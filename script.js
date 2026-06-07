@@ -55,7 +55,7 @@ const statusLabels = {
   offline: 'Đang offline',
 };
 
-const profileTypingWords = ['Chinatsu Kamado', 'Freelancer', 'Hikikomori', 'Neet', 'Fan Anime', 'Minecraft'];
+const profileTypingWords = ['Chinatsu Kamado', 'Đẹp Trai', 'Hikikomori', 'Chơi Game Hay', 'Fan Anime', 'Minecraft'];
 
 const activityTypes = {
   0: { label: 'Đang chơi', icon: '🎮' },
