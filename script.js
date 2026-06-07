@@ -10,7 +10,7 @@ const DECORATIONS = [
   'fantasy-hoa-kiem.png',
   'fantasy-ma-thuat.png',
   'fantasy-tinh-linh.png',
-  'a_57807030ab60f7ac0c4a1998aa091bbf.png',
+  'buom-dem.png',
 ];
 
 const terminalScreen = document.getElementById('terminal-screen');
