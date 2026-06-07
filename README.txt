@@ -1,2 +1,2 @@
 ﻿web by takeshi.
-remake by yuukiaoki.
+remake by Dogkun.
