@@ -55,7 +55,7 @@ const statusLabels = {
   offline: 'Đang offline',
 };
 
-const profileTypingWords = ['YuukiAoki', 'Freelancer', 'Hikikomori', 'Neet', 'Fan Anime', 'Minecraft'];
+const profileTypingWords = ['Chinatsu Kamado', 'Freelancer', 'Hikikomori', 'Neet', 'Fan Anime', 'Minecraft'];
 
 const activityTypes = {
   0: { label: 'Đang chơi', icon: '🎮' },
@@ -248,10 +248,10 @@ function normalizeUrl(value) {
 function fakeCommand(command) {
   const lower = command.toLowerCase();
   if (['help', '?'].includes(lower)) return 'Available: help, clear, profile, status, ping, dir, scan, run <anything>, or paste a URL.';
-  if (lower === 'profile') return 'Opening YuukiAoki profile interface... done. Press Enter outside this input to continue.';
+  if (lower === 'profile') return 'Opening Chinatsu Kamado profile interface... done. Press Enter outside this input to continue.';
   if (lower === 'status') return 'Discord presence daemon: ONLINE\nAnime energy: 98%\nCute cursor: armed.';
   if (lower === 'ping') return 'Pinging moonlight.anime [127.0.0.1]... Reply: time=7ms TTL=uwu';
-  if (lower === 'dir') return ' Directory of C:\\Users\\YuukiAoki\n\n<DIR> anime\n<DIR> lofi\n<DIR> minecraft\n<DIR> secrets\nprofile.exe';
+  if (lower === 'dir') return ' Directory of C:\\Users\\Chinatsu Kamado\n\n<DIR> anime\n<DIR> lofi\n<DIR> minecraft\n<DIR> secrets\nprofile.exe';
   if (lower.startsWith('run ') || lower.startsWith('npm ') || lower.startsWith('python ') || lower.startsWith('git ')) {
     return `Executing "${command}"...\n[OK] Pretending very professionally. No errors found.`;
   }
@@ -280,7 +280,7 @@ cmdForm.addEventListener('submit', (event) => {
     renderCmdBody();
     return;
   }
-  tab.log += `${tab.log.endsWith('\n') ? '' : '\n'}C:\\Users\\YuukiAoki> ${command}\n`;
+  tab.log += `${tab.log.endsWith('\n') ? '' : '\n'}C:\\Users\\Chinatsu Kamado> ${command}\n`;
   const url = normalizeUrl(command);
   if (url) {
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -388,7 +388,7 @@ const staticDiscordBadges = [
   { name: 'Nhà Phát Triển Tích Cực', icon: './data/badges/active-developer.svg' },
   { name: 'Đăng ký từ 8 thg 12, 2022', icon: './data/badges/nitro-new.svg', nitro: true },
   { name: 'Nitro Boost', icon: './data/badges/boost-6-month.svg', nitro: true },
-  { name: 'yuukiaoki', icon: './data/badges/legacy-username.svg' },
+  { name: 'Chinatsu Kamado', icon: './data/badges/legacy-username.svg' },
 ];
 
 function renderDiscordBadges() {
@@ -507,8 +507,8 @@ async function fetchDiscordPresence() {
     const avatarUrl = getAvatarUrl(user);
     const discordDecorationUrls = getDiscordDecorationUrls(user);
 
-    profileTypingWords[0] = 'YuukiAoki';
-    presenceEls.username.textContent = 'yuukiaoki';
+    profileTypingWords[0] = 'Chinatsu Kamado';
+    presenceEls.username.textContent = 'Chinatsu Kamado';
     presenceEls.customStatusLine.textContent = customStatusText || '...';
     presenceEls.statusText.innerHTML = `<span class="inline-dot ${status}"></span>${statusLabel}${clientText ? ` - ${clientText}` : ''}`;
     updateVietnamClock();
