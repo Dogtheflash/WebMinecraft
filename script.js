@@ -1,4 +1,4 @@
-const DISCORD_USER_ID = '753586794037248113';
+const DISCORD_USER_ID = '917263515209859102';
 const DECORATIONS = [
   'anime-dang-yeu.png',
   'anime-do-mo-hoi.png',
