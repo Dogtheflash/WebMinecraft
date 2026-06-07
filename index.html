@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YuukiAoki | profile</title>
+  <meta name="description"
+    content="Oh... yo bro? đây cũng ko có gì hay cả, nếu muốn có thể xem thử." />
+  <meta name="theme-color" content="#070a15" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="./Image/webicon.jfif" type="image/jpeg" />
+  
+</head>
+
+<body class="terminal-active">
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div id="pointer-glow" class="pointer-glow" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <main id="app-root">
+    <section id="terminal-screen" class="screen terminal-screen active" aria-label="Windows 11 command prompt intro">
+      <div class="cmd-window">
+        <div class="cmd-titlebar">
+          <div id="cmd-tabs" class="cmd-tabs" role="tablist" aria-label="CMD tabs"></div>
+          <button id="cmd-new-tab" class="cmd-plus" type="button" aria-label="Mở tab CMD mới">+</button>
+          <div class="cmd-controls" aria-hidden="true"><span>—</span><span>□</span><span>×</span></div>
+        </div>
+        <div class="cmd-body">
+          <div id="cmd-log" class="cmd-log" aria-live="polite"></div>
+          <form id="cmd-form" class="cmd-prompt-line" autocomplete="off">
+            <span>C:\Users\YuukiAoki&gt;</span>
+            <input id="cmd-input" type="text" autocomplete="off" spellcheck="false" aria-label="CMD command input" />
+          </form>
+          <button id="enter-console-btn" class="cmd-continue">Join World</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
+      <article class="profile-console glass-panel">
+        <div class="profile-banner">
+          <img id="banner-image" src="./data/background/banner.gif"
+            alt="Ảnh bìa hồ sơ" />
+          <div class="banner-glow"></div>
+        </div>
+
+        <header class="profile-header">
+          <div class="avatar-wrap">
+            <img id="avatar-image" class="avatar-image" src="https://images-ext-1.discordapp.net/external/Pk9lpqQlm9eiN65fVc4VsGsRbedZwUbAsCBLXPHvHq8/%3Fsize%3D4096/https/cdn.discordapp.com/avatars/753586794037248113/1c858e2fe47a144a045f340305cb01a2.png?format=webp&quality=lossless" alt="Ảnh đại diện Discord" />
+            <div id="avatar-fallback" class="avatar-fallback">T</div>
+            <img id="avatar-decoration" class="avatar-decoration" src="./data/decoration/anime-gian-du.png"
+              alt="Trang trí avatar" />
+            <span id="status-orb" class="status-orb offline" aria-label="Trạng thái Discord"></span>
+          </div>
+
+          <div class="identity-block">
+            <h1 id="display-name"><span id="profile-typing-name" class="profile-typing-name">YuukiAoki</span><span class="profile-typing-cursor" aria-hidden="true">|</span></h1>
+            <p class="username">@<span id="username">YuukiAoki</span></p>
+          </div>
+        </header>
+
+        <section class="presence-card" aria-labelledby="presence-title">
+          <div>
+            <h2 id="presence-title">Trạng thái: <span id="custom-status-line">Đang tải...</span></h2>
+            <p id="status-text"><span class="inline-dot"></span>Đang kết nối Discord...</p>
+          </div>
+          <span id="last-updated" class="sync-pill">đang đồng bộ</span>
+        </section>
+
+        <section id="activity-card" class="activity-card hidden" aria-labelledby="activity-title">
+          <div id="activity-icon" class="activity-icon">✦</div>
+          <div>
+            <h2 id="activity-title">Hoạt động</h2>
+            <p id="activity-name" class="handle">Không có hoạt động</p>
+            <p id="activity-detail">Khi có game, Spotify hoặc app đang chạy thì sẽ hiện ở đây.</p>
+            <p id="activity-time" class="activity-time"></p>
+          </div>
+        </section>
+
+        <section class="meta-grid" aria-label="Thông tin realtime Discord">
+          <div><span>Spotify</span><strong id="spotify-status">Chưa phát hiện</strong></div>
+          <div><span>Huy hiệu</span><strong id="public-flags" class="badge-list">Đang tải</strong></div>
+        </section>
+
+        <section class="about-card">
+          <h2>Giới thiệu</h2>
+          <p>Một góc hồ sơ nhỏ gọn của YuukiAoki, lấy cảm hứng nhẹ từ Discord nhưng vẫn giữ phong cách anime riêng: tối,
+            gọn, mượt và có chiều sâu.</p>
+          <div class="tags" aria-label="Thẻ hồ sơ">
+            <span>Anime</span>
+            <span>Coder</span>
+            <span>Genshin Impact</span>
+            <span>Cheater</span>
+          </div>
+        </section>
+
+        <nav class="social-row" aria-label="Liên kết mạng xã hội">
+          <a id="discord-link" href="https://discord.com/users/753586794037248113" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.32 4.37A19.8 19.8 0 0 0 15.36 2l-.24.44c1.8.55 2.64 1.34 2.64 1.34a16.5 16.5 0 0 0-5.02-1.55 17.1 17.1 0 0 0-4.24.04c-.13 0-.25.03-.38.05-.75.07-2.56.34-4.84 1.36 0 0 .87-.83 2.78-1.38L5.9 2A19.7 19.7 0 0 0 .94 4.42S0 8.1 0 12.7c0 0 1.47 2.52 5.34 2.65 0 0 .65-.78 1.18-1.45-2.24-.67-3.09-2.08-3.09-2.08s.18.13.5.31c.02.02.05.03.08.05.04.03.08.05.12.07.44.25.88.45 1.29.6.72.28 1.58.56 2.59.75 1.33.25 2.9.34 4.6.02.83-.15 1.68-.4 2.57-.75.62-.24 1.31-.58 2.03-1.05 0 0-.88 1.44-3.2 2.1.53.66 1.15 1.42 1.15 1.42 3.88-.13 5.36-2.65 5.36-2.65 0-4.6-.2-8.33-.2-8.33ZM8.2 11.62c-.98 0-1.78-.86-1.78-1.92 0-1.06.78-1.92 1.78-1.92S10 8.64 9.98 9.7c0 1.06-.79 1.92-1.78 1.92Zm7.38 0c-.98 0-1.78-.86-1.78-1.92 0-1.06.79-1.92 1.78-1.92 1 0 1.8.86 1.78 1.92 0 1.06-.78 1.92-1.78 1.92Z"/></svg>
+          </a>
+          <a id="youtube-link" href="http://youtube.com/@yuukiaoki" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.12C19.52 3.58 12 3.58 12 3.58s-7.52 0-9.4.5A3 3 0 0 0 .5 6.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.12c1.88.5 9.4.5 9.4.5s7.52 0 9.4-.5a3 3 0 0 0 2.1-2.12A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-5.8ZM9.6 15.55v-7.1L15.85 12 9.6 15.55Z"/></svg>
+          </a>
+          <a id="x-link" href="http://x.com/yuukiaoki" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2h3.68l-8.04 9.18L24 22h-7.4l-5.8-7.58L4.17 22H.48l8.6-9.83L0 2h7.6l5.24 6.93L18.9 2Zm-1.3 18.1h2.04L6.5 3.8H4.31L17.6 20.1Z"/></svg>
+          </a>
+        
+        </nav>
+
+        <footer class="profile-footer">
+          <a id="page-one-link" href="#">Page 1</a>
+          <a id="page-two-link" href="#">?</a>
+          <a id="mal-link" href="#">Text color</a>
+        </footer>
+
+        <section id="color-page" class="color-page hidden" aria-label="Unity Rich Text Gradient Generator">
+          <div class="color-page-head">
+            <button id="color-back" class="mini-btn" type="button">← Home</button>
+            <div>
+              <p class="eyebrow">Unity tool</p>
+              <h2>Rich Text Colorizer</h2>
+            </div>
+          </div>
+
+          <label class="field-block">
+            <span>Nhập văn bản</span>
+            <textarea id="tc-input-text" rows="4">YuukiAoki desu</textarea>
+          </label>
+
+          <div class="tool-grid">
+            <label class="field-block">
+              <span>Hiệu ứng màu</span>
+              <select id="tc-effect">
+                <option value="two">Dải hai màu</option>
+                <option value="mirror">Dải hai màu lặp lại</option>
+                <option value="three">Dải ba màu</option>
+                <option value="solid">Một màu</option>
+                <option value="random">Màu ngẫu nhiên</option>
+                <option value="rainbow">Cầu vồng</option>
+              </select>
+            </label>
+            <label class="field-block">
+              <span>Phông chữ</span>
+              <select id="tc-font">
+                <option value="">Mặc định</option><option>Arial</option><option>Verdana</option><option>Tahoma</option><option>Georgia</option><option>Courier New</option><option>Times New Roman</option><option>Trebuchet MS</option><option>Lucida Console</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="color-picks" aria-label="Chọn màu">
+            <label><span>Đầu</span><input id="tc-color-1" type="color" value="#ff4fd8"></label>
+            <label><span>Giữa</span><input id="tc-color-2" type="color" value="#5865f2"></label>
+            <label><span>Cuối</span><input id="tc-color-3" type="color" value="#35e8ff"></label>
+          </div>
+
+          <div class="tool-grid compact">
+            <label class="field-block"><span>Cỡ chữ</span><select id="tc-size"><option value="0">Mặc định</option><option value="12">12</option><option value="18">18</option><option value="24">24</option><option value="30">30</option><option value="36">36</option><option value="48">48</option><option value="60">60</option><option value="72">72</option><option value="90">90</option></select></label>
+            <div class="toggle-row"><label><input id="tc-bold" type="checkbox">Đậm</label><label><input id="tc-italic" type="checkbox">Ngiêng</label><label><input id="tc-word" type="checkbox">Random</label></div>
+          </div>
+
+          <div class="preview-card">
+            <span>Preview</span>
+            <div id="tc-preview" class="tc-preview"></div>
+          </div>
+
+          <label class="field-block output-block">
+            <span>Unity Rich Text</span>
+            <textarea id="tc-output" rows="6" readonly></textarea>
+          </label>
+          <button id="tc-copy" class="copy-btn" type="button">Copy Unity Rich Text</button>
+        </section>
+
+      </article>
+    </section>
+  </main>
+
+  <aside id="music-player" class="music-player glass-panel hidden" aria-label="Trình phát nhạc">
+    <button id="play-toggle" class="play-btn" type="button" aria-label="Phát hoặc tạm dừng">▶</button>
+    <button id="next-track" class="next-btn" type="button" aria-label="Chuyển bài tiếp theo">⏭</button>
+    <div class="track-meta">
+      <strong id="track-title">Beautiful Piano Music</strong>
+      <div class="track-time"><span id="current-time">0:00</span><span id="duration-time">0:00</span></div>
+      <div class="progress"><span id="progress-bar"></span></div>
+    </div>
+    <div id="volume-control" class="volume-control" aria-label="Âm lượng nhạc">
+      <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Mở chỉnh âm lượng">🔊</button>
+      <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
+    </div>
+    <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <audio id="audio-player" src="./data/music/Music.mp3" preload="auto"></audio>
+  </aside>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
