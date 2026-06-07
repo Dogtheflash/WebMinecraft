@@ -82,16 +82,16 @@ const discordBadges = [
 ];
 
 const introLines = [
-  'C:\\Users\\YuukiAoki> whoami',
-  'yuukiaoki.dev',
+  'C:\\Users\\Chinatsu Kamado> whoami',
+  'Chinatsu Kamado.dev',
   '',
-  'C:\\Users\\YuukiAoki> profile --boot',
+  'C:\\Users\\Chinatsu Kamado> profile --boot',
   '[OK] Loading personal interface...',
   '[OK] Connecting Discord presence...',
   '[OK] Preparing avatar decoration...',
   '[OK] Preparing avatar decoration...',
   '',
-  'Alias        : YuukiAoki',
+  'Alias        : Chinatsu Kamado',
   'Style        : Discord-inspired anime profile',
   'Location     : Vietnam',
   'Passion      : Anime, gaming, Minecraft',
