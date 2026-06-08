@@ -549,13 +549,9 @@ const nextTrackButton = document.getElementById('next-track');
 const currentTimeEl = document.getElementById('current-time');
 const durationTimeEl = document.getElementById('duration-time');
 const tracks = [
-
-  { title: 'My Music', src: './Audio/Esoa-Ballad-version.mp3' },
-
-  { title: 'Nhạc Nền Sôi Động', src: './Audio/Nightcore-Rise-Up.mp3' },
-
-  { title: 'Music', src: './Audio/Music.mp3' }
-
+  { title: 'Esoa (Ballad Version)', src: './Audio/Esoa-Ballad-version.mp3' },
+  { title: 'Nightcore - Rise Up', src: './Audio/Nightcore-Rise-Up.mp3' },
+  { title: 'My Music', src: './Audio/Music.mp3' }
 ];
 let currentTrackIndex = 0;
 let playing = false;
