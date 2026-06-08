@@ -385,6 +385,7 @@ function updateActivityCard(activity) {
 
 const staticDiscordBadges = [
   { name: 'HypeSquad Quả Cảm', icon: './data/badges/hypesquad-bravery.svg' },
+  { name: 'Orbs Lính Mới', icon: './data/badges/Orbs-linh-moi.png' },
   { name: 'Nhà Phát Triển Tích Cực', icon: './data/badges/active-developer.svg' },
   { name: 'Đăng ký từ 6 thg 12, 2021', icon: './data/badges/nitro-new.svg', nitro: true },
   { name: 'Nitro Boost', icon: './data/badges/boost-6-month.svg', nitro: true },
