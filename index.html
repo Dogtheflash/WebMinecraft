@@ -115,9 +115,30 @@
         
         </nav>
 
-        <footer class="profile-footer">
-          <a id="page-one-link" href="#">Page 1</a>
-<style>
+        <style>
+    /* 1. Căn chỉnh bố cục tổng thể cho thanh footer */
+    .profile-footer {
+        display: flex;
+        justify-content: center; /* Ép nút My Steam vào chính giữa */
+        align-items: center;     /* Căn giữa theo chiều dọc */
+        position: relative;      /* Tạo khung gốc để đẩy các nút khác ra góc */
+        width: 100%;             /* Đảm bảo chiều rộng trải hết màn hình */
+        padding: 10px 0;         /* Thêm một chút khoảng cách trên/dưới cho thoáng */
+    }
+
+    /* 2. Đẩy nút Page 1 ra góc ngoài cùng bên trái */
+    #page-one-link {
+        position: absolute;
+        left: 20px;
+    }
+
+    /* 3. Đẩy nút Text color ra góc ngoài cùng bên phải */
+    #mal-link {
+        position: absolute;
+        right: 20px;
+    }
+
+    /* 4. Trang trí cho nút My Steam (giữ nguyên như cũ của bạn) */
     #page-two-link {
         display: inline-flex;
         align-items: center;
@@ -135,6 +156,7 @@
         background-color: rgba(255, 255, 255, 0.2); 
     }
 
+    /* 5. Căn chỉnh icon Steam */
     .steam-icon {
         width: 20px;
         height: 20px;
@@ -142,12 +164,19 @@
     }
 </style>
 
-<a id="page-two-link" href="https://steamcommunity.com/id/nakarotad/" target="_blank" rel="noopener noreferrer">
-    <img src="https://cdn-icons-png.flaticon.com/512/3670/3670382.png" alt="Steam" class="steam-icon">
-    My Steam
-</a>
-          <a id="mal-link" href="#">Text color</a>
-        </footer>
+<footer class="profile-footer">
+    <!-- Nút bên trái -->
+    <a id="page-one-link" href="#">Page 1</a>
+    
+    <!-- Nút ở giữa -->
+    <a id="page-two-link" href="https://steamcommunity.com/id/nakarotad/" target="_blank" rel="noopener noreferrer">
+        <img src="https://cdn-icons-png.flaticon.com/512/3670/3670382.png" alt="Steam" class="steam-icon">
+        My Steam
+    </a>
+    
+    <!-- Nút bên phải -->
+    <a id="mal-link" href="#">Text color</a>
+</footer>
 
         <section id="color-page" class="color-page hidden" aria-label="Unity Rich Text Gradient Generator">
           <div class="color-page-head">
