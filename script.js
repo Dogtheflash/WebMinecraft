@@ -82,14 +82,14 @@ const discordBadges = [
 ];
 
 const introLines = [
-  'C:\\Users\\Chinatsu Kamado> whoami',
+  'C:\\Users\\Chinatsu Kamado> WaiFu',
   'Chinatsu Kamado.dev',
   '',
   'C:\\Users\\Chinatsu Kamado> profile --boot',
-  '[OK] Loading personal interface...',
-  '[OK] Connecting Discord presence...',
-  '[OK] Preparing avatar decoration...',
-  '[OK] Preparing avatar decoration...',
+  '[OK] Đang tải giao diện cá nhân...',
+  '[OK] Đang kết nối trạng thái Discord...',
+  '[OK] Đang chuẩn bị trang trí ảnh đại diện...',
+  '[OK] Đang chuẩn bị trang trí ảnh đại diện...',
   '',
   'Alias        : Chinatsu Kamado',
   'Style        : Discord-inspired anime profile',
@@ -211,7 +211,7 @@ function openCmdTab() {
   ].join('\n');
   const tips = [
     '\nGợi ý: nhập website như youtube.com rồi nhấn Enter để mở tab mới.',
-    'Gợi ý: thử các lệnh help, status, ping, dir, profile, clear.',
+    'Gợi ý: thử nhập các lệnh help, status, ping, dir, profile, clear.',
     '',
   ].join('\n');
   const tab = {
