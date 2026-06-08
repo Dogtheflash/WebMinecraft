@@ -516,7 +516,7 @@ async function fetchDiscordPresence() {
     presenceEls.avatar.src = 'https://images-ext-1.discordapp.net/external/Pk9lpqQlm9eiN65fVc4VsGsRbedZwUbAsCBLXPHvHq8/%3Fsize%3D4096/https/cdn.discordapp.com/avatars/753586794037248113/1c858e2fe47a144a045f340305cb01a2.png?format=webp&quality=lossless';
 
     setDiscordDecoration(discordDecorationUrls);
-    presenceEls.decoration.src = './data/decoration/anime-gian-du.png';
+    presenceEls.decoration.src = './data/decoration/anime-dang-yeu.png';
 
     updateActivityCard(primaryActivity);
     updateMetaFields(data, user);
