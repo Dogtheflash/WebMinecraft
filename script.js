@@ -549,7 +549,7 @@ const nextTrackButton = document.getElementById('next-track');
 const currentTimeEl = document.getElementById('current-time');
 const durationTimeEl = document.getElementById('duration-time');
 const tracks = [
-  { title: 'My Music', src: './audio/Music.mp3' },
+  { title: 'My Music', src: './Audio/Music.mp3' },
 ];
 let currentTrackIndex = 0;
 let playing = false;
