@@ -1,12 +1,20 @@
 ﻿web by takeshi.
 remake by Dogkun.
-# ⚡ DOGkun Cyber Profile
+<div align="center">
+
+# ⚡ Dogkun Cyber Profile
 
 ![Status](https://img.shields.io/badge/STATUS-ACTIVE-00f0ff?style=for-the-badge&labelColor=161b22)
 ![Made With](https://img.shields.io/badge/MADE%20WITH-HTML%20+%20CSS%20+%20JS-ff007f?style=for-the-badge&labelColor=161b22)
 ![Theme](https://img.shields.io/badge/THEME-CYBER%20ANIME-8a2be2?style=for-the-badge&labelColor=161b22)
 
-A premium cyber-anime personal profile with a Windows CMD intro, Discord-style presence cards, social links, avatar decoration, and a floating lofi music player.------------------------------------------------------------------------------------------------------------------------------------------------------------------
+<br/>
+
+Một hồ sơ cá nhân theo phong cách anime điện tử cao cấp với phần giới thiệu bằng Windows CMD, thẻ trạng thái kiểu Discord, liên kết mạng xã hội, trang trí hình đại diện và trình phát nhạc lofi nổi.
+
+</div>
+
+------------------------------------------------------------------------------------------------------------------------------------------
 
 ## ✨ Preview Vibe
 
