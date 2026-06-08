@@ -117,9 +117,35 @@
 
         <footer class="profile-footer">
           <a id="page-one-link" href="#">Page 1</a>
-          <a id="page-two-link" href="https://steamcommunity.com/id/nakarotad/" target="_blank" rel="noopener noreferrer">
+          <style>
+    #page-two-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 16px;
+        text-decoration: none;
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        background-color: rgba(255, 255, 255, 0.05);
+        transition: 0.3s;
+    }
+
+    #page-two-link:hover {
+        background-color: rgba(255, 255, 255, 0.2); 
+    }
+
+    .steam-icon {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+    }
+</style>
+
+<a id="page-two-link" href="https://steamcommunity.com/id/nakarotad/" target="_blank" rel="noopener noreferrer">
     <img src="https://cdn-icons-png.flaticon.com/512/3670/3670382.png" alt="Steam" class="steam-icon">
     My Steam
+</a>
           <a id="mal-link" href="#">Text color</a>
         </footer>
 
