@@ -6,8 +6,7 @@ remake by Dogkun.
 ![Made With](https://img.shields.io/badge/MADE%20WITH-HTML%20+%20CSS%20+%20JS-ff007f?style=for-the-badge&labelColor=161b22)
 ![Theme](https://img.shields.io/badge/THEME-CYBER%20ANIME-8a2be2?style=for-the-badge&labelColor=161b22)
 
-A premium cyber-anime personal profile with a Windows CMD intro, Discord-style presence cards, social links, avatar decoration, and a floating lofi music player.
-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+A premium cyber-anime personal profile with a Windows CMD intro, Discord-style presence cards, social links, avatar decoration, and a floating lofi music player.------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## ✨ Preview Vibe
 
