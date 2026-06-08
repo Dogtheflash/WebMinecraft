@@ -384,11 +384,11 @@ function updateActivityCard(activity) {
 }
 
 const staticDiscordBadges = [
-  { name: 'HypeSquad Lỗi Lạc', icon: './data/badges/hypesquad-brilliance.svg' },
+  { name: 'HypeSquad Quả Cảm', icon: './data/badges/hypesquad-bravery.svg' },
   { name: 'Nhà Phát Triển Tích Cực', icon: './data/badges/active-developer.svg' },
-  { name: 'Đăng ký từ 8 thg 12, 2022', icon: './data/badges/nitro-new.svg', nitro: true },
+  { name: 'Đăng ký từ 6 thg 12, 2021', icon: './data/badges/nitro-new.svg', nitro: true },
   { name: 'Nitro Boost', icon: './data/badges/boost-6-month.svg', nitro: true },
-  { name: 'Chinatsu Kamado', icon: './data/badges/legacy-username.svg' },
+  { name: 'nakarotad#2413', icon: './data/badges/legacy-username.svg' },
 ];
 
 function renderDiscordBadges() {
