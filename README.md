@@ -93,12 +93,3 @@ pro5/
     ├── decoration/ # Avatar decoration assets
     └── music/      # Background music file
 ```
-
-
-
-
-
-
-
-
-      * Cute anime-style custom cursor
