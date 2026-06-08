@@ -2,7 +2,7 @@
 remake by Dogkun.
 <div align="center">
 
-# ⚡ Dogkun Cyber Profile
+# ⚡ Chinatsu Kamado Cyber Profile
 
 ![Status](https://img.shields.io/badge/STATUS-ACTIVE-00f0ff?style=for-the-badge&labelColor=161b22)
 ![Made With](https://img.shields.io/badge/MADE%20WITH-HTML%20+%20CSS%20+%20JS-ff007f?style=for-the-badge&labelColor=161b22)
@@ -19,7 +19,7 @@ Một hồ sơ cá nhân theo phong cách anime điện tử cao cấp với ph�
 ## ✨ Preview Vibe
 
 ```cmd
-C:\Users\Takeshi boot profile
+C:\Users\Chinatsu Kamado boot profile
 [ OK ] loading cyber interface...
 [ OK ] syncing Discord presence...
 [ OK ] joining world...
