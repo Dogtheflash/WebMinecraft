@@ -513,10 +513,10 @@ async function fetchDiscordPresence() {
     presenceEls.statusText.innerHTML = `<span class="inline-dot ${status}"></span>${statusLabel}${clientText ? ` - ${clientText}` : ''}`;
     updateVietnamClock();
     if (avatarUrl) presenceEls.avatar.src = avatarUrl;
-    presenceEls.avatar.src = 'https://images-ext-1.discordapp.net/external/Pk9lpqQlm9eiN65fVc4VsGsRbedZwUbAsCBLXPHvHq8/%3Fsize%3D4096/https/cdn.discordapp.com/avatars/753586794037248113/1c858e2fe47a144a045f340305cb01a2.png?format=webp&quality=lossless';
+    presenceEls.avatar.src = 'https://images-ext-1.discordapp.net/external/Pk9lpqQlm9eiN65fVc4VsGsRbedZwUbAsCBLXPHvHq8/%3Fsize%3D4096/https://cdn.discordapp.com/avatars/917263515209859102/cd121ea4baf2512e6e98f16f0f2a8d04.png?format=webp&quality=lossless';
 
     setDiscordDecoration(discordDecorationUrls);
-    presenceEls.decoration.src = './data/decoration/anime-dang-yeu.png';
+    presenceEls.decoration.src = './data/decoration/buom-dem.png';
 
     updateActivityCard(primaryActivity);
     updateMetaFields(data, user);
