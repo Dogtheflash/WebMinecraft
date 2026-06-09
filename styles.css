@@ -14,6 +14,17 @@
   --shadow: 0 28px 90px rgba(0, 0, 0, 0.52);
 }
 
+#bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1;
+    pointer-events: none;
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scrollbar-width: none; background:#060913; }
 html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar { width:0; height:0; display:none; }
