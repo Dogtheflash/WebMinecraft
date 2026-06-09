@@ -21,7 +21,7 @@
   --font-label: clamp(0.6rem, 1vw + 0.15rem, 0.75rem);
 }
 
-.bg-video {
+#bg-video {
   position: fixed;
   inset: 0;
   width: 100%;
