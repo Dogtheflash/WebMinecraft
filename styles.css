@@ -13,14 +13,6 @@
   --muted: #9aa8c7;
   --shadow: 0 28px 90px rgba(0, 0, 0, 0.52);
 
-  /* fluid typography */
-  --font-h1: clamp(1.3rem, 2.5vw + 0.5rem, 2.1rem);
-  --font-h2: clamp(1rem, 1.8vw + 0.3rem, 1.5rem);
-  --font-body: clamp(0.75rem, 1.2vw + 0.25rem, 0.9rem);
-  --font-mono: clamp(0.65rem, 1.1vw + 0.2rem, 0.82rem);
-  --font-label: clamp(0.6rem, 1vw + 0.15rem, 0.75rem);
-}
-
 #bg-video {
   position: fixed;
   inset: 0;
