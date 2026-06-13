@@ -1,4 +1,4 @@
-const DISCORD_USER_ID = '648036769769717760';
+const DISCORD_USER_ID = '917263515209859102';
 const DECORATIONS = [
   'anime-dang-yeu.png',
   'anime-do-mo-hoi.png',
@@ -10,7 +10,7 @@ const DECORATIONS = [
   'fantasy-hoa-kiem.png',
   'fantasy-ma-thuat.png',
   'fantasy-tinh-linh.png',
-  'a_57807030ab60f7ac0c4a1998aa091bbf.png',
+  'buom-dem.png',
 ];
 
 const terminalScreen = document.getElementById('terminal-screen');
@@ -55,7 +55,7 @@ const statusLabels = {
   offline: 'Đang offline',
 };
 
-const profileTypingWords = ['Takeshi', 'Freelancer', 'Hikikomori', 'Neet', 'Fan Anime'];
+const profileTypingWords = ['Chinatsu Kamado', 'Đẹp Trai', 'Hikikomori', 'Chơi Game Hay', 'Fan Anime', 'Minecraft'];
 
 const activityTypes = {
   0: { label: 'Đang chơi', icon: '🎮' },
@@ -82,19 +82,19 @@ const discordBadges = [
 ];
 
 const introLines = [
-  'C:\\Users\\Takeshi> whoami',
-  'takeshi.dev',
+  'C:\\Users\\Chinatsu Kamado> WaiFu',
+  'Chinatsu Kamado.dev',
   '',
-  'C:\\Users\\Takeshi> profile --boot',
-  '[OK] Loading personal interface...',
-  '[OK] Connecting Discord presence...',
-  '[OK] Preparing avatar decoration...',
-  '[OK] Mounting local music file...',
+  'C:\\Users\\Chinatsu Kamado> profile --boot',
+  '[OK] Đang tải giao diện cá nhân...',
+  '[OK] Đang kết nối trạng thái Discord...',
+  '[OK] Đang chuẩn bị trang trí ảnh đại diện...',
+  '[OK] Đang chuẩn bị trang trí ảnh đại diện...',
   '',
-  'Alias        : Takeshi',
+  'Alias        : Chinatsu Kamado',
   'Style        : Discord-inspired anime profile',
   'Location     : Vietnam',
-  'Passion      : Anime, gaming, late-night code',
+  'Passion      : Anime, gaming, Minecraft',
   'Current Mode : Quiet but online',
   '',
   'Press Enter to continue.',
@@ -211,7 +211,7 @@ function openCmdTab() {
   ].join('\n');
   const tips = [
     '\nGợi ý: nhập website như youtube.com rồi nhấn Enter để mở tab mới.',
-    'Gợi ý: thử các lệnh help, status, ping, dir, profile, clear.',
+    'Gợi ý: thử nhập các lệnh help, status, ping, dir, profile, clear.',
     '',
   ].join('\n');
   const tab = {
@@ -248,10 +248,10 @@ function normalizeUrl(value) {
 function fakeCommand(command) {
   const lower = command.toLowerCase();
   if (['help', '?'].includes(lower)) return 'Available: help, clear, profile, status, ping, dir, scan, run <anything>, or paste a URL.';
-  if (lower === 'profile') return 'Opening Takeshi profile interface... done. Press Enter outside this input to continue.';
+  if (lower === 'profile') return 'Opening Chinatsu Kamado profile interface... done. Press Enter outside this input to continue.';
   if (lower === 'status') return 'Discord presence daemon: ONLINE\nAnime energy: 98%\nCute cursor: armed.';
   if (lower === 'ping') return 'Pinging moonlight.anime [127.0.0.1]... Reply: time=7ms TTL=uwu';
-  if (lower === 'dir') return ' Directory of C:\\Users\\Takeshi\n\n<DIR> anime\n<DIR> lofi\n<DIR> secrets\nprofile.exe';
+  if (lower === 'dir') return ' Directory of C:\\Users\\Chinatsu Kamado\n\n<DIR> anime\n<DIR> lofi\n<DIR> minecraft\n<DIR> secrets\nprofile.exe';
   if (lower.startsWith('run ') || lower.startsWith('npm ') || lower.startsWith('python ') || lower.startsWith('git ')) {
     return `Executing "${command}"...\n[OK] Pretending very professionally. No errors found.`;
   }
@@ -280,7 +280,7 @@ cmdForm.addEventListener('submit', (event) => {
     renderCmdBody();
     return;
   }
-  tab.log += `${tab.log.endsWith('\n') ? '' : '\n'}C:\\Users\\Takeshi> ${command}\n`;
+  tab.log += `${tab.log.endsWith('\n') ? '' : '\n'}C:\\Users\\Chinatsu Kamado> ${command}\n`;
   const url = normalizeUrl(command);
   if (url) {
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -384,11 +384,12 @@ function updateActivityCard(activity) {
 }
 
 const staticDiscordBadges = [
-  { name: 'HypeSquad Lỗi Lạc', icon: './data/badges/hypesquad-brilliance.svg' },
+  { name: 'Orbs Lính Mới', icon: './data/badges/Orbs-linh-moi.png' },
+  { name: 'HypeSquad Quả Cảm', icon: './data/badges/hypesquad-bravery.svg' },
   { name: 'Nhà Phát Triển Tích Cực', icon: './data/badges/active-developer.svg' },
-  { name: 'Đăng ký từ 8 thg 12, 2022', icon: './data/badges/nitro-new.svg', nitro: true },
+  { name: 'Đăng ký từ 6 thg 12, 2021', icon: './data/badges/nitro-new.svg', nitro: true },
   { name: 'Nitro Boost', icon: './data/badges/boost-6-month.svg', nitro: true },
-  { name: 'takeshi#7502', icon: './data/badges/legacy-username.svg' },
+  { name: 'nakarotad#2413', icon: './data/badges/legacy-username.svg' },
 ];
 
 function renderDiscordBadges() {
@@ -507,14 +508,16 @@ async function fetchDiscordPresence() {
     const avatarUrl = getAvatarUrl(user);
     const discordDecorationUrls = getDiscordDecorationUrls(user);
 
-    profileTypingWords[0] = user.global_name || user.display_name || 'Takeshi';
-    presenceEls.username.textContent = user.username || 'takeshi';
+    profileTypingWords[0] = 'Chinatsu Kamado';
+    presenceEls.username.textContent = 'Chinatsu Kamado';
     presenceEls.customStatusLine.textContent = customStatusText || '...';
     presenceEls.statusText.innerHTML = `<span class="inline-dot ${status}"></span>${statusLabel}${clientText ? ` - ${clientText}` : ''}`;
     updateVietnamClock();
     if (avatarUrl) presenceEls.avatar.src = avatarUrl;
+    presenceEls.avatar.src = 'https://images-ext-1.discordapp.net/external/KglgTpgmix6LkqXu75sNwRMz8sWZuOl9JWnUCLWG_IA/%3Fsize%3D4096/https/cdn.discordapp.com/avatars/917263515209859102/cd121ea4baf2512e6e98f16f0f2a8d04.png?format=webp&quality=lossless&width=656&height=656';
 
     setDiscordDecoration(discordDecorationUrls);
+    presenceEls.decoration.src = './data/decoration/buom-dem.png';
 
     updateActivityCard(primaryActivity);
     updateMetaFields(data, user);
@@ -537,13 +540,19 @@ function rotateDecoration() {
 }
 setInterval(rotateDecoration, 5000);
 
+function enterConsole() {
+  showScreen(profileScreen);
+  startMusic();
+}
+
 const trackTitle = document.getElementById('track-title');
 const nextTrackButton = document.getElementById('next-track');
 const currentTimeEl = document.getElementById('current-time');
 const durationTimeEl = document.getElementById('duration-time');
 const tracks = [
-  { title: 'Beautiful Piano Music', src: './data/music/2%20Hour%20Beautiful%20Piano%20Music.mp3' },
-  { title: 'Weathering With You Lofi', src: './data/music/Weathering_with_you_Lofi.mp3' },
+  { title: 'Nightcore - Rise Up', src: './Audio/Nightcore-Rise-Up.mp3' },
+  { title: 'Esoa (Ballad Version)', src: './Audio/Esoa-Ballad-version.mp3' },
+  { title: 'My Music', src: './Audio/Music.mp3' }
 ];
 let currentTrackIndex = 0;
 let playing = false;
@@ -600,11 +609,6 @@ function pauseMusic() {
   playToggle.textContent = '▶';
   player.classList.add('paused');
   renderTrackMeta();
-}
-
-function enterConsole() {
-  showScreen(profileScreen);
-  startMusic();
 }
 
 playToggle.addEventListener('click', async () => {
@@ -682,13 +686,7 @@ volumeSlider.addEventListener('input', () => {
   scheduleVolumeAutoClose();
 });
 
-['page-one-link', 'page-two-link'].forEach((id) => {
-  const element = document.getElementById(id);
-  if (!element) return;
-  element.addEventListener('click', (event) => event.preventDefault());
-});
-
-renderTrackMeta();
+document.getElementById('page-one-link').addEventListener('click', (event) => event.preventDefault());
 
 const colorTool = {
   page: document.getElementById('color-page'),
@@ -711,37 +709,30 @@ const colorTool = {
   copy: document.getElementById('tc-copy'),
 };
 
-const BOT_STATUS_ENDPOINTS = [
-  'https://musicbot-api.takeshi.dev/api/public-status',
-  'http://localhost:3000/api/public-status',
-  'http://127.0.0.1:3000/api/public-status',
-  'http://localhost:20128/api/public-status',
-  'http://127.0.0.1:20128/api/public-status',
-];
-const BOT_STATUS_REFRESH_MS = 15000;
-let botStatusTimer = null;
-let activeBotStatusApi = null;
+renderTrackMeta();
 
-const botPage = {
-  page: document.getElementById('bot-page'),
-  open: document.getElementById('page-two-link'),
-  back: document.getElementById('bot-back'),
-  avatar: document.getElementById('bot-avatar'),
-  statusDot: document.getElementById('bot-status-dot'),
-  statusText: document.getElementById('bot-status-text'),
-  pageTitle: document.getElementById('bot-page-title'),
-  name: document.getElementById('bot-display-name'),
-  customStatus: document.getElementById('bot-custom-status'),
-  hero: document.querySelector('.bot-hero'),
-  invite: document.getElementById('bot-invite-link'),
-  updatedAt: document.getElementById('bot-updated-at'),
-  ping: document.getElementById('bot-ping'),
-  servers: document.getElementById('bot-servers'),
-  playing: document.getElementById('bot-playing'),
-  connected: document.getElementById('bot-connected'),
-  runtime: document.getElementById('bot-runtime'),
-  lavalink: document.getElementById('bot-lavalink'),
-};
+colorTool.open.addEventListener('click', (e) => { e.preventDefault(); showColorPage(); });
+colorTool.back.addEventListener('click', hideColorPage);
+
+colorTool.text.addEventListener('input', buildUnityRichText);
+colorTool.effect.addEventListener('change', buildUnityRichText);
+colorTool.font.addEventListener('change', buildUnityRichText);
+colorTool.size.addEventListener('change', buildUnityRichText);
+colorTool.c1.addEventListener('input', buildUnityRichText);
+colorTool.c2.addEventListener('input', buildUnityRichText);
+colorTool.c3.addEventListener('input', buildUnityRichText);
+colorTool.bold.addEventListener('change', buildUnityRichText);
+colorTool.italic.addEventListener('change', buildUnityRichText);
+colorTool.word.addEventListener('change', buildUnityRichText);
+
+colorTool.copy.addEventListener('click', () => {
+  colorTool.output.select();
+  navigator.clipboard.writeText(colorTool.output.value).then(() => {
+    const original = colorTool.copy.textContent;
+    colorTool.copy.textContent = 'Đã copy!';
+    setTimeout(() => { colorTool.copy.textContent = original; }, 1500);
+  });
+});
 
 let activeInnerPage = null;
 
@@ -897,130 +888,6 @@ function setText(element, value) {
   if (element) element.textContent = value;
 }
 
-function setBotStatusDot(status = 'offline') {
-  if (!botPage.statusDot) return;
-  botPage.statusDot.className = `bot-status-dot ${status}`;
-}
-
-function formatUpdatedAt(value) {
-  const date = value ? new Date(value) : new Date();
-  return `Cập nhật ${date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
-}
-
-function renderBotStatus(data) {
-  const bot = data.bot || {};
-  const music = data.music || {};
-  const lavalink = data.lavalink || {};
-  const nodes = lavalink.nodes || [];
-  const status = bot.status || 'offline';
-  const onlineNodes = Number.isFinite(lavalink.onlineCount)
-    ? lavalink.onlineCount
-    : nodes.filter(node => node.online).length;
-  const lavalinkText = onlineNodes > 0
-    ? `Đang chạy: ${onlineNodes} node・Online`
-    : 'Đang chạy: 0 node・Offline';
-
-  if (botPage.avatar && bot.avatar) botPage.avatar.src = bot.avatar;
-  if (botPage.hero) {
-    botPage.hero.style.backgroundImage = bot.banner
-      ? `linear-gradient(135deg, rgba(9,12,26,.86), rgba(16,18,35,.64) 54%, rgba(8,11,22,.88)), url('${bot.banner}')`
-      : '';
-  }
-  setBotStatusDot(status);
-  setText(botPage.statusText, `${status.toUpperCase()}${bot.tag ? ` • ${bot.tag}` : ''}`);
-  setText(botPage.pageTitle, bot.name || 'Music Bot');
-  setText(botPage.name, bot.name || 'Music Bot');
-  setText(botPage.customStatus, bot.customStatus || 'Không có custom status');
-  setText(botPage.ping, `${music.ping ?? '--'}ms`);
-  setText(botPage.servers, music.servers ?? '--');
-  setText(botPage.playing, `${music.playingRooms ?? '--'} phòng`);
-  setText(botPage.connected, `${music.connectedRooms ?? '--'} phòng`);
-  setText(botPage.runtime, music.runtime || '--');
-  setText(botPage.lavalink, lavalinkText);
-  setText(botPage.updatedAt, formatUpdatedAt(data.updatedAt));
-
-  if (botPage.invite && bot.inviteUrl) {
-    botPage.invite.href = bot.inviteUrl;
-    botPage.invite.classList.remove('disabled');
-  }
-}
-
-function renderBotStatusError() {
-  setBotStatusDot('offline');
-  setText(botPage.statusText, 'OFFLINE • Không kết nối được API');
-  setText(botPage.customStatus, 'Kiểm tra lại xem bot có đang chạy không!');
-  setText(botPage.updatedAt, 'API chưa phản hồi');
-}
-
-async function requestBotStatus(endpoint) {
-  const response = await fetch(`${endpoint}?t=${Date.now()}`, { cache: 'no-store' });
-  if (!response.ok) throw new Error(`Status ${response.status}`);
-  const data = await response.json();
-  if (!data.ok) throw new Error(data.message || 'Bot API not ready');
-  activeBotStatusApi = endpoint;
-  return data;
-}
-
-async function fetchBotStatus() {
-  try {
-    const endpoints = activeBotStatusApi
-      ? [activeBotStatusApi, ...BOT_STATUS_ENDPOINTS.filter(endpoint => endpoint !== activeBotStatusApi)]
-      : BOT_STATUS_ENDPOINTS;
-    let lastError = null;
-
-    for (const endpoint of endpoints) {
-      try {
-        const data = await requestBotStatus(endpoint);
-        renderBotStatus(data);
-        return;
-      } catch (error) {
-        lastError = error;
-      }
-    }
-
-    throw lastError || new Error('No bot API endpoint responded');
-  } catch (error) {
-    console.warn('Bot status fetch failed:', error);
-    renderBotStatusError();
-  }
-}
-
-function startBotStatusPolling() {
-  fetchBotStatus();
-  clearInterval(botStatusTimer);
-  botStatusTimer = setInterval(fetchBotStatus, BOT_STATUS_REFRESH_MS);
-}
-
-function stopBotStatusPolling() {
-  clearInterval(botStatusTimer);
-  botStatusTimer = null;
-}
-
-function showBotPage() {
-  showInnerPage(botPage.page, startBotStatusPolling);
-}
-
-function hideBotPage() {
-  stopBotStatusPolling();
-  hideInnerPage(botPage.page);
-}
-
-if (colorTool.open) colorTool.open.addEventListener('click', (event) => { event.preventDefault(); showColorPage(); });
-if (colorTool.back) colorTool.back.addEventListener('click', hideColorPage);
-if (botPage.open) botPage.open.addEventListener('click', (event) => { event.preventDefault(); showBotPage(); });
-if (botPage.back) botPage.back.addEventListener('click', hideBotPage);
-['input', 'change'].forEach((type) => {
-  ['text', 'effect', 'font', 'size', 'c1', 'c2', 'c3', 'bold', 'italic', 'word'].forEach((key) => {
-    colorTool[key]?.addEventListener(type, buildUnityRichText);
-  });
-});
-colorTool.copy?.addEventListener('click', async () => {
-  await navigator.clipboard.writeText(colorTool.output.value);
-  colorTool.copy.textContent = 'Đã copy!';
-  setTimeout(() => { colorTool.copy.textContent = 'Copy Unity Rich Text'; }, 1200);
-});
-buildUnityRichText();
-
 const interactiveCard = document.querySelector('.profile-console');
 const pointerGlow = document.getElementById('pointer-glow');
 let activeTiltTarget = null;
@@ -1133,4 +1000,4 @@ if (interactiveCard) {
     const target = activeTiltTarget;
     if (target && !target.contains(event.relatedTarget)) resetCardPointer();
   });
-}
+}s
