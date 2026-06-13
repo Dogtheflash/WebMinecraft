@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chinatsu Kamado| profile</title>
+  <title>YuukiAoki | profile</title>
   <meta name="description"
-    content="Chào bạn ở đây cũng ko có gì hay cả, nếu muốn có thể xem thử." />
+    content="Oh... yo bro? đây cũng ko có gì hay cả, nếu muốn có thể xem thử." />
   <meta name="theme-color" content="#070a15" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,18 +14,18 @@
     href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="favicon.png" type="image/svg+xml">
+  <link rel="icon" href="./Image/webicon.jfif" type="image/jpeg" />
   
 </head>
 
 <body class="terminal-active">
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
+  <div class="ambient ambient-three"></div>
   <div id="pointer-glow" class="pointer-glow" aria-hidden="true"></div>
-    <div class="scanlines" aria-hidden="true"></div>
-  <video id="bg-video" class="bg-video" autoplay muted loop playsinline aria-hidden="true">
-    <source src="./data/background/bg-test.mp4" type="video/mp4">
-  </video>
+  <div class="scanlines" aria-hidden="true"></div>
+  <canvas id="bg-stars" aria-hidden="true"></canvas>
+  <canvas id="bg-tree" aria-hidden="true"></canvas>
 
   <main id="app-root">
     <section id="terminal-screen" class="screen terminal-screen active" aria-label="Windows 11 command prompt intro">
@@ -33,48 +33,46 @@
         <div class="cmd-titlebar">
           <div id="cmd-tabs" class="cmd-tabs" role="tablist" aria-label="CMD tabs"></div>
           <button id="cmd-new-tab" class="cmd-plus" type="button" aria-label="Mở tab CMD mới">+</button>
-          <div class="cmd-controls" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="cmd-controls" aria-hidden="true"><span>—</span><span>□</span><span>×</span></div>
         </div>
         <div class="cmd-body">
           <div id="cmd-log" class="cmd-log" aria-live="polite"></div>
           <form id="cmd-form" class="cmd-prompt-line" autocomplete="off">
-            <span>C:\Users\Chinatsu Kamado&gt;</span>
+            <span>C:\Users\YuukiAoki&gt;</span>
             <input id="cmd-input" type="text" autocomplete="off" spellcheck="false" aria-label="CMD command input" />
           </form>
-<button id="enter-console-btn" class="cmd-continue">Join World</button>
+          <button id="enter-console-btn" class="cmd-continue">Join World</button>
         </div>
       </div>
     </section>
+
     <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
       <article class="profile-console glass-panel">
-        <div class="profile-banner">
-          <img id="banner-image" src="./data/background/banner.gif"
-            alt="Ảnh bìa hồ sơ" />
-          <div class="banner-glow"></div>
-        </div>
 
         <header class="profile-header">
           <div class="avatar-wrap">
-            <!-- Đã thay đổi link avatar ở dòng dưới -->
-            <img id="avatar-image" class="avatar-image" src="https://images-ext-1.discordapp.net/external/Pk9lpqQlm9eiN65fVc4VsGsRbedZwUbAsCBLXPHvHq8/%3Fsize%3D4096/https://cdn.discordapp.com/avatars/917263515209859102/cd121ea4baf2512e6e98f16f0f2a8d04.png?size=4096" alt="Ảnh đại diện Discord" />
+            <img id="avatar-image" class="avatar-image" src="https://images-ext-1.discordapp.net/external/Pk9lpqQlm9eiN65fVc4VsGsRbedZwUbAsCBLXPHvHq8/%3Fsize%3D4096/https/cdn.discordapp.com/avatars/753586794037248113/1c858e2fe47a144a045f340305cb01a2.png?format=webp&quality=lossless" alt="Ảnh đại diện Discord" />
             <div id="avatar-fallback" class="avatar-fallback">T</div>
-            <img id="avatar-decoration" class="avatar-decoration" src="./data/decoration/anime-dang-yeu.png"
-              alt="Trang trí avatar" />
+            <img id="avatar-decoration" class="avatar-decoration" src="./data/decoration/anime-gian-du.png" alt="Trang trí avatar" />
             <span id="status-orb" class="status-orb offline" aria-label="Trạng thái Discord"></span>
           </div>
-
           <div class="identity-block">
-            <h1 id="display-name"><span id="profile-typing-name" class="profile-typing-name">Chinatsu Kamado</span><span class="profile-typing-cursor" aria-hidden="true">|</span></h1>
-            <p class="username">@<span id="username">Chinatsu Kamado</span></p>
+            <h1 id="display-name"><span id="profile-typing-name" class="profile-typing-name">YuukiAoki</span><span class="profile-typing-cursor" aria-hidden="true">|</span></h1>
+            <p class="username">@<span id="username">YuukiAoki</span></p>
           </div>
         </header>
 
+        <div class="profile-divider"></div>
+
         <section class="presence-card" aria-labelledby="presence-title">
-          <div>
-            <h2 id="presence-title">Trạng thái: <span id="custom-status-line">Đang tải...</span></h2>
-            <p id="status-text"><span class="inline-dot"></span>Đang kết nối Discord...</p>
+          <div class="presence-dot-wrap">
+            <span id="status-dot" class="status-dot"></span>
           </div>
-          <span id="last-updated" class="sync-pill">đang đồng bộ</span>
+          <div class="presence-text">
+            <p id="custom-status-line" class="status-line">Đang tải...</p>
+            <p id="status-text" class="status-sub">Đang kết nối Discord...</p>
+          </div>
+          <span id="last-updated" class="sync-pill">đồng bộ</span>
         </section>
 
         <section id="activity-card" class="activity-card hidden" aria-labelledby="activity-title">
@@ -87,93 +85,161 @@
           </div>
         </section>
 
-        <section class="meta-grid" aria-label="Thông tin realtime Discord">
-          <div><span>Spotify</span><strong id="spotify-status">Chưa phát hiện</strong></div>
-          <div><span>Huy hiệu</span><strong id="public-flags" class="badge-list">Đang tải</strong></div>
+        <section class="meta-strip" aria-label="Thông tin realtime Discord">
+          <div class="meta-item">
+            <span class="meta-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            </span>
+            <div class="meta-info">
+              <span class="meta-label">Spotify</span>
+              <strong id="spotify-status" class="meta-val">Chưa phát hiện</strong>
+            </div>
+          </div>
+          <div class="meta-sep"></div>
+          <div class="meta-item">
+            <span class="meta-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+            </span>
+            <div class="meta-info">
+              <span class="meta-label">Huy hiệu</span>
+              <span id="public-flags" class="badge-list"></span>
+            </div>
+          </div>
         </section>
 
         <section class="about-card">
-          <h2>Giới thiệu</h2>
-          <p>Một góc hồ sơ nhỏ gọn của Chinatsu Kamado, lấy cảm hứng nhẹ từ Discord nhưng vẫn giữ phong cách anime riêng: tối,
-            gọn, mượt và có chiều sâu.</p>
-          <div class="tags" aria-label="Thẻ hồ sơ">
-            <span>Anime</span>
-            <span>Coder</span>
-            <span>Genshin Impact</span>
-            <span>Cheater</span>
+          <div class="about-tags">
+            <span class="tag-pill tag-html">HTML</span>
+            <span class="tag-pill tag-noob">NOOB</span>
+            <span class="tag-pill tag-angel">THIÊN SỨ</span>
+            <span class="tag-pill tag-pro">PRO</span>
+            <span class="tag-pill tag-admin">ADMIN</span>
+            <span class="tag-pill tag-khazix">KHA'ZIX</span>
+          </div>
+        </section>
+
+        <section class="sv-section" aria-label="Server">
+          <h3 class="sv-section-title">SERVER STATS</h3>
+
+          <div class="sv-split-layout">
+            <div class="sv-image-block">
+              <img id="sv-server-image" src="./Image/servericon.png" alt="Minecraft" style="cursor:zoom-in;" />
+              <div class="sv-image-overlay"></div>
+              <div class="sv-image-topbar">
+                <span id="sv-status-badge" class="sv-status-badge offline">OFFLINE</span>
+              </div>
+            </div>
+
+            <div class="sv-info-block">
+              <h4 class="sv-server-name">Minecraft Skyblock</h4>
+              <p class="sv-server-desc">Khám phá, sinh tồn và xây dựng trên hòn đảo giữa bầu trời.</p>
+              <div class="sv-stats-grid">
+                <div class="sv-stat-item">
+                  <span class="sv-stat-label">Players</span>
+                  <span id="sv-players" class="sv-stat-val">-- / --</span>
+                </div>
+                <div class="sv-stat-item">
+                  <span class="sv-stat-label">Port</span>
+                  <span class="sv-stat-val">25565</span>
+                </div>
+              </div>
+              <div class="sv-ip-block">
+                <span class="sv-ip">Sv.Minevui.Net</span>
+                <button id="sv-copy-btn" class="sv-copy-btn" type="button">Copy</button>
+              </div>
+            </div>
           </div>
         </section>
 
         <nav class="social-row" aria-label="Liên kết mạng xã hội">
-          <a id="discord-link" href="https://discord.com/users/917263515209859102" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
+          <a id="discord-link" href="https://discord.com/users/753586794037248113" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord" data-tooltip="Discord">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.32 4.37A19.8 19.8 0 0 0 15.36 2l-.24.44c1.8.55 2.64 1.34 2.64 1.34a16.5 16.5 0 0 0-5.02-1.55 17.1 17.1 0 0 0-4.24.04c-.13 0-.25.03-.38.05-.75.07-2.56.34-4.84 1.36 0 0 .87-.83 2.78-1.38L5.9 2A19.7 19.7 0 0 0 .94 4.42S0 8.1 0 12.7c0 0 1.47 2.52 5.34 2.65 0 0 .65-.78 1.18-1.45-2.24-.67-3.09-2.08-3.09-2.08s.18.13.5.31c.02.02.05.03.08.05.04.03.08.05.12.07.44.25.88.45 1.29.6.72.28 1.58.56 2.59.75 1.33.25 2.9.34 4.6.02.83-.15 1.68-.4 2.57-.75.62-.24 1.31-.58 2.03-1.05 0 0-.88 1.44-3.2 2.1.53.66 1.15 1.42 1.15 1.42 3.88-.13 5.36-2.65 5.36-2.65 0-4.6-.2-8.33-.2-8.33ZM8.2 11.62c-.98 0-1.78-.86-1.78-1.92 0-1.06.78-1.92 1.78-1.92S10 8.64 9.98 9.7c0 1.06-.79 1.92-1.78 1.92Zm7.38 0c-.98 0-1.78-.86-1.78-1.92 0-1.06.79-1.92 1.78-1.92 1 0 1.8.86 1.78 1.92 0 1.06-.78 1.92-1.78 1.92Z"/></svg>
           </a>
-          <a id="youtube-link" href="https://www.youtube.com/@Dogloser" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
+          <a id="youtube-link" href="http://youtube.com/@yuukiaoki" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube" data-tooltip="YouTube">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.12C19.52 3.58 12 3.58 12 3.58s-7.52 0-9.4.5A3 3 0 0 0 .5 6.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.12c1.88.5 9.4.5 9.4.5s7.52 0 9.4-.5a3 3 0 0 0 2.1-2.12A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-5.8ZM9.6 15.55v-7.1L15.85 12 9.6 15.55Z"/></svg>
           </a>
-          <a id="x-link" href="https://x.com/Dogkunne" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
+          <a id="x-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="X" title="X" data-tooltip="X">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2h3.68l-8.04 9.18L24 22h-7.4l-5.8-7.58L4.17 22H.48l8.6-9.83L0 2h7.6l5.24 6.93L18.9 2Zm-1.3 18.1h2.04L6.5 3.8H4.31L17.6 20.1Z"/></svg>
           </a>
-          <a id="github-link" href="https://github.com/Dogtheflash" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub" data-tooltip="GitHub">
+          <a id="github-link" href="https://github.com/Duydeptraivv" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub" data-tooltip="GitHub">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12Z"/></svg>
           </a>
-        
         </nav>
 
-        <style>
-    .profile-footer {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        width: 100%;
-        padding: 10px 0;
-    }
+        <footer class="profile-footer">
+          <a id="page-one-link" href="#">Page 1</a>
+          <a id="page-two-link" href="#">Music Bot</a>
+          <a id="mal-link" href="#">Text color</a>
+        </footer>
 
-    #page-one-link {
-        position: absolute;
-        left: 20px;
-    }
+        <section id="music-bot-page" class="music-bot-page hidden" aria-label="Music Bot">
+          <div class="mb-head">
+            <button id="music-bot-back" class="mini-btn" type="button">← Home</button>
+            <div>
+              <p class="eyebrow">Discord music bot</p>
+              <h2>Music Bot</h2>
+            </div>
+          </div>
 
-    #mal-link {
-        position: absolute;
-        right: 20px;
-    }
+          <div class="mb-status-card">
+            <p class="mb-loading-text">Đang kết nối API...</p>
+            <div class="mb-stats hidden">
+              <div class="mb-stat">
+                <span class="mb-stat-label">Ping</span>
+                <span id="mb-ping" class="mb-stat-val">--ms</span>
+              </div>
+              <div class="mb-stat">
+                <span class="mb-stat-label">Servers</span>
+                <span id="mb-servers" class="mb-stat-val">--</span>
+              </div>
+              <div class="mb-stat">
+                <span class="mb-stat-label">Đang phát</span>
+                <span id="mb-playing" class="mb-stat-val">-- phòng</span>
+              </div>
+              <div class="mb-stat">
+                <span class="mb-stat-label">Kết nối</span>
+                <span id="mb-connected" class="mb-stat-val">-- phòng</span>
+              </div>
+              <div class="mb-stat">
+                <span class="mb-stat-label">Runtime</span>
+                <span id="mb-runtime" class="mb-stat-val">--</span>
+              </div>
+              <div class="mb-stat">
+                <span class="mb-stat-label">Lavalink</span>
+                <span id="mb-lavalink" class="mb-stat-val">--</span>
+              </div>
+            </div>
+          </div>
 
-    #page-two-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 16px;
-        text-decoration: none;
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 20px;
-        background-color: rgba(255, 255, 255, 0.05);
-        transition: 0.3s;
-    }
+          <div class="mb-features">
+            <div class="mb-feature">
+              <div class="mb-feature-num">01</div>
+              <div class="mb-feature-content">
+                <h3>Music-first</h3>
+                <p>Tập trung phát nhạc, queue và trải nghiệm nghe gọn nhẹ.</p>
+              </div>
+            </div>
+            <div class="mb-feature">
+              <div class="mb-feature-num">02</div>
+              <div class="mb-feature-content">
+                <h3>Realtime status</h3>
+                <p>Dữ liệu lấy trực tiếp từ API của source bot đang chạy.</p>
+              </div>
+            </div>
+            <div class="mb-feature">
+              <div class="mb-feature-num">03</div>
+              <div class="mb-feature-content">
+                <h3>Server friendly</h3>
+                <p>Landing page nhẹ để review và mời bot vào server.</p>
+              </div>
+            </div>
+          </div>
 
-    #page-two-link:hover {
-        background-color: rgba(255, 255, 255, 0.2); 
-    }
-
-    .steam-icon {
-        width: 20px;
-        height: 20px;
-        object-fit: contain;
-    }
-</style>
-
-<footer class="profile-footer">
-    <a id="page-one-link" href="#">Server Minecraft</a>
-
-    <a id="page-two-link" href="https://steamcommunity.com/id/nakarotad/" target="_blank" rel="noopener noreferrer">
-        <img src="https://cdn-icons-png.flaticon.com/512/3670/3670382.png" alt="Steam" class="steam-icon">
-        My Steam
-    </a>
-    
-    <a id="mal-link" href="#">Text color</a>
-</footer>
+          <a class="mb-add-btn" href="https://discord.com/oauth2/authorize?client_id=YOUR_BOT_ID&permissions=0&scope=bot" target="_blank" rel="noopener">
+            Thêm bot vào server
+          </a>
+          <p class="mb-add-note">Chưa cập nhật</p>
+        </section>
 
         <section id="color-page" class="color-page hidden" aria-label="Unity Rich Text Gradient Generator">
           <div class="color-page-head">
@@ -186,7 +252,7 @@
 
           <label class="field-block">
             <span>Nhập văn bản</span>
-            <textarea id="tc-input-text" rows="4">Chinatsu Kamado desu</textarea>
+            <textarea id="tc-input-text" rows="4">YuukiAoki desu</textarea>
           </label>
 
           <div class="tool-grid">
@@ -249,10 +315,15 @@
       <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
     </div>
     <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-    <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
+    <audio id="audio-player" src="./data/music/Music.mp3" preload="auto"></audio>
   </aside>
 
   <script src="script.js"></script>
+  <div id="sv-image-lightbox" role="dialog" aria-label="Xem ảnh lớn">
+    <button class="lb-close" type="button" aria-label="Đóng">×</button>
+    <img id="lb-img" src="" alt="Ảnh Minecraft Server" />
+    <span class="lb-hint">Tap bên ngoài hoặc nhấn × để đóng</span>
+  </div>
 </body>
 
 </html>
