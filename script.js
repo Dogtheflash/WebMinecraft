@@ -1008,11 +1008,25 @@ if (interactiveCard) {
 const minecraftBtn = document.getElementById("page-one-link");
 const minecraftPage = document.getElementById("minecraft-page");
 const minecraftBack = document.getElementById("minecraft-back");
+const pageOneLink = document.getElementById("page-one-link");
+const minecraftPage = document.getElementById("minecraft-page");
+const minecraftBack = document.getElementById("minecraft-back");
 
-minecraftBtn.addEventListener("click", () => {
-    minecraftPage.classList.remove("hidden");
+if (pageOneLink) {
+pageOneLink.addEventListener("click", (e) => {
+e.preventDefault();
+
+```
+    document.getElementById("color-page")?.classList.add("hidden");
+    minecraftPage?.classList.remove("hidden");
 });
+```
 
+}
+
+if (minecraftBack) {
 minecraftBack.addEventListener("click", () => {
-    minecraftPage.classList.add("hidden");
+minecraftPage?.classList.add("hidden");
 });
+}
+
