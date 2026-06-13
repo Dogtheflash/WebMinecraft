@@ -690,10 +690,7 @@ volumeSlider.addEventListener('input', () => {
   scheduleVolumeAutoClose();
 });
 
-<footer class="profile-footer">
-          <a id="page-one-link" href="#">Page 1</a>
-          <a id="page-two-link" href="#">Server Minecraft</a> <a id="mal-link" href="#">Text color</a>
-        </footer>
+document.getElementById('page-one-link').addEventListener('click', (event) => event.preventDefault());
 
 const colorTool = {
   page: document.getElementById('color-page'),
