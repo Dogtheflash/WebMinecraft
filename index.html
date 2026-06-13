@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chinatsu Kamado| profile</title>
+  <title>Takeshi | pro5</title>
   <meta name="description"
-    content="Chào bạn ở đây cũng ko có gì hay cả, nếu muốn có thể xem thử." />
+    content="Oh... yo bro? đây cũng ko có gì hay cả, nếu muốn có thể xem thử." />
   <meta name="theme-color" content="#070a15" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,7 +14,7 @@
     href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="favicon.png" type="image/svg+xml">
+  <link rel="icon" href="https://cdn.discordapp.com/emojis/1111630069362868244.webp" />
   
 </head>
 
@@ -22,10 +22,7 @@
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
   <div id="pointer-glow" class="pointer-glow" aria-hidden="true"></div>
-    <div class="scanlines" aria-hidden="true"></div>
-  <video id="bg-video" class="bg-video" autoplay muted loop playsinline aria-hidden="true">
-    <source src="./data/background/bg-test.mp4" type="video/mp4">
-  </video>
+  <div class="scanlines" aria-hidden="true"></div>
 
   <main id="app-root">
     <section id="terminal-screen" class="screen terminal-screen active" aria-label="Windows 11 command prompt intro">
@@ -33,39 +30,39 @@
         <div class="cmd-titlebar">
           <div id="cmd-tabs" class="cmd-tabs" role="tablist" aria-label="CMD tabs"></div>
           <button id="cmd-new-tab" class="cmd-plus" type="button" aria-label="Mở tab CMD mới">+</button>
-          <div class="cmd-controls" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="cmd-controls" aria-hidden="true"><span>—</span><span>□</span><span>×</span></div>
         </div>
         <div class="cmd-body">
           <div id="cmd-log" class="cmd-log" aria-live="polite"></div>
           <form id="cmd-form" class="cmd-prompt-line" autocomplete="off">
-            <span>C:\Users\Chinatsu Kamado&gt;</span>
+            <span>C:\Users\Takeshi&gt;</span>
             <input id="cmd-input" type="text" autocomplete="off" spellcheck="false" aria-label="CMD command input" />
           </form>
-<button id="enter-console-btn" class="cmd-continue">Join World</button>
+          <button id="enter-console-btn" class="cmd-continue">Join World</button>
         </div>
       </div>
     </section>
+
     <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
       <article class="profile-console glass-panel">
         <div class="profile-banner">
-          <img id="banner-image" src="./data/background/banner.gif"
+          <img id="banner-image" src="https://i.pinimg.com/originals/20/cc/a0/20cca0b04e912510dbfd30b4608972b6.gif"
             alt="Ảnh bìa hồ sơ" />
           <div class="banner-glow"></div>
         </div>
 
         <header class="profile-header">
           <div class="avatar-wrap">
-            <!-- Đã thay đổi link avatar ở dòng dưới -->
-            <img id="avatar-image" class="avatar-image" src="https://images-ext-1.discordapp.net/external/Pk9lpqQlm9eiN65fVc4VsGsRbedZwUbAsCBLXPHvHq8/%3Fsize%3D4096/https://cdn.discordapp.com/avatars/917263515209859102/cd121ea4baf2512e6e98f16f0f2a8d04.png?size=4096" alt="Ảnh đại diện Discord" />
+            <img id="avatar-image" class="avatar-image" src="" alt="Ảnh đại diện Discord" />
             <div id="avatar-fallback" class="avatar-fallback">T</div>
-            <img id="avatar-decoration" class="avatar-decoration" src="./data/decoration/anime-dang-yeu.png"
+            <img id="avatar-decoration" class="avatar-decoration" src="./data/decoration/anime-nani.png"
               alt="Trang trí avatar" />
             <span id="status-orb" class="status-orb offline" aria-label="Trạng thái Discord"></span>
           </div>
 
           <div class="identity-block">
-            <h1 id="display-name"><span id="profile-typing-name" class="profile-typing-name">Chinatsu Kamado</span><span class="profile-typing-cursor" aria-hidden="true">|</span></h1>
-            <p class="username">@<span id="username">Chinatsu Kamado</span></p>
+            <h1 id="display-name"><span id="profile-typing-name" class="profile-typing-name">Takeshi</span><span class="profile-typing-cursor" aria-hidden="true">|</span></h1>
+            <p class="username">@<span id="username">takeshi</span></p>
           </div>
         </header>
 
@@ -94,94 +91,37 @@
 
         <section class="about-card">
           <h2>Giới thiệu</h2>
-          <p>Một góc hồ sơ nhỏ gọn của Chinatsu Kamado, lấy cảm hứng nhẹ từ Discord nhưng vẫn giữ phong cách anime riêng: tối,
+          <p>Một góc hồ sơ nhỏ gọn của Takeshi, lấy cảm hứng nhẹ từ Discord nhưng vẫn giữ phong cách anime riêng: tối,
             gọn, mượt và có chiều sâu.</p>
           <div class="tags" aria-label="Thẻ hồ sơ">
             <span>Anime</span>
-            <span>Coder</span>
+            <span>Music</span>           
             <span>Genshin Impact</span>
+            <span>Coder</span>
             <span>Cheater</span>
           </div>
         </section>
 
         <nav class="social-row" aria-label="Liên kết mạng xã hội">
-          <a id="discord-link" href="https://discord.com/users/917263515209859102" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
+          <a id="discord-link" href="https://discord.com/users/648036769769717760" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.32 4.37A19.8 19.8 0 0 0 15.36 2l-.24.44c1.8.55 2.64 1.34 2.64 1.34a16.5 16.5 0 0 0-5.02-1.55 17.1 17.1 0 0 0-4.24.04c-.13 0-.25.03-.38.05-.75.07-2.56.34-4.84 1.36 0 0 .87-.83 2.78-1.38L5.9 2A19.7 19.7 0 0 0 .94 4.42S0 8.1 0 12.7c0 0 1.47 2.52 5.34 2.65 0 0 .65-.78 1.18-1.45-2.24-.67-3.09-2.08-3.09-2.08s.18.13.5.31c.02.02.05.03.08.05.04.03.08.05.12.07.44.25.88.45 1.29.6.72.28 1.58.56 2.59.75 1.33.25 2.9.34 4.6.02.83-.15 1.68-.4 2.57-.75.62-.24 1.31-.58 2.03-1.05 0 0-.88 1.44-3.2 2.1.53.66 1.15 1.42 1.15 1.42 3.88-.13 5.36-2.65 5.36-2.65 0-4.6-.2-8.33-.2-8.33ZM8.2 11.62c-.98 0-1.78-.86-1.78-1.92 0-1.06.78-1.92 1.78-1.92S10 8.64 9.98 9.7c0 1.06-.79 1.92-1.78 1.92Zm7.38 0c-.98 0-1.78-.86-1.78-1.92 0-1.06.79-1.92 1.78-1.92 1 0 1.8.86 1.78 1.92 0 1.06-.78 1.92-1.78 1.92Z"/></svg>
           </a>
-          <a id="youtube-link" href="https://www.youtube.com/@Dogloser" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
+          <a id="youtube-link" href="http://youtube.com/@takeshi7502" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.12C19.52 3.58 12 3.58 12 3.58s-7.52 0-9.4.5A3 3 0 0 0 .5 6.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.12c1.88.5 9.4.5 9.4.5s7.52 0 9.4-.5a3 3 0 0 0 2.1-2.12A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-5.8ZM9.6 15.55v-7.1L15.85 12 9.6 15.55Z"/></svg>
           </a>
-          <a id="x-link" href="https://x.com/Dogkunne" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
+          <a id="x-link" href="http://x.com/takeshi7502" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2h3.68l-8.04 9.18L24 22h-7.4l-5.8-7.58L4.17 22H.48l8.6-9.83L0 2h7.6l5.24 6.93L18.9 2Zm-1.3 18.1h2.04L6.5 3.8H4.31L17.6 20.1Z"/></svg>
           </a>
-          <a id="github-link" href="https://github.com/Dogtheflash" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub" data-tooltip="GitHub">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12Z"/></svg>
+          <a id="github-link" href="https://github.com/takeshi7502" target="_blank" rel="noopener noreferrer" aria-label="Github" title="Github">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.8 23.38c.6.1.82-.26.82-.58v-2.04c-3.34.73-4.04-1.41-4.04-1.41-.55-1.38-1.34-1.75-1.34-1.75-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.4 11.4 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.3c0 .32.22.69.83.57A12 12 0 0 0 12 .5Z"/></svg>
           </a>
-        
         </nav>
 
-        <style>
-    .profile-footer {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        width: 100%;
-        padding: 10px 0;
-    }
-
-    #page-one-link {
-        position: absolute;
-        left: 20px;
-    }
-
-    #mal-link {
-        position: absolute;
-        right: 20px;
-    }
-
-    #page-two-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 16px;
-        text-decoration: none;
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 20px;
-        background-color: rgba(255, 255, 255, 0.05);
-        transition: 0.3s;
-    }
-
-    #page-two-link:hover {
-        background-color: rgba(255, 255, 255, 0.2); 
-    }
-
-    .steam-icon {
-        width: 20px;
-        height: 20px;
-        object-fit: contain;
-    }
-</style>
-
- <footer class="profile-footer">
-    <a id="page-one-link" href="#">Server Minecraft</a>
-<section id="minecraft-page" class="bot-page hidden" aria-label="Minecraft Server">
-    <div class="color-page-head">
-        <button id="minecraft-back" class="mini-btn" type="button">← Home</button>
-        <div>
-            <p class="eybow">MINECRAFT SERVER</p>
-            <h2 id="minecraft-page-title">Tên Server Của Bạn</h2>
-        </div>
-    </div>
-    </section>
-    <a id="page-two-link" href="https://steamcommunity.com/id/nakarotad/" target="_blank" rel="noopener noreferrer">
-        <img src="https://cdn-icons-png.flaticon.com/512/3670/3670382.png" alt="Steam" class="steam-icon">
-        My Steam
-    </a>
-    
-    <a id="mal-link" href="#">Text color</a>
-</footer>
+        <footer class="profile-footer">
+          <a id="page-one-link" href="#">Page 1</a>
+          <a id="page-two-link" href="#">Music Bot</a>
+          <a id="mal-link" href="#">Text color</a>
+        </footer>
 
         <section id="color-page" class="color-page hidden" aria-label="Unity Rich Text Gradient Generator">
           <div class="color-page-head">
@@ -194,7 +134,7 @@
 
           <label class="field-block">
             <span>Nhập văn bản</span>
-            <textarea id="tc-input-text" rows="4">Chinatsu Kamado desu</textarea>
+            <textarea id="tc-input-text" rows="4">Takeshi desu</textarea>
           </label>
 
           <div class="tool-grid">
@@ -240,6 +180,47 @@
           <button id="tc-copy" class="copy-btn" type="button">Copy Unity Rich Text</button>
         </section>
 
+        <section id="bot-page" class="bot-page hidden" aria-label="Discord Music Bot">
+          <div class="color-page-head">
+            <button id="bot-back" class="mini-btn" type="button">← Home</button>
+            <div>
+              <p class="eyebrow">Discord music bot</p>
+              <h2 id="bot-page-title">Music Bot</h2>
+            </div>
+          </div>
+
+          <div class="bot-hero">
+            <div class="bot-avatar-wrap">
+              <img id="bot-avatar" class="bot-avatar" src="" alt="Bot avatar">
+              <span id="bot-status-dot" class="bot-status-dot offline"></span>
+            </div>
+            <div>
+              <span id="bot-status-text" class="bot-kicker">Đang kết nối API...</span>
+              <h3 id="bot-display-name">Music Bot</h3>
+              <p id="bot-custom-status">Đang lấy thông tin bot...</p>
+            </div>
+          </div>
+
+          <div class="bot-actions">
+            <a id="bot-invite-link" class="invite-btn disabled" href="#" target="_blank" rel="noopener noreferrer">Thêm bot vào server</a>
+            <span id="bot-updated-at" class="bot-note">Chưa cập nhật</span>
+          </div>
+
+          <div class="bot-live-grid" aria-label="Music bot live stats">
+            <article><span>Ping</span><strong id="bot-ping">--ms</strong></article>
+            <article><span>Servers</span><strong id="bot-servers">--</strong></article>
+            <article><span>Đang phát</span><strong id="bot-playing">-- phòng</strong></article>
+            <article><span>Kết nối</span><strong id="bot-connected">-- phòng</strong></article>
+            <article class="wide"><span>Runtime</span><strong id="bot-runtime">--</strong></article>
+            <article class="wide"><span>Lavalink</span><strong id="bot-lavalink">--</strong></article>
+          </div>
+
+          <div class="bot-feature-grid">
+            <article><span>01</span><strong>Music-first</strong><p>Tập trung phát nhạc, queue và trải nghiệm nghe gọn nhẹ.</p></article>
+            <article><span>02</span><strong>Realtime status</strong><p>Dữ liệu lấy trực tiếp từ API của source bot đang chạy.</p></article>
+            <article><span>03</span><strong>Server friendly</strong><p>Landing page nhẹ để review và mời bot vào server.</p></article>
+          </div>
+        </section>
       </article>
     </section>
   </main>
@@ -257,7 +238,7 @@
       <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
     </div>
     <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-    <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
+    <audio id="audio-player" src="./data/music/2%20Hour%20Beautiful%20Piano%20Music.mp3" preload="auto"></audio>
   </aside>
 
   <script src="script.js"></script>
