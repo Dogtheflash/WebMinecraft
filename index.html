@@ -41,10 +41,17 @@
             <span>C:\Users\Chinatsu Kamado&gt;</span>
             <input id="cmd-input" type="text" autocomplete="off" spellcheck="false" aria-label="CMD command input" />
           </form>
-          <button id="enter-console-btn" class="cmd-continue">Join World</button>
-        </div>
-      </div>
-    </section>
+          document.getElementById('enter-console-btn').addEventListener('click', function() {
+  var btn = this;
+  btn.textContent = 'Loading...';
+  btn.style.pointerEvents = 'none';
+  btn.style.opacity = '0.7';
+
+  setTimeout(function() {
+    document.querySelector('.terminal-screen').classList.add('active');
+    document.querySelector('.cmd-window').style.display = 'none';
+  }, 2000);
+});
 
     <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
       <article class="profile-console glass-panel">
