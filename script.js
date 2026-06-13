@@ -1005,3 +1005,14 @@ if (interactiveCard) {
     if (target && !target.contains(event.relatedTarget)) resetCardPointer();
   });
 }
+const minecraftBtn = document.getElementById("page-one-link");
+const minecraftPage = document.getElementById("minecraft-page");
+const minecraftBack = document.getElementById("minecraft-back");
+
+minecraftBtn.addEventListener("click", () => {
+    minecraftPage.classList.remove("hidden");
+});
+
+minecraftBack.addEventListener("click", () => {
+    minecraftPage.classList.add("hidden");
+});
