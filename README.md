@@ -1,3 +1,7 @@
+web by takeshi.
+remake by Dogkun.
+<div align="center">
+  
 # ⚡ Takeshi Cyber Profile
 
 <p align="center">
@@ -7,8 +11,7 @@
 </p>
 
 <p align="center">
-  A premium cyber-anime personal profile with a Windows CMD intro, Discord-style presence cards,
-  social links, avatar decoration, and a floating lofi music player.
+  AMột hồ sơ cá nhân theo phong cách anime điện tử cao cấp với phần giới thiệu bằng Windows CMD, thẻ trạng thái kiểu Discord, liên kết mạng xã hội, trang trí hình đại diện và trình phát  nhạc lofi nổi.
 </p>
 
 ---
@@ -16,15 +19,16 @@
 ## ✨ Preview Vibe
 
 ```txt
-C:\Users\Takeshi> boot profile
+C:\Users\Chinatsu Kamado boot profile
 [ OK ] loading cyber interface...
 [ OK ] syncing Discord presence...
 [ OK ] joining world...
 ```
 
-The page starts with an authentic terminal-style intro, then transitions into a polished glassmorphism
-profile dashboard with animated accents, realtime Discord-like status, and a compact music controller.
-
+<div align="center">
+Trang này bắt đầu bằng phần giới thiệu theo phong cách terminal chân thực, sau đó chuyển sang bảng điều khiển hồ sơ được thiết kế tinh tế với hiệu ứng glassmorphism, các điểm nhấn hoạt hình, trạng thái thời gian thực giống Discord và bộ điều khiển nhạc nhỏ gọn.
+    <br/>
+    </div>
 ---
 
 ## 🌟 Features
@@ -173,7 +177,7 @@ URL-like commands open in a new browser tab, while other commands return fun ter
 
 ## 🖤 Author
 
-Made for **Takeshi** — cyber, anime, lofi, and terminal vibes.
+Made for **Chinatsu Kamado** — cyber, anime, lofi, and terminal vibes.
 
 <p align="center">
   <sub>Designed to feel like joining a small digital world.</sub>
