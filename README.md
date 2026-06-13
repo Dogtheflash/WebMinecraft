@@ -1,7 +1,7 @@
 web by takeshi.
 remake by Dogkun.
   
-# ⚡ Takeshi Cyber Profile
+# ⚡ Chinatsu Kamado Profile
 
 <p align="center">
   <img src="https://img.shields.io/badge/Status-Active-35e8ff?style=for-the-badge&labelColor=070a15" alt="Status" />
