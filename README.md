@@ -25,7 +25,10 @@ C:\Users\Chinatsu Kamado boot profile
 ```
 
 
+<div align="center">
 Trang này bắt đầu bằng phần giới thiệu theo phong cách terminal chân thực, sau đó chuyển sang bảng điều khiển hồ sơ được thiết kế tinh tế với hiệu ứng glassmorphism, các điểm nhấn hoạt hình, trạng thái thời gian thực giống Discord và bộ điều khiển nhạc nhỏ gọn.
+    <br/>
+    </div>
 
 ---
 
