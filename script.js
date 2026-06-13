@@ -12,11 +12,7 @@ const DECORATIONS = [
   'fantasy-tinh-linh.png',
   'buom-dem.png',
 ];
-const mcTool = {
-  page: document.getElementById('minecraft-page'),
-  open: document.getElementById('minecraft-link'),
-  back: document.getElementById('minecraft-back'),
-};
+
 const terminalScreen = document.getElementById('terminal-screen');
 const profileScreen = document.getElementById('profile-screen');
 const enterButton = document.getElementById('enter-console-btn');
@@ -1004,29 +1000,4 @@ if (interactiveCard) {
     const target = activeTiltTarget;
     if (target && !target.contains(event.relatedTarget)) resetCardPointer();
   });
-}
-const minecraftBtn = document.getElementById("page-one-link");
-const minecraftPage = document.getElementById("minecraft-page");
-const minecraftBack = document.getElementById("minecraft-back");
-const pageOneLink = document.getElementById("page-one-link");
-const minecraftPage = document.getElementById("minecraft-page");
-const minecraftBack = document.getElementById("minecraft-back");
-
-if (pageOneLink) {
-pageOneLink.addEventListener("click", (e) => {
-e.preventDefault();
-
-```
-    document.getElementById("color-page")?.classList.add("hidden");
-    minecraftPage?.classList.remove("hidden");
-});
-```
-
-}
-
-if (minecraftBack) {
-minecraftBack.addEventListener("click", () => {
-minecraftPage?.classList.add("hidden");
-});
-}
-
+}s
