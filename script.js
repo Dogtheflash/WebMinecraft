@@ -690,11 +690,10 @@ volumeSlider.addEventListener('input', () => {
   scheduleVolumeAutoClose();
 });
 
-mcTool.open.addEventListener('click', (e) => { 
-    e.preventDefault(); 
-    showInnerPage(mcTool.page); 
-});
-mcTool.back.addEventListener('click', () => hideInnerPage(mcTool.page));
+<footer class="profile-footer">
+          <a id="page-one-link" href="#">Page 1</a>
+          <a id="page-two-link" href="#">Server Minecraft</a> <a id="mal-link" href="#">Text color</a>
+        </footer>
 
 const colorTool = {
   page: document.getElementById('color-page'),
