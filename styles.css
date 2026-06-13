@@ -111,24 +111,45 @@ body.color-page-active .profile-console { margin-top:0; }
 .cmd-tab-close { opacity:.55; font-size:14px; line-height:1; }
 .cmd-tab:hover .cmd-tab-close { opacity:1; }
 .cmd-plus { width: 34px; height:100%; text-align: center; color: #d0d0d0; font-size: 17px; flex:0 0 auto; border:0; background:transparent; cursor:inherit; }
+.cmd-titlebar { 
+  height: 38px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: flex-start; 
+  background: #161b22; 
+  border-bottom: 1px solid #30363d; 
+  user-select: none; 
+  padding-left: 15px; 
+  gap: 8px;
+}
+
+.cmd-tabs, .cmd-plus { 
+  display: none !important; 
+}
+
 .cmd-controls { 
   margin-left: 0; 
+  margin-right: auto;
   display: flex; 
   gap: 8px; 
-  height: auto; 
+  height: 100%; 
+  align-items: center;
 }
+
 .cmd-controls span { 
   width: 12px !important; 
   height: 12px !important; 
   border-radius: 50%; 
-  color: transparent !important; 
   display: inline-block; 
   cursor: pointer; 
+  flex-shrink: 0; 
 }
+
 .cmd-controls span:nth-child(1) { background-color: #ff5f56 !important; }
 .cmd-controls span:nth-child(2) { background-color: #ffbd2e !important; }
 .cmd-controls span:nth-child(3) { background-color: #27c93f !important; }
-.cmd-controls span:hover { filter: brightness(0.8); background-color: inherit; color: transparent !important; }
+
+.cmd-controls span:hover { filter: brightness(0.8); }
 .cmd-body { min-height: 380px; padding: 18px 20px 20px; color: #f2f2f2; font: 500 clamp(12px, 2vw, 15px) Consolas, "Cascadia Mono", "JetBrains Mono", monospace; line-height: 1.48; }
 .cmd-plus:hover { background:#2b2b2b; }
 .cmd-log { white-space:pre-wrap; min-height:270px; color:#f2f2f2; }
