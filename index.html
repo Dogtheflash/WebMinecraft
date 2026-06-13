@@ -165,20 +165,47 @@
 </style>
 
  <footer class="profile-footer">
-<a id="minecraft-link" href="#">Server Minecraft</a>
+<section id="bot-page" class="bot-page hidden" aria-label="Minecraft Server Info">
+          <div class="color-page-head">
+            <button id="bot-back" class="mini-btn" type="button">← Home</button>
+            <div>
+              <p class="eyebrow">Minecraft Server</p>
+              <h2 id="bot-page-title">Takeshi Craft</h2>
+            </div>
+          </div>
 
-<section id="minecraft-page" class="color-page hidden" aria-label="Minecraft Server">
-    <div class="color-page-head">
-        <button id="minecraft-back" class="mini-btn" type="button">← Home</button>
-        <div>
-            <p class="eyebrow">SERVER INFO</p>
-            <h2 id="minecraft-page-title">Minecraft Server</h2>
-        </div>
-    </div>
-    <div class="preview-card">
-        <p>Địa chỉ: sv.minevui.net</p>
-    </div>
-</section>
+          <div class="bot-hero">
+            <div class="bot-avatar-wrap">
+              <img id="bot-avatar" class="bot-avatar" src="https://cdn.discordapp.com/emojis/1111630069362868244.webp" alt="Server icon">
+              <span id="bot-status-dot" class="bot-status-dot online"></span>
+            </div>
+            <div>
+              <span id="bot-status-text" class="bot-kicker">Trạng thái: Online</span>
+              <h3 id="bot-display-name">play.takeshicraft.com</h3>
+              <p id="bot-custom-status">Phiên bản: 1.20.x - 1.21 | Sinh tồn & Khám phá</p>
+            </div>
+          </div>
+
+          <div class="bot-actions">
+            <a id="bot-invite-link" class="invite-btn" href="#" onclick="navigator.clipboard.writeText('play.takeshicraft.com'); alert('Đã sao chép IP Server!'); return false;">Sao chép IP Server</a>
+            <span id="bot-updated-at" class="bot-note">Đang hoạt động ổn định</span>
+          </div>
+
+          <div class="bot-live-grid" aria-label="Minecraft server live stats">
+            <article><span>Ping</span><strong id="bot-ping">24ms</strong></article>
+            <article><span>Người chơi</span><strong id="bot-servers">15 / 100</strong></article>
+            <article><span>Phiên bản</span><strong id="bot-playing">1.20.1</strong></article>
+            <article><span>Thể loại</span><strong id="bot-connected">Survival</strong></article>
+            <article class="wide"><span>Uptime máy chủ</span><strong id="bot-runtime">99.9%</strong></article>
+            <article class="wide"><span>Tình trạng RAM</span><strong id="bot-lavalink">Mượt mà (0% Lag)</strong></article>
+          </div>
+
+          <div class="bot-feature-grid">
+            <article><span>01</span><strong>Survival Cổ Điển</strong><p>Lối chơi sinh tồn hấp dẫn, cày cuốc công bằng và giữ nguyên giá trị cốt lõi.</p></article>
+            <article><span>02</span><strong>Anti-Cheat Mạnh</strong><p>Hệ thống bảo vệ tối tân, ngăn chặn triệt để các hành vi gian lận.</p></article>
+            <article><span>03</span><strong>Cộng Đồng Vui Vẻ</strong><p>Nơi giao lưu, kết bạn và cùng nhau xây dựng những công trình vĩ đại.</p></article>
+          </div>
+        </section>
     <a id="page-two-link" href="https://steamcommunity.com/id/nakarotad/" target="_blank" rel="noopener noreferrer">
         <img src="https://cdn-icons-png.flaticon.com/512/3670/3670382.png" alt="Steam" class="steam-icon">
         My Steam
