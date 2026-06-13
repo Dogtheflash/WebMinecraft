@@ -12,7 +12,11 @@ const DECORATIONS = [
   'fantasy-tinh-linh.png',
   'buom-dem.png',
 ];
-
+const mcTool = {
+  page: document.getElementById('minecraft-page'),
+  open: document.getElementById('minecraft-link'),
+  back: document.getElementById('minecraft-back'),
+};
 const terminalScreen = document.getElementById('terminal-screen');
 const profileScreen = document.getElementById('profile-screen');
 const enterButton = document.getElementById('enter-console-btn');
@@ -686,7 +690,11 @@ volumeSlider.addEventListener('input', () => {
   scheduleVolumeAutoClose();
 });
 
-document.getElementById('page-one-link').addEventListener('click', (event) => event.preventDefault());
+mcTool.open.addEventListener('click', (e) => { 
+    e.preventDefault(); 
+    showInnerPage(mcTool.page); 
+});
+mcTool.back.addEventListener('click', () => hideInnerPage(mcTool.page));
 
 const colorTool = {
   page: document.getElementById('color-page'),
