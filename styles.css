@@ -21,6 +21,25 @@
   --font-label: clamp(0.6rem, 1vw + 0.15rem, 0.75rem);
 }
 
+/* Loading Screen */
+#loadingScreen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.15), transparent 35%),
+                radial-gradient(circle at 80% 30%, rgba(34, 211, 238, 0.12), transparent 40%),
+                linear-gradient(135deg, #0f172a 0%, #0b1021 60%, #130f2e 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#loadingScreen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
 #bg-video {
   position: fixed;
   inset: 0;
