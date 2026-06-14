@@ -409,26 +409,18 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 .glow1 { width: 500px; height: 500px; background: #00f7ff22; top: -100px; left: -100px; }
 .glow2 { width: 450px; height: 450px; background: #ff00ff18; right: -100px; bottom: -100px; }
 
-.loader-box {
-    position: relative;
-    width: 450px; padding: 40px;
-    border-radius: 28px;
-    background: rgba(255, 255, 255, .05);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border: 1px solid rgba(255, 255, 255, .15);
-    box-shadow: 0 0 30px rgba(0, 247, 255, .2);
-    z-index: 10;
-}
+.loader-box{
+    width:min(600px,90vw);
 
-.loader-logo { text-align: center; color: white; font-size: 32px; font-weight: 800; text-shadow: 0 0 10px #00f7ff, 0 0 30px #00f7ff; }
-.loader-subtitle { text-align: center; color: #8bcfff; margin: 12px 0 25px; font-weight: bold; }
-.loader-progress-bg { width: 100%; height: 14px; border-radius: 999px; overflow: hidden; background: rgba(255, 255, 255, .08); }
-.loader-progress-fill { width: 0%; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #00f7ff, #009dff, #ff00d4); box-shadow: 0 0 20px #00f7ff; transition: width 0.1s linear; }
-.loader-info { margin-top: 15px; display: flex; justify-content: space-between; color: white; }
-#loader-percent { color: #00f7ff; font-weight: 700; }
+    padding:40px;
 
-@keyframes gridMove {
-    from { transform: perspective(1200px) rotateX(78deg) translateY(0); }
-    to { transform: perspective(1200px) rotateX(78deg) translateY(60px); }
+    background:rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.12);
+
+    border-radius:30px;
+
+    box-shadow:
+    0 0 30px rgba(0,247,255,.15),
+    0 0 80px rgba(255,0,212,.08);
 }
