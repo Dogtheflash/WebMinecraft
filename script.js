@@ -1001,58 +1001,58 @@ if (interactiveCard) {
     if (target && !target.contains(event.relatedTarget)) resetCardPointer();
   });
 }s
-/* ==========================
-   CYBER LOADER
-========================== */
+/* ========================================= */
+/* CYBERPUNK LOADING SCREEN LOGIC            */
+/* ========================================= */
+window.addEventListener('load', () => {
+    const progressFill = document.getElementById('loader-bar');
+    const percentText = document.getElementById('loader-percent');
+    const statusText = document.getElementById('loader-status');
+    const cyberLoader = document.getElementById('cyber-loader');
 
-// Lấy các phần tử từ HTML theo đúng ID của bạn
-const progressFill = document.getElementById('loader-bar');
-const percentText = document.getElementById('loader-percent');
-const statusText = document.getElementById('loader-status');
-const cyberLoader = document.getElementById('cyber-loader');
+    if (!cyberLoader) return; // Nếu không tìm thấy loader thì bỏ qua
 
-let progress = 0;
+    let progress = 0;
 
-function simulateLoading() {
-    // Tốc độ tải ngẫu nhiên để trông giống thật hơn
-    const increment = Math.random() * 3 + 0.5; 
-    progress += increment;
+    function simulateLoading() {
+        const increment = Math.random() * 4 + 1; 
+        progress += increment;
 
-    if (progress >= 100) {
-        progress = 100;
+        if (progress >= 100) {
+            progress = 100;
+            updateUI();
+            finishLoading();
+            return;
+        }
+
         updateUI();
-        finishLoading();
-        return;
+        setTimeout(simulateLoading, Math.random() * 100 + 50);
     }
 
-    updateUI();
-    
-    // Random delay từ 30ms đến 150ms cho mỗi nhịp tăng
-    setTimeout(simulateLoading, Math.random() * 120 + 30);
-}
+    function updateUI() {
+        progressFill.style.width = `${progress}%`;
+        percentText.innerText = `${Math.floor(progress)}%`;
+    }
 
-function updateUI() {
-    // Cập nhật thanh bar và phần trăm
-    progressFill.style.width = `${progress}%`;
-    percentText.innerText = `${Math.floor(progress)}%`;
-}
-
-function finishLoading() {
-    setTimeout(() => {
-        statusText.innerText = "ACCESS GRANTED";
-        statusText.style.color = "#00ffff"; 
-        percentText.style.color = "#00ffff";
-        progressFill.style.boxShadow = "0 0 15px #00ffff";
-
-        // Thêm class .hide vào cyber-loader để kích hoạt transition CSS
+    function finishLoading() {
         setTimeout(() => {
-            cyberLoader.classList.add('hide'); 
-            
-            // Xóa khỏi HTML sau 1 giây (thời gian của transition trong CSS)
-            setTimeout(() => {
-                cyberLoader.style.display = "none";
-            }, 1000);
-        }, 1000);
+            statusText.innerText = "SYSTEM READY";
+            statusText.style.color = "#00ffff"; 
+            progressFill.style.boxShadow = "0 0 20px #00ffff, 0 0 40px #ff00ff";
 
-    }, 300);
-}
+            // Mờ dần màn hình loading
+            setTimeout(() => {
+                cyberLoader.classList.add('hide'); 
+                
+                // Xóa loader khỏi giao diện để bạn tương tác với Terminal ở dưới
+                setTimeout(() => {
+                    cyberLoader.style.display = "none";
+                }, 1000);
+            }, 1000);
+
+        }, 300);
+    }
+
+    // Khởi động trình loading sau khi DOM đã sẵn sàng nửa giây
+    setTimeout(simulateLoading, 500);
+});
