@@ -371,14 +371,13 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   .profile-header { flex-direction: column; align-items: flex-start; }
   .identity-block { max-width: 100%; }
 }
-
 /* ============================================================
-   CYBER LOADING SCREEN - FIXED
+   CYBER LOADING SCREEN
    ============================================================ */
 #cyber-loading {
   position: fixed;
   inset: 0;
-  z-index: 99999;
+  z-index: 999999;
   background: #000814;
   display: flex;
   align-items: center;
@@ -393,45 +392,36 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   visibility: hidden;
   pointer-events: none;
 }
+
 #cyber-loading .cl-grid {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0; pointer-events: none;
   background-image:
     linear-gradient(rgba(0,255,180,0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0,255,180,0.05) 1px, transparent 1px);
   background-size: 40px 40px;
   animation: clGridPulse 4s ease-in-out infinite;
-  pointer-events: none;
 }
 @keyframes clGridPulse { 0%,100%{opacity:.4} 50%{opacity:.9} }
 
 #cyber-loading .cl-scanlines {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
+  position: absolute; inset: 0; pointer-events: none; z-index: 2;
   background: repeating-linear-gradient(
     0deg, transparent, transparent 2px,
     rgba(0,255,200,0.013) 2px, rgba(0,255,200,0.013) 4px
   );
 }
-#cyber-loading .cl-corner {
-  position: absolute;
-  width: 36px;
-  height: 36px;
-  z-index: 3;
-}
-#cyber-loading .cl-tl { top:16px; left:16px;  border-top:2px solid #00ffb4; border-left:2px solid #00ffb4; }
-#cyber-loading .cl-tr { top:16px; right:16px; border-top:2px solid #00ffb4; border-right:2px solid #00ffb4; }
+
+#cyber-loading .cl-corner { position: absolute; width: 36px; height: 36px; z-index: 3; }
+#cyber-loading .cl-tl { top:16px; left:16px;   border-top:2px solid #00ffb4; border-left:2px solid #00ffb4; }
+#cyber-loading .cl-tr { top:16px; right:16px;  border-top:2px solid #00ffb4; border-right:2px solid #00ffb4; }
 #cyber-loading .cl-bl { bottom:16px; left:16px;  border-bottom:2px solid #00ffb4; border-left:2px solid #00ffb4; }
 #cyber-loading .cl-br { bottom:16px; right:16px; border-bottom:2px solid #00ffb4; border-right:2px solid #00ffb4; }
 
 #cyber-loading .cl-card {
-  position: relative;
-  z-index: 5;
+  position: relative; z-index: 5;
   width: min(500px, 92vw);
   padding: 44px 48px;
-  background: rgba(0, 18, 13, 0.82);
+  background: rgba(0,18,13,0.82);
   border: 1px solid rgba(0,255,180,0.25);
   border-radius: 4px;
   backdrop-filter: blur(20px);
@@ -442,46 +432,33 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
     0 24px 80px rgba(0,0,0,0.9),
     0 0 60px rgba(0,255,180,0.05);
 }
+
 #cyber-loading .cl-card-accent {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
+  position: absolute; top:0; left:0; right:0; height:2px;
   border-radius: 4px 4px 0 0;
-  background: linear-gradient(90deg, transparent, #00ffb4, #ff006e, #00b4ff, transparent);
+  background: linear-gradient(90deg, transparent,#00ffb4,#ff006e,#00b4ff,transparent);
   background-size: 300% auto;
   animation: clAccent 3s linear infinite;
 }
 @keyframes clAccent { 0%{background-position:0%} 100%{background-position:300%} }
 
-#cyber-loading .cl-header {
-  text-align: center;
-  margin-bottom: 32px;
-}
+#cyber-loading .cl-header { text-align:center; margin-bottom:32px; }
 #cyber-loading .cl-eyebrow {
-  font-size: 10px;
-  letter-spacing: 4px;
-  color: rgba(0,255,180,0.45);
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  display: block;
+  display: block; font-size:10px; letter-spacing:4px;
+  color:rgba(0,255,180,0.45); margin-bottom:10px; text-transform:uppercase;
 }
 #cyber-loading .cl-title {
-  font-family: 'Outfit', 'JetBrains Mono', sans-serif;
-  font-size: clamp(1.4rem, 5vw, 2rem);
-  font-weight: 800;
-  letter-spacing: 6px;
-  color: #00ffb4;
-  text-transform: uppercase;
+  font-family: 'Outfit','JetBrains Mono',sans-serif;
+  font-size: clamp(1.4rem,5vw,2rem);
+  font-weight: 800; letter-spacing:6px;
+  color: #00ffb4; text-transform: uppercase;
   text-shadow: 0 0 20px rgba(0,255,180,0.8), 0 0 40px rgba(0,255,180,0.3);
-  position: relative;
-  display: inline-block;
+  position: relative; display: inline-block;
 }
 #cyber-loading .cl-title::before,
 #cyber-loading .cl-title::after {
   content: attr(data-text);
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
+  position: absolute; top:0; left:0; width:100%;
 }
 #cyber-loading .cl-title::before {
   color: #ff006e;
@@ -506,175 +483,105 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   97%{transform:translateX(2px);opacity:.7}
 }
 
-/* Status row */
 #cyber-loading .cl-status-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
 }
 #cyber-loading .cl-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: #00ffb4;
-  box-shadow: 0 0 8px #00ffb4;
-  flex-shrink: 0;
-  animation: clBlink 1s ease-in-out infinite;
+  width:8px; height:8px; border-radius:50%;
+  background:#00ffb4; box-shadow:0 0 8px #00ffb4;
+  flex-shrink:0; animation: clBlink 1s ease-in-out infinite;
 }
 @keyframes clBlink { 0%,100%{opacity:1} 50%{opacity:.1} }
 #cyber-loading .cl-status-text {
-  flex: 1;
-  font-size: 11px;
-  color: rgba(0,255,180,0.65);
-  letter-spacing: 1px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  flex:1; font-size:11px; color:rgba(0,255,180,0.65);
+  letter-spacing:1px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
 }
 #cyber-loading .cl-pct {
-  font-size: 13px;
-  color: #00ffb4;
-  font-weight: 700;
-  letter-spacing: 1px;
-  min-width: 42px;
-  text-align: right;
+  font-size:13px; color:#00ffb4; font-weight:700;
+  letter-spacing:1px; min-width:42px; text-align:right;
 }
 
-/* Main progress track */
 #cyber-loading .cl-track {
-  position: relative;
-  height: 4px;
-  background: rgba(0,255,180,0.08);
-  margin-bottom: 6px;
-  overflow: visible;
+  position:relative; height:4px;
+  background:rgba(0,255,180,0.08); margin-bottom:6px; overflow:visible;
 }
 #cyber-loading .cl-track::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+  content:''; position:absolute; inset:0; pointer-events:none;
   background: repeating-linear-gradient(
-    90deg,
-    transparent, transparent 9.9%,
+    90deg, transparent, transparent 9.9%,
     rgba(0,255,180,0.15) 9.9%, rgba(0,255,180,0.15) 10%
   );
-  pointer-events: none;
 }
 #cyber-loading .cl-fill {
-  position: absolute;
-  top: 0; left: 0;
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #00b4ff, #00ffb4, #ff006e);
-  background-size: 200% 100%;
+  position:absolute; top:0; left:0; height:100%; width:0%;
+  background: linear-gradient(90deg,#00b4ff,#00ffb4,#ff006e);
+  background-size:200% 100%;
   animation: clFill 2s linear infinite;
   transition: width 0.08s linear;
 }
 @keyframes clFill { 0%{background-position:100% 50%} 100%{background-position:0% 50%} }
 #cyber-loading .cl-head {
-  position: absolute;
-  top: 50%;
-  right: 100%;
-  transform: translate(50%, -50%);
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 0 12px 4px rgba(0,255,180,0.9), 0 0 24px 8px rgba(0,180,255,0.45);
-  transition: right 0.08s linear;
-  pointer-events: none;
+  position:absolute; top:50%; right:100%;
+  transform:translate(50%,-50%);
+  width:10px; height:10px; border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 12px 4px rgba(0,255,180,0.9),0 0 24px 8px rgba(0,180,255,0.45);
+  transition:right 0.08s linear; pointer-events:none;
 }
 #cyber-loading .cl-hex-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 22px;
-  font-size: 9px;
-  color: rgba(0,255,180,0.22);
-  letter-spacing: 1px;
+  display:flex; justify-content:space-between; margin-bottom:22px;
+  font-size:9px; color:rgba(0,255,180,0.22); letter-spacing:1px;
 }
 
-/* Sub bars */
-#cyber-loading .cl-subbars { margin-bottom: 28px; }
+#cyber-loading .cl-subbars { margin-bottom:28px; }
 #cyber-loading .cl-sub {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  display:flex; align-items:center; gap:10px; margin-bottom:10px;
 }
 #cyber-loading .cl-sub-lbl {
-  font-size: 9px;
-  color: rgba(0,255,180,0.4);
-  letter-spacing: 1px;
-  width: 68px;
-  flex-shrink: 0;
-  text-transform: uppercase;
+  font-size:9px; color:rgba(0,255,180,0.4);
+  letter-spacing:1px; width:68px; flex-shrink:0; text-transform:uppercase;
 }
 #cyber-loading .cl-sub-track {
-  flex: 1;
-  height: 2px;
-  background: rgba(0,255,180,0.07);
-  overflow: hidden;
-  position: relative;
+  flex:1; height:2px; background:rgba(0,255,180,0.07);
+  overflow:hidden; position:relative;
 }
 #cyber-loading .cl-sub-fill {
-  height: 100%;
-  width: 0%;
-  transition: width 0.15s ease;
-  display: block;
+  height:100%; width:0%; display:block; transition:width 0.15s ease;
 }
 #cyber-loading .cl-sub-pct {
-  font-size: 9px;
-  color: rgba(0,255,180,0.35);
-  width: 30px;
-  text-align: right;
-  flex-shrink: 0;
+  font-size:9px; color:rgba(0,255,180,0.35);
+  width:30px; text-align:right; flex-shrink:0;
 }
 
-/* Enter button */
 #cyber-loading .cl-enter-btn {
-  display: block;
-  width: 100%;
-  padding: 13px 0;
-  background: transparent;
-  border: 1px solid #00ffb4;
-  color: #00ffb4;
-  font-family: 'Outfit', 'JetBrains Mono', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  border-radius: 2px;
-  opacity: 0;
-  transform: translateY(10px);
+  display:block; width:100%; padding:13px 0;
+  background:transparent; border:1px solid #00ffb4;
+  color:#00ffb4;
+  font-family:'Outfit','JetBrains Mono',sans-serif;
+  font-size:12px; font-weight:700;
+  letter-spacing:4px; text-transform:uppercase;
+  cursor:pointer; position:relative; overflow:hidden;
+  border-radius:2px;
+  opacity:0; transform:translateY(10px);
   transition: opacity 0.5s ease, transform 0.5s ease,
               color 0.3s, background 0.3s, box-shadow 0.3s;
 }
 #cyber-loading .cl-enter-btn.cl-show {
-  opacity: 1;
-  transform: translateY(0);
+  opacity:1; transform:translateY(0);
 }
 #cyber-loading .cl-enter-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(0,255,180,0.1), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.5s ease;
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg,transparent,rgba(0,255,180,0.1),transparent);
+  transform:translateX(-100%); transition:transform 0.5s ease;
 }
-#cyber-loading .cl-enter-btn:hover::before { transform: translateX(100%); }
+#cyber-loading .cl-enter-btn:hover::before { transform:translateX(100%); }
 #cyber-loading .cl-enter-btn:hover {
-  color: #000;
-  background: #00ffb4;
-  box-shadow: 0 0 20px rgba(0,255,180,0.55), 0 0 40px rgba(0,255,180,0.25);
+  color:#000; background:#00ffb4;
+  box-shadow:0 0 20px rgba(0,255,180,0.55),0 0 40px rgba(0,255,180,0.25);
 }
 
-/* Meta row */
 #cyber-loading .cl-meta {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 18px;
-  font-size: 9px;
-  color: rgba(0,255,180,0.25);
-  letter-spacing: 1px;
+  display:flex; justify-content:space-between;
+  margin-top:18px; font-size:9px;
+  color:rgba(0,255,180,0.25); letter-spacing:1px;
 }
