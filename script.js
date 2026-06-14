@@ -1,3 +1,33 @@
+function animateProgress(element, percentElement, target, duration) {
+  let start = 0;
+  const startTime = performance.now();
+
+  function update(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    
+    // Hàm easing để tăng tốc dần (Ease-out)
+    const easedProgress = 1 - Math.pow(1 - progress, 3);
+    
+    const currentVal = Math.floor(easedProgress * target);
+    element.style.width = currentVal + '%';
+    if(percentElement) percentElement.innerText = currentVal + '%';
+
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    }
+  }
+  requestAnimationFrame(update);
+}
+
+// Gọi animation đồng thời để rút ngắn thời gian chờ
+window.addEventListener('load', () => {
+  animateProgress(document.getElementById('cl-fill'), document.getElementById('cl-pct'), 100, 2000);
+  animateProgress(document.getElementById('cs1'), document.getElementById('cs1p'), 100, 1500);
+  animateProgress(document.getElementById('cs2'), document.getElementById('cs2p'), 100, 1200);
+  animateProgress(document.getElementById('cs3'), document.getElementById('cs3p'), 100, 1800);
+});
+
 (function () {
   const overlay   = document.getElementById('cyber-loading');
   const fill      = document.getElementById('cl-fill');
