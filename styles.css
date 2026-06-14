@@ -371,106 +371,310 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   .profile-header { flex-direction: column; align-items: flex-start; }
   .identity-block { max-width: 100%; }
 }
-/* Reset CSS cơ bản */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+:root{
+    --cyan:#00f7ff;
+    --blue:#009dff;
+    --pink:#ff00d4;
 }
 
-body, html {
-    height: 100%;
-    background-color: #121212;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Inter,Segoe UI,sans-serif;
 }
 
-/* -------------------------------------
-   MÀN HÌNH LOADING
-------------------------------------- */
-#loader-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* Ảnh nền phong cảnh để thấy rõ hiệu ứng Glassmorphism */
-    background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') center/cover no-repeat;
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.6s ease, visibility 0.6s ease;
+body{
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#050816;
 }
 
-/* Thẻ Card trong suốt (Glassmorphism Effect) */
-.glass-card {
-    background: rgba(25, 25, 25, 0.4); /* Màu nền đen trong suốt */
-    backdrop-filter: blur(12px); /* Hiệu ứng làm mờ nền phía sau */
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
-    padding: 40px 50px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-    text-align: center;
-    width: 380px;
+/* Background */
+
+.bg{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
 }
 
-/* Logo Gradient */
-.gradient-logo {
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    background: linear-gradient(45deg, #ff416c, #ff4b2b, #ffba08);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 30px;
-    text-transform: uppercase;
+.grid{
+    position:absolute;
+    width:200%;
+    height:200%;
+    left:-50%;
+    bottom:-70%;
+
+    background-image:
+    linear-gradient(rgba(0,247,255,.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,247,255,.12) 1px, transparent 1px);
+
+    background-size:60px 60px;
+
+    transform:
+    perspective(1200px)
+    rotateX(78deg);
+
+    animation:gridMove 10s linear infinite;
 }
 
-/* Khung chứa Progress Bar */
-.progress-container {
-    width: 100%;
-    height: 8px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 15px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+.glow1,
+.glow2{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(120px);
 }
 
-/* Thanh Progress Bar chạy bên trong */
-.progress-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #ff416c, #ff4b2b);
-    border-radius: 10px;
-    transition: width 0.1s ease;
+.glow1{
+    width:500px;
+    height:500px;
+    background:#00f7ff22;
+    top:-100px;
+    left:-100px;
 }
 
-/* Text hiển thị phần trăm */
-.loading-text {
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    opacity: 0.8;
+.glow2{
+    width:450px;
+    height:450px;
+    background:#ff00ff18;
+    right:-100px;
+    bottom:-100px;
 }
 
-/* Class để JS gọi lệnh ẩn màn hình loading */
-.fade-out {
-    opacity: 0;
-    visibility: hidden;
+/* Loader */
+
+.loader{
+    position:relative;
+    width:460px;
+    padding:40px;
+
+    background:rgba(255,255,255,.05);
+
+    backdrop-filter:blur(30px);
+    -webkit-backdrop-filter:blur(30px);
+
+    border:1px solid rgba(255,255,255,.12);
+
+    border-radius:30px;
+
+    box-shadow:
+    0 0 30px rgba(0,247,255,.15),
+    0 0 80px rgba(255,0,212,.08);
+
+    overflow:hidden;
+
+    transition:
+    opacity 1s ease,
+    transform 1s ease;
 }
 
-/* -------------------------------------
-   NỘI DUNG TRANG WEB SAU KHI LOAD XONG
-------------------------------------- */
-.content {
-    padding: 50px;
-    text-align: center;
-    color: #ffffff;
+.loader.hide{
+    opacity:0;
+    transform:scale(.8);
+    pointer-events:none;
 }
 
-.content h1 {
-    color: #ff416c;
+.loader::before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+
+    background:linear-gradient(
+    135deg,
+    var(--cyan),
+    var(--blue),
+    var(--pink),
+    var(--cyan));
+
+    background-size:400%;
+    animation:borderFlow 8s linear infinite;
+
+    z-index:-1;
+    filter:blur(18px);
+}
+
+.loader::after{
+    content:"";
+    position:absolute;
+    top:-100%;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:linear-gradient(
+    transparent,
+    rgba(255,255,255,.08),
+    transparent);
+
+    animation:scan 3s linear infinite;
+}
+
+.logo{
+    text-align:center;
+    color:white;
+    font-size:34px;
+    font-weight:800;
+    letter-spacing:3px;
+
+    text-shadow:
+    0 0 10px var(--cyan),
+    0 0 30px var(--cyan);
+}
+
+.subtitle{
+    text-align:center;
+    color:#9fdfff;
+    margin-top:10px;
+    margin-bottom:30px;
+    font-size:14px;
+    letter-spacing:1px;
+}
+
+/* Progress */
+
+.progress-wrap{
+    position:relative;
+}
+
+.progress-bg{
+    height:16px;
+    background:rgba(255,255,255,.08);
+    border-radius:999px;
+    overflow:hidden;
+}
+
+.progress-fill{
+    width:0%;
+    height:100%;
+
+    background:
+    linear-gradient(
+    90deg,
+    var(--cyan),
+    var(--blue),
+    var(--pink));
+
+    border-radius:999px;
+
+    box-shadow:
+    0 0 15px var(--cyan),
+    0 0 30px var(--cyan);
+
+    position:relative;
+}
+
+.progress-fill::after{
+    content:"";
+
+    position:absolute;
+    top:0;
+    right:-30px;
+
+    width:80px;
+    height:100%;
+
+    background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.8),
+    transparent);
+
+    transform:skewX(-25deg);
+
+    animation:shine 2s linear infinite;
+}
+
+.info{
+    display:flex;
+    justify-content:space-between;
+
+    margin-top:15px;
+    color:white;
+    font-size:14px;
+}
+
+.percent{
+    color:var(--cyan);
+    font-weight:700;
+}
+
+.status{
+    color:#9fdfff;
+}
+
+/* Ready Screen */
+
+.ready{
+    position:absolute;
+    inset:0;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:white;
+    font-size:28px;
+    font-weight:700;
+
+    opacity:0;
+    transition:.8s;
+
+    backdrop-filter:blur(15px);
+}
+
+.ready.show{
+    opacity:1;
+}
+
+/* Particles */
+
+.particle{
+    position:absolute;
+    border-radius:50%;
+    background:var(--cyan);
+    opacity:.6;
+    animation:float linear infinite;
+}
+
+@keyframes gridMove{
+    from{
+        transform:perspective(1200px) rotateX(78deg) translateY(0);
+    }
+    to{
+        transform:perspective(1200px) rotateX(78deg) translateY(60px);
+    }
+}
+
+@keyframes borderFlow{
+    to{
+        background-position:400%;
+    }
+}
+
+@keyframes shine{
+    from{
+        right:-80px;
+    }
+    to{
+        right:100%;
+    }
+}
+
+@keyframes scan{
+    to{
+        top:100%;
+    }
+}
+
+@keyframes float{
+    from{
+        transform:translateY(100vh);
+    }
+    to{
+        transform:translateY(-120vh);
+    }
 }
