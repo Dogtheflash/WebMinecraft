@@ -1,5 +1,4 @@
-<script>
-  function updateLoad() {
+ function updateLoad() {
     const fill = document.getElementById('cl-fill');
     const pct = document.getElementById('cl-pct');
     const cs1 = document.getElementById('cs1');
