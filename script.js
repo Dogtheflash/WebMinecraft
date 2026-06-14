@@ -10,6 +10,10 @@
   const enterBtn  = document.getElementById('cl-enter-btn');
   const clockEl   = document.getElementById('cl-clock');
 
+  /* Ẩn CMD window ngay từ đầu */
+  const terminalScreen = document.getElementById('terminal-screen');
+  if (terminalScreen) terminalScreen.style.visibility = 'hidden';
+
   const msgs = [
     'Đang khởi động hệ thống...',
     'Nạp giao thức bảo mật...',
@@ -23,31 +27,31 @@
 
   let prog = 0, s1 = 0, s2 = 0, s3 = 0, done = false;
 
-  /* clock */
+  /* Clock */
   setInterval(() => {
     if (clockEl) clockEl.textContent = new Date().toTimeString().slice(0, 8);
   }, 1000);
 
-  /* progress */
+  /* Progress */
   const iv = setInterval(() => {
     if (done) return;
-    let inc = prog < 40 ? (Math.random()*3+1.5)
-            : prog < 75 ? (Math.random()*1.5+0.5)
-            : prog < 92 ? (Math.random()*0.8+0.2)
+    let inc = prog < 40 ? (Math.random() * 3 + 1.5)
+            : prog < 75 ? (Math.random() * 1.5 + 0.5)
+            : prog < 92 ? (Math.random() * 0.8 + 0.2)
             :              0.15;
 
     prog = Math.min(prog + inc, 100);
-    s1   = Math.min(s1 + Math.random()*3+0.5, 100);
-    s2   = Math.min(s2 + Math.random()*2.5+0.3, 100);
-    s3   = Math.min(s3 + Math.random()*3+0.2, 100);
+    s1   = Math.min(s1 + Math.random() * 3 + 0.5, 100);
+    s2   = Math.min(s2 + Math.random() * 2.5 + 0.3, 100);
+    s3   = Math.min(s3 + Math.random() * 3 + 0.2, 100);
 
     const p = Math.floor(prog);
-    fill.style.width = prog + '%';
-    head.style.right = (100 - prog) + '%';
-    pct.textContent  = p + '%';
+    if (fill) fill.style.width = prog + '%';
+    if (head) head.style.right = (100 - prog) + '%';
+    if (pct)  pct.textContent  = p + '%';
 
     const si = Math.min(Math.floor(prog / 12.5), msgs.length - 1);
-    statusTxt.textContent = msgs[si];
+    if (statusTxt) statusTxt.textContent = msgs[si];
 
     const setBar = (id, pid, v) => {
       const el = document.getElementById(id);
@@ -55,24 +59,45 @@
       if (el) el.style.width = Math.floor(v) + '%';
       if (ep) ep.textContent = Math.floor(v) + '%';
     };
-    setBar('cs1','cs1p', s1);
-    setBar('cs2','cs2p', s2);
-    setBar('cs3','cs3p', s3);
+    setBar('cs1', 'cs1p', s1);
+    setBar('cs2', 'cs2p', s2);
+    setBar('cs3', 'cs3p', s3);
 
     if (prog >= 100) {
       clearInterval(iv);
       done = true;
-      statusTxt.textContent = 'Hoàn tất. Sẵn sàng!';
-      setTimeout(() => enterBtn.classList.add('cl-show'), 400);
+      if (statusTxt) statusTxt.textContent = 'Hoàn tất. Sẵn sàng!';
+      setTimeout(() => {
+        if (enterBtn) enterBtn.classList.add('cl-show');
+      }, 400);
     }
   }, 55);
 
-  /* enter */
-  enterBtn.addEventListener('click', () => {
-    enterBtn.disabled = true;
-    enterBtn.textContent = 'ĐANG KẾT NỐI...';
-    overlay.classList.add('cl-hidden');
-  });
+  /* Click ENTER → fade loading → hiện CMD */
+  if (enterBtn) {
+    enterBtn.addEventListener('click', () => {
+      enterBtn.disabled = true;
+      enterBtn.textContent = 'ĐANG KẾT NỐI...';
+
+      /* Fade out loading screen */
+      overlay.classList.add('cl-hidden');
+
+      /* Sau khi fade xong thì hiện CMD */
+      setTimeout(() => {
+        if (terminalScreen) {
+          terminalScreen.style.visibility = 'visible';
+          terminalScreen.style.opacity = '0';
+          terminalScreen.style.transition = 'opacity 0.6s ease';
+          /* Fade in CMD */
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              terminalScreen.style.opacity = '1';
+            });
+          });
+        }
+      }, 900); /* khớp với transition 0.9s của overlay */
+    });
+  }
 })();
 /* ============================================================
    END CYBER LOADING SCREEN
