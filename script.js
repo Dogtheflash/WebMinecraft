@@ -1001,3 +1001,73 @@ if (interactiveCard) {
     if (target && !target.contains(event.relatedTarget)) resetCardPointer();
   });
 }s
+const states = [
+    "Initializing Core",
+    "Loading Assets",
+    "Decrypting Data",
+    "Connecting Services",
+    "Building Interface",
+    "Optimizing Effects",
+    "Launching Experience"
+];
+
+let progress = 0;
+
+const percent = document.getElementById("percent");
+const bar = document.getElementById("bar");
+const status = document.getElementById("status");
+const loader = document.getElementById("loader");
+const ready = document.getElementById("ready");
+
+const interval = setInterval(() => {
+
+    progress++;
+
+    percent.textContent = progress + "%";
+    bar.style.width = progress + "%";
+
+    status.textContent =
+        states[Math.floor(progress / 15)] ||
+        states[states.length - 1];
+
+    if(progress >= 100){
+
+        clearInterval(interval);
+
+        ready.classList.add("show");
+
+        setTimeout(() => {
+
+            loader.classList.add("hide");
+
+            // Chuyển trang sau khi load xong
+            // window.location.href = "home.html";
+
+        },1200);
+    }
+
+},45);
+
+/* Particles */
+
+for(let i = 0; i < 30; i++){
+
+    const p = document.createElement("div");
+
+    p.className = "particle";
+
+    const size = Math.random() * 4 + 2;
+
+    p.style.width = size + "px";
+    p.style.height = size + "px";
+
+    p.style.left = Math.random() * 100 + "%";
+
+    p.style.animationDuration =
+        (Math.random() * 8 + 5) + "s";
+
+    p.style.animationDelay =
+        (-Math.random() * 10) + "s";
+
+    document.body.appendChild(p);
+}
