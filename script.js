@@ -1001,73 +1001,54 @@ if (interactiveCard) {
     if (target && !target.contains(event.relatedTarget)) resetCardPointer();
   });
 }s
-const states = [
-    "Initializing Core",
-    "Loading Assets",
-    "Decrypting Data",
-    "Connecting Services",
-    "Building Interface",
-    "Optimizing Effects",
-    "Launching Experience"
-];
+/* ==========================
+   CYBER LOADER
+========================== */
 
-let progress = 0;
+document.addEventListener("DOMContentLoaded", () => {
 
-const percent = document.getElementById("percent");
-const bar = document.getElementById("bar");
-const status = document.getElementById("status");
-const loader = document.getElementById("loader");
-const ready = document.getElementById("ready");
+    const loader = document.getElementById("cyber-loader");
+    const percent = document.getElementById("loader-percent");
+    const bar = document.getElementById("loader-bar");
+    const status = document.getElementById("loader-status");
 
-const interval = setInterval(() => {
+    if(!loader) return;
 
-    progress++;
+    const states = [
+        "Initializing Core",
+        "Loading Discord Data",
+        "Loading Assets",
+        "Synchronizing Presence",
+        "Building Interface",
+        "Preparing Experience",
+        "Ready"
+    ];
 
-    percent.textContent = progress + "%";
-    bar.style.width = progress + "%";
+    let progress = 0;
 
-    status.textContent =
-        states[Math.floor(progress / 15)] ||
-        states[states.length - 1];
+    const interval = setInterval(() => {
 
-    if(progress >= 100){
+        progress++;
 
-        clearInterval(interval);
+        percent.textContent = progress + "%";
+        bar.style.width = progress + "%";
 
-        ready.classList.add("show");
+        status.textContent =
+            states[Math.floor(progress / 15)] ||
+            "Ready";
 
-        setTimeout(() => {
+        if(progress >= 100){
 
-            loader.classList.add("hide");
+            clearInterval(interval);
 
-            // Chuyển trang sau khi load xong
-            // window.location.href = "home.html";
+            setTimeout(() => {
 
-        },1200);
-    }
+                loader.classList.add("hide");
 
-},45);
+            },500);
 
-/* Particles */
+        }
 
-for(let i = 0; i < 30; i++){
+    },30);
 
-    const p = document.createElement("div");
-
-    p.className = "particle";
-
-    const size = Math.random() * 4 + 2;
-
-    p.style.width = size + "px";
-    p.style.height = size + "px";
-
-    p.style.left = Math.random() * 100 + "%";
-
-    p.style.animationDuration =
-        (Math.random() * 8 + 5) + "s";
-
-    p.style.animationDelay =
-        (-Math.random() * 10) + "s";
-
-    document.body.appendChild(p);
-}
+});
