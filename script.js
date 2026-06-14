@@ -265,9 +265,10 @@ function typeIntro() {
     }
   }, 18);
 }
-renderCmd();
-typeIntro();
-
+window.initCmd = function () {
+  renderCmd();
+  typeIntro();
+};
 function showScreen(screen) {
   [terminalScreen, profileScreen].forEach((item) => item.classList.remove('active'));
   screen.classList.add('active');
