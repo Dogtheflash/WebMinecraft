@@ -19,50 +19,58 @@
 </head>
 
 <body class="terminal-active">
-  <!-- ========== LOADING SCREEN ========== -->
-<div id="cyber-loading" class="cyber-loading">
-  <div class="cl-scanlines"></div>
-  <div class="cl-grid"></div>
-  <div class="cl-corner cl-tl"></div>
-  <div class="cl-corner cl-tr"></div>
-  <div class="cl-corner cl-bl"></div>
-  <div class="cl-corner cl-br"></div>
 
-  <div class="cl-card">
-    <div class="cl-card-accent"></div>
-
-    <div class="cl-header">
-      <div class="cl-eyebrow">System Boot Sequence</div>
-      <div class="cl-title" data-text="INITIALIZING">INITIALIZING</div>
+  <!-- ========== CYBER LOADING SCREEN ========== -->
+  <div id="cyber-loading">
+    <div class="cl-grid"></div>
+    <div class="cl-scanlines"></div>
+    <div class="cl-corner cl-tl"></div>
+    <div class="cl-corner cl-tr"></div>
+    <div class="cl-corner cl-bl"></div>
+    <div class="cl-corner cl-br"></div>
+    <div class="cl-card">
+      <div class="cl-card-accent"></div>
+      <div class="cl-header">
+        <span class="cl-eyebrow">System Boot Sequence</span>
+        <div class="cl-title" data-text="INITIALIZING">INITIALIZING</div>
+      </div>
+      <div class="cl-status-row">
+        <div class="cl-dot"></div>
+        <div class="cl-status-text" id="cl-status">Đang khởi động hệ thống...</div>
+        <div class="cl-pct" id="cl-pct">0%</div>
+      </div>
+      <div class="cl-track">
+        <div class="cl-fill" id="cl-fill"></div>
+        <div class="cl-head" id="cl-head"></div>
+      </div>
+      <div class="cl-hex-row"><span>0x0000</span><span>0xFFFF</span></div>
+      <div class="cl-subbars">
+        <div class="cl-sub">
+          <span class="cl-sub-lbl">Neural</span>
+          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs1" style="background:linear-gradient(90deg,#00b4ff,#00ffb4)"></div></div>
+          <span class="cl-sub-pct" id="cs1p">0%</span>
+        </div>
+        <div class="cl-sub">
+          <span class="cl-sub-lbl">Crypto</span>
+          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs2" style="background:linear-gradient(90deg,#ff006e,#ff9d00)"></div></div>
+          <span class="cl-sub-pct" id="cs2p">0%</span>
+        </div>
+        <div class="cl-sub">
+          <span class="cl-sub-lbl">Interface</span>
+          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs3" style="background:linear-gradient(90deg,#8000ff,#00ffb4)"></div></div>
+          <span class="cl-sub-pct" id="cs3p">0%</span>
+        </div>
+      </div>
+      <button class="cl-enter-btn" id="cl-enter-btn">▶&nbsp; ENTER WORLD &nbsp;◀</button>
+      <div class="cl-meta">
+        <span>v4.2.0-NEON</span>
+        <span id="cl-clock">00:00:00</span>
+        <span>CYB-OS</span>
+      </div>
     </div>
+  </div>
+  <!-- ========== END CYBER LOADING SCREEN ========== -->
 
-    <div class="cl-status-row">
-      <div class="cl-dot"></div>
-      <div class="cl-status-text" id="cl-status">Đang khởi động hệ thống...</div>
-      <div class="cl-pct" id="cl-pct">0%</div>
-    </div>
-
-    <div class="cl-track">
-      <div class="cl-fill" id="cl-fill"></div>
-      <div class="cl-head" id="cl-head"></div>
-    </div>
-    <div class="cl-hex-row">
-      <span>0x0000</span><span>0xFFFF</span>
-    </div>
-
-    <div class="cl-subbars">
-      <div class="cl-sub"><span class="cl-sub-lbl">Neural</span>
-        <div class="cl-sub-track"><div class="cl-sub-fill" id="cs1" style="background:linear-gradient(90deg,#00b4ff,#00ffb4)"></div></div>
-        <span class="cl-sub-pct" id="cs1p">0%</span></div>
-      <div class="cl-sub"><span class="cl-sub-lbl">Crypto</span>
-        <div class="cl-sub-track"><div class="cl-sub-fill" id="cs2" style="background:linear-gradient(90deg,#ff006e,#ff9d00)"></div></div>
-        <span class="cl-sub-pct" id="cs2p">0%</span></div>
-      <div class="cl-sub"><span class="cl-sub-lbl">Interface</span>
-        <div class="cl-sub-track"><div class="cl-sub-fill" id="cs3" style="background:linear-gradient(90deg,#8000ff,#00ffb4)"></div></div>
-        <span class="cl-sub-pct" id="cs3p">0%</span></div>
-    </div>
-
-    <button class="cl-enter-btn"
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
   <div id="pointer-glow" class="pointer-glow" aria-hidden="true"></div>
@@ -72,7 +80,7 @@
   </video>
 
   <main id="app-root">
-    <section id="terminal-screen" class="screen terminal-screen active" aria-label="Windows 11 command prompt intro">
+    <section id="terminal-screen" class="screen terminal-screen active" aria-label="Windows 11 command prompt intro" style="visibility:hidden;opacity:0;transition:opacity 0.6s ease;">
       <div class="cmd-window">
         <div class="cmd-titlebar">
           <div id="cmd-tabs" class="cmd-tabs" role="tablist" aria-label="CMD tabs"></div>
@@ -303,6 +311,290 @@
     <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
     <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
   </aside>
+
+  <!-- CYBER LOADING SCREEN STYLES -->
+  <style>
+  #cyber-loading {
+    position: fixed; inset: 0; z-index: 999999;
+    background: #000814;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    opacity: 1; visibility: visible;
+    transition: opacity 0.9s ease, visibility 0.9s ease;
+  }
+  #cyber-loading.cl-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+  #cyber-loading .cl-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(0,255,180,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,180,0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: clGridPulse 4s ease-in-out infinite;
+  }
+  @keyframes clGridPulse { 0%,100%{opacity:.4} 50%{opacity:.9} }
+
+  #cyber-loading .cl-scanlines {
+    position: absolute; inset: 0; pointer-events: none; z-index: 2;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,255,200,0.013) 2px, rgba(0,255,200,0.013) 4px
+    );
+  }
+  #cyber-loading .cl-corner { position: absolute; width: 36px; height: 36px; z-index: 3; }
+  #cyber-loading .cl-tl { top:16px; left:16px;   border-top:2px solid #00ffb4; border-left:2px solid #00ffb4; }
+  #cyber-loading .cl-tr { top:16px; right:16px;  border-top:2px solid #00ffb4; border-right:2px solid #00ffb4; }
+  #cyber-loading .cl-bl { bottom:16px; left:16px;  border-bottom:2px solid #00ffb4; border-left:2px solid #00ffb4; }
+  #cyber-loading .cl-br { bottom:16px; right:16px; border-bottom:2px solid #00ffb4; border-right:2px solid #00ffb4; }
+
+  #cyber-loading .cl-card {
+    position: relative; z-index: 5;
+    width: min(500px, 92vw);
+    padding: 44px 48px;
+    background: rgba(0,18,13,0.82);
+    border: 1px solid rgba(0,255,180,0.25);
+    border-radius: 4px;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 0 0 1px rgba(0,255,180,0.06),
+      inset 0 1px 0 rgba(0,255,180,0.1),
+      0 24px 80px rgba(0,0,0,0.9),
+      0 0 60px rgba(0,255,180,0.05);
+  }
+  #cyber-loading .cl-card-accent {
+    position: absolute; top:0; left:0; right:0; height:2px;
+    border-radius: 4px 4px 0 0;
+    background: linear-gradient(90deg, transparent,#00ffb4,#ff006e,#00b4ff,transparent);
+    background-size: 300% auto;
+    animation: clAccent 3s linear infinite;
+  }
+  @keyframes clAccent { 0%{background-position:0%} 100%{background-position:300%} }
+
+  #cyber-loading .cl-header { text-align:center; margin-bottom:32px; }
+  #cyber-loading .cl-eyebrow {
+    display: block; font-size:10px; letter-spacing:4px;
+    color:rgba(0,255,180,0.45); margin-bottom:10px; text-transform:uppercase;
+  }
+  #cyber-loading .cl-title {
+    font-family: 'Outfit','JetBrains Mono',sans-serif;
+    font-size: clamp(1.4rem,5vw,2rem); font-weight:800;
+    letter-spacing:6px; color:#00ffb4; text-transform:uppercase;
+    text-shadow: 0 0 20px rgba(0,255,180,0.8), 0 0 40px rgba(0,255,180,0.3);
+    position:relative; display:inline-block;
+  }
+  #cyber-loading .cl-title::before,
+  #cyber-loading .cl-title::after {
+    content: attr(data-text); position:absolute; top:0; left:0; width:100%;
+  }
+  #cyber-loading .cl-title::before {
+    color:#ff006e; animation:clG1 3.5s infinite;
+    clip-path:polygon(0 0,100% 0,100% 38%,0 38%);
+  }
+  #cyber-loading .cl-title::after {
+    color:#00b4ff; animation:clG2 3.5s infinite;
+    clip-path:polygon(0 62%,100% 62%,100% 100%,0 100%);
+  }
+  @keyframes clG1 {
+    0%,88%,100%{transform:none;opacity:0}
+    90%{transform:translateX(-3px);opacity:.85}
+    93%{transform:translateX(3px);opacity:.85}
+    96%{transform:translateX(-2px);opacity:.7}
+  }
+  @keyframes clG2 {
+    0%,88%,100%{transform:none;opacity:0}
+    91%{transform:translateX(3px);opacity:.85}
+    94%{transform:translateX(-3px);opacity:.85}
+    97%{transform:translateX(2px);opacity:.7}
+  }
+
+  #cyber-loading .cl-status-row {
+    display:flex; align-items:center; gap:10px; margin-bottom:14px;
+  }
+  #cyber-loading .cl-dot {
+    width:8px; height:8px; border-radius:50%;
+    background:#00ffb4; box-shadow:0 0 8px #00ffb4;
+    flex-shrink:0; animation:clBlink 1s ease-in-out infinite;
+  }
+  @keyframes clBlink { 0%,100%{opacity:1} 50%{opacity:.1} }
+  #cyber-loading .cl-status-text {
+    flex:1; font-size:11px; color:rgba(0,255,180,0.65);
+    letter-spacing:1px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
+  }
+  #cyber-loading .cl-pct {
+    font-size:13px; color:#00ffb4; font-weight:700;
+    letter-spacing:1px; min-width:42px; text-align:right;
+  }
+
+  #cyber-loading .cl-track {
+    position:relative; height:4px;
+    background:rgba(0,255,180,0.08); margin-bottom:6px; overflow:visible;
+  }
+  #cyber-loading .cl-track::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background: repeating-linear-gradient(
+      90deg, transparent, transparent 9.9%,
+      rgba(0,255,180,0.15) 9.9%, rgba(0,255,180,0.15) 10%
+    );
+  }
+  #cyber-loading .cl-fill {
+    position:absolute; top:0; left:0; height:100%; width:0%;
+    background: linear-gradient(90deg,#00b4ff,#00ffb4,#ff006e);
+    background-size:200% 100%;
+    animation:clFill 2s linear infinite;
+    transition:width 0.08s linear;
+  }
+  @keyframes clFill { 0%{background-position:100% 50%} 100%{background-position:0% 50%} }
+  #cyber-loading .cl-head {
+    position:absolute; top:50%; right:100%;
+    transform:translate(50%,-50%);
+    width:10px; height:10px; border-radius:50%;
+    background:#fff;
+    box-shadow:0 0 12px 4px rgba(0,255,180,0.9), 0 0 24px 8px rgba(0,180,255,0.45);
+    transition:right 0.08s linear; pointer-events:none;
+  }
+  #cyber-loading .cl-hex-row {
+    display:flex; justify-content:space-between; margin-bottom:22px;
+    font-size:9px; color:rgba(0,255,180,0.22); letter-spacing:1px;
+  }
+
+  #cyber-loading .cl-subbars { margin-bottom:28px; }
+  #cyber-loading .cl-sub {
+    display:flex; align-items:center; gap:10px; margin-bottom:10px;
+  }
+  #cyber-loading .cl-sub-lbl {
+    font-size:9px; color:rgba(0,255,180,0.4); letter-spacing:1px;
+    width:68px; flex-shrink:0; text-transform:uppercase;
+  }
+  #cyber-loading .cl-sub-track {
+    flex:1; height:2px; background:rgba(0,255,180,0.07); overflow:hidden; position:relative;
+  }
+  #cyber-loading .cl-sub-fill { height:100%; width:0%; display:block; transition:width 0.15s ease; }
+  #cyber-loading .cl-sub-pct {
+    font-size:9px; color:rgba(0,255,180,0.35); width:30px; text-align:right; flex-shrink:0;
+  }
+
+  #cyber-loading .cl-enter-btn {
+    display:block; width:100%; padding:13px 0;
+    background:transparent; border:1px solid #00ffb4;
+    color:#00ffb4;
+    font-family:'Outfit','JetBrains Mono',sans-serif;
+    font-size:12px; font-weight:700; letter-spacing:4px; text-transform:uppercase;
+    cursor:pointer; position:relative; overflow:hidden; border-radius:2px;
+    opacity:0; transform:translateY(10px);
+    transition:opacity 0.5s ease, transform 0.5s ease,
+                color 0.3s, background 0.3s, box-shadow 0.3s;
+  }
+  #cyber-loading .cl-enter-btn.cl-show { opacity:1; transform:translateY(0); }
+  #cyber-loading .cl-enter-btn::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(90deg,transparent,rgba(0,255,180,0.1),transparent);
+    transform:translateX(-100%); transition:transform 0.5s ease;
+  }
+  #cyber-loading .cl-enter-btn:hover::before { transform:translateX(100%); }
+  #cyber-loading .cl-enter-btn:hover {
+    color:#000; background:#00ffb4;
+    box-shadow:0 0 20px rgba(0,255,180,0.55),0 0 40px rgba(0,255,180,0.25);
+  }
+
+  #cyber-loading .cl-meta {
+    display:flex; justify-content:space-between;
+    margin-top:18px; font-size:9px;
+    color:rgba(0,255,180,0.25); letter-spacing:1px;
+  }
+  </style>
+
+  <!-- CYBER LOADING SCREEN SCRIPT (chạy trước script.js) -->
+  <script>
+  (function () {
+    var overlay    = document.getElementById('cyber-loading');
+    var fill       = document.getElementById('cl-fill');
+    var head       = document.getElementById('cl-head');
+    var pctEl      = document.getElementById('cl-pct');
+    var statusEl   = document.getElementById('cl-status');
+    var enterBtn   = document.getElementById('cl-enter-btn');
+    var clockEl    = document.getElementById('cl-clock');
+    var terminal   = document.getElementById('terminal-screen');
+
+    var msgs = [
+      'Đang khởi động hệ thống...',
+      'Nạp giao thức bảo mật...',
+      'Kết nối neural interface...',
+      'Giải mã ma trận dữ liệu...',
+      'Đồng bộ cyberspace...',
+      'Xác thực danh tính...',
+      'Tải môi trường ảo...',
+      'Hoàn tất. Sẵn sàng!'
+    ];
+
+    var prog = 0, s1 = 0, s2 = 0, s3 = 0, done = false;
+
+    /* Đồng hồ realtime */
+    setInterval(function () {
+      if (clockEl) clockEl.textContent = new Date().toTimeString().slice(0, 8);
+    }, 1000);
+
+    /* Progress bar */
+    var iv = setInterval(function () {
+      if (done) return;
+      var inc = prog < 40  ? (Math.random() * 3   + 1.5)
+              : prog < 75  ? (Math.random() * 1.5 + 0.5)
+              : prog < 92  ? (Math.random() * 0.8 + 0.2)
+              :               0.15;
+
+      prog = Math.min(prog + inc, 100);
+      s1   = Math.min(s1 + Math.random() * 3   + 0.5, 100);
+      s2   = Math.min(s2 + Math.random() * 2.5 + 0.3, 100);
+      s3   = Math.min(s3 + Math.random() * 3   + 0.2, 100);
+
+      var p = Math.floor(prog);
+      if (fill)   fill.style.width  = prog + '%';
+      if (head)   head.style.right  = (100 - prog) + '%';
+      if (pctEl)  pctEl.textContent = p + '%';
+
+      var si = Math.min(Math.floor(prog / 12.5), msgs.length - 1);
+      if (statusEl) statusEl.textContent = msgs[si];
+
+      function setBar(id, pid, v) {
+        var el = document.getElementById(id);
+        var ep = document.getElementById(pid);
+        if (el) el.style.width      = Math.floor(v) + '%';
+        if (ep) ep.textContent      = Math.floor(v) + '%';
+      }
+      setBar('cs1', 'cs1p', s1);
+      setBar('cs2', 'cs2p', s2);
+      setBar('cs3', 'cs3p', s3);
+
+      if (prog >= 100) {
+        clearInterval(iv);
+        done = true;
+        if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
+        setTimeout(function () {
+          if (enterBtn) enterBtn.classList.add('cl-show');
+        }, 400);
+      }
+    }, 55);
+
+    /* Click ENTER → fade loading → fade in CMD */
+    if (enterBtn) {
+      enterBtn.addEventListener('click', function () {
+        enterBtn.disabled = true;
+        enterBtn.textContent = 'ĐANG KẾT NỐI...';
+
+        /* Fade out loading overlay */
+        overlay.classList.add('cl-hidden');
+
+        /* Sau 900ms (khớp transition) → hiện terminal */
+        setTimeout(function () {
+          if (terminal) {
+            terminal.style.visibility = 'visible';
+            /* Trigger reflow để transition opacity hoạt động */
+            terminal.getBoundingClientRect();
+            terminal.style.opacity = '1';
+          }
+        }, 900);
+      });
+    }
+  })();
+  </script>
 
   <script src="script.js"></script>
 </body>
