@@ -21,69 +21,54 @@
 <body class="terminal-active">
 
   <!-- ========== CYBER LOADING SCREEN ========== -->
-<head>
-    <meta charset="UTF-8">
-    <style>
-        /* CSS cho chuyển động mượt */
-        .cl-fill, .cl-sub-fill {
-            transition: width 0.1s linear; /* Giúp thanh chạy mượt, không nhảy vọt */
-        }
-        #main-menu {
-            display: none; /* Ẩn menu đi ban đầu */
-            padding: 50px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-
-    <div id="cyber-loading">
-        <div class="cl-track"><div class="cl-fill" id="cl-fill" style="width: 0%"></div></div>
-        <div id="cl-pct">0%</div>
+  <div id="cyber-loading">
+    <div class="cl-grid"></div>
+    <div class="cl-scanlines"></div>
+    <div class="cl-corner cl-tl"></div>
+    <div class="cl-corner cl-tr"></div>
+    <div class="cl-corner cl-bl"></div>
+    <div class="cl-corner cl-br"></div>
+    <div class="cl-card">
+      <div class="cl-card-accent"></div>
+      <div class="cl-header">
+        <span class="cl-eyebrow">System Boot Sequence</span>
+        <div class="cl-title" data-text="INITIALIZING">INITIALIZING</div>
+      </div>
+      <div class="cl-status-row">
+        <div class="cl-dot"></div>
+        <div class="cl-status-text" id="cl-status">Đang khởi động hệ thống...</div>
+        <div class="cl-pct" id="cl-pct">0%</div>
+      </div>
+      <div class="cl-track">
+        <div class="cl-fill" id="cl-fill"></div>
+        <div class="cl-head" id="cl-head"></div>
+      </div>
+      <div class="cl-hex-row"><span>0x0000</span><span>0xFFFF</span></div>
+      <div class="cl-subbars">
+        <div class="cl-sub">
+          <span class="cl-sub-lbl">Neural</span>
+          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs1" style="background:linear-gradient(90deg,#00b4ff,#00ffb4)"></div></div>
+          <span class="cl-sub-pct" id="cs1p">0%</span>
+        </div>
+        <div class="cl-sub">
+          <span class="cl-sub-lbl">Crypto</span>
+          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs2" style="background:linear-gradient(90deg,#ff006e,#ff9d00)"></div></div>
+          <span class="cl-sub-pct" id="cs2p">0%</span>
+        </div>
+        <div class="cl-sub">
+          <span class="cl-sub-lbl">Interface</span>
+          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs3" style="background:linear-gradient(90deg,#8000ff,#00ffb4)"></div></div>
+          <span class="cl-sub-pct" id="cs3p">0%</span>
+        </div>
+      </div>
+      <button class="cl-enter-btn" id="cl-enter-btn">▶&nbsp; ENTER WORLD &nbsp;◀</button>
+      <div class="cl-meta">
+        <span>v4.2.0-NEON</span>
+        <span id="cl-clock">00:00:00</span>
+        <span>CYB-OS</span>
+      </div>
     </div>
-
-    <div id="main-menu">
-        <h1>Chào mừng đến với hệ thống!</h1>
-        <p>Menu của bạn đã sẵn sàng.</p>
-    </div>
-
-    <script>
-        const fill = document.getElementById("cl-fill");
-        const pct = document.getElementById("cl-pct");
-        const loader = document.getElementById("cyber-loading");
-        const menu = document.getElementById("main-menu");
-
-        let progress = 0;
-
-        function updateLoading() {
-            // Tăng progress đều đặn và chậm hơn một chút để tạo cảm giác mượt
-            progress += 0.8; 
-            
-            if (progress >= 100) {
-                progress = 100;
-                fill.style.width = "100%";
-                pct.innerText = "100%";
-                
-                // Sau khi đạt 100%, ẩn loading và hiện menu
-                setTimeout(() => {
-                    loader.style.opacity = "0";
-                    setTimeout(() => {
-                        loader.style.display = "none";
-                        menu.style.display = "block"; // Hiện menu
-                    }, 500);
-                }, 300);
-            } else {
-                fill.style.width = progress + "%";
-                pct.innerText = Math.floor(progress) + "%";
-                requestAnimationFrame(updateLoading); // Gọi lại hàm để tạo chuyển động liên tục 60fps
-            }
-        }
-
-        // Bắt đầu chạy ngay
-        requestAnimationFrame(updateLoading);
-    </script>
-</body>
-</html>
+  </div>
   <!-- ========== END CYBER LOADING SCREEN ========== -->
 
   <div class="ambient ambient-one"></div>
@@ -91,7 +76,7 @@
   <div id="pointer-glow" class="pointer-glow" aria-hidden="true"></div>
     <div class="scanlines" aria-hidden="true"></div>
   <video id="bg-video" class="bg-video" autoplay muted loop playsinline aria-hidden="true">
-    <source src="./data/background/testning.mp4" type="video/mp4">
+    <source src="./data/background/bg-test.mp4" type="video/mp4">
   </video>
 
   <main id="app-root">
