@@ -371,26 +371,19 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   .profile-header { flex-direction: column; align-items: flex-start; }
   .identity-block { max-width: 100%; }
 }
-/* ==========================
-   PREMIUM CYBER LOADER
-========================== */
-
-/* Đã thêm font mặc định để chữ có phong cách công nghệ / hacker */
+/* ========================================= */
+/* CYBERPUNK LOADING SCREEN STYLES           */
+/* ========================================= */
 .cyber-loader {
     position: fixed;
     inset: 0;
-    z-index: 999999;
-
+    z-index: 999999; /* Đảm bảo che hết mọi thứ kể cả terminal */
     display: flex;
     justify-content: center;
     align-items: center;
-
     background: #050816;
-    font-family: 'Courier New', Courier, monospace; /* Thêm dòng này */
-
-    transition: 
-        opacity 1s ease, 
-        visibility 1s ease;
+    font-family: 'JetBrains Mono', 'Courier New', Courier, monospace; /* Đồng bộ font với web của bạn */
+    transition: opacity 1s ease, visibility 1s ease;
 }
 
 .cyber-loader.hide {
@@ -398,134 +391,44 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
     visibility: hidden;
 }
 
-.loader-bg {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-}
+.loader-bg { position: absolute; inset: 0; overflow: hidden; }
 
 .grid {
     position: absolute;
-    width: 200%;
-    height: 200%;
-    left: -50%;
-    bottom: -70%;
-
+    width: 200%; height: 200%;
+    left: -50%; bottom: -70%;
     background-image: 
         linear-gradient(rgba(0, 247, 255, .12) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 247, 255, .12) 1px, transparent 1px);
-
     background-size: 60px 60px;
-
-    transform: 
-        perspective(1200px) 
-        rotateX(78deg);
-
+    transform: perspective(1200px) rotateX(78deg);
     animation: gridMove 10s linear infinite;
 }
 
-.glow1,
-.glow2 {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-}
-
-.glow1 {
-    width: 500px;
-    height: 500px;
-    background: #00f7ff22;
-    top: -100px;
-    left: -100px;
-}
-
-.glow2 {
-    width: 450px;
-    height: 450px;
-    background: #ff00ff18;
-    right: -100px;
-    bottom: -100px;
-}
+.glow1, .glow2 { position: absolute; border-radius: 50%; filter: blur(120px); }
+.glow1 { width: 500px; height: 500px; background: #00f7ff22; top: -100px; left: -100px; }
+.glow2 { width: 450px; height: 450px; background: #ff00ff18; right: -100px; bottom: -100px; }
 
 .loader-box {
-    width: 450px;
-    padding: 40px;
+    position: relative;
+    width: 450px; padding: 40px;
     border-radius: 28px;
     background: rgba(255, 255, 255, .05);
     backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px); /* Thêm dòng này để hỗ trợ trình duyệt Safari */
+    -webkit-backdrop-filter: blur(25px);
     border: 1px solid rgba(255, 255, 255, .15);
     box-shadow: 0 0 30px rgba(0, 247, 255, .2);
-    z-index: 10; /* Đảm bảo box luôn nổi lên trên hiệu ứng nền */
+    z-index: 10;
 }
 
-.loader-logo {
-    text-align: center;
-    color: white;
-    font-size: 32px;
-    font-weight: 800;
-    text-shadow: 
-        0 0 10px #00f7ff, 
-        0 0 30px #00f7ff;
-}
-
-.loader-subtitle {
-    text-align: center;
-    color: #8bcfff;
-    margin: 12px 0 25px;
-    font-weight: bold;
-}
-
-.loader-progress-bg {
-    width: 100%;
-    height: 14px;
-    border-radius: 999px;
-    overflow: hidden;
-    background: rgba(255, 255, 255, .08);
-}
-
-.loader-progress-fill {
-    width: 0%;
-    height: 100%;
-    border-radius: 999px;
-
-    background: linear-gradient(
-        90deg, 
-        #00f7ff, 
-        #009dff, 
-        #ff00d4
-    );
-
-    box-shadow: 0 0 20px #00f7ff;
-    
-    /* ĐÂY LÀ PHẦN QUAN TRỌNG NHẤT BỊ THIẾU GIÚP THANH LOADING CHẠY MƯỢT */
-    transition: width 0.1s linear; 
-}
-
-.loader-info {
-    margin-top: 15px;
-    display: flex;
-    justify-content: space-between;
-    color: white;
-}
-
-#loader-percent {
-    color: #00f7ff;
-    font-weight: 700;
-}
+.loader-logo { text-align: center; color: white; font-size: 32px; font-weight: 800; text-shadow: 0 0 10px #00f7ff, 0 0 30px #00f7ff; }
+.loader-subtitle { text-align: center; color: #8bcfff; margin: 12px 0 25px; font-weight: bold; }
+.loader-progress-bg { width: 100%; height: 14px; border-radius: 999px; overflow: hidden; background: rgba(255, 255, 255, .08); }
+.loader-progress-fill { width: 0%; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #00f7ff, #009dff, #ff00d4); box-shadow: 0 0 20px #00f7ff; transition: width 0.1s linear; }
+.loader-info { margin-top: 15px; display: flex; justify-content: space-between; color: white; }
+#loader-percent { color: #00f7ff; font-weight: 700; }
 
 @keyframes gridMove {
-    from {
-        transform: 
-            perspective(1200px) 
-            rotateX(78deg) 
-            translateY(0);
-    }
-    to {
-        transform: 
-            perspective(1200px) 
-            rotateX(78deg) 
-            translateY(60px);
-    }
-}
+    from { transform: perspective(1200px) rotateX(78deg) translateY(0); }
+    to { transform: perspective(1200px) rotateX(78deg) translateY(60px); }
 }
