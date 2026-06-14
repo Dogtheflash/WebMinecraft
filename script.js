@@ -1005,50 +1005,63 @@ if (interactiveCard) {
    CYBER LOADER
 ========================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+// Lấy các phần tử từ HTML theo đúng ID của bạn
+const progressFill = document.getElementById('loader-bar');
+const percentText = document.getElementById('loader-percent');
+const statusText = document.getElementById('loader-status');
+const cyberLoader = document.getElementById('cyber-loader');
 
-    const loader = document.getElementById("cyber-loader");
-    const percent = document.getElementById("loader-percent");
-    const bar = document.getElementById("loader-bar");
-    const status = document.getElementById("loader-status");
+let progress = 0;
 
-    if(!loader) return;
+function simulateLoading() {
+    // Tốc độ tải ngẫu nhiên để trông giống thật hơn
+    const increment = Math.random() * 3 + 0.5; 
+    progress += increment;
 
-    const states = [
-        "Initializing Core",
-        "Loading Discord Data",
-        "Loading Assets",
-        "Synchronizing Presence",
-        "Building Interface",
-        "Preparing Experience",
-        "Ready"
-    ];
+    if (progress >= 100) {
+        progress = 100;
+        updateUI();
+        finishLoading();
+        return;
+    }
 
-    let progress = 0;
+    updateUI();
+    
+    // Random delay từ 30ms đến 150ms cho mỗi nhịp tăng
+    setTimeout(simulateLoading, Math.random() * 120 + 30);
+}
 
-    const interval = setInterval(() => {
+function updateUI() {
+    // Cập nhật thanh bar và phần trăm
+    progressFill.style.width = `${progress}%`;
+    percentText.innerText = `${Math.floor(progress)}%`;
+}
 
-        progress++;
+function finishLoading() {
+    setTimeout(() => {
+        // Đổi chữ khi load xong 100%
+        statusText.innerText = "ACCESS GRANTED";
+        statusText.style.color = "#00ffff"; // Thêm màu neon xanh
+        percentText.style.color = "#00ffff";
+        
+        progressFill.style.boxShadow = "0 0 15px #00ffff"; // Thanh bar chớp sáng nhẹ
 
-        percent.textContent = progress + "%";
-        bar.style.width = progress + "%";
-
-        status.textContent =
-            states[Math.floor(progress / 15)] ||
-            "Ready";
-
-        if(progress >= 100){
-
-            clearInterval(interval);
-
+        // (Tùy chọn) Ẩn màn hình loading sau 1 giây để vào trang chính
+        setTimeout(() => {
+            cyberLoader.style.transition = "opacity 0.8s ease-out";
+            cyberLoader.style.opacity = "0";
+            
+            // Xóa hẳn màn hình loading khỏi DOM sau khi mờ dần
             setTimeout(() => {
+                cyberLoader.style.display = "none";
+            }, 800);
+        }, 1000);
 
-                loader.classList.add("hide");
+    }, 300);
+}
 
-            },500);
-
-        }
-
-    },30);
-
+// Bắt đầu chạy hiệu ứng
+window.onload = () => {
+    setTimeout(simulateLoading, 500);
+};
 });
