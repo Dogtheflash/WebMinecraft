@@ -1,6 +1,3 @@
-/* ============================================================
-   CYBER LOADING SCREEN  –  thêm vào ĐẦU script.js
-   ============================================================ */
 (function () {
   const overlay   = document.getElementById('cyber-loading');
   const fill      = document.getElementById('cl-fill');
