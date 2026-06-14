@@ -111,22 +111,22 @@ body.color-page-active .profile-console { margin-top:0; }
 .cmd-tab-close { opacity:.55; font-size:14px; line-height:1; }
 .cmd-tab:hover .cmd-tab-close { opacity:1; }
 .cmd-plus { width: 34px; height:100%; text-align: center; color: #d0d0d0; font-size: 17px; flex:0 0 auto; border:0; background:transparent; cursor:inherit; }
-.cmd-controls { 
-  margin-left: auto; /* Tự động đẩy nhóm nút sang phải */
+.cmd-controls {
+  margin-left: auto;
   margin-right: 0;
-  display: flex; 
-  gap: 8px; 
-  height: 100%; 
+  display: flex;
+  gap: 8px;
+  height: 100%;
   align-items: center;
 }
 
-.cmd-controls span { 
-  width: 12px !important; 
-  height: 12px !important; 
-  border-radius: 50%; 
-  display: inline-block; 
-  cursor: pointer; 
-  flex-shrink: 0; 
+.cmd-controls span {
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .cmd-controls span:nth-child(1) { background-color: #ff5f56 !important; }
@@ -259,6 +259,7 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 .hidden { display:none !important; }
 
 @keyframes screenIn { from { opacity:0; transform:translateY(14px) scale(.98); } to { opacity:1; transform:none; } }
+@keyframes drift { to { transform: translate(4%, 3%) scale(1.04); } }
 @keyframes pageDriftOut { 0% { opacity:1; transform:translateY(-4px) translateX(0) scale(1); filter:blur(0); } 55% { opacity:.42; transform:translateY(-4px) translateX(-18px) scale(.975); filter:blur(1.8px); } 100% { opacity:1; transform:translateY(-4px) translateX(0) scale(1); filter:blur(0); } }
 @keyframes pageDriftIn { 0% { opacity:.46; transform:translateY(-4px) translateX(18px) scale(.975); filter:blur(1.8px); } 100% { opacity:1; transform:translateY(-4px) translateX(0) scale(1); filter:blur(0); } }
 @keyframes colorPageWipeIn { 0% { opacity:0; clip-path:inset(0 0 0 100% round 14px); transform:translateX(34px) scale(.985); filter:blur(4px); } 58% { opacity:1; clip-path:inset(0 0 0 0 round 14px); transform:translateX(0) scale(1); filter:blur(.4px); } 100% { opacity:1; clip-path:inset(0 0 0 0 round 14px); transform:none; filter:blur(0); } }
@@ -299,6 +300,9 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 
 @keyframes bars { to { height:27px; } }
 
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 620px) {
   body.terminal-active { position:fixed; inset:0; width:100%; overflow:hidden; }
   body.terminal-active .terminal-screen { height:100dvh; min-height:100dvh; padding:18px 12px; }
@@ -350,10 +354,6 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   .presence-card { flex-direction: column; align-items: flex-start; }
   .social-row { grid-template-columns: repeat(2, 1fr); padding-left: 16px; padding-right: 16px; }
   .profile-footer { padding-left: 16px; padding-right: 16px; }
-}
-
-@media (max-width: 420px) {
-  .cmd-window { border-radius: 8px; }
   .cmd-controls { grid-template-columns: repeat(3, 36px); }
   .cmd-tab { padding: 0 12px; }
   .cmd-body { min-height: 360px; padding: 14px; font-size: 12px; }
@@ -365,12 +365,11 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   .username, .presence-card p, .activity-card p, .about-card p { font-size: 13px; }
 }
 
-@keyframes typingCaret { 50% { opacity:0; } }
-
 @media (max-width: 340px) {
   .profile-header { flex-direction: column; align-items: flex-start; }
   .identity-block { max-width: 100%; }
 }
+
 /* ============================================================
    CYBER LOADING SCREEN v2 — Premium Cyberpunk
    ============================================================ */
