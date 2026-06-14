@@ -1039,29 +1039,20 @@ function updateUI() {
 
 function finishLoading() {
     setTimeout(() => {
-        // Đổi chữ khi load xong 100%
         statusText.innerText = "ACCESS GRANTED";
-        statusText.style.color = "#00ffff"; // Thêm màu neon xanh
+        statusText.style.color = "#00ffff"; 
         percentText.style.color = "#00ffff";
-        
-        progressFill.style.boxShadow = "0 0 15px #00ffff"; // Thanh bar chớp sáng nhẹ
+        progressFill.style.boxShadow = "0 0 15px #00ffff";
 
-        // (Tùy chọn) Ẩn màn hình loading sau 1 giây để vào trang chính
+        // Thêm class .hide vào cyber-loader để kích hoạt transition CSS
         setTimeout(() => {
-            cyberLoader.style.transition = "opacity 0.8s ease-out";
-            cyberLoader.style.opacity = "0";
+            cyberLoader.classList.add('hide'); 
             
-            // Xóa hẳn màn hình loading khỏi DOM sau khi mờ dần
+            // Xóa khỏi HTML sau 1 giây (thời gian của transition trong CSS)
             setTimeout(() => {
                 cyberLoader.style.display = "none";
-            }, 800);
+            }, 1000);
         }, 1000);
 
     }, 300);
 }
-
-// Bắt đầu chạy hiệu ứng
-window.onload = () => {
-    setTimeout(simulateLoading, 500);
-};
-});
