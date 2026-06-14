@@ -1,3 +1,82 @@
+/* ============================================================
+   CYBER LOADING SCREEN  –  thêm vào ĐẦU script.js
+   ============================================================ */
+(function () {
+  const overlay   = document.getElementById('cyber-loading');
+  const fill      = document.getElementById('cl-fill');
+  const head      = document.getElementById('cl-head');
+  const pct       = document.getElementById('cl-pct');
+  const statusTxt = document.getElementById('cl-status');
+  const enterBtn  = document.getElementById('cl-enter-btn');
+  const clockEl   = document.getElementById('cl-clock');
+
+  const msgs = [
+    'Đang khởi động hệ thống...',
+    'Nạp giao thức bảo mật...',
+    'Kết nối neural interface...',
+    'Giải mã ma trận dữ liệu...',
+    'Đồng bộ cyberspace...',
+    'Xác thực danh tính...',
+    'Tải môi trường ảo...',
+    'Hoàn tất. Sẵn sàng!'
+  ];
+
+  let prog = 0, s1 = 0, s2 = 0, s3 = 0, done = false;
+
+  /* clock */
+  setInterval(() => {
+    if (clockEl) clockEl.textContent = new Date().toTimeString().slice(0, 8);
+  }, 1000);
+
+  /* progress */
+  const iv = setInterval(() => {
+    if (done) return;
+    let inc = prog < 40 ? (Math.random()*3+1.5)
+            : prog < 75 ? (Math.random()*1.5+0.5)
+            : prog < 92 ? (Math.random()*0.8+0.2)
+            :              0.15;
+
+    prog = Math.min(prog + inc, 100);
+    s1   = Math.min(s1 + Math.random()*3+0.5, 100);
+    s2   = Math.min(s2 + Math.random()*2.5+0.3, 100);
+    s3   = Math.min(s3 + Math.random()*3+0.2, 100);
+
+    const p = Math.floor(prog);
+    fill.style.width = prog + '%';
+    head.style.right = (100 - prog) + '%';
+    pct.textContent  = p + '%';
+
+    const si = Math.min(Math.floor(prog / 12.5), msgs.length - 1);
+    statusTxt.textContent = msgs[si];
+
+    const setBar = (id, pid, v) => {
+      const el = document.getElementById(id);
+      const ep = document.getElementById(pid);
+      if (el) el.style.width = Math.floor(v) + '%';
+      if (ep) ep.textContent = Math.floor(v) + '%';
+    };
+    setBar('cs1','cs1p', s1);
+    setBar('cs2','cs2p', s2);
+    setBar('cs3','cs3p', s3);
+
+    if (prog >= 100) {
+      clearInterval(iv);
+      done = true;
+      statusTxt.textContent = 'Hoàn tất. Sẵn sàng!';
+      setTimeout(() => enterBtn.classList.add('cl-show'), 400);
+    }
+  }, 55);
+
+  /* enter */
+  enterBtn.addEventListener('click', () => {
+    enterBtn.disabled = true;
+    enterBtn.textContent = 'ĐANG KẾT NỐI...';
+    overlay.classList.add('cl-hidden');
+  });
+})();
+/* ============================================================
+   END CYBER LOADING SCREEN
+   ============================================================ */
 const DISCORD_USER_ID = '917263515209859102';
 const DECORATIONS = [
   'anime-dang-yeu.png',
