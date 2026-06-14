@@ -1004,55 +1004,68 @@ if (interactiveCard) {
 /* ========================================= */
 /* CYBERPUNK LOADING SCREEN LOGIC            */
 /* ========================================= */
-window.addEventListener('load', () => {
-    const progressFill = document.getElementById('loader-bar');
-    const percentText = document.getElementById('loader-percent');
-    const statusText = document.getElementById('loader-status');
-    const cyberLoader = document.getElementById('cyber-loader');
+const states = [
+    "Initializing Core",
+    "Loading Assets",
+    "Decrypting Data",
+    "Connecting Services",
+    "Building Interface",
+    "Optimizing Effects",
+    "Launching Experience"
+];
 
-    if (!cyberLoader) return; // Nếu không tìm thấy loader thì bỏ qua
+let progress = 0;
 
-    let progress = 0;
+const percent = document.getElementById("percent");
+const bar = document.getElementById("bar");
+const status = document.getElementById("status");
+const loader = document.getElementById("loader");
+const ready = document.getElementById("ready");
 
-    function simulateLoading() {
-        const increment = Math.random() * 4 + 1; 
-        progress += increment;
+const interval = setInterval(() => {
 
-        if (progress >= 100) {
-            progress = 100;
-            updateUI();
-            finishLoading();
-            return;
-        }
+    progress++;
 
-        updateUI();
-        setTimeout(simulateLoading, Math.random() * 100 + 50);
-    }
+    percent.textContent = progress + "%";
+    bar.style.width = progress + "%";
 
-    function updateUI() {
-        progressFill.style.width = `${progress}%`;
-        percentText.innerText = `${Math.floor(progress)}%`;
-    }
+    status.textContent =
+        states[Math.floor(progress / 15)] ||
+        states[states.length - 1];
 
-    function finishLoading() {
+    if (progress >= 100) {
+
+        clearInterval(interval);
+
+        ready.classList.add("show");
+
         setTimeout(() => {
-            statusText.innerText = "SYSTEM READY";
-            statusText.style.color = "#00ffff"; 
-            progressFill.style.boxShadow = "0 0 20px #00ffff, 0 0 40px #ff00ff";
-
-            // Mờ dần màn hình loading
-            setTimeout(() => {
-                cyberLoader.classList.add('hide'); 
-                
-                // Xóa loader khỏi giao diện để bạn tương tác với Terminal ở dưới
-                setTimeout(() => {
-                    cyberLoader.style.display = "none";
-                }, 1000);
-            }, 1000);
-
-        }, 300);
+            loader.classList.add("hide");
+        }, 1200);
     }
 
-    // Khởi động trình loading sau khi DOM đã sẵn sàng nửa giây
-    setTimeout(simulateLoading, 500);
-});
+}, 45);
+
+/* Particles */
+
+for (let i = 0; i < 30; i++) {
+
+    const p = document.createElement("div");
+
+    p.className = "particle";
+
+    const size = Math.random() * 4 + 2;
+
+    p.style.width = size + "px";
+    p.style.height = size + "px";
+
+    p.style.left = Math.random() * 100 + "%";
+
+    p.style.animationDuration =
+        (Math.random() * 8 + 5) + "s";
+
+    p.style.animationDelay =
+        (-Math.random() * 10) + "s";
+
+    document.body.appendChild(p);
+}
