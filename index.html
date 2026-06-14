@@ -1,27 +1,55 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chinatsu Kamado Loading Screen</title>
+    <title>Premium Cyberpunk Loader</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="loader-wrapper">
-        <div class="loading-logo">tiendung</div>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar" style="width: 100%;"></div>
-            </div>
-            <div class="progress-text" id="progressText">100%</div>
-            <div class="loading-text">LOADING <span id="loadingText">0</span>%</div>
+<div class="bg">
+    <div class="grid"></div>
+    <div class="glow1"></div>
+    <div class="glow2"></div>
+</div>
+
+<div class="loader" id="loader">
+
+    <div class="logo">
+        CYBER CORE
+    </div>
+
+    <div class="subtitle">
+        Premium System Bootstrap
+    </div>
+
+    <div class="progress-wrap">
+        <div class="progress-bg">
+            <div class="progress-fill" id="bar"></div>
+        </div>
+
+        <div class="info">
+            <span class="status" id="status">
+                Initializing...
+            </span>
+
+            <span class="percent" id="percent">
+                0%
+            </span>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <div class="ready" id="ready">
+        SYSTEM READY ✓
+    </div>
+
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
