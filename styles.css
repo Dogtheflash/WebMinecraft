@@ -371,3 +371,110 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   .profile-header { flex-direction: column; align-items: flex-start; }
   .identity-block { max-width: 100%; }
 }
+
+/* ============================================================
+   CYBER LOADING SCREEN
+   ============================================================ */
+.cyber-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  transition: opacity 0.9s ease, visibility 0.9s ease;
+}
+.cyber-loading.cl-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* grid bg */
+.cl-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,255,180,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,180,0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: clGridPulse 4s ease-in-out infinite;
+}
+@keyframes clGridPulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+/* scan lines */
+.cl-scanlines {
+  position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,255,200,0.012) 2px, rgba(0,255,200,0.012) 4px
+  );
+}
+
+/* corners */
+.cl-corner { position: absolute; width: 36px; height: 36px; z-index: 3; }
+.cl-tl { top:16px; left:16px;  border-top:2px solid #00ffb4; border-left:2px solid #00ffb4; }
+.cl-tr { top:16px; right:16px; border-top:2px solid #00ffb4; border-right:2px solid #00ffb4; }
+.cl-bl { bottom:16px; left:16px;  border-bottom:2px solid #00ffb4; border-left:2px solid #00ffb4; }
+.cl-br { bottom:16px; right:16px; border-bottom:2px solid #00ffb4; border-right:2px solid #00ffb4; }
+
+/* card */
+.cl-card {
+  position: relative; z-index: 5;
+  width: min(500px, 92vw);
+  padding: 44px 48px;
+  background: rgba(0,18,13,0.78);
+  border: 1px solid rgba(0,255,180,0.22);
+  border-radius: 4px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 0 0 1px rgba(0,255,180,0.07),
+    inset 0 1px 0 rgba(0,255,180,0.1),
+    0 24px 80px rgba(0,0,0,0.85),
+    0 0 60px rgba(0,255,180,0.06);
+}
+
+/* top accent */
+.cl-card-accent {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(90deg, transparent, #00ffb4, #ff006e, #00b4ff, transparent);
+  background-size: 200% auto;
+  animation: clAccent 3s linear infinite;
+}
+@keyframes clAccent { 0%{background-position:0%} 100%{background-position:200%} }
+
+/* header */
+.cl-header { text-align: center; margin-bottom: 32px; }
+.cl-eyebrow {
+  font-size: 10px; letter-spacing: 4px;
+  color: rgba(0,255,180,0.45); margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.cl-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-weight: 800; letter-spacing: 6px;
+  color: #00ffb4; text-transform: uppercase;
+  text-shadow: 0 0 20px rgba(0,255,180,0.8), 0 0 40px rgba(0,255,180,0.3);
+  position: relative;
+}
+.cl-title::before, .cl-title::after {
+  content: attr(data-text);
+  position: absolute; top:0; left:0; width:100%;
+}
+.cl-title::before {
+  color: #ff006e;
+  animation: clGlitch1 3.5s infinite;
+  clip-path: polygon(0 0,100% 0,100% 38%,0 38%);
+}
+.cl-title::after {
+  color: #00b4ff;
+  animation: clGlitch2 3.5s infinite;
+  clip-path: polygon(0 62%,100% 62%,100% 100%,0 100%);
+}
+@keyframes clGlitch1 {
+  0%,88%,100%{transform:none;opacity:0}
+  90%{transform:translateX(-3px);opac
