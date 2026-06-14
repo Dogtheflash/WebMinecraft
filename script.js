@@ -68,38 +68,25 @@
       clearInterval(iv);
       done = true;
       if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
-      /* Hiện nút ENTER sau 400ms */
+
+      /* Tự động fade out sau 600ms, rồi hiện CMD */
       setTimeout(function () {
-        if (enterBtn) enterBtn.classList.add('cl-show');
-      }, 400);
+        if (overlay) overlay.classList.add('cl-hidden');
+        setTimeout(function () {
+          if (terminal) {
+            terminal.style.visibility = 'visible';
+            terminal.style.opacity    = '0';
+            terminal.style.transition = 'opacity 0.6s ease';
+            requestAnimationFrame(function () {
+              requestAnimationFrame(function () {
+                terminal.style.opacity = '1';
+              });
+            });
+          }
+        }, 900);
+      }, 600);
     }
   }, 55);
-
-  /* Click ENTER WORLD → fade loading → fade in CMD */
-  if (enterBtn) {
-    enterBtn.addEventListener('click', function () {
-      enterBtn.disabled = true;
-      enterBtn.textContent = 'ĐANG KẾT NỐI...';
-
-      /* Fade out loading overlay (0.9s theo CSS transition) */
-      if (overlay) overlay.classList.add('cl-hidden');
-
-      /* Sau 900ms → hiện terminal với fade in */
-      setTimeout(function () {
-        if (terminal) {
-          terminal.style.visibility = 'visible';
-          terminal.style.opacity    = '0';
-          terminal.style.transition = 'opacity 0.6s ease';
-          /* Double rAF để trigger transition */
-          requestAnimationFrame(function () {
-            requestAnimationFrame(function () {
-              terminal.style.opacity = '1';
-            });
-          });
-        }
-      }, 900);
-    });
-  }
 })();
 /* ============================================================
    END CYBER LOADING SCREEN
