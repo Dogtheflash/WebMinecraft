@@ -79,6 +79,8 @@
             requestAnimationFrame(function () {
               requestAnimationFrame(function () {
                 terminal.style.opacity = '1';
+                /* ✅ Gọi initCmd sau khi terminal hiện ra */
+                if (typeof window.initCmd === 'function') window.initCmd();
               });
             });
           }
@@ -256,8 +258,12 @@ function typeIntro() {
     }
   }, 18);
 }
-renderCmd();
-typeIntro();
+
+/* ✅ Bọc renderCmd + typeIntro vào initCmd, chỉ gọi sau khi loading xong */
+window.initCmd = function () {
+  renderCmd();
+  typeIntro();
+};
 
 function showScreen(screen) {
   [terminalScreen, profileScreen].forEach((item) => item.classList.remove('active'));
