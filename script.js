@@ -24,7 +24,7 @@
       document.getElementById('cs1p').innerText = Math.round(Math.min(progress * 1.1, 100)) + '%';
       document.getElementById('cs2p').innerText = Math.round(Math.min(progress * 0.9, 100)) + '%';
       document.getElementById('cs3p').innerText = Math.round(Math.min(progress * 1.2, 100)) + '%';
-    }, 200); // 200ms mỗi bước = load xong trong khoảng 1.5 - 2 giây
+    }, 400); // 200ms mỗi bước = load xong trong khoảng 1.5 - 2 giây
   }
 
   // Chạy khi trang tải xong
