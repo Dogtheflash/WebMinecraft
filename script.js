@@ -1,24 +1,36 @@
-function animateProgress(element, percentElement, target, duration) {
-  let start = 0;
-  const startTime = performance.now();
-
-  function update(currentTime) {
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / duration, 1);
+<script>
+  function updateLoad() {
+    const fill = document.getElementById('cl-fill');
+    const pct = document.getElementById('cl-pct');
+    const cs1 = document.getElementById('cs1');
+    const cs2 = document.getElementById('cs2');
+    const cs3 = document.getElementById('cs3');
     
-    // Hàm easing để tăng tốc dần (Ease-out)
-    const easedProgress = 1 - Math.pow(1 - progress, 3);
-    
-    const currentVal = Math.floor(easedProgress * target);
-    element.style.width = currentVal + '%';
-    if(percentElement) percentElement.innerText = currentVal + '%';
-
-    if (progress < 1) {
-      requestAnimationFrame(update);
-    }
+    // Tăng tốc độ load bằng cách đặt thời gian ngắn
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 15; // Nhảy bước ngẫu nhiên để trông thật hơn
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+        document.getElementById('cl-enter-btn').classList.add('ready');
+      }
+      
+      // Áp dụng giá trị
+      fill.style.width = progress + '%';
+      pct.innerText = Math.round(progress) + '%';
+      cs1.style.width = Math.min(progress * 1.1, 100) + '%';
+      cs2.style.width = Math.min(progress * 0.9, 100) + '%';
+      cs3.style.width = Math.min(progress * 1.2, 100) + '%';
+      document.getElementById('cs1p').innerText = Math.round(Math.min(progress * 1.1, 100)) + '%';
+      document.getElementById('cs2p').innerText = Math.round(Math.min(progress * 0.9, 100)) + '%';
+      document.getElementById('cs3p').innerText = Math.round(Math.min(progress * 1.2, 100)) + '%';
+    }, 200); // 200ms mỗi bước = load xong trong khoảng 1.5 - 2 giây
   }
-  requestAnimationFrame(update);
-}
+
+  // Chạy khi trang tải xong
+  window.onload = updateLoad;
+</script>
 
 // Gọi animation đồng thời để rút ngắn thời gian chờ
 window.addEventListener('load', () => {
