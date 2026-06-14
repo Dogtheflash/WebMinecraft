@@ -2,14 +2,13 @@
    CYBER LOADING SCREEN  –  chạy trước tất cả code khác
    ============================================================ */
 (function () {
-  var overlay    = document.getElementById('cyber-loading');
-  var fill       = document.getElementById('cl-fill');
-  var head       = document.getElementById('cl-head');
-  var pctEl      = document.getElementById('cl-pct');
-  var statusEl   = document.getElementById('cl-status');
-  var enterBtn   = document.getElementById('cl-enter-btn');
-  var clockEl    = document.getElementById('cl-clock');
-  var terminal   = document.getElementById('terminal-screen');
+  var overlay  = document.getElementById('cyber-loading');
+  var fill     = document.getElementById('cl-fill');
+  var head     = document.getElementById('cl-head');
+  var pctEl    = document.getElementById('cl-pct');
+  var statusEl = document.getElementById('cl-status');
+  var clockEl  = document.getElementById('cl-clock');
+  var terminal = document.getElementById('terminal-screen');
 
   /* Ẩn CMD ngay từ đầu */
   if (terminal) terminal.style.visibility = 'hidden';
@@ -36,10 +35,10 @@
   var iv = setInterval(function () {
     if (done) return;
 
-    var inc = prog < 40  ? (Math.random() * 3   + 1.5)
-            : prog < 75  ? (Math.random() * 1.5 + 0.5)
-            : prog < 92  ? (Math.random() * 0.8 + 0.2)
-            :               0.15;
+    var inc = prog < 40 ? (Math.random() * 3   + 1.5)
+            : prog < 75 ? (Math.random() * 1.5 + 0.5)
+            : prog < 92 ? (Math.random() * 0.8 + 0.2)
+            :              0.15;
 
     prog = Math.min(prog + inc, 100);
     s1   = Math.min(s1 + Math.random() * 3   + 0.5, 100);
@@ -57,8 +56,8 @@
     function setBar(id, pid, v) {
       var el = document.getElementById(id);
       var ep = document.getElementById(pid);
-      if (el) el.style.width  = Math.floor(v) + '%';
-      if (ep) ep.textContent  = Math.floor(v) + '%';
+      if (el) el.style.width = Math.floor(v) + '%';
+      if (ep) ep.textContent = Math.floor(v) + '%';
     }
     setBar('cs1', 'cs1p', s1);
     setBar('cs2', 'cs2p', s2);
@@ -69,7 +68,7 @@
       done = true;
       if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
 
-      /* Tự động fade out sau 600ms, rồi hiện CMD */
+      /* Tự động fade out sau 600ms → hiện CMD */
       setTimeout(function () {
         if (overlay) overlay.classList.add('cl-hidden');
         setTimeout(function () {
