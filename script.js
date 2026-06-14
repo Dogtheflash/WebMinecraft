@@ -88,6 +88,11 @@
             requestAnimationFrame(function () {
               requestAnimationFrame(function () {
                 terminal.style.opacity = '1';
+
+                /* ✅ GỌI initCmd SAU KHI terminal hiện ra */
+                if (typeof window.initCmd === 'function') {
+                  window.initCmd();
+                }
               });
             });
           }
@@ -265,10 +270,13 @@ function typeIntro() {
     }
   }, 18);
 }
+
+/* ✅ initCmd chỉ được gọi từ loading screen callback ở trên */
 window.initCmd = function () {
   renderCmd();
   typeIntro();
 };
+
 function showScreen(screen) {
   [terminalScreen, profileScreen].forEach((item) => item.classList.remove('active'));
   screen.classList.add('active');
