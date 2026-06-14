@@ -1,3 +1,12 @@
+// Loading Screen and intro interactions
+document.addEventListener('DOMContentLoaded', () => {
+    const loadingScreen = document.getElementById('loadingScreen');
+    const enterButton = document.getElementById('enterButton');
+    const bgMusic = document.getElementById('bgMusic');
+    const mainContent = document.getElementById('mainContent');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+  
 const DISCORD_USER_ID = '917263515209859102';
 const DECORATIONS = [
   'anime-dang-yeu.png',
