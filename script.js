@@ -1001,3 +1001,39 @@ if (interactiveCard) {
     if (target && !target.contains(event.relatedTarget)) resetCardPointer();
   });
 }s
+document.addEventListener("DOMContentLoaded", function() {
+    let width = 0;
+    const bar = document.getElementById('myBar');
+    const text = document.getElementById('loadingText');
+    const loaderWrapper = document.getElementById('loader-wrapper');
+
+    // Giả lập tiến trình tải trang
+    const loadingInterval = setInterval(() => {
+        // Tăng phần trăm ngẫu nhiên từ 1 đến 5 để có cảm giác tự nhiên
+        let increment = Math.floor(Math.random() * 5) + 1;
+        width += increment;
+
+        if (width >= 100) {
+            width = 100;
+            clearInterval(loadingInterval);
+            
+            // Cập nhật giao diện lần cuối trước khi ẩn
+            bar.style.width = '100%';
+            text.innerText = '100';
+
+            // Dừng lại 0.5s ở 100% rồi mới mờ dần (tạo hiệu ứng mượt mà)
+            setTimeout(() => {
+                loaderWrapper.classList.add('fade-out');
+                
+                // Xóa hoàn toàn khỏi DOM sau khi mờ dần để không cản trở tương tác
+                setTimeout(() => {
+                    loaderWrapper.style.display = 'none';
+                }, 600); // 600ms = thời gian transition trong CSS
+            }, 500);
+
+        } else {
+            bar.style.width = width + '%';
+            text.innerText = width;
+        }
+    }, 60); // Tốc độ chạy (ms)
+});
