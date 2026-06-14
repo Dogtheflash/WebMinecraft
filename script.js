@@ -1,5 +1,6 @@
 /* ============================================================
-   CYBER LOADING SCREEN  –  chạy trước tất cả code khác
+   CYBER LOADING SCREEN v2 — Premium Cyberpunk
+   Tốc độ: ~2 giây, tự vào luôn khi đạt 100%
    ============================================================ */
 (function () {
   var overlay  = document.getElementById('cyber-loading');
@@ -8,6 +9,7 @@
   var pctEl    = document.getElementById('cl-pct');
   var statusEl = document.getElementById('cl-status');
   var clockEl  = document.getElementById('cl-clock');
+  var fadeEl   = document.getElementById('cl-fade');
   var terminal = document.getElementById('terminal-screen');
 
   /* Ẩn CMD ngay từ đầu */
@@ -31,19 +33,20 @@
     if (clockEl) clockEl.textContent = new Date().toTimeString().slice(0, 8);
   }, 1000);
 
-  /* Progress bar tự động */
+  /* Progress bar — ~2 giây để hoàn thành */
   var iv = setInterval(function () {
     if (done) return;
 
-    var inc = prog < 40 ? (Math.random() * 3   + 1.5)
-            : prog < 75 ? (Math.random() * 1.5 + 0.5)
-            : prog < 92 ? (Math.random() * 0.8 + 0.2)
-            :              0.15;
+    /* Tốc độ cao để xong trong ~2s (interval 30ms × ~67 tick) */
+    var inc = prog < 50 ? (Math.random() * 5 + 4)
+            : prog < 80 ? (Math.random() * 3 + 2.5)
+            : prog < 95 ? (Math.random() * 2 + 1)
+            :              (Math.random() * 1.5 + 0.8);
 
     prog = Math.min(prog + inc, 100);
-    s1   = Math.min(s1 + Math.random() * 3   + 0.5, 100);
-    s2   = Math.min(s2 + Math.random() * 2.5 + 0.3, 100);
-    s3   = Math.min(s3 + Math.random() * 3   + 0.2, 100);
+    s1   = Math.min(s1 + Math.random() * 6 + 3,  100);
+    s2   = Math.min(s2 + Math.random() * 5 + 2.5, 100);
+    s3   = Math.min(s3 + Math.random() * 6 + 2,  100);
 
     var p = Math.floor(prog);
     if (fill)  fill.style.width  = prog + '%';
@@ -56,8 +59,8 @@
     function setBar(id, pid, v) {
       var el = document.getElementById(id);
       var ep = document.getElementById(pid);
-      if (el) el.style.width = Math.floor(v) + '%';
-      if (ep) ep.textContent = Math.floor(v) + '%';
+      if (el) el.style.width  = Math.floor(v) + '%';
+      if (ep) ep.textContent  = Math.floor(v) + '%';
     }
     setBar('cs1', 'cs1p', s1);
     setBar('cs2', 'cs2p', s2);
@@ -68,10 +71,16 @@
       done = true;
       if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
 
-      /* Tự động fade out sau 600ms → hiện CMD */
+      /* Chờ 400ms → fade overlay → hiện CMD */
       setTimeout(function () {
-        if (overlay) overlay.classList.add('cl-hidden');
+        /* Fade overlay đen che loading card */
+        if (fadeEl) fadeEl.classList.add('active');
+
         setTimeout(function () {
+          /* Ẩn toàn bộ loading */
+          if (overlay) overlay.classList.add('cl-hidden');
+
+          /* Hiện terminal với fade in */
           if (terminal) {
             terminal.style.visibility = 'visible';
             terminal.style.opacity    = '0';
@@ -79,15 +88,13 @@
             requestAnimationFrame(function () {
               requestAnimationFrame(function () {
                 terminal.style.opacity = '1';
-                /* ✅ Gọi initCmd sau khi terminal hiện ra */
-                if (typeof window.initCmd === 'function') window.initCmd();
               });
             });
           }
-        }, 900);
-      }, 600);
+        }, 950);
+      }, 400);
     }
-  }, 55);
+  }, 30);
 })();
 /* ============================================================
    END CYBER LOADING SCREEN
@@ -258,12 +265,8 @@ function typeIntro() {
     }
   }, 18);
 }
-
-/* ✅ Bọc renderCmd + typeIntro vào initCmd, chỉ gọi sau khi loading xong */
-window.initCmd = function () {
-  renderCmd();
-  typeIntro();
-};
+renderCmd();
+typeIntro();
 
 function showScreen(screen) {
   [terminalScreen, profileScreen].forEach((item) => item.classList.remove('active'));
