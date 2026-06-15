@@ -371,6 +371,202 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 }
 
 /* ============================================================
+   MINECRAFT SERVER PAGE
+   ============================================================ */
+
+/* Bot card */
+.mc-bot-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  background: rgba(255,255,255,.04);
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.mc-bot-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(88,101,242,.08), rgba(53,232,255,.04));
+  pointer-events: none;
+}
+.mc-bot-avatar {
+  position: relative;
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+}
+.mc-bot-avatar img {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,.12);
+}
+.mc-bot-status-dot {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid rgba(15,18,32,.98);
+}
+.mc-bot-status-dot.online { background: var(--green); box-shadow: 0 0 10px rgba(62,232,125,.5); }
+.mc-bot-status-dot.offline { background: #80848e; }
+.mc-bot-info { min-width: 0; }
+.mc-bot-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.mc-bot-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.02em;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mc-bot-desc {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Action row */
+.mc-action-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.mc-join-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font: 700 13px 'JetBrains Mono', monospace;
+  background: linear-gradient(135deg, #5865f2, #4752c4);
+  color: #fff;
+  border: 1px solid rgba(88,101,242,.5);
+  text-decoration: none;
+  transition: .22s ease;
+  box-shadow: 0 4px 18px rgba(88,101,242,.3);
+  flex: 0 0 auto;
+}
+.mc-join-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(88,101,242,.45);
+  background: linear-gradient(135deg, #6a74f5, #5865f2);
+  color: #fff;
+  border-color: rgba(88,101,242,.7);
+}
+.mc-updated {
+  font: 600 11px 'JetBrains Mono', monospace;
+  color: var(--muted);
+  letter-spacing: .02em;
+}
+
+/* Stats grid */
+.mc-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.mc-stat-card {
+  padding: 11px 13px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  background: rgba(255,255,255,.03);
+  min-width: 0;
+  transition: border-color .2s ease;
+}
+.mc-stat-card:hover {
+  border-color: rgba(53,232,255,.22);
+}
+.mc-stat-card.wide {
+  grid-column: span 2;
+}
+.mc-stat-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+.mc-stat-value {
+  display: block;
+  font: 700 14px 'JetBrains Mono', monospace;
+  color: #eef4ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mc-ip {
+  color: var(--cyan) !important;
+  letter-spacing: .04em;
+}
+
+/* Feature cards */
+.mc-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.mc-feature-card {
+  padding: 13px 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  background: rgba(255,255,255,.03);
+  transition: .22s ease;
+}
+.mc-feature-card:hover {
+  border-color: rgba(88,101,242,.3);
+  background: rgba(88,101,242,.06);
+  transform: translateY(-2px);
+}
+.mc-feature-num {
+  font: 800 11px 'JetBrains Mono', monospace;
+  color: var(--discord);
+  letter-spacing: .08em;
+  margin-bottom: 7px;
+}
+.mc-feature-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.mc-feature-desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+@media (max-width: 420px) {
+  .mc-stats-grid { grid-template-columns: 1fr 1fr; }
+  .mc-feature-grid { grid-template-columns: 1fr; }
+  .mc-feature-card { padding: 11px; }
+  .mc-bot-name { font-size: 15px; }
+}
+
+/* ============================================================
    CYBER LOADING SCREEN v2 — Premium Cyberpunk
    ============================================================ */
 #cyber-loading {
