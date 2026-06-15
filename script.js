@@ -624,8 +624,8 @@ async function fetchDiscordPresence() {
     presenceEls.customStatusLine.textContent = customStatusText || '...';
     presenceEls.statusText.innerHTML = `<span class="inline-dot ${status}"></span>${statusLabel}${clientText ? ` - ${clientText}` : ''}`;
     updateVietnamClock();
-    if (avatarUrl) presenceEls.avatar.src = avatarUrl;
-    presenceEls.avatar.src = 'https://images-ext-1.discordapp.net/external/KglgTpgmix6LkqXu75sNwRMz8sWZuOl9JWnUCLWG_IA/%3Fsize%3D4096/https/cdn.discordapp.com/avatars/917263515209859102/cd121ea4baf2512e6e98f16f0f2a8d04.png?format=webp&quality=lossless&width=656&height=656';
+    // ✏️ SỬA: Dùng ảnh avatar local thay vì Discord CDN
+    presenceEls.avatar.src = './minevui-avatar.png';
 
     setDiscordDecoration(discordDecorationUrls);
     presenceEls.decoration.src = './data/decoration/buom-dem.png';
