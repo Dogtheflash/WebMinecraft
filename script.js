@@ -950,7 +950,7 @@ function buildUnityRichText() {
   colorTool.output.value = rich;
 }
 
-function showInnerPage(page, afterShow) {
+function showInnerPage(page, afterShow, wide = false) {
   if (!page) return;
   resetCardPointer();
   activeInnerPage?.classList.add('hidden');
@@ -959,6 +959,8 @@ function showInnerPage(page, afterShow) {
   page.style.setProperty('--tilt-x', '0deg');
   page.style.setProperty('--tilt-y', '0deg');
   document.body.classList.add('color-page-active');
+  if (wide) document.body.classList.add('wide-page-active');
+  else document.body.classList.remove('wide-page-active');
   colorTool.profile.classList.remove('slide-to-home');
   colorTool.profile.classList.add('slide-to-color', 'page-mode');
   page.classList.remove('hidden', 'leaving');
@@ -978,6 +980,7 @@ function hideInnerPage(page) {
   colorTool.profile.classList.add('slide-to-home');
   setTimeout(() => {
     document.body.classList.remove('color-page-active');
+    document.body.classList.remove('wide-page-active');
     colorTool.profile.classList.remove('page-mode', 'slide-to-home');
     page.classList.add('hidden');
     page.classList.remove('leaving');
@@ -1077,7 +1080,7 @@ async function fetchMinecraftStatus() {
 function showMinecraftPage() {
   showInnerPage(minecraftPage.page, () => {
     fetchMinecraftStatus();
-  });
+  }, true);
 }
 
 function hideMinecraftPage() {
@@ -1209,7 +1212,7 @@ async function fetchSteamStatus() {
 function showSteamPage() {
   showInnerPage(steamPage.page, () => {
     initSteamPage();
-  });
+  }, true);
 }
 
 function hideSteamPage() {
