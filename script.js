@@ -1012,12 +1012,12 @@ const minecraftPage = {
   joinBtn: document.getElementById('mc-join-btn'),
 };
 
-// ⚙️ CẤU HÌNH SERVER — chỉnh sửa tại đây
+// ✏️ SỬA: Cập nhật MC_CONFIG — ip, botName
 const MC_CONFIG = {
-  ip: 'play.example.com',          // IP hoặc domain server
-  port: 25565,                      // Port (mặc định 25565)
-  discordInvite: 'https://discord.gg/', // Link invite Discord
-  botName: 'Chinatsu SMP',
+  ip: 'Sv.Minevui.Net',           // ✏️ SỬA
+  port: 25565,
+  discordInvite: 'https://discord.gg/',
+  botName: 'Minecraft Skyblock',  // ✏️ SỬA
   botDesc: '🌿 Server Minecraft sinh tồn · Vanilla SMP',
   version: '1.21.x',
 };
@@ -1033,10 +1033,19 @@ function formatMcTime() {
 
 async function fetchMinecraftStatus() {
   if (!minecraftPage.page) return;
+
+  // ✏️ SỬA: Hiển thị giá trị tĩnh theo yêu cầu
+  if (minecraftPage.ping)    minecraftPage.ping.textContent    = '20ms';
+  if (minecraftPage.online)  minecraftPage.online.textContent  = '0 người';
+  if (minecraftPage.max)     minecraftPage.max.textContent     = '1000 người';
+  if (minecraftPage.version) minecraftPage.version.textContent = MC_CONFIG.version;
+  if (minecraftPage.ip)      minecraftPage.ip.textContent      = MC_CONFIG.ip;
+  if (minecraftPage.updated) minecraftPage.updated.textContent = formatMcTime();
+  if (minecraftPage.joinBtn) minecraftPage.joinBtn.href        = MC_CONFIG.discordInvite;
+
+  // Vẫn kiểm tra trạng thái thật từ API
   const ip = MC_CONFIG.ip;
   const port = MC_CONFIG.port;
-
-  // Dùng mcsrvstat.us API (public, không cần key)
   const apiUrl = `https://api.mcsrvstat.us/3/${ip}${port !== 25565 ? ':' + port : ''}`;
 
   try {
@@ -1044,19 +1053,11 @@ async function fetchMinecraftStatus() {
     const data = await res.json();
 
     if (data.online) {
-      if (minecraftPage.ping) minecraftPage.ping.textContent = data.debug?.ping ? `${data.debug.ping}ms` : 'Online';
-      if (minecraftPage.online) minecraftPage.online.textContent = `${data.players?.online ?? 0} người`;
-      if (minecraftPage.max) minecraftPage.max.textContent = `${data.players?.max ?? 0} người`;
-      if (minecraftPage.version) minecraftPage.version.textContent = data.version || MC_CONFIG.version;
       if (minecraftPage.statusText) {
         minecraftPage.statusText.textContent = '🟢 Online — Đang hoạt động';
         minecraftPage.statusText.style.color = 'var(--green)';
       }
     } else {
-      if (minecraftPage.ping) minecraftPage.ping.textContent = '--ms';
-      if (minecraftPage.online) minecraftPage.online.textContent = '-- người';
-      if (minecraftPage.max) minecraftPage.max.textContent = '-- người';
-      if (minecraftPage.version) minecraftPage.version.textContent = MC_CONFIG.version;
       if (minecraftPage.statusText) {
         minecraftPage.statusText.textContent = '🔴 Offline — Server đang tắt';
         minecraftPage.statusText.style.color = 'var(--red)';
@@ -1068,10 +1069,6 @@ async function fetchMinecraftStatus() {
       minecraftPage.statusText.style.color = 'var(--yellow)';
     }
   }
-
-  if (minecraftPage.ip) minecraftPage.ip.textContent = ip;
-  if (minecraftPage.updated) minecraftPage.updated.textContent = formatMcTime();
-  if (minecraftPage.joinBtn) minecraftPage.joinBtn.href = MC_CONFIG.discordInvite;
 }
 
 function showMinecraftPage() {
