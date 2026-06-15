@@ -797,7 +797,7 @@ volumeSlider.addEventListener('input', () => {
   scheduleVolumeAutoClose();
 });
 
-document.getElementById('page-one-link').addEventListener('click', (event) => event.preventDefault());
+// page-one-link (Server Minecraft) — handled by minecraftPage.open listener below
 
 const colorTool = {
   page: document.getElementById('color-page'),
@@ -994,6 +994,109 @@ function showColorPage() {
 function hideColorPage() {
   hideInnerPage(colorTool.page);
 }
+
+/* ============================================================
+   MINECRAFT SERVER PAGE
+   ============================================================ */
+const minecraftPage = {
+  page: document.getElementById('minecraft-page'),
+  back: document.getElementById('minecraft-back'),
+  open: document.getElementById('page-one-link'),
+  ping: document.getElementById('mc-ping'),
+  version: document.getElementById('mc-version'),
+  online: document.getElementById('mc-online'),
+  max: document.getElementById('mc-max'),
+  ip: document.getElementById('mc-ip'),
+  statusText: document.getElementById('mc-status-text'),
+  updated: document.getElementById('mc-updated'),
+  joinBtn: document.getElementById('mc-join-btn'),
+};
+
+// ⚙️ CẤU HÌNH SERVER — chỉnh sửa tại đây
+const MC_CONFIG = {
+  ip: 'play.example.com',          // IP hoặc domain server
+  port: 25565,                      // Port (mặc định 25565)
+  discordInvite: 'https://discord.gg/', // Link invite Discord
+  botName: 'Chinatsu SMP',
+  botDesc: '🌿 Server Minecraft sinh tồn · Vanilla SMP',
+  version: '1.21.x',
+};
+
+function formatMcTime() {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+  }).formatToParts(new Date());
+  const get = (t) => parts.find((p) => p.type === t)?.value || '';
+  return `Cập nhật ${get('hour')}:${get('minute')}:${get('second')}`;
+}
+
+async function fetchMinecraftStatus() {
+  if (!minecraftPage.page) return;
+  const ip = MC_CONFIG.ip;
+  const port = MC_CONFIG.port;
+
+  // Dùng mcsrvstat.us API (public, không cần key)
+  const apiUrl = `https://api.mcsrvstat.us/3/${ip}${port !== 25565 ? ':' + port : ''}`;
+
+  try {
+    const res = await fetch(apiUrl);
+    const data = await res.json();
+
+    if (data.online) {
+      if (minecraftPage.ping) minecraftPage.ping.textContent = data.debug?.ping ? `${data.debug.ping}ms` : 'Online';
+      if (minecraftPage.online) minecraftPage.online.textContent = `${data.players?.online ?? 0} người`;
+      if (minecraftPage.max) minecraftPage.max.textContent = `${data.players?.max ?? 0} người`;
+      if (minecraftPage.version) minecraftPage.version.textContent = data.version || MC_CONFIG.version;
+      if (minecraftPage.statusText) {
+        minecraftPage.statusText.textContent = '🟢 Online — Đang hoạt động';
+        minecraftPage.statusText.style.color = 'var(--green)';
+      }
+    } else {
+      if (minecraftPage.ping) minecraftPage.ping.textContent = '--ms';
+      if (minecraftPage.online) minecraftPage.online.textContent = '-- người';
+      if (minecraftPage.max) minecraftPage.max.textContent = '-- người';
+      if (minecraftPage.version) minecraftPage.version.textContent = MC_CONFIG.version;
+      if (minecraftPage.statusText) {
+        minecraftPage.statusText.textContent = '🔴 Offline — Server đang tắt';
+        minecraftPage.statusText.style.color = 'var(--red)';
+      }
+    }
+  } catch {
+    if (minecraftPage.statusText) {
+      minecraftPage.statusText.textContent = '⚠️ Không thể kiểm tra';
+      minecraftPage.statusText.style.color = 'var(--yellow)';
+    }
+  }
+
+  if (minecraftPage.ip) minecraftPage.ip.textContent = ip;
+  if (minecraftPage.updated) minecraftPage.updated.textContent = formatMcTime();
+  if (minecraftPage.joinBtn) minecraftPage.joinBtn.href = MC_CONFIG.discordInvite;
+}
+
+function showMinecraftPage() {
+  showInnerPage(minecraftPage.page, () => {
+    fetchMinecraftStatus();
+  });
+}
+
+function hideMinecraftPage() {
+  hideInnerPage(minecraftPage.page);
+}
+
+if (minecraftPage.open) {
+  minecraftPage.open.addEventListener('click', (e) => { e.preventDefault(); showMinecraftPage(); });
+}
+if (minecraftPage.back) {
+  minecraftPage.back.addEventListener('click', hideMinecraftPage);
+}
+
+// Auto-refresh mỗi 30s khi page đang mở
+setInterval(() => {
+  if (minecraftPage.page && !minecraftPage.page.classList.contains('hidden')) {
+    fetchMinecraftStatus();
+  }
+}, 30000);
 
 function setText(element, value) {
   if (element) element.textContent = value;
