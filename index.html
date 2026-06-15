@@ -193,7 +193,8 @@
             </div>
             <div class="mc-bot-info">
               <div class="mc-bot-tag">ONLINE · <span id="mc-bot-tag">SERVER BOT#0000</span></div>
-              <div class="mc-bot-name" id="mc-bot-name">Chinatsu SMP</div>
+              <!-- ✏️ SỬA: Chinatsu SMP → Minecraft Skyblock -->
+              <div class="mc-bot-name" id="mc-bot-name">Minecraft Skyblock</div>
               <div class="mc-bot-desc" id="mc-bot-desc">🌿 Server Minecraft sinh tồn · Vanilla SMP</div>
             </div>
           </div>
@@ -211,7 +212,8 @@
           <div class="mc-stats-grid">
             <div class="mc-stat-card">
               <span class="mc-stat-label">PING</span>
-              <strong class="mc-stat-value" id="mc-ping">--ms</strong>
+              <!-- ✏️ SỬA: hiển thị 20ms -->
+              <strong class="mc-stat-value" id="mc-ping">20ms</strong>
             </div>
             <div class="mc-stat-card">
               <span class="mc-stat-label">PHIÊN BẢN</span>
@@ -219,15 +221,28 @@
             </div>
             <div class="mc-stat-card">
               <span class="mc-stat-label">ĐANG CHƠI</span>
-              <strong class="mc-stat-value" id="mc-online">-- người</strong>
+              <!-- ✏️ SỬA: 0 người -->
+              <strong class="mc-stat-value" id="mc-online">0 người</strong>
             </div>
             <div class="mc-stat-card">
               <span class="mc-stat-label">TỐI ĐA</span>
-              <strong class="mc-stat-value" id="mc-max">-- người</strong>
+              <!-- ✏️ SỬA: 1000 người -->
+              <strong class="mc-stat-value" id="mc-max">1000 người</strong>
             </div>
-            <div class="mc-stat-card wide">
-              <span class="mc-stat-label">ĐỊA CHỈ SERVER</span>
-              <strong class="mc-stat-value mc-ip" id="mc-ip">play.example.com</strong>
+            <!-- ✏️ SỬA: Thêm nút Copy IP góc phải -->
+            <div class="mc-stat-card wide" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+              <div style="min-width:0;">
+                <span class="mc-stat-label">ĐỊA CHỈ SERVER</span>
+                <!-- ✏️ SỬA: Sv.Minevui.Net -->
+                <strong class="mc-stat-value mc-ip" id="mc-ip">Sv.Minevui.Net</strong>
+              </div>
+              <button id="mc-copy-btn"
+                onclick="navigator.clipboard.writeText('Sv.Minevui.Net').then(()=>{this.textContent='✓ Đã copy!';setTimeout(()=>{this.textContent='Copy IP'},1500)})"
+                style="flex-shrink:0;padding:7px 14px;border-radius:999px;border:1px solid rgba(53,232,255,.35);background:rgba(53,232,255,.1);color:#35e8ff;font:700 11px 'JetBrains Mono',monospace;cursor:pointer;transition:.2s ease;white-space:nowrap;"
+                onmouseover="this.style.background='rgba(53,232,255,.25)';this.style.borderColor='rgba(53,232,255,.6)'"
+                onmouseout="this.style.background='rgba(53,232,255,.1)';this.style.borderColor='rgba(53,232,255,.35)'">
+                Copy IP
+              </button>
             </div>
             <div class="mc-stat-card wide">
               <span class="mc-stat-label">TRẠNG THÁI</span>
