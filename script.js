@@ -1,4 +1,59 @@
 /* ============================================================
+   DEVTOOLS BLOCKER — Phát hiện DevTools, ẩn web khi mở
+   Tự động phục hồi khi DevTools đóng, không cần reload
+   ============================================================ */
+(function () {
+  const overlay = document.getElementById('devtools-overlay');
+  const retryBtn = document.getElementById('devtools-retry-btn');
+  const THRESHOLD = 160;
+  let isBlocked = false;
+
+  function showOverlay() {
+    if (!overlay || isBlocked) return;
+    isBlocked = true;
+    overlay.classList.remove('hidden');
+    overlay.removeAttribute('aria-hidden');
+  }
+
+  function hideOverlay() {
+    if (!overlay || !isBlocked) return;
+    isBlocked = false;
+    overlay.classList.add('hidden');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+
+  function checkDevTools() {
+    const widthDiff  = window.outerWidth  - window.innerWidth;
+    const heightDiff = window.outerHeight - window.innerHeight;
+
+    if (widthDiff > THRESHOLD || heightDiff > THRESHOLD) {
+      showOverlay();
+    } else {
+      hideOverlay();
+    }
+  }
+
+  // Nút "Quay lại xem anime" — kiểm tra lại ngay
+  if (retryBtn) {
+    retryBtn.addEventListener('click', () => {
+      checkDevTools();
+    });
+  }
+
+  // Kiểm tra liên tục mỗi 800ms
+  setInterval(checkDevTools, 800);
+
+  // Kiểm tra ngay khi resize (mở/đóng DevTools dạng dock)
+  window.addEventListener('resize', checkDevTools);
+
+  // Chạy lần đầu
+  checkDevTools();
+})();
+/* ============================================================
+   END DEVTOOLS BLOCKER
+   ============================================================ */
+
+/* ============================================================
    CYBER LOADING SCREEN v2 — Premium Cyberpunk
    Tốc độ: ~2 giây, tự vào luôn khi đạt 100%
    ============================================================ */
