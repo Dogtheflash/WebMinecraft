@@ -19,6 +19,33 @@
 
 <body class="terminal-active">
 
+  <!-- ========== DEVTOOLS BLOCKER OVERLAY ========== -->
+  <div id="devtools-overlay" class="devtools-overlay hidden" aria-hidden="true">
+    <div class="devtools-card">
+      <div class="devtools-shield">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 4L8 14V32C8 45.25 18.4 57.74 32 61C45.6 57.74 56 45.25 56 32V14L32 4Z" fill="url(#shieldGrad)"/>
+          <path d="M32 4L8 14V32C8 45.25 18.4 57.74 32 61C45.6 57.74 56 45.25 56 32V14L32 4Z" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+          <defs>
+            <linearGradient id="shieldGrad" x1="32" y1="4" x2="32" y2="61" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#4A90E2"/>
+              <stop offset="100%" stop-color="#1A3A6B"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <h2 class="devtools-title">Developer Tools đang mở</h2>
+      <p class="devtools-desc">Hệ thống phát hiện bạn đang sử dụng công cụ dành cho<br>nhà phát triển. Vui lòng tắt đi để tiếp tục xem anime.</p>
+      <ul class="devtools-steps">
+        <li><span class="devtools-num">1</span>Nhấn <kbd>F12</kbd> hoặc <kbd>Ctrl+Shift+I</kbd> để tắt DevTools</li>
+        <li><span class="devtools-num">2</span>Hoặc đóng cửa sổ DevTools nếu mở riêng</li>
+        <li><span class="devtools-num">3</span>Nhấn nút bên dưới để quay lại xem</li>
+      </ul>
+      <button class="devtools-btn" id="devtools-retry-btn">← Quay lại xem anime</button>
+    </div>
+  </div>
+  <!-- ========== END DEVTOOLS BLOCKER OVERLAY ========== -->
+
   <!-- ========== CYBER LOADING SCREEN v2 (premium) ========== -->
   <div id="cyber-loading">
     <div class="cl-grid-bg"></div>
