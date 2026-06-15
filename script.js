@@ -1,59 +1,4 @@
 /* ============================================================
-   DEVTOOLS BLOCKER — Phát hiện DevTools, ẩn web khi mở
-   Tự động phục hồi khi DevTools đóng, không cần reload
-   ============================================================ */
-(function () {
-  const overlay = document.getElementById('devtools-overlay');
-  const retryBtn = document.getElementById('devtools-retry-btn');
-  const THRESHOLD = 160;
-  let isBlocked = false;
-
-  function showOverlay() {
-    if (!overlay || isBlocked) return;
-    isBlocked = true;
-    overlay.classList.remove('hidden');
-    overlay.removeAttribute('aria-hidden');
-  }
-
-  function hideOverlay() {
-    if (!overlay || !isBlocked) return;
-    isBlocked = false;
-    overlay.classList.add('hidden');
-    overlay.setAttribute('aria-hidden', 'true');
-  }
-
-  function checkDevTools() {
-    const widthDiff  = window.outerWidth  - window.innerWidth;
-    const heightDiff = window.outerHeight - window.innerHeight;
-
-    if (widthDiff > THRESHOLD || heightDiff > THRESHOLD) {
-      showOverlay();
-    } else {
-      hideOverlay();
-    }
-  }
-
-  // Nút "Quay lại xem anime" — kiểm tra lại ngay
-  if (retryBtn) {
-    retryBtn.addEventListener('click', () => {
-      checkDevTools();
-    });
-  }
-
-  // Kiểm tra liên tục mỗi 800ms
-  setInterval(checkDevTools, 800);
-
-  // Kiểm tra ngay khi resize (mở/đóng DevTools dạng dock)
-  window.addEventListener('resize', checkDevTools);
-
-  // Chạy lần đầu
-  checkDevTools();
-})();
-/* ============================================================
-   END DEVTOOLS BLOCKER
-   ============================================================ */
-
-/* ============================================================
    CYBER LOADING SCREEN v2 — Premium Cyberpunk
    Tốc độ: ~2 giây, tự vào luôn khi đạt 100%
    ============================================================ */
@@ -1067,12 +1012,12 @@ const minecraftPage = {
   joinBtn: document.getElementById('mc-join-btn'),
 };
 
-// ✏️ SỬA: Cập nhật MC_CONFIG — ip, botName
+// ⚙️ CẤU HÌNH SERVER — chỉnh sửa tại đây
 const MC_CONFIG = {
-  ip: 'Sv.Minevui.Net',           // ✏️ SỬA
-  port: 25565,
-  discordInvite: 'https://discord.gg/',
-  botName: 'Minecraft Skyblock',  // ✏️ SỬA
+  ip: 'play.example.com',          // IP hoặc domain server
+  port: 25565,                      // Port (mặc định 25565)
+  discordInvite: 'https://discord.gg/', // Link invite Discord
+  botName: 'Chinatsu SMP',
   botDesc: '🌿 Server Minecraft sinh tồn · Vanilla SMP',
   version: '1.21.x',
 };
@@ -1088,19 +1033,10 @@ function formatMcTime() {
 
 async function fetchMinecraftStatus() {
   if (!minecraftPage.page) return;
-
-  // ✏️ SỬA: Hiển thị giá trị tĩnh theo yêu cầu
-  if (minecraftPage.ping)    minecraftPage.ping.textContent    = '20ms';
-  if (minecraftPage.online)  minecraftPage.online.textContent  = '0 người';
-  if (minecraftPage.max)     minecraftPage.max.textContent     = '1000 người';
-  if (minecraftPage.version) minecraftPage.version.textContent = MC_CONFIG.version;
-  if (minecraftPage.ip)      minecraftPage.ip.textContent      = MC_CONFIG.ip;
-  if (minecraftPage.updated) minecraftPage.updated.textContent = formatMcTime();
-  if (minecraftPage.joinBtn) minecraftPage.joinBtn.href        = MC_CONFIG.discordInvite;
-
-  // Vẫn kiểm tra trạng thái thật từ API
   const ip = MC_CONFIG.ip;
   const port = MC_CONFIG.port;
+
+  // Dùng mcsrvstat.us API (public, không cần key)
   const apiUrl = `https://api.mcsrvstat.us/3/${ip}${port !== 25565 ? ':' + port : ''}`;
 
   try {
@@ -1108,11 +1044,19 @@ async function fetchMinecraftStatus() {
     const data = await res.json();
 
     if (data.online) {
+      if (minecraftPage.ping) minecraftPage.ping.textContent = data.debug?.ping ? `${data.debug.ping}ms` : 'Online';
+      if (minecraftPage.online) minecraftPage.online.textContent = `${data.players?.online ?? 0} người`;
+      if (minecraftPage.max) minecraftPage.max.textContent = `${data.players?.max ?? 0} người`;
+      if (minecraftPage.version) minecraftPage.version.textContent = data.version || MC_CONFIG.version;
       if (minecraftPage.statusText) {
         minecraftPage.statusText.textContent = '🟢 Online — Đang hoạt động';
         minecraftPage.statusText.style.color = 'var(--green)';
       }
     } else {
+      if (minecraftPage.ping) minecraftPage.ping.textContent = '--ms';
+      if (minecraftPage.online) minecraftPage.online.textContent = '-- người';
+      if (minecraftPage.max) minecraftPage.max.textContent = '-- người';
+      if (minecraftPage.version) minecraftPage.version.textContent = MC_CONFIG.version;
       if (minecraftPage.statusText) {
         minecraftPage.statusText.textContent = '🔴 Offline — Server đang tắt';
         minecraftPage.statusText.style.color = 'var(--red)';
@@ -1124,6 +1068,10 @@ async function fetchMinecraftStatus() {
       minecraftPage.statusText.style.color = 'var(--yellow)';
     }
   }
+
+  if (minecraftPage.ip) minecraftPage.ip.textContent = ip;
+  if (minecraftPage.updated) minecraftPage.updated.textContent = formatMcTime();
+  if (minecraftPage.joinBtn) minecraftPage.joinBtn.href = MC_CONFIG.discordInvite;
 }
 
 function showMinecraftPage() {
@@ -1149,6 +1097,138 @@ setInterval(() => {
     fetchMinecraftStatus();
   }
 }, 30000);
+
+/* ============================================================
+   STEAM PROFILE PAGE
+   ============================================================ */
+const steamPage = {
+  page: document.getElementById('steam-page'),
+  back: document.getElementById('steam-back'),
+  open: document.getElementById('page-two-link'),
+  avatar: document.getElementById('steam-avatar'),
+  statusDot: document.getElementById('steam-status-dot'),
+  statusLabel: document.getElementById('steam-status-label'),
+  displayName: document.getElementById('steam-display-name'),
+  realName: document.getElementById('steam-real-name'),
+  hours: document.getElementById('steam-hours'),
+  games: document.getElementById('steam-games'),
+  level: document.getElementById('steam-level'),
+  friends: document.getElementById('steam-friends'),
+  playing: document.getElementById('steam-playing'),
+  updated: document.getElementById('steam-updated'),
+};
+
+// ⚙️ CẤU HÌNH STEAM — thông tin tĩnh của bạn
+const STEAM_CONFIG = {
+  profileUrl: 'https://steamcommunity.com/id/nakarotad/',
+  steamId: 'nakarotad',
+  displayName: 'nakarotad',
+  realName: '🎮 Chinatsu Kamado',
+  avatar: 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg',
+  // Thông tin tĩnh (Steam API cần key riêng, không thể gọi trực tiếp từ browser)
+  hours: '1,240 giờ',
+  games: '87 game',
+  level: '42',
+  friends: '38 người',
+};
+
+function formatSteamTime() {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+  }).formatToParts(new Date());
+  const get = (t) => parts.find((p) => p.type === t)?.value || '';
+  return `Cập nhật ${get('hour')}:${get('minute')}:${get('second')}`;
+}
+
+function initSteamPage() {
+  if (!steamPage.page) return;
+
+  // Hiển thị thông tin từ config
+  if (steamPage.avatar) steamPage.avatar.src = STEAM_CONFIG.avatar;
+  if (steamPage.displayName) steamPage.displayName.textContent = STEAM_CONFIG.displayName;
+  if (steamPage.realName) steamPage.realName.textContent = STEAM_CONFIG.realName;
+  if (steamPage.hours) steamPage.hours.textContent = STEAM_CONFIG.hours;
+  if (steamPage.games) steamPage.games.textContent = STEAM_CONFIG.games;
+  if (steamPage.level) steamPage.level.textContent = STEAM_CONFIG.level;
+  if (steamPage.friends) steamPage.friends.textContent = STEAM_CONFIG.friends;
+  if (steamPage.updated) steamPage.updated.textContent = formatSteamTime();
+
+  // Thử lấy trạng thái online qua Steam profile XML
+  fetchSteamStatus();
+}
+
+async function fetchSteamStatus() {
+  // Steam community XML feed (không cần API key, public)
+  const xmlUrl = `https://steamcommunity.com/id/${STEAM_CONFIG.steamId}/?xml=1`;
+  try {
+    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(xmlUrl)}`);
+    const data = await res.json();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(data.contents, 'text/xml');
+
+    const stateCode = xml.querySelector('stateMessage')?.textContent?.trim() || '';
+    const inGameInfo = xml.querySelector('inGameInfo gameExtraInfo')?.textContent?.trim();
+    const onlineState = xml.querySelector('onlineState')?.textContent?.trim();
+    const avatarMed = xml.querySelector('avatarMedium')?.textContent?.trim();
+
+    // Cập nhật avatar nếu có
+    if (avatarMed && steamPage.avatar) {
+      steamPage.avatar.src = avatarMed.replace('_medium', '_full');
+    }
+
+    // Cập nhật trạng thái
+    let statusText = 'Offline';
+    let dotClass = 'offline';
+
+    if (onlineState === 'in-game' && inGameInfo) {
+      statusText = 'In-Game';
+      dotClass = 'ingame';
+      if (steamPage.playing) steamPage.playing.textContent = `🎮 ${inGameInfo}`;
+    } else if (onlineState === 'online') {
+      statusText = 'Online';
+      dotClass = 'online';
+      if (steamPage.playing) steamPage.playing.textContent = 'Đang online trên Steam';
+    } else {
+      statusText = 'Offline';
+      dotClass = 'offline';
+      if (steamPage.playing) steamPage.playing.textContent = 'Không có hoạt động';
+    }
+
+    if (steamPage.statusLabel) steamPage.statusLabel.textContent = statusText;
+    if (steamPage.statusDot) steamPage.statusDot.className = `steam-status-dot ${dotClass}`;
+    if (steamPage.updated) steamPage.updated.textContent = formatSteamTime();
+
+  } catch {
+    if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'Không thể tải';
+    if (steamPage.statusDot) steamPage.statusDot.className = 'steam-status-dot offline';
+    if (steamPage.playing) steamPage.playing.textContent = 'Không thể kiểm tra trạng thái';
+  }
+}
+
+function showSteamPage() {
+  showInnerPage(steamPage.page, () => {
+    initSteamPage();
+  });
+}
+
+function hideSteamPage() {
+  hideInnerPage(steamPage.page);
+}
+
+if (steamPage.open) {
+  steamPage.open.addEventListener('click', (e) => { e.preventDefault(); showSteamPage(); });
+}
+if (steamPage.back) {
+  steamPage.back.addEventListener('click', hideSteamPage);
+}
+
+// Auto-refresh Steam status mỗi 60s
+setInterval(() => {
+  if (steamPage.page && !steamPage.page.classList.contains('hidden')) {
+    fetchSteamStatus();
+  }
+}, 60000);
 
 function setText(element, value) {
   if (element) element.textContent = value;
