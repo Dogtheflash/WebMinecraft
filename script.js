@@ -1132,11 +1132,11 @@ const steamPage = {
   gameThumb:   document.getElementById('steam-game-thumb'),
 };
 
-// Thông tin tĩnh không lấy được qua API cơ bản
+// Thông tin tĩnh không lấy được qua API / dùng làm fallback khi Worker không trả về
 const STEAM_STATIC = {
   realName: '🎮 Chinatsu Kamado',
-  level:    '42',
-  friends:  '38 người',
+  level:    '--',
+  friends:  '-- người',
 };
 
 function formatSteamTime() {
@@ -1164,12 +1164,18 @@ function applySteamData(data) {
   if (steamPage.displayName)
     steamPage.displayName.textContent = data.displayName || 'nakarotad';
 
-  // Thông tin tĩnh
+  // Tên thật vẫn là thông tin tĩnh (Steam API không trả về)
   if (steamPage.realName)  steamPage.realName.textContent  = STEAM_STATIC.realName;
-  if (steamPage.level)     steamPage.level.textContent     = STEAM_STATIC.level;
-  if (steamPage.friends)   steamPage.friends.textContent   = STEAM_STATIC.friends;
 
-  // Số game + tổng giờ chơi từ API
+  // Level thật từ GetSteamLevel — fallback về '--' nếu null
+  if (steamPage.level)
+    steamPage.level.textContent = (data.level ?? null) !== null ? `${data.level}` : STEAM_STATIC.level;
+
+  // Số bạn bè thật từ GetFriendList — fallback nếu friendslist private/lỗi
+  if (steamPage.friends)
+    steamPage.friends.textContent = (data.friendsCount ?? null) !== null ? `${data.friendsCount} người` : STEAM_STATIC.friends;
+
+  // Số game + tổng giờ chơi từ API (include_played_free_games=false → khớp số game thật)
   if (steamPage.games)
     steamPage.games.textContent = `${data.totalGames} game`;
   if (steamPage.hours)
