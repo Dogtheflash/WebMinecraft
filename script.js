@@ -603,6 +603,9 @@ function startProfileNameTyping() {
 
 startProfileNameTyping();
 
+// Lưu data Lanyard toàn cục để Steam page dùng
+let lanyardCache = null;
+
 async function fetchDiscordPresence() {
   try {
     const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { cache: 'no-store' });
@@ -610,6 +613,8 @@ async function fetchDiscordPresence() {
     if (!payload.success) throw new Error('Lanyard returned unsuccessful response');
 
     const data = payload.data;
+    lanyardCache = data; // ← lưu cache toàn cục
+
     const user = data.discord_user;
     const status = setStatusClass(data.discord_status);
     const statusLabel = statusLabels[status] || 'Đang offline';
@@ -632,6 +637,11 @@ async function fetchDiscordPresence() {
 
     updateActivityCard(primaryActivity);
     updateMetaFields(data, user);
+
+    // Nếu Steam page đang mở → cập nhật luôn
+    if (steamPage.page && !steamPage.page.classList.contains('hidden')) {
+      updateSteamFromLanyard(data);
+    }
   } catch (error) {
     console.warn('Unable to retrieve Discord presence:', error);
     const status = setStatusClass('offline');
@@ -1119,6 +1129,7 @@ const steamPage = {
   friends: document.getElementById('steam-friends'),
   playing: document.getElementById('steam-playing'),
   updated: document.getElementById('steam-updated'),
+  gameThumb: document.getElementById('steam-game-thumb'),
 };
 
 // ⚙️ CẤU HÌNH STEAM — thông tin tĩnh của bạn
@@ -1144,68 +1155,85 @@ function formatSteamTime() {
   return `Cập nhật ${get('hour')}:${get('minute')}:${get('second')}`;
 }
 
+/* -------------------------------------------------------
+   Cập nhật Steam page từ dữ liệu Lanyard realtime
+   Lanyard tự động lấy activity Steam qua Discord Rich Presence
+   (yêu cầu: Discord đã kết nối Steam và đang chạy Discord)
+   ------------------------------------------------------- */
+function updateSteamFromLanyard(data) {
+  if (!steamPage.page) return;
+
+  // --- Tìm activity Steam (type 0 = Playing, từ Steam game) ---
+  const activities = data.activities || [];
+  const steamActivity = activities.find(a =>
+    a.type === 0 && a.id !== 'spotify:1' && a.application_id
+  );
+
+  // --- Trạng thái online / in-game / offline ---
+  const discordStatus = data.discord_status; // online | idle | dnd | offline
+  let statusText = 'Offline';
+  let dotClass   = 'offline';
+
+  if (steamActivity) {
+    statusText = 'In-Game';
+    dotClass   = 'ingame';
+  } else if (discordStatus === 'online' || discordStatus === 'idle' || discordStatus === 'dnd') {
+    statusText = 'Online';
+    dotClass   = 'online';
+  }
+
+  if (steamPage.statusLabel) steamPage.statusLabel.textContent = statusText;
+  if (steamPage.statusDot)   steamPage.statusDot.className = `steam-status-dot ${dotClass}`;
+
+  // --- Game đang chơi ---
+  if (steamPage.playing) {
+    if (steamActivity) {
+      const gameName    = steamActivity.name || 'Unknown Game';
+      const gameDetail  = steamActivity.details || '';
+      const gameState   = steamActivity.state   || '';
+      const elapsed     = getElapsedText(steamActivity.timestamps);
+      steamPage.playing.innerHTML =
+        `🎮 <strong style="color:#fff">${gameName}</strong>` +
+        (gameDetail ? `<br><span style="font-size:11px;color:var(--muted)">${gameDetail}${gameState ? ' · ' + gameState : ''}</span>` : '') +
+        (elapsed    ? `<br><span style="font-size:11px;color:var(--cyan)">${elapsed}</span>` : '');
+    } else if (discordStatus !== 'offline') {
+      steamPage.playing.textContent = 'Không có game đang chạy';
+    } else {
+      steamPage.playing.textContent = 'Không có hoạt động';
+    }
+  }
+
+  // --- Ảnh game (nếu có large_image từ Steam CDN) ---
+  if (steamActivity?.assets?.large_image && steamPage.gameThumb) {
+    const appId = steamActivity.application_id;
+    steamPage.gameThumb.src = `https://cdn.discordapp.com/app-assets/${appId}/${steamActivity.assets.large_image}.png`;
+    steamPage.gameThumb.style.display = 'block';
+  } else if (steamPage.gameThumb) {
+    steamPage.gameThumb.style.display = 'none';
+  }
+
+  if (steamPage.updated) steamPage.updated.textContent = formatSteamTime();
+}
+
 function initSteamPage() {
   if (!steamPage.page) return;
 
-  // Hiển thị thông tin từ config
-  if (steamPage.avatar) steamPage.avatar.src = STEAM_CONFIG.avatar;
+  // Thông tin tĩnh từ config
+  if (steamPage.avatar)      steamPage.avatar.src             = STEAM_CONFIG.avatar;
   if (steamPage.displayName) steamPage.displayName.textContent = STEAM_CONFIG.displayName;
-  if (steamPage.realName) steamPage.realName.textContent = STEAM_CONFIG.realName;
-  if (steamPage.hours) steamPage.hours.textContent = STEAM_CONFIG.hours;
-  if (steamPage.games) steamPage.games.textContent = STEAM_CONFIG.games;
-  if (steamPage.level) steamPage.level.textContent = STEAM_CONFIG.level;
-  if (steamPage.friends) steamPage.friends.textContent = STEAM_CONFIG.friends;
-  if (steamPage.updated) steamPage.updated.textContent = formatSteamTime();
+  if (steamPage.realName)    steamPage.realName.textContent    = STEAM_CONFIG.realName;
+  if (steamPage.hours)       steamPage.hours.textContent       = STEAM_CONFIG.hours;
+  if (steamPage.games)       steamPage.games.textContent       = STEAM_CONFIG.games;
+  if (steamPage.level)       steamPage.level.textContent       = STEAM_CONFIG.level;
+  if (steamPage.friends)     steamPage.friends.textContent     = STEAM_CONFIG.friends;
+  if (steamPage.updated)     steamPage.updated.textContent     = formatSteamTime();
 
-  // Thử lấy trạng thái online qua Steam profile XML
-  fetchSteamStatus();
-}
-
-async function fetchSteamStatus() {
-  // Steam community XML feed (không cần API key, public)
-  const xmlUrl = `https://steamcommunity.com/id/${STEAM_CONFIG.steamId}/?xml=1`;
-  try {
-    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(xmlUrl)}`);
-    const data = await res.json();
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(data.contents, 'text/xml');
-
-    const stateCode = xml.querySelector('stateMessage')?.textContent?.trim() || '';
-    const inGameInfo = xml.querySelector('inGameInfo gameExtraInfo')?.textContent?.trim();
-    const onlineState = xml.querySelector('onlineState')?.textContent?.trim();
-    const avatarMed = xml.querySelector('avatarMedium')?.textContent?.trim();
-
-    // Cập nhật avatar nếu có
-    if (avatarMed && steamPage.avatar) {
-      steamPage.avatar.src = avatarMed.replace('_medium', '_full');
-    }
-
-    // Cập nhật trạng thái
-    let statusText = 'Offline';
-    let dotClass = 'offline';
-
-    if (onlineState === 'in-game' && inGameInfo) {
-      statusText = 'In-Game';
-      dotClass = 'ingame';
-      if (steamPage.playing) steamPage.playing.textContent = `🎮 ${inGameInfo}`;
-    } else if (onlineState === 'online') {
-      statusText = 'Online';
-      dotClass = 'online';
-      if (steamPage.playing) steamPage.playing.textContent = 'Đang online trên Steam';
-    } else {
-      statusText = 'Offline';
-      dotClass = 'offline';
-      if (steamPage.playing) steamPage.playing.textContent = 'Không có hoạt động';
-    }
-
-    if (steamPage.statusLabel) steamPage.statusLabel.textContent = statusText;
-    if (steamPage.statusDot) steamPage.statusDot.className = `steam-status-dot ${dotClass}`;
-    if (steamPage.updated) steamPage.updated.textContent = formatSteamTime();
-
-  } catch {
-    if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'Không thể tải';
-    if (steamPage.statusDot) steamPage.statusDot.className = 'steam-status-dot offline';
-    if (steamPage.playing) steamPage.playing.textContent = 'Không thể kiểm tra trạng thái';
+  // Dùng cache Lanyard nếu đã có, không thì chờ fetch tiếp theo
+  if (lanyardCache) {
+    updateSteamFromLanyard(lanyardCache);
+  } else {
+    if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'Đang tải...';
+    if (steamPage.playing)     steamPage.playing.textContent     = 'Đang kết nối...';
   }
 }
 
@@ -1226,12 +1254,7 @@ if (steamPage.back) {
   steamPage.back.addEventListener('click', hideSteamPage);
 }
 
-// Auto-refresh Steam status mỗi 60s
-setInterval(() => {
-  if (steamPage.page && !steamPage.page.classList.contains('hidden')) {
-    fetchSteamStatus();
-  }
-}, 60000);
+// Steam page tự cập nhật qua fetchDiscordPresence mỗi 6s — không cần interval riêng
 
 function setText(element, value) {
   if (element) element.textContent = value;
