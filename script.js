@@ -613,7 +613,7 @@ async function fetchDiscordPresence() {
     if (!payload.success) throw new Error('Lanyard returned unsuccessful response');
 
     const data = payload.data;
-    lanyardCache = data; // ← lưu cache toàn cục
+    lanyardCache = data;
 
     const user = data.discord_user;
     const status = setStatusClass(data.discord_status);
@@ -638,9 +638,9 @@ async function fetchDiscordPresence() {
     updateActivityCard(primaryActivity);
     updateMetaFields(data, user);
 
-    // Nếu Steam page đang mở → cập nhật luôn
+    // Nếu Steam page đang mở → cập nhật game từ Lanyard (fallback)
     if (steamPage.page && !steamPage.page.classList.contains('hidden')) {
-      updateSteamFromLanyard(data);
+      applySteamLanyardFallback(data);
     }
   } catch (error) {
     console.warn('Unable to retrieve Discord presence:', error);
@@ -1027,9 +1027,9 @@ const minecraftPage = {
 
 // ⚙️ CẤU HÌNH SERVER — chỉnh sửa tại đây
 const MC_CONFIG = {
-  ip: 'play.example.com',          // IP hoặc domain server
-  port: 25565,                      // Port (mặc định 25565)
-  discordInvite: 'https://discord.gg/', // Link invite Discord
+  ip: 'play.example.com',
+  port: 25565,
+  discordInvite: 'https://discord.gg/',
   botName: 'Chinatsu SMP',
   botDesc: '🌿 Server Minecraft sinh tồn · Vanilla SMP',
   version: '1.21.x',
@@ -1048,8 +1048,6 @@ async function fetchMinecraftStatus() {
   if (!minecraftPage.page) return;
   const ip = MC_CONFIG.ip;
   const port = MC_CONFIG.port;
-
-  // Dùng mcsrvstat.us API (public, không cần key)
   const apiUrl = `https://api.mcsrvstat.us/3/${ip}${port !== 25565 ? ':' + port : ''}`;
 
   try {
@@ -1104,7 +1102,6 @@ if (minecraftPage.back) {
   minecraftPage.back.addEventListener('click', hideMinecraftPage);
 }
 
-// Auto-refresh mỗi 30s khi page đang mở
 setInterval(() => {
   if (minecraftPage.page && !minecraftPage.page.classList.contains('hidden')) {
     fetchMinecraftStatus();
@@ -1112,38 +1109,34 @@ setInterval(() => {
 }, 30000);
 
 /* ============================================================
-   STEAM PROFILE PAGE
+   STEAM PROFILE PAGE — Real Steam API via Cloudflare Worker
+   Worker URL: https://steam-proxy.bbtu223344.workers.dev/
    ============================================================ */
+const STEAM_WORKER_URL = 'https://steam-proxy.bbtu223344.workers.dev/';
+
 const steamPage = {
-  page: document.getElementById('steam-page'),
-  back: document.getElementById('steam-back'),
-  open: document.getElementById('page-two-link'),
-  avatar: document.getElementById('steam-avatar'),
-  statusDot: document.getElementById('steam-status-dot'),
+  page:        document.getElementById('steam-page'),
+  back:        document.getElementById('steam-back'),
+  open:        document.getElementById('page-two-link'),
+  avatar:      document.getElementById('steam-avatar'),
+  statusDot:   document.getElementById('steam-status-dot'),
   statusLabel: document.getElementById('steam-status-label'),
   displayName: document.getElementById('steam-display-name'),
-  realName: document.getElementById('steam-real-name'),
-  hours: document.getElementById('steam-hours'),
-  games: document.getElementById('steam-games'),
-  level: document.getElementById('steam-level'),
-  friends: document.getElementById('steam-friends'),
-  playing: document.getElementById('steam-playing'),
-  updated: document.getElementById('steam-updated'),
-  gameThumb: document.getElementById('steam-game-thumb'),
+  realName:    document.getElementById('steam-real-name'),
+  hours:       document.getElementById('steam-hours'),
+  games:       document.getElementById('steam-games'),
+  level:       document.getElementById('steam-level'),
+  friends:     document.getElementById('steam-friends'),
+  playing:     document.getElementById('steam-playing'),
+  updated:     document.getElementById('steam-updated'),
+  gameThumb:   document.getElementById('steam-game-thumb'),
 };
 
-// ⚙️ CẤU HÌNH STEAM — thông tin tĩnh của bạn
-const STEAM_CONFIG = {
-  profileUrl: 'https://steamcommunity.com/id/nakarotad/',
-  steamId: 'nakarotad',
-  displayName: 'nakarotad',
+// Thông tin tĩnh không lấy được qua API cơ bản
+const STEAM_STATIC = {
   realName: '🎮 Chinatsu Kamado',
-  avatar: 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg',
-  // Thông tin tĩnh (Steam API cần key riêng, không thể gọi trực tiếp từ browser)
-  hours: '1,240 giờ',
-  games: '87 game',
-  level: '42',
-  friends: '38 người',
+  level:    '42',
+  friends:  '38 người',
 };
 
 function formatSteamTime() {
@@ -1155,92 +1148,143 @@ function formatSteamTime() {
   return `Cập nhật ${get('hour')}:${get('minute')}:${get('second')}`;
 }
 
-/* -------------------------------------------------------
-   Cập nhật Steam page từ dữ liệu Lanyard realtime
-   Lanyard tự động lấy activity Steam qua Discord Rich Presence
-   (yêu cầu: Discord đã kết nối Steam và đang chạy Discord)
-   ------------------------------------------------------- */
-function updateSteamFromLanyard(data) {
-  if (!steamPage.page) return;
+async function fetchSteamData() {
+  const res  = await fetch(STEAM_WORKER_URL, { cache: 'no-store' });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
 
-  // --- Tìm activity Steam (type 0 = Playing, từ Steam game) ---
-  const activities = data.activities || [];
-  const steamActivity = activities.find(a =>
-    a.type === 0 && a.id !== 'spotify:1' && a.application_id
-  );
+function applySteamData(data) {
+  // Avatar thật từ Steam
+  if (steamPage.avatar && data.avatar)
+    steamPage.avatar.src = data.avatar;
 
-  // --- Trạng thái online / in-game / offline ---
-  const discordStatus = data.discord_status; // online | idle | dnd | offline
-  let statusText = 'Offline';
+  // Tên hiển thị từ Steam
+  if (steamPage.displayName)
+    steamPage.displayName.textContent = data.displayName || 'nakarotad';
+
+  // Thông tin tĩnh
+  if (steamPage.realName)  steamPage.realName.textContent  = STEAM_STATIC.realName;
+  if (steamPage.level)     steamPage.level.textContent     = STEAM_STATIC.level;
+  if (steamPage.friends)   steamPage.friends.textContent   = STEAM_STATIC.friends;
+
+  // Số game + tổng giờ chơi từ API
+  if (steamPage.games)
+    steamPage.games.textContent = `${data.totalGames} game`;
+  if (steamPage.hours)
+    steamPage.hours.textContent = `${data.totalHours.toLocaleString()} giờ`;
+
+  // Trạng thái online / in-game / offline
+  const isIngame = Boolean(data.currentGame);
+  const isOnline = data.statusCode > 0;
   let dotClass   = 'offline';
+  let statusText = 'Offline';
+  if (isIngame)      { dotClass = 'ingame'; statusText = 'In-Game'; }
+  else if (isOnline) { dotClass = 'online'; statusText = data.status || 'Online'; }
 
-  if (steamActivity) {
-    statusText = 'In-Game';
-    dotClass   = 'ingame';
-  } else if (discordStatus === 'online' || discordStatus === 'idle' || discordStatus === 'dnd') {
-    statusText = 'Online';
-    dotClass   = 'online';
-  }
-
+  if (steamPage.statusDot)   steamPage.statusDot.className    = `steam-status-dot ${dotClass}`;
   if (steamPage.statusLabel) steamPage.statusLabel.textContent = statusText;
-  if (steamPage.statusDot)   steamPage.statusDot.className = `steam-status-dot ${dotClass}`;
 
-  // --- Game đang chơi ---
+  // Game đang chơi
   if (steamPage.playing) {
-    if (steamActivity) {
-      const gameName    = steamActivity.name || 'Unknown Game';
-      const gameDetail  = steamActivity.details || '';
-      const gameState   = steamActivity.state   || '';
-      const elapsed     = getElapsedText(steamActivity.timestamps);
+    if (isIngame) {
       steamPage.playing.innerHTML =
-        `🎮 <strong style="color:#fff">${gameName}</strong>` +
-        (gameDetail ? `<br><span style="font-size:11px;color:var(--muted)">${gameDetail}${gameState ? ' · ' + gameState : ''}</span>` : '') +
-        (elapsed    ? `<br><span style="font-size:11px;color:var(--cyan)">${elapsed}</span>` : '');
-    } else if (discordStatus !== 'offline') {
-      steamPage.playing.textContent = 'Không có game đang chạy';
+        `🎮 <strong style="color:#fff">${data.currentGame}</strong>`;
     } else {
-      steamPage.playing.textContent = 'Không có hoạt động';
+      steamPage.playing.textContent = 'Không có game đang chạy';
     }
   }
 
-  // --- Ảnh game (nếu có large_image từ Steam CDN) ---
-  if (steamActivity?.assets?.large_image && steamPage.gameThumb) {
-    const appId = steamActivity.application_id;
-    steamPage.gameThumb.src = `https://cdn.discordapp.com/app-assets/${appId}/${steamActivity.assets.large_image}.png`;
-    steamPage.gameThumb.style.display = 'block';
-  } else if (steamPage.gameThumb) {
-    steamPage.gameThumb.style.display = 'none';
+  // Thumbnail game đang chơi
+  if (steamPage.gameThumb) {
+    if (isIngame && data.currentGameThumb) {
+      steamPage.gameThumb.src = data.currentGameThumb;
+      steamPage.gameThumb.style.display = 'block';
+    } else {
+      steamPage.gameThumb.style.display = 'none';
+    }
+  }
+
+  // Top 3 game nhiều giờ nhất → cập nhật feature cards
+  if (data.topGames?.length) {
+    data.topGames.forEach((game, i) => {
+      const card = document.getElementById(`steam-game-${i + 1}`);
+      if (!card) return;
+      const title = card.querySelector('.mc-feature-title');
+      const desc  = card.querySelector('.mc-feature-desc');
+      if (title) title.textContent = game.name;
+      if (desc)  desc.textContent  = `${game.hours.toLocaleString()} giờ chơi`;
+    });
   }
 
   if (steamPage.updated) steamPage.updated.textContent = formatSteamTime();
 }
 
-function initSteamPage() {
+/* Fallback: nếu Steam API lỗi, dùng Lanyard để lấy game đang chơi qua Discord Rich Presence */
+function applySteamLanyardFallback(data) {
+  if (!steamPage.page) return;
+  const activities = data.activities || [];
+  const steamActivity = activities.find(a =>
+    a.type === 0 && a.id !== 'spotify:1' && a.application_id
+  );
+  if (!steamActivity) return;
+
+  // Chỉ cập nhật phần "đang chơi" nếu Lanyard phát hiện game Steam
+  const gameName   = steamActivity.name || 'Unknown Game';
+  const gameDetail = steamActivity.details || '';
+  const gameState  = steamActivity.state   || '';
+  const elapsed    = getElapsedText(steamActivity.timestamps);
+
+  if (steamPage.statusDot)   steamPage.statusDot.className    = 'steam-status-dot ingame';
+  if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'In-Game';
+
+  if (steamPage.playing) {
+    steamPage.playing.innerHTML =
+      `🎮 <strong style="color:#fff">${gameName}</strong>` +
+      (gameDetail ? `<br><span style="font-size:11px;color:var(--muted)">${gameDetail}${gameState ? ' · ' + gameState : ''}</span>` : '') +
+      (elapsed    ? `<br><span style="font-size:11px;color:var(--cyan)">${elapsed}</span>` : '');
+  }
+
+  if (steamActivity?.assets?.large_image && steamPage.gameThumb) {
+    const appId = steamActivity.application_id;
+    steamPage.gameThumb.src = `https://cdn.discordapp.com/app-assets/${appId}/${steamActivity.assets.large_image}.png`;
+    steamPage.gameThumb.style.display = 'block';
+  }
+
+  if (steamPage.updated) steamPage.updated.textContent = formatSteamTime();
+}
+
+async function initSteamPage() {
   if (!steamPage.page) return;
 
-  // Thông tin tĩnh từ config
-  if (steamPage.avatar)      steamPage.avatar.src             = STEAM_CONFIG.avatar;
-  if (steamPage.displayName) steamPage.displayName.textContent = STEAM_CONFIG.displayName;
-  if (steamPage.realName)    steamPage.realName.textContent    = STEAM_CONFIG.realName;
-  if (steamPage.hours)       steamPage.hours.textContent       = STEAM_CONFIG.hours;
-  if (steamPage.games)       steamPage.games.textContent       = STEAM_CONFIG.games;
-  if (steamPage.level)       steamPage.level.textContent       = STEAM_CONFIG.level;
-  if (steamPage.friends)     steamPage.friends.textContent     = STEAM_CONFIG.friends;
-  if (steamPage.updated)     steamPage.updated.textContent     = formatSteamTime();
+  // Hiện loading ngay
+  if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'Đang tải...';
+  if (steamPage.playing)     steamPage.playing.textContent     = 'Đang kết nối Steam...';
+  if (steamPage.realName)    steamPage.realName.textContent    = STEAM_STATIC.realName;
+  if (steamPage.level)       steamPage.level.textContent       = STEAM_STATIC.level;
+  if (steamPage.friends)     steamPage.friends.textContent     = STEAM_STATIC.friends;
 
-  // Dùng cache Lanyard nếu đã có, không thì chờ fetch tiếp theo
-  if (lanyardCache) {
-    updateSteamFromLanyard(lanyardCache);
-  } else {
-    if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'Đang tải...';
-    if (steamPage.playing)     steamPage.playing.textContent     = 'Đang kết nối...';
+  try {
+    const data = await fetchSteamData();
+    applySteamData(data);
+
+    // Sau khi có data Steam, nếu Lanyard biết đang chơi game thì overlay thêm chi tiết
+    if (lanyardCache) applySteamLanyardFallback(lanyardCache);
+  } catch (err) {
+    console.warn('Steam Worker fetch error:', err);
+
+    // Fallback hoàn toàn sang Lanyard nếu Worker lỗi
+    if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'Lỗi kết nối Steam API';
+    if (steamPage.playing)     steamPage.playing.textContent     = 'Đang dùng dữ liệu Discord...';
+    if (steamPage.updated)     steamPage.updated.textContent     = formatSteamTime();
+
+    if (lanyardCache) applySteamLanyardFallback(lanyardCache);
   }
 }
 
 function showSteamPage() {
-  showInnerPage(steamPage.page, () => {
-    initSteamPage();
-  }, true);
+  showInnerPage(steamPage.page, () => { initSteamPage(); }, true);
 }
 
 function hideSteamPage() {
@@ -1254,7 +1298,21 @@ if (steamPage.back) {
   steamPage.back.addEventListener('click', hideSteamPage);
 }
 
-// Steam page tự cập nhật qua fetchDiscordPresence mỗi 6s — không cần interval riêng
+// Auto-refresh Steam mỗi 30s khi page đang mở
+setInterval(() => {
+  if (steamPage.page && !steamPage.page.classList.contains('hidden')) {
+    fetchSteamData().then(data => {
+      applySteamData(data);
+      if (lanyardCache) applySteamLanyardFallback(lanyardCache);
+    }).catch(() => {
+      if (lanyardCache) applySteamLanyardFallback(lanyardCache);
+    });
+  }
+}, 30000);
+
+/* ============================================================
+   END STEAM PROFILE PAGE
+   ============================================================ */
 
 function setText(element, value) {
   if (element) element.textContent = value;
