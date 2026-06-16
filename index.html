@@ -306,9 +306,13 @@
               <span class="mc-stat-label">BẠN BÈ</span>
               <strong class="mc-stat-value" id="steam-friends">-- người</strong>
             </div>
-            <div class="mc-stat-card wide">
-              <span class="mc-stat-label">ĐANG CHƠI</span>
-              <strong class="mc-stat-value" id="steam-playing">Không có thông tin</strong>
+            <div class="mc-stat-card wide" style="display:flex;align-items:center;gap:14px;">
+              <img id="steam-game-thumb" src="" alt="Game thumbnail"
+                style="display:none;width:72px;height:40px;object-fit:cover;border-radius:6px;flex:0 0 auto;border:1px solid rgba(255,255,255,.12);" />
+              <div style="min-width:0;flex:1;">
+                <span class="mc-stat-label">ĐANG CHƠI</span>
+                <strong class="mc-stat-value" id="steam-playing">Đang kết nối...</strong>
+              </div>
             </div>
             <div class="mc-stat-card wide">
               <span class="mc-stat-label">STEAM ID</span>
