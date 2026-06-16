@@ -46,15 +46,38 @@ body {
   font-family: 'Consolas', 'Courier New', monospace;
 }
 
-.terminal-window {
-  background-color: #0d1117;
-  border: 1px solid #30363d;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 900px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-  overflow: hidden;
+/* ============================================================
+   PHẦN CHỈNH SỬA: Thay thế ảnh nền bằng style chuẩn Linux
+   ============================================================ */
+.cmd-window { 
+  width: min(760px, 94vw); 
+  overflow: hidden; 
+  border-radius: 10px; 
+  border: 1px solid rgba(255,255,255,.16); 
+  background: #121212; /* Nền xám đen chuẩn Terminal */
+  box-shadow: 0 26px 90px rgba(0,0,0,.58); 
+  position: relative; 
 }
+
+/* Hiệu ứng thở (pulse glow) nhẹ ở nền Terminal */
+.cmd-window::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+  animation: terminalPulse 8s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes terminalPulse {
+  0% { transform: scale(0.8); opacity: 0.4; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+/* ============================================================ */
 
 .terminal-header {
   background-color: #161b22;
@@ -111,96 +134,10 @@ body.wide-page-active .color-page {
 .screen.active { display: grid; animation: screenIn .55s ease both; }
 .glass-panel { background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.08); backdrop-filter: blur(22px) saturate(130%); }
 
-/* ============================================================
-   CMD WINDOW — Linux terminal background (thay thế ảnh cũ)
-   ============================================================ */
-.cmd-window {
-  width: min(760px, 94vw);
-  overflow: hidden;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,.16);
-  box-shadow: 0 26px 90px rgba(0,0,0,.58);
-  position: relative;
-
-  /* Nền terminal Linux: màu đen sâu + gradient xanh lá mờ ở góc */
-  background-color: #0c0f0c;
-  background-image:
-    /* Viền phát sáng xanh lá ở góc trên trái — giống glow terminal */
-    radial-gradient(ellipse 55% 35% at 8% 6%, rgba(0, 255, 100, 0.07) 0%, transparent 70%),
-    /* Glow mờ ở góc dưới phải */
-    radial-gradient(ellipse 40% 30% at 92% 94%, rgba(0, 200, 80, 0.05) 0%, transparent 65%),
-    /* Scanline ngang — đặc trưng Linux terminal chuẩn */
-    repeating-linear-gradient(
-      0deg,
-      transparent 0px,
-      transparent 3px,
-      rgba(0, 255, 80, 0.018) 3px,
-      rgba(0, 255, 80, 0.018) 4px
-    );
-  animation: terminalBgPulse 6s ease-in-out infinite;
-}
-
-/* Lớp overlay animated bên trong .cmd-window — thêm hiệu ứng flicker nhẹ */
-.cmd-window::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  /* Dải sáng quét nhẹ từ trên xuống — giống CRT refresh */
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(0, 255, 80, 0.025) 48%,
-    transparent 52%,
-    transparent 100%
-  );
-  background-size: 100% 200%;
-  animation: terminalSweep 8s linear infinite;
-  mix-blend-mode: screen;
-}
-
-/* Lớp vignette viền tối — tạo chiều sâu như màn CRT */
-.cmd-window::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  background: radial-gradient(
-    ellipse 90% 85% at 50% 50%,
-    transparent 55%,
-    rgba(0, 0, 0, 0.38) 100%
-  );
-}
-
-/* Đảm bảo các phần tử con nằm trên lớp pseudo */
-.cmd-titlebar,
-.cmd-body {
-  position: relative;
-  z-index: 1;
-}
-
-@keyframes terminalBgPulse {
-  0%, 100% { background-color: #0c0f0c; }
-  50%       { background-color: #0d110d; }
-}
-
-@keyframes terminalSweep {
-  0%   { background-position: 0% 0%; }
-  100% { background-position: 0% 200%; }
-}
-
-/* ============================================================
-   END CMD WINDOW background
-   ============================================================ */
-
-.cmd-titlebar { height: 34px; display: flex; align-items: center; justify-content: flex-start; background: #1a1d1a; border-bottom: 1px solid rgba(0,255,80,.10); user-select: none; }
+.cmd-titlebar { height: 34px; display: flex; align-items: center; justify-content: flex-start; background: #1f1f1f; border-bottom: 1px solid rgba(255,255,255,.08); user-select: none; position: relative; z-index: 2; }
 .cmd-tabs { display: flex; align-items: center; height: 100%; min-width: 0; flex:0 1 auto; overflow:hidden; }
-.cmd-tab { height: 100%; min-width:132px; max-width:210px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 0 12px 0 16px; color: #cfcfcf; font: 600 12px "Segoe UI", system-ui, sans-serif; background: #161916; border:0; border-right: 1px solid rgba(255,255,255,.08); }
-.cmd-tab.active-tab { color:#fff; background:#0c0f0c; }
+.cmd-tab { height: 100%; min-width:132px; max-width:210px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 0 12px 0 16px; color: #cfcfcf; font: 600 12px "Segoe UI", system-ui, sans-serif; background: #171717; border:0; border-right: 1px solid rgba(255,255,255,.08); }
+.cmd-tab.active-tab { color:#fff; background:#0c0c0c; }
 .cmd-tab-title { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 .cmd-tab-close { opacity:.55; font-size:14px; line-height:1; }
 .cmd-tab:hover .cmd-tab-close { opacity:1; }
@@ -228,17 +165,17 @@ body.wide-page-active .color-page {
 .cmd-controls span:nth-child(3) { background-color: #27c93f !important; }
 
 .cmd-controls span:hover { filter: brightness(0.8); }
-.cmd-body { min-height: 380px; padding: 18px 20px 20px; color: #f2f2f2; font: 500 clamp(12px, 2vw, 15px) Consolas, "Cascadia Mono", "JetBrains Mono", monospace; line-height: 1.48; }
+.cmd-body { min-height: 380px; padding: 18px 20px 20px; color: #f2f2f2; font: 500 clamp(12px, 2vw, 15px) Consolas, "Cascadia Mono", "JetBrains Mono", monospace; line-height: 1.48; position: relative; z-index: 2;}
 .cmd-plus:hover { background:#2b2b2b; }
-.cmd-log { white-space:pre-wrap; min-height:270px; color:#c8f0c0; text-shadow: 0 0 6px rgba(0,255,80,.25); }
-.cmd-prompt-line { display:flex; align-items:center; gap:0; color:#c8f0c0; margin:0; }
-.cmd-prompt-line span { flex:0 0 auto; color:#5fff8a; text-shadow: 0 0 8px rgba(0,255,80,.35); }
-.cmd-prompt-line input { flex:1; min-width:0; border:0; outline:0; background:transparent; color:#c8f0c0; font:inherit; caret-color:#5fff8a; padding:0 0 0 6px; }
+.cmd-log { white-space:pre-wrap; min-height:270px; color:#f2f2f2; }
+.cmd-prompt-line { display:flex; align-items:center; gap:0; color:#f2f2f2; margin:0; }
+.cmd-prompt-line span { flex:0 0 auto; }
+.cmd-prompt-line input { flex:1; min-width:0; border:0; outline:0; background:transparent; color:#f2f2f2; font:inherit; caret-color:#f2f2f2; padding:0 0 0 6px; }
 .cmd-body p { margin: 0; }
 #typewriter-output.hidden, .cmd-continue.hidden, .cmd-prompt-line.hidden { display:none; }
-.cmd-log.typing::after { content: "█"; margin-left: 2px; color: #5fff8a; text-shadow: 0 0 10px rgba(0,255,80,.8); animation: blink 1s steps(1) infinite; }
-.cmd-continue { margin-top: 18px; width: 100%; padding: 12px 14px; cursor: pointer; color: #c8f0c0; border: 1px solid rgba(0,255,80,.22); border-radius: 6px; background: rgba(0,40,10,.6); transition: .2s ease; text-shadow: 0 0 6px rgba(0,255,80,.3); }
-.cmd-continue:hover { background: rgba(0,60,16,.75); border-color: rgba(0,255,80,.45); box-shadow: 0 0 14px rgba(0,255,80,.12); }
+.cmd-log.typing::after { content: "█"; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+.cmd-continue { margin-top: 18px; width: 100%; padding: 12px 14px; cursor: pointer; color: #fff; border: 1px solid rgba(255,255,255,.18); border-radius: 6px; background: #1b1b1b; transition: .2s ease; }
+.cmd-continue:hover { background: #252525; border-color: rgba(255,255,255,.32); }
 
 .profile-console { width: min(560px, 94vw); overflow: hidden; border-radius: 16px; transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(-4px); transform-style:preserve-3d; position:relative; border:0; transition:transform .16s ease, box-shadow .24s ease; will-change:transform; }
 .profile-console.interactive-hover { box-shadow: var(--shadow), 0 0 42px rgba(88,101,242,.16), inset 0 1px 0 rgba(255,255,255,.1); }
