@@ -97,6 +97,15 @@ body.color-page-active .screen { padding-bottom:30px; align-items:start; }
 body.color-page-active .profile-screen { padding-top:34px; }
 body.color-page-active .profile-console { margin-top:0; }
 
+/* Chế độ wide khi mở Steam / Minecraft page */
+body.wide-page-active .profile-console {
+  width: min(860px, 94vw) !important;
+  transition: width .45s cubic-bezier(.16,1,.3,1), transform .16s ease, box-shadow .24s ease;
+}
+body.wide-page-active .color-page {
+  min-height: 520px;
+}
+
 .screen { min-height: 100vh; width: 100%; display: none; place-items: center; padding: 30px 16px 138px; }
 .terminal-screen { padding-bottom: 30px; overscroll-behavior:none; touch-action:none; }
 .screen.active { display: grid; animation: screenIn .55s ease both; }
@@ -560,11 +569,155 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   line-height: 1.55;
 }
 
+/* Stats grid — wide mode dùng 4 cột */
+body.wide-page-active .mc-stats-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+body.wide-page-active .mc-stats-grid .mc-stat-card.wide {
+  grid-column: span 2;
+}
+body.wide-page-active .mc-feature-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+body.wide-page-active .mc-bot-card {
+  padding: 18px 20px;
+}
+body.wide-page-active .mc-bot-name,
+body.wide-page-active .steam-display-name {
+  font-size: 22px;
+}
+body.wide-page-active .steam-avatar-wrap,
+body.wide-page-active .steam-avatar-wrap img {
+  width: 72px;
+  height: 72px;
+}
+body.wide-page-active .mc-bot-avatar img {
+  width: 68px;
+  height: 68px;
+}
+body.wide-page-active .mc-bot-avatar {
+  width: 68px;
+  height: 68px;
+}
+
 @media (max-width: 420px) {
   .mc-stats-grid { grid-template-columns: 1fr 1fr; }
   .mc-feature-grid { grid-template-columns: 1fr; }
   .mc-feature-card { padding: 11px; }
   .mc-bot-name { font-size: 15px; }
+}
+
+/* ============================================================
+   STEAM PROFILE PAGE
+   ============================================================ */
+.steam-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  background: rgba(255,255,255,.04);
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.steam-profile-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(23,126,212,.1), rgba(27,40,56,.06));
+  pointer-events: none;
+}
+.steam-avatar-wrap {
+  position: relative;
+  flex: 0 0 auto;
+  width: 60px;
+  height: 60px;
+}
+.steam-avatar-wrap img {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 2px solid rgba(23,126,212,.5);
+  box-shadow: 0 0 16px rgba(23,126,212,.25);
+}
+.steam-status-dot {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid rgba(15,18,32,.98);
+  background: #80848e;
+}
+.steam-status-dot.online  { background: #57cbde; box-shadow: 0 0 10px rgba(87,203,222,.6); }
+.steam-status-dot.ingame  { background: #90ba3c; box-shadow: 0 0 10px rgba(144,186,60,.6); }
+.steam-status-dot.offline { background: #4a5568; }
+
+.steam-profile-info { min-width: 0; }
+.steam-platform-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: #57cbde;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.steam-display-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.02em;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.steam-real-name {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Steam visit button — màu Steam xanh dương */
+.steam-visit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font: 700 13px 'JetBrains Mono', monospace;
+  background: linear-gradient(135deg, #1b82d6, #1565a8);
+  color: #fff;
+  border: 1px solid rgba(23,126,212,.5);
+  text-decoration: none;
+  transition: .22s ease;
+  box-shadow: 0 4px 18px rgba(23,126,212,.3);
+  flex: 0 0 auto;
+}
+.steam-visit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(23,126,212,.5);
+  background: linear-gradient(135deg, #2196f3, #1b82d6);
+  color: #fff;
+  border-color: rgba(23,126,212,.8);
+}
+
+.steam-game-card:hover {
+  border-color: rgba(23,126,212,.35) !important;
+  background: rgba(23,126,212,.07) !important;
+}
+.steam-game-card .mc-feature-num { color: #57cbde; }
+
+@media (max-width: 420px) {
+  .steam-avatar-wrap { width: 50px; height: 50px; }
+  .steam-avatar-wrap img { width: 50px; height: 50px; }
+  .steam-display-name { font-size: 15px; }
 }
 
 /* ============================================================
