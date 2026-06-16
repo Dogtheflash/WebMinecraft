@@ -1083,14 +1083,29 @@ async function fetchMinecraftStatus() {
   const botDescEl = document.getElementById('mc-bot-desc');
   if (botDescEl) botDescEl.textContent = MC_CONFIG.botDesc;
 
-  // ← MỚI: Gắn nút copy IP vào ô địa chỉ server (chỉ gắn 1 lần)
+  // ← Gắn nút copy IP + rainbow text (chỉ gắn 1 lần)
   const ipCard = minecraftPage.ip?.closest('.mc-stat-card');
   if (ipCard && !ipCard.querySelector('.mc-copy-ip-btn')) {
+    // Layout: label trên, hàng dưới gồm [IP rainbow + nút copy]
     ipCard.style.display = 'flex';
-    ipCard.style.alignItems = 'center';
-    ipCard.style.justifyContent = 'space-between';
-    ipCard.style.gap = '10px';
+    ipCard.style.flexDirection = 'column';
+    ipCard.style.gap = '6px';
 
+    // Thêm class rainbow cho chữ IP
+    if (minecraftPage.ip) {
+      minecraftPage.ip.classList.add('mc-ip-rainbow');
+    }
+
+    // Hàng dưới chứa IP + nút copy
+    const bottomRow = document.createElement('div');
+    bottomRow.className = 'mc-ip-bottom-row';
+
+    // Di chuyển phần tử IP vào bottomRow
+    if (minecraftPage.ip) {
+      bottomRow.appendChild(minecraftPage.ip);
+    }
+
+    // Nút copy
     const copyBtn = document.createElement('button');
     copyBtn.className = 'mc-copy-ip-btn';
     copyBtn.title = 'Copy địa chỉ server';
@@ -1105,7 +1120,9 @@ async function fetchMinecraftStatus() {
         }, 1500);
       });
     });
-    ipCard.appendChild(copyBtn);
+
+    bottomRow.appendChild(copyBtn);
+    ipCard.appendChild(bottomRow);
   }
 }
 
@@ -1445,11 +1462,43 @@ if (interactiveCard) {
 }
 
 /* ============================================================
-   CSS NÚT COPY IP — inject vào <style> khi trang load
+   CSS NÚT COPY IP + RAINBOW IP — inject vào <style> khi trang load
    ============================================================ */
 (function injectCopyBtnStyle() {
   const style = document.createElement('style');
   style.textContent = `
+    /* Hàng dưới trong ô địa chỉ: IP bên trái, nút copy bên phải */
+    .mc-ip-bottom-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+    }
+
+    /* Rainbow animation cho chữ IP */
+    .mc-ip-rainbow {
+      background: linear-gradient(
+        90deg,
+        #ff4fd8, #ff6b6b, #ffd93d,
+        #6bcb77, #35e8ff, #5865f2,
+        #ff4fd8
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent !important;
+      animation: rainbowShift 3s linear infinite;
+      font-weight: 800 !important;
+      letter-spacing: .04em;
+    }
+    @keyframes rainbowShift {
+      0%   { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    /* Nút copy */
     .mc-copy-ip-btn {
       flex: 0 0 auto;
       display: inline-flex;
