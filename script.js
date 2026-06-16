@@ -37,7 +37,6 @@
   var iv = setInterval(function () {
     if (done) return;
 
-    /* Tốc độ cao để xong trong ~2s (interval 30ms × ~67 tick) */
     var inc = prog < 50 ? (Math.random() * 5 + 4)
             : prog < 80 ? (Math.random() * 3 + 2.5)
             : prog < 95 ? (Math.random() * 2 + 1)
@@ -71,16 +70,12 @@
       done = true;
       if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
 
-      /* Chờ 400ms → fade overlay → hiện CMD */
       setTimeout(function () {
-        /* Fade overlay đen che loading card */
         if (fadeEl) fadeEl.classList.add('active');
 
         setTimeout(function () {
-          /* Ẩn toàn bộ loading */
           if (overlay) overlay.classList.add('cl-hidden');
 
-          /* Hiện terminal với fade in */
           if (terminal) {
             terminal.style.visibility = 'visible';
             terminal.style.opacity    = '0';
@@ -89,7 +84,6 @@
               requestAnimationFrame(function () {
                 terminal.style.opacity = '1';
 
-                /* ✅ GỌI initCmd SAU KHI terminal hiện ra */
                 if (typeof window.initCmd === 'function') {
                   window.initCmd();
                 }
@@ -271,7 +265,6 @@ function typeIntro() {
   }, 18);
 }
 
-/* ✅ initCmd chỉ được gọi từ loading screen callback ở trên */
 window.initCmd = function () {
   renderCmd();
   typeIntro();
@@ -603,7 +596,6 @@ function startProfileNameTyping() {
 
 startProfileNameTyping();
 
-// Lưu data Lanyard toàn cục để Steam page dùng
 let lanyardCache = null;
 
 async function fetchDiscordPresence() {
@@ -638,7 +630,6 @@ async function fetchDiscordPresence() {
     updateActivityCard(primaryActivity);
     updateMetaFields(data, user);
 
-    // Nếu Steam page đang mở → cập nhật game từ Lanyard (fallback)
     if (steamPage.page && !steamPage.page.classList.contains('hidden')) {
       applySteamLanyardFallback(data);
     }
@@ -806,8 +797,6 @@ volumeSlider.addEventListener('input', () => {
   volumeToggle.textContent = icon;
   scheduleVolumeAutoClose();
 });
-
-// page-one-link (Server Minecraft) — handled by minecraftPage.open listener below
 
 const colorTool = {
   page: document.getElementById('color-page'),
@@ -1027,10 +1016,10 @@ const minecraftPage = {
 
 // ⚙️ CẤU HÌNH SERVER — chỉnh sửa tại đây
 const MC_CONFIG = {
-  ip: 'play.example.com',
+  ip: 'Sv.Minevui.Net',        // ← ĐÃ SỬA: địa chỉ server mới
   port: 25565,
   discordInvite: 'https://discord.gg/',
-  botName: 'Chinatsu SMP',
+  botName: 'Minecraft Skyblock',  // ← ĐÃ SỬA: tên server mới
   botDesc: '🌿 Server Minecraft sinh tồn · Vanilla SMP',
   version: '1.21.x',
 };
@@ -1055,18 +1044,19 @@ async function fetchMinecraftStatus() {
     const data = await res.json();
 
     if (data.online) {
-      if (minecraftPage.ping) minecraftPage.ping.textContent = data.debug?.ping ? `${data.debug.ping}ms` : 'Online';
-      if (minecraftPage.online) minecraftPage.online.textContent = `${data.players?.online ?? 0} người`;
-      if (minecraftPage.max) minecraftPage.max.textContent = `${data.players?.max ?? 0} người`;
+      // Nếu API trả về online, dùng data thật nhưng ưu tiên cấu hình tĩnh
+      if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';       // ← ĐÃ SỬA: cố định 20ms
+      if (minecraftPage.online) minecraftPage.online.textContent = '0 người'; // ← ĐÃ SỬA: cố định 0
+      if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';    // ← ĐÃ SỬA: cố định 1000
       if (minecraftPage.version) minecraftPage.version.textContent = data.version || MC_CONFIG.version;
       if (minecraftPage.statusText) {
         minecraftPage.statusText.textContent = '🟢 Online — Đang hoạt động';
         minecraftPage.statusText.style.color = 'var(--green)';
       }
     } else {
-      if (minecraftPage.ping) minecraftPage.ping.textContent = '--ms';
-      if (minecraftPage.online) minecraftPage.online.textContent = '-- người';
-      if (minecraftPage.max) minecraftPage.max.textContent = '-- người';
+      if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';        // ← ĐÃ SỬA
+      if (minecraftPage.online) minecraftPage.online.textContent = '0 người'; // ← ĐÃ SỬA
+      if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';    // ← ĐÃ SỬA
       if (minecraftPage.version) minecraftPage.version.textContent = MC_CONFIG.version;
       if (minecraftPage.statusText) {
         minecraftPage.statusText.textContent = '🔴 Offline — Server đang tắt';
@@ -1074,6 +1064,9 @@ async function fetchMinecraftStatus() {
       }
     }
   } catch {
+    if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';          // ← ĐÃ SỬA
+    if (minecraftPage.online) minecraftPage.online.textContent = '0 người';   // ← ĐÃ SỬA
+    if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';      // ← ĐÃ SỬA
     if (minecraftPage.statusText) {
       minecraftPage.statusText.textContent = '⚠️ Không thể kiểm tra';
       minecraftPage.statusText.style.color = 'var(--yellow)';
@@ -1083,6 +1076,37 @@ async function fetchMinecraftStatus() {
   if (minecraftPage.ip) minecraftPage.ip.textContent = ip;
   if (minecraftPage.updated) minecraftPage.updated.textContent = formatMcTime();
   if (minecraftPage.joinBtn) minecraftPage.joinBtn.href = MC_CONFIG.discordInvite;
+
+  // Gán tên bot card từ config
+  const botNameEl = document.getElementById('mc-bot-name');
+  if (botNameEl) botNameEl.textContent = MC_CONFIG.botName;
+  const botDescEl = document.getElementById('mc-bot-desc');
+  if (botDescEl) botDescEl.textContent = MC_CONFIG.botDesc;
+
+  // ← MỚI: Gắn nút copy IP vào ô địa chỉ server (chỉ gắn 1 lần)
+  const ipCard = minecraftPage.ip?.closest('.mc-stat-card');
+  if (ipCard && !ipCard.querySelector('.mc-copy-ip-btn')) {
+    ipCard.style.display = 'flex';
+    ipCard.style.alignItems = 'center';
+    ipCard.style.justifyContent = 'space-between';
+    ipCard.style.gap = '10px';
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'mc-copy-ip-btn';
+    copyBtn.title = 'Copy địa chỉ server';
+    copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`;
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(MC_CONFIG.ip).then(() => {
+        copyBtn.innerHTML = `✓`;
+        copyBtn.style.color = 'var(--green)';
+        setTimeout(() => {
+          copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`;
+          copyBtn.style.color = '';
+        }, 1500);
+      });
+    });
+    ipCard.appendChild(copyBtn);
+  }
 }
 
 function showMinecraftPage() {
@@ -1110,7 +1134,6 @@ setInterval(() => {
 
 /* ============================================================
    STEAM PROFILE PAGE — Real Steam API via Cloudflare Worker
-   Worker URL: https://steam-proxy.bbtu223344.workers.dev/
    ============================================================ */
 const STEAM_WORKER_URL = 'https://steam-proxy.bbtu223344.workers.dev/';
 
@@ -1132,7 +1155,6 @@ const steamPage = {
   gameThumb:   document.getElementById('steam-game-thumb'),
 };
 
-// Thông tin tĩnh không lấy được qua API / dùng làm fallback khi Worker không trả về
 const STEAM_STATIC = {
   realName: '🎮 Chinatsu Kamado',
   level:    '--',
@@ -1156,32 +1178,25 @@ async function fetchSteamData() {
 }
 
 function applySteamData(data) {
-  // Avatar thật từ Steam
   if (steamPage.avatar && data.avatar)
     steamPage.avatar.src = data.avatar;
 
-  // Tên hiển thị từ Steam
   if (steamPage.displayName)
     steamPage.displayName.textContent = data.displayName || 'nakarotad';
 
-  // Tên thật vẫn là thông tin tĩnh (Steam API không trả về)
   if (steamPage.realName)  steamPage.realName.textContent  = STEAM_STATIC.realName;
 
-  // Level thật từ GetSteamLevel — fallback về '--' nếu null
   if (steamPage.level)
     steamPage.level.textContent = (data.level ?? null) !== null ? `${data.level}` : STEAM_STATIC.level;
 
-  // Số bạn bè thật từ GetFriendList — fallback nếu friendslist private/lỗi
   if (steamPage.friends)
     steamPage.friends.textContent = (data.friendsCount ?? null) !== null ? `${data.friendsCount} người` : STEAM_STATIC.friends;
 
-  // Số game + tổng giờ chơi từ API (include_played_free_games=false → khớp số game thật)
   if (steamPage.games)
     steamPage.games.textContent = `${data.totalGames} game`;
   if (steamPage.hours)
     steamPage.hours.textContent = `${data.totalHours.toLocaleString()} giờ`;
 
-  // Trạng thái online / in-game / offline
   const isIngame = Boolean(data.currentGame);
   const isOnline = data.statusCode > 0;
   let dotClass   = 'offline';
@@ -1192,7 +1207,6 @@ function applySteamData(data) {
   if (steamPage.statusDot)   steamPage.statusDot.className    = `steam-status-dot ${dotClass}`;
   if (steamPage.statusLabel) steamPage.statusLabel.textContent = statusText;
 
-  // Game đang chơi
   if (steamPage.playing) {
     if (isIngame) {
       steamPage.playing.innerHTML =
@@ -1202,7 +1216,6 @@ function applySteamData(data) {
     }
   }
 
-  // Thumbnail game đang chơi
   if (steamPage.gameThumb) {
     if (isIngame && data.currentGameThumb) {
       steamPage.gameThumb.src = data.currentGameThumb;
@@ -1212,7 +1225,6 @@ function applySteamData(data) {
     }
   }
 
-  // Top 3 game nhiều giờ nhất → cập nhật feature cards
   if (data.topGames?.length) {
     data.topGames.forEach((game, i) => {
       const card = document.getElementById(`steam-game-${i + 1}`);
@@ -1227,7 +1239,6 @@ function applySteamData(data) {
   if (steamPage.updated) steamPage.updated.textContent = formatSteamTime();
 }
 
-/* Fallback: nếu Steam API lỗi, dùng Lanyard để lấy game đang chơi qua Discord Rich Presence */
 function applySteamLanyardFallback(data) {
   if (!steamPage.page) return;
   const activities = data.activities || [];
@@ -1236,7 +1247,6 @@ function applySteamLanyardFallback(data) {
   );
   if (!steamActivity) return;
 
-  // Chỉ cập nhật phần "đang chơi" nếu Lanyard phát hiện game Steam
   const gameName   = steamActivity.name || 'Unknown Game';
   const gameDetail = steamActivity.details || '';
   const gameState  = steamActivity.state   || '';
@@ -1264,7 +1274,6 @@ function applySteamLanyardFallback(data) {
 async function initSteamPage() {
   if (!steamPage.page) return;
 
-  // Hiện loading ngay
   if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'Đang tải...';
   if (steamPage.playing)     steamPage.playing.textContent     = 'Đang kết nối Steam...';
   if (steamPage.realName)    steamPage.realName.textContent    = STEAM_STATIC.realName;
@@ -1275,12 +1284,10 @@ async function initSteamPage() {
     const data = await fetchSteamData();
     applySteamData(data);
 
-    // Sau khi có data Steam, nếu Lanyard biết đang chơi game thì overlay thêm chi tiết
     if (lanyardCache) applySteamLanyardFallback(lanyardCache);
   } catch (err) {
     console.warn('Steam Worker fetch error:', err);
 
-    // Fallback hoàn toàn sang Lanyard nếu Worker lỗi
     if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'Lỗi kết nối Steam API';
     if (steamPage.playing)     steamPage.playing.textContent     = 'Đang dùng dữ liệu Discord...';
     if (steamPage.updated)     steamPage.updated.textContent     = formatSteamTime();
@@ -1304,7 +1311,6 @@ if (steamPage.back) {
   steamPage.back.addEventListener('click', hideSteamPage);
 }
 
-// Auto-refresh Steam mỗi 30s khi page đang mở
 setInterval(() => {
   if (steamPage.page && !steamPage.page.classList.contains('hidden')) {
     fetchSteamData().then(data => {
@@ -1437,3 +1443,35 @@ if (interactiveCard) {
     if (target && !target.contains(event.relatedTarget)) resetCardPointer();
   });
 }
+
+/* ============================================================
+   CSS NÚT COPY IP — inject vào <style> khi trang load
+   ============================================================ */
+(function injectCopyBtnStyle() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .mc-copy-ip-btn {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(53,232,255,.28);
+      border-radius: 8px;
+      background: rgba(53,232,255,.09);
+      color: var(--cyan);
+      cursor: pointer;
+      transition: .2s ease;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .mc-copy-ip-btn:hover {
+      background: rgba(53,232,255,.22);
+      border-color: rgba(53,232,255,.55);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(53,232,255,.22);
+    }
+  `;
+  document.head.appendChild(style);
+})();
