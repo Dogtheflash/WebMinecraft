@@ -111,7 +111,20 @@
         </div>
         <!-- ========== END THEME SWITCHER ========== -->
         <div class="profile-banner">
-          <img id="banner-image" src="./data/background/banner.gif" alt="Ảnh bìa hồ sơ" />
+          <!-- Parallax Layer 0: Base image -->
+          <div class="plx-layer" data-depth="0.03">
+            <img id="banner-image" src="./data/background/banner.gif" alt="Ảnh bìa hồ sơ" />
+          </div>
+          <!-- Parallax Layer 1: Light sweep -->
+          <div class="plx-layer plx-light" data-depth="0.06"></div>
+          <!-- Parallax Layer 2: Floating particles -->
+          <div class="plx-layer plx-particles" data-depth="0.10">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <!-- Parallax Layer 3: Sparkles -->
+          <div class="plx-layer plx-sparkles" data-depth="0.15">
+            <b>✦</b><b>✧</b><b>✦</b><b>✧</b><b>✦</b>
+          </div>
           <div class="banner-glow"></div>
         </div>
 
