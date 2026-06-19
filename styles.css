@@ -46,38 +46,15 @@ body {
   font-family: 'Consolas', 'Courier New', monospace;
 }
 
-/* ============================================================
-   PHẦN CHỈNH SỬA: Thay thế ảnh nền bằng style chuẩn Linux
-   ============================================================ */
-.cmd-window { 
-  width: min(760px, 94vw); 
-  overflow: hidden; 
-  border-radius: 10px; 
-  border: 1px solid rgba(255,255,255,.16); 
-  background: #121212; /* Nền xám đen chuẩn Terminal */
-  box-shadow: 0 26px 90px rgba(0,0,0,.58); 
-  position: relative; 
+.terminal-window {
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 900px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  overflow: hidden;
 }
-
-/* Hiệu ứng thở (pulse glow) nhẹ ở nền Terminal */
-.cmd-window::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
-  animation: terminalPulse 8s ease-in-out infinite alternate;
-  pointer-events: none;
-  z-index: 0;
-}
-
-@keyframes terminalPulse {
-  0% { transform: scale(0.8); opacity: 0.4; }
-  100% { transform: scale(1.2); opacity: 1; }
-}
-/* ============================================================ */
 
 .terminal-header {
   background-color: #161b22;
@@ -134,10 +111,11 @@ body.wide-page-active .color-page {
 .screen.active { display: grid; animation: screenIn .55s ease both; }
 .glass-panel { background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.08); backdrop-filter: blur(22px) saturate(130%); }
 
-.cmd-titlebar { height: 34px; display: flex; align-items: center; justify-content: flex-start; background: #000; border-bottom: 1px solid rgba(255,255,255,.08); user-select: none; position: relative; z-index: 2; }
+.cmd-window { width: min(760px, 94vw); overflow: hidden; border-radius: 10px; border: 1px solid rgba(255,255,255,.16); background: #0a0a0a url('./Image/webicon.jfif') center/cover no-repeat; box-shadow: 0 26px 90px rgba(0,0,0,.58); position: relative; }
+.cmd-titlebar { height: 34px; display: flex; align-items: center; justify-content: flex-start; background: #1f1f1f; border-bottom: 1px solid rgba(255,255,255,.08); user-select: none; }
 .cmd-tabs { display: flex; align-items: center; height: 100%; min-width: 0; flex:0 1 auto; overflow:hidden; }
-.cmd-tab { height: 100%; min-width:132px; max-width:210px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 0 12px 0 16px; color: #cfcfcf; font: 600 12px "Segoe UI", system-ui, sans-serif; background: #000; border:0; border-right: 1px solid rgba(255,255,255,.08); }
-.cmd-tab.active-tab { color:#fff; background:#000; box-shadow: inset 0 -2px 0 rgba(255,255,255,.5); }
+.cmd-tab { height: 100%; min-width:132px; max-width:210px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 0 12px 0 16px; color: #cfcfcf; font: 600 12px "Segoe UI", system-ui, sans-serif; background: #171717; border:0; border-right: 1px solid rgba(255,255,255,.08); }
+.cmd-tab.active-tab { color:#fff; background:#0c0c0c; }
 .cmd-tab-title { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 .cmd-tab-close { opacity:.55; font-size:14px; line-height:1; }
 .cmd-tab:hover .cmd-tab-close { opacity:1; }
@@ -165,7 +143,7 @@ body.wide-page-active .color-page {
 .cmd-controls span:nth-child(3) { background-color: #27c93f !important; }
 
 .cmd-controls span:hover { filter: brightness(0.8); }
-.cmd-body { min-height: 380px; padding: 18px 20px 20px; color: #f2f2f2; font: 500 clamp(12px, 2vw, 15px) Consolas, "Cascadia Mono", "JetBrains Mono", monospace; line-height: 1.48; position: relative; z-index: 2;}
+.cmd-body { min-height: 380px; padding: 18px 20px 20px; color: #f2f2f2; font: 500 clamp(12px, 2vw, 15px) Consolas, "Cascadia Mono", "JetBrains Mono", monospace; line-height: 1.48; }
 .cmd-plus:hover { background:#2b2b2b; }
 .cmd-log { white-space:pre-wrap; min-height:270px; color:#f2f2f2; }
 .cmd-prompt-line { display:flex; align-items:center; gap:0; color:#f2f2f2; margin:0; }
@@ -174,82 +152,8 @@ body.wide-page-active .color-page {
 .cmd-body p { margin: 0; }
 #typewriter-output.hidden, .cmd-continue.hidden, .cmd-prompt-line.hidden { display:none; }
 .cmd-log.typing::after { content: "█"; margin-left: 2px; animation: blink 1s steps(1) infinite; }
-.cmd-continue {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  margin-top: 18px;
-  width: 100%;
-  padding: 13px 14px;
-  cursor: pointer;
-  color: #fff;
-  font-weight: 600;
-  letter-spacing: .015em;
-  border: 1px solid rgba(255,255,255,.32);
-  border-radius: 14px;
-  background:
-    radial-gradient(120% 140% at 18% -20%, rgba(255,255,255,.4), transparent 55%),
-    linear-gradient(180deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,.03) 42%, rgba(0,0,0,.18) 100%),
-    rgba(40,40,46,.5);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.55),
-    inset 0 -10px 18px -12px rgba(0,0,0,.4),
-    0 10px 26px rgba(0,0,0,.45),
-    0 0 16px rgba(255,255,255,.06);
-  transition: transform .45s cubic-bezier(.16,1,.3,1), box-shadow .45s cubic-bezier(.16,1,.3,1), border-color .35s ease, background .35s ease;
-  animation: liquidBreathe 4.5s ease-in-out infinite;
-}
-.cmd-continue::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.55) 50%, transparent 65%);
-  background-size: 240% 100%;
-  background-position: 180% 0;
-  mix-blend-mode: screen;
-  opacity: .9;
-  transition: background-position 1.15s cubic-bezier(.16,1,.3,1);
-}
-.cmd-continue::after {
-  content: "";
-  position: absolute;
-  top: 0; left: 10%; right: 10%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent);
-  filter: blur(.3px);
-  pointer-events: none;
-  z-index: 2;
-}
-.cmd-continue span, .cmd-continue { position: relative; z-index: 3; }
-.cmd-continue:hover {
-  transform: translateY(-2px) scale(1.012);
-  border-color: rgba(255,255,255,.5);
-  background:
-    radial-gradient(120% 140% at 18% -20%, rgba(255,255,255,.5), transparent 55%),
-    linear-gradient(180deg, rgba(255,255,255,.2) 0%, rgba(255,255,255,.05) 42%, rgba(0,0,0,.16) 100%),
-    rgba(48,48,54,.55);
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.7),
-    inset 0 -10px 18px -12px rgba(0,0,0,.4),
-    0 16px 38px rgba(0,0,0,.5),
-    0 0 26px rgba(255,255,255,.16);
-}
-.cmd-continue:hover::before { background-position: -40% 0; }
-.cmd-continue:active {
-  transform: translateY(0) scale(.985);
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.5),
-    inset 0 6px 14px -8px rgba(0,0,0,.5),
-    0 6px 16px rgba(0,0,0,.4);
-}
-@keyframes liquidBreathe {
-  0%, 100% { box-shadow: inset 0 1px 1px rgba(255,255,255,.55), inset 0 -10px 18px -12px rgba(0,0,0,.4), 0 10px 26px rgba(0,0,0,.45), 0 0 14px rgba(255,255,255,.05); }
-  50% { box-shadow: inset 0 1px 1px rgba(255,255,255,.65), inset 0 -10px 18px -12px rgba(0,0,0,.4), 0 10px 26px rgba(0,0,0,.45), 0 0 22px rgba(255,255,255,.12); }
-}
+.cmd-continue { margin-top: 18px; width: 100%; padding: 12px 14px; cursor: pointer; color: #fff; border: 1px solid rgba(255,255,255,.18); border-radius: 6px; background: #1b1b1b; transition: .2s ease; }
+.cmd-continue:hover { background: #252525; border-color: rgba(255,255,255,.32); }
 
 .profile-console { width: min(560px, 94vw); overflow: hidden; border-radius: 16px; transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(-4px); transform-style:preserve-3d; position:relative; border:0; transition:transform .16s ease, box-shadow .24s ease; will-change:transform; }
 .profile-console.interactive-hover { box-shadow: var(--shadow), 0 0 42px rgba(88,101,242,.16), inset 0 1px 0 rgba(255,255,255,.1); }
@@ -1001,73 +905,3 @@ body.wide-page-active .mc-bot-avatar {
   transition: opacity 0.9s ease;
 }
 #cyber-loading .cl-fade-overlay.active { opacity:1; pointer-events:all; }
-    /* ============================================================
-       ANIME CLOCK — INLINE SYNC-PILL STYLE
-       ============================================================ */
-    .clock-inline {
-      flex: 0 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 2px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(88,101,242,.13);
-      border: 1px solid rgba(88,101,242,.25);
-      min-width: 118px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color .25s ease, background .25s ease;
-    }
-    .clock-inline:hover {
-      border-color: rgba(53,232,255,.35);
-      background: rgba(53,232,255,.08);
-    }
-    .clock-inline::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(88,101,242,.08), transparent 60%);
-      pointer-events: none;
-    }
-    .clock-inline-top {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .clock-inline-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 6px var(--cyan);
-      flex-shrink: 0;
-      animation: ciDotPulse 2s ease-in-out infinite;
-    }
-    @keyframes ciDotPulse {
-      0%,100% { opacity:1; transform:scale(1); }
-      50%      { opacity:.3; transform:scale(.7); }
-    }
-    .clock-inline-time {
-      font: 700 13px 'JetBrains Mono', monospace;
-      color: #dfe5ff;
-      letter-spacing: .03em;
-      line-height: 1;
-    }
-    .ci-sep {
-      color: var(--discord);
-      animation: ciSepBlink 1s steps(1) infinite;
-    }
-    @keyframes ciSepBlink { 50% { opacity: .15; } }
-    .clock-inline-date {
-      font: 600 9px 'JetBrains Mono', monospace;
-      color: rgba(170,180,255,.42);
-      letter-spacing: .06em;
-      line-height: 1;
-    }
-    .clock-inline-phase {
-      font: 700 9px 'JetBrains Mono', monospace;
-      color: rgba(53,232,255,.55);
-      letter-spacing: .08em;
-      line-height: 1;
-    }
