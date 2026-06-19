@@ -1,5 +1,5 @@
 :root {
-  --bg: #060913;
+  --bg: #000000;
   --panel: rgba(15, 18, 32, 0.78);
   --panel-strong: rgba(20, 24, 42, 0.92);
   --line: rgba(255, 255, 255, 0.11);
@@ -37,7 +37,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar { width:0
 
 body {
   background-image: none !important;
-  background-color: #000000;
+  background-color: var(--bg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1071,3 +1071,258 @@ body.wide-page-active .mc-bot-avatar {
       letter-spacing: .08em;
       line-height: 1;
     }
+
+/* ============================================================
+   THEME SWITCHER — UI
+   ============================================================ */
+.theme-switcher {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.theme-toggle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #fff;
+  font-size: 16px;
+  display: grid;
+  place-items: center;
+  cursor: inherit;
+  transition: .28s ease;
+  z-index: 2;
+  box-shadow: 0 4px 18px rgba(0,0,0,.4);
+}
+.theme-toggle-btn:hover {
+  transform: scale(1.12) rotate(15deg);
+  border-color: rgba(255,255,255,.45);
+  background: rgba(0,0,0,.75);
+  box-shadow: 0 6px 22px rgba(0,0,0,.55);
+}
+
+.theme-menu {
+  display: flex;
+  gap: 4px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.65);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 8px 30px rgba(0,0,0,.55);
+  animation: themeMenuIn .32s cubic-bezier(.16,1,.3,1);
+}
+.theme-menu.hidden {
+  display: none !important;
+}
+
+@keyframes themeMenuIn {
+  from { opacity: 0; transform: translateX(12px) scale(.88); }
+  to   { opacity: 1; transform: none; }
+}
+
+.theme-option {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: rgba(255,255,255,.06);
+  font-size: 14px;
+  display: grid;
+  place-items: center;
+  cursor: inherit;
+  transition: .22s ease;
+}
+.theme-option:hover {
+  transform: scale(1.18);
+  background: rgba(255,255,255,.14);
+}
+.theme-option.active {
+  border-color: var(--cyan);
+  background: rgba(53,232,255,.12);
+  box-shadow: 0 0 12px rgba(53,232,255,.3);
+}
+
+/* Smooth transition on theme switch */
+body,
+.glass-panel,
+.profile-console::before,
+.presence-card, .activity-card, .about-card,
+.meta-grid div,
+.social-row a, .profile-footer a,
+.tags span,
+.clock-inline,
+.music-player,
+.ambient {
+  transition: background .45s ease, background-color .45s ease,
+              border-color .35s ease, color .35s ease,
+              box-shadow .45s ease;
+}
+.profile-typing-name {
+  transition: background .45s ease;
+}
+
+/* ============================================================
+   THEME: SAKURA PINK 🌸
+   ============================================================ */
+[data-theme="sakura"] {
+  --bg: #12080e;
+  --panel: rgba(36, 14, 30, 0.78);
+  --panel-strong: rgba(48, 20, 40, 0.92);
+  --line: rgba(255, 180, 220, 0.13);
+  --discord: #e84393;
+  --cyan: #fd79a8;
+  --pink: #ff6b9d;
+  --green: #55efc4;
+  --yellow: #ffeaa7;
+  --red: #ff7675;
+  --text: #fff0f5;
+  --muted: #c9a0b5;
+  --shadow: 0 28px 90px rgba(40, 0, 20, 0.55);
+}
+[data-theme="sakura"] .profile-console::before {
+  background: linear-gradient(180deg, #ff9a9e 0%, #fecfef 34%, rgba(255,255,255,.18) 50%, #e84393 68%, #fd79a8 100%);
+}
+[data-theme="sakura"] .profile-typing-name {
+  background: linear-gradient(90deg, #fff, #ffd6f0 42%, #ffb8d0);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+[data-theme="sakura"] .banner-glow {
+  background: radial-gradient(circle at 24% 38%, rgba(232,67,147,.28), transparent 34%);
+}
+[data-theme="sakura"] .tags span {
+  background: rgba(232,67,147,.12); border-color: rgba(232,67,147,.24);
+}
+[data-theme="sakura"] .clock-inline {
+  background: rgba(232,67,147,.13); border-color: rgba(232,67,147,.25);
+}
+[data-theme="sakura"] .mc-join-btn {
+  background: linear-gradient(135deg, #e84393, #d63384);
+  border-color: rgba(232,67,147,.5);
+  box-shadow: 0 4px 18px rgba(232,67,147,.3);
+}
+[data-theme="sakura"] .copy-btn {
+  background: linear-gradient(135deg, rgba(232,67,147,.32), rgba(253,121,168,.2));
+}
+[data-theme="sakura"] .preview-card {
+  background: linear-gradient(135deg, rgba(232,67,147,.12), rgba(253,121,168,.06));
+}
+[data-theme="sakura"] .theme-option.active {
+  border-color: var(--cyan); box-shadow: 0 0 12px rgba(253,121,168,.35);
+}
+
+/* ============================================================
+   THEME: OCEAN BLUE 🌊
+   ============================================================ */
+[data-theme="ocean"] {
+  --bg: #020c16;
+  --panel: rgba(8, 22, 42, 0.8);
+  --panel-strong: rgba(10, 28, 52, 0.92);
+  --line: rgba(100, 180, 255, 0.12);
+  --discord: #0984e3;
+  --cyan: #74b9ff;
+  --pink: #a29bfe;
+  --green: #00cec9;
+  --yellow: #fdcb6e;
+  --red: #d63031;
+  --text: #dfe6e9;
+  --muted: #8fa8c7;
+  --shadow: 0 28px 90px rgba(0, 10, 30, 0.6);
+}
+[data-theme="ocean"] .profile-console::before {
+  background: linear-gradient(180deg, #74b9ff 0%, #a29bfe 34%, rgba(255,255,255,.15) 50%, #0984e3 68%, #00cec9 100%);
+}
+[data-theme="ocean"] .profile-typing-name {
+  background: linear-gradient(90deg, #fff, #b8d4ff 42%, #a0f0ed);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+[data-theme="ocean"] .banner-glow {
+  background: radial-gradient(circle at 24% 38%, rgba(9,132,227,.28), transparent 34%);
+}
+[data-theme="ocean"] .tags span {
+  background: rgba(9,132,227,.12); border-color: rgba(9,132,227,.24);
+}
+[data-theme="ocean"] .clock-inline {
+  background: rgba(9,132,227,.13); border-color: rgba(9,132,227,.25);
+}
+[data-theme="ocean"] .mc-join-btn {
+  background: linear-gradient(135deg, #0984e3, #0773c5);
+  border-color: rgba(9,132,227,.5);
+  box-shadow: 0 4px 18px rgba(9,132,227,.3);
+}
+[data-theme="ocean"] .copy-btn {
+  background: linear-gradient(135deg, rgba(9,132,227,.32), rgba(116,185,255,.2));
+}
+[data-theme="ocean"] .preview-card {
+  background: linear-gradient(135deg, rgba(9,132,227,.12), rgba(116,185,255,.06));
+}
+[data-theme="ocean"] .theme-option.active {
+  border-color: var(--cyan); box-shadow: 0 0 12px rgba(116,185,255,.35);
+}
+
+/* ============================================================
+   THEME: NEON FIRE 🔥
+   ============================================================ */
+[data-theme="fire"] {
+  --bg: #0e0600;
+  --panel: rgba(32, 16, 6, 0.8);
+  --panel-strong: rgba(44, 22, 8, 0.92);
+  --line: rgba(255, 140, 50, 0.12);
+  --discord: #e17055;
+  --cyan: #ff9f43;
+  --pink: #ff6348;
+  --green: #2ed573;
+  --yellow: #ffa502;
+  --red: #ff4757;
+  --text: #fff5ee;
+  --muted: #c7a88f;
+  --shadow: 0 28px 90px rgba(30, 8, 0, 0.55);
+}
+[data-theme="fire"] .profile-console::before {
+  background: linear-gradient(180deg, #ff9f43 0%, #e17055 34%, rgba(255,255,255,.15) 50%, #ff6348 68%, #ffa502 100%);
+}
+[data-theme="fire"] .profile-typing-name {
+  background: linear-gradient(90deg, #fff, #ffd4a8 42%, #ffb088);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+[data-theme="fire"] .banner-glow {
+  background: radial-gradient(circle at 24% 38%, rgba(255,99,72,.28), transparent 34%);
+}
+[data-theme="fire"] .tags span {
+  background: rgba(225,112,85,.12); border-color: rgba(225,112,85,.24);
+}
+[data-theme="fire"] .clock-inline {
+  background: rgba(225,112,85,.13); border-color: rgba(225,112,85,.25);
+}
+[data-theme="fire"] .mc-join-btn {
+  background: linear-gradient(135deg, #e17055, #c0392b);
+  border-color: rgba(225,112,85,.5);
+  box-shadow: 0 4px 18px rgba(225,112,85,.3);
+}
+[data-theme="fire"] .copy-btn {
+  background: linear-gradient(135deg, rgba(225,112,85,.32), rgba(255,159,67,.2));
+}
+[data-theme="fire"] .preview-card {
+  background: linear-gradient(135deg, rgba(225,112,85,.12), rgba(255,159,67,.06));
+}
+[data-theme="fire"] .theme-option.active {
+  border-color: var(--cyan); box-shadow: 0 0 12px rgba(255,159,67,.35);
+}
+
+/* ============================================================
+   THEME SWITCHER — Responsive
+   ============================================================ */
+@media (max-width: 420px) {
+  .theme-toggle-btn { width: 32px; height: 32px; font-size: 14px; }
+  .theme-option { width: 26px; height: 26px; font-size: 12px; }
+  .theme-menu { padding: 4px 6px; gap: 3px; }
+}
