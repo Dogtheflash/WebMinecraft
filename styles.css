@@ -398,11 +398,17 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 }
 
 /* Block Swipe Reveal for Headers */
-.screen.active h2, .screen.active .meta-grid span {
+.screen.active h2 {
   position: relative;
   display: inline-block;
-  color: transparent !important;
-  animation: revealTextContent 0s 0.8s forwards;
+  color: transparent;
+  animation: revealColorH2 0s 0.8s forwards;
+}
+.screen.active .meta-grid span {
+  position: relative;
+  display: inline-block;
+  color: transparent;
+  animation: revealColorSpan 0s 0.8s forwards;
 }
 .screen.active h2::before, .screen.active .meta-grid span::before {
   content: "";
@@ -415,8 +421,11 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   animation: blockSwipe 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
 }
 .screen.active .activity-card h2::before { animation-delay: 0.1s; }
+.screen.active .activity-card h2 { animation-delay: 0.9s; }
 .screen.active .meta-grid span::before { animation-delay: 0.25s; }
+.screen.active .meta-grid span { animation-delay: 1.05s; }
 .screen.active .about-card h2::before { animation-delay: 0.4s; }
+.screen.active .about-card h2 { animation-delay: 1.2s; }
 
 @keyframes blockSwipe {
   0% { transform: scaleX(0); transform-origin: left; }
@@ -424,8 +433,11 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   50.1% { transform: scaleX(1); transform-origin: right; }
   100% { transform: scaleX(0); transform-origin: right; }
 }
-@keyframes revealTextContent {
-  to { color: inherit !important; }
+@keyframes revealColorH2 {
+  to { color: #fff; }
+}
+@keyframes revealColorSpan {
+  to { color: var(--muted); }
 }
 
 #discord-link svg { transform:translateY(1px) scale(1.08); transform-origin:center; }
