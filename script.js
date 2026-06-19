@@ -1524,48 +1524,51 @@ if (interactiveCard) {
   `;
   document.head.appendChild(style);
 })();
+/* ============================================================
+   ANIME CLOCK WIDGET
+   ============================================================ */
 (function () {
   var VN_DAYS = ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
   var VN_MONTHS = ['tháng 1','tháng 2','tháng 3','tháng 4','tháng 5','tháng 6',
                    'tháng 7','tháng 8','tháng 9','tháng 10','tháng 11','tháng 12'];
-
+ 
   function getVN() {
     return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
   }
   function pad(n) { return String(n).padStart(2, '0'); }
-
+ 
   function greeting(h) {
-    if (h >= 5  && h < 11) return 'Chào buổi sáng · Ngủ ngon chưa? ☕';
-    if (h >= 11 && h < 13) return 'Giờ nghỉ trưa · Ăn cơm chưa? 🍜';
-    if (h >= 13 && h < 18) return 'Buổi chiều · Đang cày game? 🎮';
-    if (h >= 18 && h < 22) return 'Buổi tối · Đang xem anime? 🌸';
-    return 'Đêm khuya rồi · Ngủ sớm thôi senpai 🌙';
+    if (h >= 5  && h < 11) return 'Chào buổi sáng &middot; <strong>Ngủ ngon chưa? ☕</strong>';
+    if (h >= 11 && h < 13) return 'Giờ nghỉ trưa &middot; <strong>Ăn cơm chưa? 🍜</strong>';
+    if (h >= 13 && h < 18) return 'Buổi chiều &middot; <strong>Đang cày game? 🎮</strong>';
+    if (h >= 18 && h < 22) return 'Buổi tối &middot; <strong>Đang xem anime? 🌸</strong>';
+    return 'Đêm khuya rồi &middot; <strong>Ngủ sớm thôi senpai 🌙</strong>';
   }
-
+ 
   function tickClock() {
     var d  = getVN();
     var h  = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
     var h12 = h % 12 || 12;
-
+ 
     var hmEl   = document.getElementById('ck-hm');
     var secEl  = document.getElementById('ck-sec');
     var ampmEl = document.getElementById('ck-ampm');
     var dateEl = document.getElementById('ck-date');
     var fillEl = document.getElementById('ck-fill');
     var greetEl = document.getElementById('ck-greet');
-
+ 
     if (!hmEl) return; /* widget chưa render */
-
+ 
     hmEl.textContent  = pad(h12) + ':' + pad(m);
     secEl.textContent = pad(s);
     ampmEl.textContent = h < 12 ? 'AM' : 'PM';
-
+ 
     dateEl.textContent = VN_DAYS[d.getDay()] + ', ' +
       pad(d.getDate()) + ' ' + VN_MONTHS[d.getMonth()] + ', ' + d.getFullYear();
-
+ 
     var pct = ((h * 3600 + m * 60 + s) / 86400 * 100).toFixed(2);
     fillEl.style.width = pct + '%';
-
+ 
     /* phases */
     var phases = [
       { id: 'ck-morning',   active: h >= 6  && h < 12 },
@@ -1576,10 +1579,10 @@ if (interactiveCard) {
       var el = document.getElementById(p.id);
       if (el) el.classList.toggle('ck-active', p.active);
     });
-
+ 
     if (greetEl) greetEl.innerHTML = greeting(h);
   }
-
+ 
   tickClock();
   setInterval(tickClock, 1000);
 })();
