@@ -1001,73 +1001,198 @@ body.wide-page-active .mc-bot-avatar {
   transition: opacity 0.9s ease;
 }
 #cyber-loading .cl-fade-overlay.active { opacity:1; pointer-events:all; }
- /* ============================================================
-       ANIME CLOCK — INLINE SYNC-PILL STYLE
-       ============================================================ */
-    .clock-inline {
-      flex: 0 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 2px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(88,101,242,.13);
-      border: 1px solid rgba(88,101,242,.25);
-      min-width: 118px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color .25s ease, background .25s ease;
-    }
-    .clock-inline:hover {
-      border-color: rgba(53,232,255,.35);
-      background: rgba(53,232,255,.08);
-    }
-    .clock-inline::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(88,101,242,.08), transparent 60%);
-      pointer-events: none;
-    }
-    .clock-inline-top {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .clock-inline-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 6px var(--cyan);
-      flex-shrink: 0;
-      animation: ciDotPulse 2s ease-in-out infinite;
-    }
-    @keyframes ciDotPulse {
-      0%,100% { opacity:1; transform:scale(1); }
-      50%      { opacity:.3; transform:scale(.7); }
-    }
-    .clock-inline-time {
-      font: 700 13px 'JetBrains Mono', monospace;
-      color: #dfe5ff;
-      letter-spacing: .03em;
-      line-height: 1;
-    }
-    .ci-sep {
-      color: var(--discord);
-      animation: ciSepBlink 1s steps(1) infinite;
-    }
-    @keyframes ciSepBlink { 50% { opacity: .15; } }
-    .clock-inline-date {
-      font: 600 9px 'JetBrains Mono', monospace;
-      color: rgba(170,180,255,.42);
-      letter-spacing: .06em;
-      line-height: 1;
-    }
-    .clock-inline-phase {
-      font: 700 9px 'JetBrains Mono', monospace;
-      color: rgba(53,232,255,.55);
-      letter-spacing: .08em;
-      line-height: 1;
-    }
+/* ============================================================
+   ANIME CLOCK WIDGET
+   ============================================================ */
+.clock-widget {
+  margin: 0 20px 11px;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,.09);
+  background: rgba(255,255,255,.03);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.clock-widget::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 20% 0%, rgba(88,101,242,.1) 0%, transparent 55%),
+              radial-gradient(ellipse at 80% 100%, rgba(255,79,216,.07) 0%, transparent 55%);
+  pointer-events: none;
+}
+ 
+/* Eyebrow */
+.clock-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 700 9px 'JetBrains Mono', monospace;
+  letter-spacing: .18em;
+  color: rgba(170,180,255,.38);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  position: relative;
+}
+.clock-live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 7px var(--cyan);
+  flex-shrink: 0;
+  animation: clockDotPulse 2s ease-in-out infinite;
+}
+@keyframes clockDotPulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:.3; transform:scale(.75); }
+}
+ 
+/* Main time display */
+.clock-main-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  margin-bottom: 4px;
+  position: relative;
+}
+.clock-hm {
+  font: 900 clamp(42px,10vw,62px)/1 'Outfit', 'JetBrains Mono', monospace;
+  letter-spacing: -.04em;
+  background: linear-gradient(135deg, #fff 0%, #e0d8ff 42%, #a5f3ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.clock-sec-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-bottom: 7px;
+  margin-left: 6px;
+  gap: 2px;
+}
+.clock-sec {
+  font: 700 18px/1 'JetBrains Mono', monospace;
+  color: var(--cyan);
+  text-shadow: 0 0 12px rgba(53,232,255,.5);
+  letter-spacing: -.02em;
+}
+.clock-ampm {
+  font: 700 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .12em;
+  color: rgba(170,180,255,.5);
+}
+ 
+/* Date + timezone */
+.clock-sub-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.clock-date {
+  font: 600 11px 'JetBrains Mono', monospace;
+  color: rgba(200,210,255,.48);
+  letter-spacing: .03em;
+}
+.clock-tz {
+  font: 700 10px 'JetBrains Mono', monospace;
+  color: rgba(53,232,255,.5);
+  letter-spacing: .1em;
+  background: rgba(53,232,255,.07);
+  border: 1px solid rgba(53,232,255,.18);
+  padding: 3px 9px;
+  border-radius: 99px;
+}
+ 
+/* Progress bar */
+.clock-progress-block { margin-bottom: 14px; }
+.clock-prog-labels {
+  display: flex;
+  justify-content: space-between;
+  font: 700 9px 'JetBrains Mono', monospace;
+  color: rgba(170,180,255,.28);
+  letter-spacing: .08em;
+  margin-bottom: 5px;
+}
+.clock-track {
+  height: 3px;
+  background: rgba(255,255,255,.06);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.clock-track-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--discord), var(--pink), var(--cyan));
+  background-size: 200% 100%;
+  animation: clockFillShimmer 3s linear infinite;
+  transition: width 1s cubic-bezier(.4,0,.2,1);
+}
+@keyframes clockFillShimmer {
+  0%   { background-position: 100% 50%; }
+  100% { background-position: -100% 50%; }
+}
+ 
+/* Phase cards */
+.clock-phases {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.clock-phase {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 10px;
+  padding: 9px 10px 8px;
+  transition: border-color .25s, background .25s;
+}
+.clock-phase.ck-active {
+  background: rgba(88,101,242,.1);
+  border-color: rgba(88,101,242,.35);
+}
+.cph-icon {
+  font-size: 17px;
+  display: block;
+  margin-bottom: 5px;
+}
+.cph-name {
+  display: block;
+  font: 700 9px 'JetBrains Mono', monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(170,180,255,.38);
+  margin-bottom: 3px;
+}
+.cph-time {
+  display: block;
+  font: 700 10px 'JetBrains Mono', monospace;
+  color: rgba(200,210,255,.5);
+}
+.clock-phase.ck-active .cph-time { color: #c7d2fe; }
+ 
+/* Footer */
+.clock-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.clock-greet {
+  font: 600 11px 'JetBrains Mono', monospace;
+  color: rgba(170,180,255,.45);
+  letter-spacing: .03em;
+}
+.clock-greet strong { color: #e0d8ff; font-weight: 700; }
+.clock-ver {
+  font: 700 9px 'JetBrains Mono', monospace;
+  color: rgba(255,255,255,.12);
+  letter-spacing: .1em;
+}
+ 
+@media (max-width: 420px) {
+  .clock-widget { margin: 0 16px 11px; padding: 14px; }
+  .clock-phases { grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .cph-time { font-size: 9px; }
+}
