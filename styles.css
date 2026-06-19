@@ -404,13 +404,13 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   color: transparent;
   animation: revealColorH2 0s 0.8s forwards;
 }
-.screen.active .meta-grid span {
+.screen.active .meta-grid div > span {
   position: relative;
   display: inline-block;
   color: transparent;
   animation: revealColorSpan 0s 0.8s forwards;
 }
-.screen.active h2::before, .screen.active .meta-grid span::before {
+.screen.active h2::before, .screen.active .meta-grid div > span::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -422,8 +422,8 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 }
 .screen.active .activity-card h2::before { animation-delay: 0.1s; }
 .screen.active .activity-card h2 { animation-delay: 0.9s; }
-.screen.active .meta-grid span::before { animation-delay: 0.25s; }
-.screen.active .meta-grid span { animation-delay: 1.05s; }
+.screen.active .meta-grid div > span::before { animation-delay: 0.25s; }
+.screen.active .meta-grid div > span { animation-delay: 1.05s; }
 .screen.active .about-card h2::before { animation-delay: 0.4s; }
 .screen.active .about-card h2 { animation-delay: 1.2s; }
 
