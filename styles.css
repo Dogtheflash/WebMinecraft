@@ -1426,3 +1426,61 @@ body,
   .plx-particles i:nth-child(n+9) { display: none; }
   .plx-sparkles b:nth-child(n+4)  { display: none; }
 }
+
+/* ============================================================
+   CLOCK WIDGET — Mobile Responsive
+   ============================================================ */
+@media (max-width: 620px) {
+  .clock-inline {
+    width: 100%;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 
+      "time date"
+      "time phase";
+    align-items: center;
+    border-radius: 14px;
+    padding: 16px 20px;
+    gap: 4px 12px;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .clock-inline-top {
+    grid-area: time;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .clock-inline-time {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: .02em;
+    color: #fff;
+  }
+  .clock-inline-dot {
+    width: 8px;
+    height: 8px;
+  }
+  .ci-sep {
+    font-size: 24px;
+    opacity: 0.6;
+    margin: 0 1px;
+  }
+  .clock-inline-date {
+    grid-area: date;
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    text-align: right;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 800;
+  }
+  .clock-inline-phase {
+    grid-area: phase;
+    font-size: 13px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--cyan);
+  }
+}
