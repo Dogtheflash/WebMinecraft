@@ -1524,48 +1524,65 @@ if (interactiveCard) {
   `;
   document.head.appendChild(style);
 })();
-    /* ============================================================
-       ANIME CLOCK INLINE — thay thế sync-pill
-       ============================================================ */
-    (function () {
-      var VN_DAYS = ['CN','T2','T3','T4','T5','T6','T7'];
-      var VN_PHASES = [
-        { s:5,  e:11, l:'🌅 Buổi sáng'  },
-        { s:11, e:13, l:'☀️ Giờ trưa'   },
-        { s:13, e:18, l:'🌤 Buổi chiều'  },
-        { s:18, e:22, l:'🌆 Buổi tối'   },
-        { s:22, e:24, l:'🌙 Đêm khuya'  },
-        { s:0,  e:5,  l:'🌃 Nửa đêm'   },
-      ];
-      function getVN() {
-        return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
-      }
-      function pad(n) { return String(n).padStart(2, '0'); }
-      function getPhase(h) {
-        for (var i = 0; i < VN_PHASES.length; i++) {
-          var p = VN_PHASES[i];
-          if (h >= p.s && h < p.e) return p.l;
-        }
-        return '🌙 GMT+7';
-      }
-      function tickClock() {
-        var d = getVN();
-        var h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
-        var hEl    = document.getElementById('ci-h');
-        var mEl    = document.getElementById('ci-m');
-        var sEl    = document.getElementById('ci-s');
-        var dateEl = document.getElementById('ci-date');
-        var phEl   = document.getElementById('ci-phase');
-        if (!hEl) return;
-        hEl.textContent    = pad(h);
-        mEl.textContent    = pad(m);
-        sEl.textContent    = pad(s);
-        dateEl.textContent = VN_DAYS[d.getDay()] + ', ' + pad(d.getDate()) + '/' + pad(d.getMonth() + 1);
-        phEl.textContent   = getPhase(h);
-      }
-      tickClock();
-      setInterval(tickClock, 1000);
-    })();
-    /* ============================================================
-       END ANIME CLOCK INLINE
-       ============================================================ */
+(function () {
+  var VN_DAYS = ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+  var VN_MONTHS = ['tháng 1','tháng 2','tháng 3','tháng 4','tháng 5','tháng 6',
+                   'tháng 7','tháng 8','tháng 9','tháng 10','tháng 11','tháng 12'];
+
+  function getVN() {
+    return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
+  }
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function greeting(h) {
+    if (h >= 5  && h < 11) return 'Chào buổi sáng · Ngủ ngon chưa? ☕';
+    if (h >= 11 && h < 13) return 'Giờ nghỉ trưa · Ăn cơm chưa? 🍜';
+    if (h >= 13 && h < 18) return 'Buổi chiều · Đang cày game? 🎮';
+    if (h >= 18 && h < 22) return 'Buổi tối · Đang xem anime? 🌸';
+    return 'Đêm khuya rồi · Ngủ sớm thôi senpai 🌙';
+  }
+
+  function tickClock() {
+    var d  = getVN();
+    var h  = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
+    var h12 = h % 12 || 12;
+
+    var hmEl   = document.getElementById('ck-hm');
+    var secEl  = document.getElementById('ck-sec');
+    var ampmEl = document.getElementById('ck-ampm');
+    var dateEl = document.getElementById('ck-date');
+    var fillEl = document.getElementById('ck-fill');
+    var greetEl = document.getElementById('ck-greet');
+
+    if (!hmEl) return; /* widget chưa render */
+
+    hmEl.textContent  = pad(h12) + ':' + pad(m);
+    secEl.textContent = pad(s);
+    ampmEl.textContent = h < 12 ? 'AM' : 'PM';
+
+    dateEl.textContent = VN_DAYS[d.getDay()] + ', ' +
+      pad(d.getDate()) + ' ' + VN_MONTHS[d.getMonth()] + ', ' + d.getFullYear();
+
+    var pct = ((h * 3600 + m * 60 + s) / 86400 * 100).toFixed(2);
+    fillEl.style.width = pct + '%';
+
+    /* phases */
+    var phases = [
+      { id: 'ck-morning',   active: h >= 6  && h < 12 },
+      { id: 'ck-afternoon', active: h >= 12 && h < 18 },
+      { id: 'ck-night',     active: h >= 18 || h < 6  },
+    ];
+    phases.forEach(function (p) {
+      var el = document.getElementById(p.id);
+      if (el) el.classList.toggle('ck-active', p.active);
+    });
+
+    if (greetEl) greetEl.innerHTML = greeting(h);
+  }
+
+  tickClock();
+  setInterval(tickClock, 1000);
+})();
+/* ============================================================
+   END ANIME CLOCK WIDGET
+   ============================================================ */
