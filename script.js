@@ -1550,3 +1550,59 @@ if (interactiveCard) {
     /* ============================================================
        END ANIME CLOCK INLINE
        ============================================================ */
+
+/* ============================================================
+   THEME SWITCHER
+   ============================================================ */
+(function () {
+  var THEMES = ['cyber', 'sakura', 'ocean', 'fire'];
+  var THEME_ICONS = { cyber: '🌙', sakura: '🌸', ocean: '🌊', fire: '🔥' };
+  var STORAGE_KEY = 'profile-theme';
+
+  var toggleBtn = document.getElementById('theme-toggle');
+  var menu = document.getElementById('theme-menu');
+  var options = document.querySelectorAll('.theme-option');
+
+  if (!toggleBtn || !menu) return;
+
+  function applyTheme(theme) {
+    if (THEMES.indexOf(theme) === -1) theme = 'cyber';
+    document.documentElement.setAttribute('data-theme', theme);
+    toggleBtn.textContent = THEME_ICONS[theme] || '🌙';
+    options.forEach(function (opt) {
+      opt.classList.toggle('active', opt.dataset.theme === theme);
+    });
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
+  }
+
+  // Load saved theme on page load
+  var saved = '';
+  try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+  applyTheme(saved || 'cyber');
+
+  // Toggle menu open/close
+  toggleBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    menu.classList.toggle('hidden');
+  });
+
+  // Select theme
+  options.forEach(function (opt) {
+    opt.addEventListener('click', function () {
+      applyTheme(opt.dataset.theme);
+      setTimeout(function () {
+        menu.classList.add('hidden');
+      }, 150);
+    });
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener('click', function (e) {
+    if (!menu.contains(e.target) && e.target !== toggleBtn) {
+      menu.classList.add('hidden');
+    }
+  });
+})();
+/* ============================================================
+   END THEME SWITCHER
+   ============================================================ */
