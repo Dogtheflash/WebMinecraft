@@ -657,6 +657,9 @@ function enterConsole() {
   startMusic();
 }
 
+/* ============================================================
+   MUSIC PLAYER & WEB AUDIO API VISUALIZER TÍCH HỢP
+   ============================================================ */
 const trackTitle = document.getElementById('track-title');
 const nextTrackButton = document.getElementById('next-track');
 const currentTimeEl = document.getElementById('current-time');
@@ -668,6 +671,80 @@ const tracks = [
 ];
 let currentTrackIndex = 0;
 let playing = false;
+
+// Variables cho Real Visualizer Canvas
+let audioCtx;
+let analyser;
+let audioSource;
+const vizCanvas = document.getElementById('real-audio-visualizer');
+const vizCtx = vizCanvas ? vizCanvas.getContext('2d') : null;
+let isVizInitialized = false;
+
+// Đảm bảo canvas chạy tràn hết bề ngang màn hình
+function resizeVizCanvas() {
+  if (vizCanvas) {
+    vizCanvas.width = window.innerWidth;
+    vizCanvas.height = 200; // Độ cao của sóng vươn lên
+  }
+}
+window.addEventListener('resize', resizeVizCanvas);
+resizeVizCanvas();
+
+// Khởi tạo AudioContext (chỉ được gọi khi user bấm Play)
+function initVisualizer() {
+  if (isVizInitialized || !vizCanvas) return;
+
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 256; // Chi tiết sóng
+
+  audioSource = audioCtx.createMediaElementSource(audio);
+  audioSource.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  isVizInitialized = true;
+  drawVisualizer();
+}
+
+// Vòng lặp vẽ dải sóng ngang toả ra từ giữa
+function drawVisualizer() {
+  requestAnimationFrame(drawVisualizer);
+  if (!vizCanvas || !analyser) return;
+
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  analyser.getByteFrequencyData(dataArray);
+
+  // Xóa frame cũ
+  vizCtx.clearRect(0, 0, vizCanvas.width, vizCanvas.height);
+
+  const barWidth = (vizCanvas.width / bufferLength) * 0.8;
+  
+  // Toạ độ bắt đầu từ tâm màn hình
+  let centerX = vizCanvas.width / 2;
+  let xRight = centerX;
+  let xLeft = centerX;
+
+  for (let i = 0; i < bufferLength; i++) {
+    let barHeight = dataArray[i] * 0.7; 
+
+    // Màu gradient Cyan -> Pink Cyberpunk giống theme của bạn
+    const r = barHeight + (25 * (i / bufferLength));
+    const g = 100 * (i / bufferLength);
+    const b = 255 - (barHeight / 2);
+
+    vizCtx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.8)`;
+    
+    // Vẽ nửa bên phải
+    vizCtx.fillRect(xRight, vizCanvas.height - barHeight, barWidth - 1, barHeight);
+    
+    // Vẽ nửa bên trái (đối xứng)
+    vizCtx.fillRect(xLeft - barWidth + 1, vizCanvas.height - barHeight, barWidth - 1, barHeight);
+
+    xRight += barWidth;
+    xLeft -= barWidth;
+  }
+}
 
 audio.volume = Number(volumeSlider.value) / 100;
 playToggle.textContent = '▶';
@@ -703,6 +780,12 @@ async function playCurrentTrack() {
   playToggle.textContent = '❚❚';
   player.classList.remove('paused');
   renderTrackMeta();
+  
+  // Khởi chạy Visualizer
+  initVisualizer();
+  if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+  }
 }
 
 async function startMusic() {
@@ -797,6 +880,10 @@ volumeSlider.addEventListener('input', () => {
   volumeToggle.textContent = icon;
   scheduleVolumeAutoClose();
 });
+
+/* ============================================================
+   REST OF THE SCRIPT
+   ============================================================ */
 
 const colorTool = {
   page: document.getElementById('color-page'),
@@ -1014,12 +1101,11 @@ const minecraftPage = {
   joinBtn: document.getElementById('mc-join-btn'),
 };
 
-// ⚙️ CẤU HÌNH SERVER — chỉnh sửa tại đây
 const MC_CONFIG = {
-  ip: 'Sv.Minevui.Net',        // ← ĐÃ SỬA: địa chỉ server mới
+  ip: 'Sv.Minevui.Net',       
   port: 25565,
   discordInvite: 'https://discord.gg/',
-  botName: 'Minecraft Skyblock',  // ← ĐÃ SỬA: tên server mới
+  botName: 'Minecraft Skyblock', 
   botDesc: '🌿 Server Minecraft sinh tồn · Vanilla SMP',
   version: '1.21.x',
 };
@@ -1044,19 +1130,18 @@ async function fetchMinecraftStatus() {
     const data = await res.json();
 
     if (data.online) {
-      // Nếu API trả về online, dùng data thật nhưng ưu tiên cấu hình tĩnh
-      if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';       // ← ĐÃ SỬA: cố định 20ms
-      if (minecraftPage.online) minecraftPage.online.textContent = '0 người'; // ← ĐÃ SỬA: cố định 0
-      if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';    // ← ĐÃ SỬA: cố định 1000
+      if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';      
+      if (minecraftPage.online) minecraftPage.online.textContent = '0 người'; 
+      if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';   
       if (minecraftPage.version) minecraftPage.version.textContent = data.version || MC_CONFIG.version;
       if (minecraftPage.statusText) {
         minecraftPage.statusText.textContent = '🟢 Online — Đang hoạt động';
         minecraftPage.statusText.style.color = 'var(--green)';
       }
     } else {
-      if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';        // ← ĐÃ SỬA
-      if (minecraftPage.online) minecraftPage.online.textContent = '0 người'; // ← ĐÃ SỬA
-      if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';    // ← ĐÃ SỬA
+      if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';      
+      if (minecraftPage.online) minecraftPage.online.textContent = '0 người'; 
+      if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';  
       if (minecraftPage.version) minecraftPage.version.textContent = MC_CONFIG.version;
       if (minecraftPage.statusText) {
         minecraftPage.statusText.textContent = '🔴 Offline — Server đang tắt';
@@ -1064,9 +1149,9 @@ async function fetchMinecraftStatus() {
       }
     }
   } catch {
-    if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';          // ← ĐÃ SỬA
-    if (minecraftPage.online) minecraftPage.online.textContent = '0 người';   // ← ĐÃ SỬA
-    if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';      // ← ĐÃ SỬA
+    if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';      
+    if (minecraftPage.online) minecraftPage.online.textContent = '0 người';  
+    if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';   
     if (minecraftPage.statusText) {
       minecraftPage.statusText.textContent = '⚠️ Không thể kiểm tra';
       minecraftPage.statusText.style.color = 'var(--yellow)';
@@ -1077,35 +1162,28 @@ async function fetchMinecraftStatus() {
   if (minecraftPage.updated) minecraftPage.updated.textContent = formatMcTime();
   if (minecraftPage.joinBtn) minecraftPage.joinBtn.href = MC_CONFIG.discordInvite;
 
-  // Gán tên bot card từ config
   const botNameEl = document.getElementById('mc-bot-name');
   if (botNameEl) botNameEl.textContent = MC_CONFIG.botName;
   const botDescEl = document.getElementById('mc-bot-desc');
   if (botDescEl) botDescEl.textContent = MC_CONFIG.botDesc;
 
-  // ← Gắn nút copy IP + rainbow text (chỉ gắn 1 lần)
   const ipCard = minecraftPage.ip?.closest('.mc-stat-card');
   if (ipCard && !ipCard.querySelector('.mc-copy-ip-btn')) {
-    // Layout: label trên, hàng dưới gồm [IP rainbow + nút copy]
     ipCard.style.display = 'flex';
     ipCard.style.flexDirection = 'column';
     ipCard.style.gap = '6px';
 
-    // Thêm class rainbow cho chữ IP
     if (minecraftPage.ip) {
       minecraftPage.ip.classList.add('mc-ip-rainbow');
     }
 
-    // Hàng dưới chứa IP + nút copy
     const bottomRow = document.createElement('div');
     bottomRow.className = 'mc-ip-bottom-row';
 
-    // Di chuyển phần tử IP vào bottomRow
     if (minecraftPage.ip) {
       bottomRow.appendChild(minecraftPage.ip);
     }
 
-    // Nút copy
     const copyBtn = document.createElement('button');
     copyBtn.className = 'mc-copy-ip-btn';
     copyBtn.title = 'Copy địa chỉ server';
@@ -1150,7 +1228,7 @@ setInterval(() => {
 }, 30000);
 
 /* ============================================================
-   STEAM PROFILE PAGE — Real Steam API via Cloudflare Worker
+   STEAM PROFILE PAGE 
    ============================================================ */
 const STEAM_WORKER_URL = 'https://steam-proxy.bbtu223344.workers.dev/';
 
@@ -1339,10 +1417,6 @@ setInterval(() => {
   }
 }, 30000);
 
-/* ============================================================
-   END STEAM PROFILE PAGE
-   ============================================================ */
-
 function setText(element, value) {
   if (element) element.textContent = value;
 }
@@ -1461,13 +1535,9 @@ if (interactiveCard) {
   });
 }
 
-/* ============================================================
-   CSS NÚT COPY IP + RAINBOW IP — inject vào <style> khi trang load
-   ============================================================ */
 (function injectCopyBtnStyle() {
   const style = document.createElement('style');
   style.textContent = `
-    /* Hàng dưới trong ô địa chỉ: IP bên trái, nút copy bên phải */
     .mc-ip-bottom-row {
       display: flex;
       align-items: center;
@@ -1476,7 +1546,6 @@ if (interactiveCard) {
       width: 100%;
     }
 
-    /* Rainbow animation cho chữ IP */
     .mc-ip-rainbow {
       background: linear-gradient(
         90deg,
@@ -1498,7 +1567,6 @@ if (interactiveCard) {
       100% { background-position: 200% center; }
     }
 
-    /* Nút copy */
     .mc-copy-ip-btn {
       flex: 0 0 auto;
       display: inline-flex;
