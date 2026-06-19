@@ -1606,3 +1606,46 @@ if (interactiveCard) {
 /* ============================================================
    END THEME SWITCHER
    ============================================================ */
+
+/* ============================================================
+   PARALLAX BANNER — Mouse-driven layer movement
+   ============================================================ */
+(function () {
+  var card = document.querySelector('.profile-console');
+  var layers = document.querySelectorAll('.plx-layer');
+  if (!card || !layers.length) return;
+
+  var MX = 200;   // max horizontal shift (px per depth unit)
+  var MY = 120;   // max vertical shift
+  var ticking = false;
+
+  function onMove(e) {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      var rect = card.getBoundingClientRect();
+      var px = (e.clientX - rect.left) / rect.width - 0.5;   // -0.5 → 0.5
+      var py = (e.clientY - rect.top) / rect.height - 0.5;
+
+      for (var i = 0; i < layers.length; i++) {
+        var depth = parseFloat(layers[i].dataset.depth) || 0;
+        var dx = (px * depth * MX).toFixed(2);
+        var dy = (py * depth * MY).toFixed(2);
+        layers[i].style.transform = 'translate3d(' + dx + 'px,' + dy + 'px,0)';
+      }
+      ticking = false;
+    });
+  }
+
+  function onLeave() {
+    for (var i = 0; i < layers.length; i++) {
+      layers[i].style.transform = 'translate3d(0,0,0)';
+    }
+  }
+
+  card.addEventListener('pointermove', onMove, { passive: true });
+  card.addEventListener('pointerleave', onLeave);
+})();
+/* ============================================================
+   END PARALLAX BANNER
+   ============================================================ */
