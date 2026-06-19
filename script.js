@@ -601,6 +601,7 @@ async function fetchDiscordPresence() {
 
     profileTypingWords[0] = 'Chinatsu Kamado';
     presenceEls.username.textContent = 'Chinatsu Kamado';
+    presenceEls.username.setAttribute('data-text', 'Chinatsu Kamado');
     presenceEls.customStatusLine.textContent = customStatusText || '...';
     presenceEls.statusText.innerHTML = `<span class="inline-dot ${status}"></span>${statusLabel}${clientText ? ` - ${clientText}` : ''}`;
     if (avatarUrl) presenceEls.avatar.src = avatarUrl;
