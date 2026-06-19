@@ -1524,3 +1524,48 @@ if (interactiveCard) {
   `;
   document.head.appendChild(style);
 })();
+    /* ============================================================
+       ANIME CLOCK INLINE — thay thế sync-pill
+       ============================================================ */
+    (function () {
+      var VN_DAYS = ['CN','T2','T3','T4','T5','T6','T7'];
+      var VN_PHASES = [
+        { s:5,  e:11, l:'🌅 Buổi sáng'  },
+        { s:11, e:13, l:'☀️ Giờ trưa'   },
+        { s:13, e:18, l:'🌤 Buổi chiều'  },
+        { s:18, e:22, l:'🌆 Buổi tối'   },
+        { s:22, e:24, l:'🌙 Đêm khuya'  },
+        { s:0,  e:5,  l:'🌃 Nửa đêm'   },
+      ];
+      function getVN() {
+        return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
+      }
+      function pad(n) { return String(n).padStart(2, '0'); }
+      function getPhase(h) {
+        for (var i = 0; i < VN_PHASES.length; i++) {
+          var p = VN_PHASES[i];
+          if (h >= p.s && h < p.e) return p.l;
+        }
+        return '🌙 GMT+7';
+      }
+      function tickClock() {
+        var d = getVN();
+        var h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
+        var hEl    = document.getElementById('ci-h');
+        var mEl    = document.getElementById('ci-m');
+        var sEl    = document.getElementById('ci-s');
+        var dateEl = document.getElementById('ci-date');
+        var phEl   = document.getElementById('ci-phase');
+        if (!hEl) return;
+        hEl.textContent    = pad(h);
+        mEl.textContent    = pad(m);
+        sEl.textContent    = pad(s);
+        dateEl.textContent = VN_DAYS[d.getDay()] + ', ' + pad(d.getDate()) + '/' + pad(d.getMonth() + 1);
+        phEl.textContent   = getPhase(h);
+      }
+      tickClock();
+      setInterval(tickClock, 1000);
+    })();
+    /* ============================================================
+       END ANIME CLOCK INLINE
+       ============================================================ */
