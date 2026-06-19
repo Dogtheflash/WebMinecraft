@@ -122,7 +122,15 @@
             <h2 id="presence-title">Trạng thái: <span id="custom-status-line">Đang tải...</span></h2>
             <p id="status-text"><span class="inline-dot"></span>Đang kết nối Discord...</p>
           </div>
-          <span id="last-updated" class="sync-pill">đang đồng bộ</span>
+          <!-- CLOCK WIDGET (thay sync-pill) -->
+          <div class="clock-inline" aria-label="Giờ Việt Nam">
+            <div class="clock-inline-top">
+              <span class="clock-inline-dot"></span>
+              <span class="clock-inline-time"><span id="ci-h">00</span><span class="ci-sep">:</span><span id="ci-m">00</span><span class="ci-sep">:</span><span id="ci-s">00</span></span>
+            </div>
+            <div class="clock-inline-date" id="ci-date">T2, 01/01</div>
+            <div class="clock-inline-phase" id="ci-phase">🌙 GMT+7</div>
+          </div>
         </section>
 
         <section id="activity-card" class="activity-card hidden" aria-labelledby="activity-title">
@@ -150,6 +158,8 @@
             <span>Cheater</span>
           </div>
         </section>
+
+
 
         <nav class="social-row" aria-label="Liên kết mạng xã hội">
           <a id="discord-link" href="https://discord.com/users/917263515209859102" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
@@ -188,7 +198,6 @@
           <!-- Bot status card -->
           <div class="mc-bot-card">
             <div class="mc-bot-avatar">
-              <!-- ✅ ĐÃ SỬA: dùng ảnh minevui-avatar.png thay vì Discord avatar -->
               <img src="./minevui-avatar.png" alt="Bot avatar" id="mc-bot-avatar" />
               <span class="mc-bot-status-dot online"></span>
             </div>
