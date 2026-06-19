@@ -1114,7 +1114,16 @@
             <h2 id="presence-title">Trạng thái: <span id="custom-status-line">Đang tải...</span></h2>
             <p id="status-text"><span class="inline-dot"></span>Đang kết nối Discord...</p>
           </div>
-          <span id="last-updated" class="sync-pill">đang đồng bộ</span>
+                    <!-- ========== CLOCK INLINE ========== -->
+          <div class="clock-inline" aria-label="Giờ Việt Nam">
+            <div class="clock-inline-top">
+              <span class="clock-inline-dot"></span>
+              <span class="clock-inline-time"><span id="ci-h">00</span><span class="ci-sep">:</span><span id="ci-m">00</span><span class="ci-sep">:</span><span id="ci-s">00</span></span>
+            </div>
+            <div class="clock-inline-date" id="ci-date">T2, 01/01</div>
+            <div class="clock-inline-phase" id="ci-phase">🌙 GMT+7</div>
+          </div>
+          <!-- ========== END CLOCK INLINE ========== -->
         </section>
 
         <section id="activity-card" class="activity-card hidden" aria-labelledby="activity-title">
