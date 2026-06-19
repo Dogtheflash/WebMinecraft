@@ -151,6 +151,59 @@
           </div>
         </section>
 
+        <!-- ========== ANIME CLOCK WIDGET ========== -->
+        <section class="clock-widget" aria-label="Đồng hồ Việt Nam">
+          <div class="clock-eyebrow">
+            <span class="clock-live-dot"></span>LIVE CLOCK · VIETNAM TIME
+          </div>
+
+          <div class="clock-main-row">
+            <span class="clock-hm" id="ck-hm">00:00</span>
+            <div class="clock-sec-col">
+              <span class="clock-sec" id="ck-sec">00</span>
+              <span class="clock-ampm" id="ck-ampm">AM</span>
+            </div>
+          </div>
+
+          <div class="clock-sub-row">
+            <span class="clock-date" id="ck-date"></span>
+            <span class="clock-tz">GMT+7</span>
+          </div>
+
+          <div class="clock-progress-block">
+            <div class="clock-prog-labels">
+              <span>00:00</span><span id="ck-prog-label">Ngày hôm nay</span><span>23:59</span>
+            </div>
+            <div class="clock-track">
+              <div class="clock-track-fill" id="ck-fill" style="width:0%"></div>
+            </div>
+          </div>
+
+          <div class="clock-phases">
+            <div class="clock-phase" id="ck-morning">
+              <span class="cph-icon">🌅</span>
+              <span class="cph-name">Sáng</span>
+              <span class="cph-time">06:00 – 11:59</span>
+            </div>
+            <div class="clock-phase" id="ck-afternoon">
+              <span class="cph-icon">☀️</span>
+              <span class="cph-name">Chiều</span>
+              <span class="cph-time">12:00 – 17:59</span>
+            </div>
+            <div class="clock-phase" id="ck-night">
+              <span class="cph-icon">🌙</span>
+              <span class="cph-name">Tối / Đêm</span>
+              <span class="cph-time">18:00 – 05:59</span>
+            </div>
+          </div>
+
+          <div class="clock-footer-row">
+            <span class="clock-greet" id="ck-greet"></span>
+            <span class="clock-ver">v1.0 · CHINATSU</span>
+          </div>
+        </section>
+        <!-- ========== END ANIME CLOCK WIDGET ========== -->
+
         <nav class="social-row" aria-label="Liên kết mạng xã hội">
           <a id="discord-link" href="https://discord.com/users/917263515209859102" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.32 4.37A19.8 19.8 0 0 0 15.36 2l-.24.44c1.8.55 2.64 1.34 2.64 1.34a16.5 16.5 0 0 0-5.02-1.55 17.1 17.1 0 0 0-4.24.04c-.13 0-.25.03-.38.05-.75.07-2.56.34-4.84 1.36 0 0 .87-.83 2.78-1.38L5.9 2A19.7 19.7 0 0 0 .94 4.42S0 8.1 0 12.7c0 0 1.47 2.52 5.34 2.65 0 0 .65-.78 1.18-1.45-2.24-.67-3.09-2.08-3.09-2.08s.18.13.5.31c.02.02.05.03.08.05.04.03.08.05.12.07.44.25.88.45 1.29.6.72.28 1.58.56 2.59.75 1.33.25 2.9.34 4.6.02.83-.15 1.68-.4 2.57-.75.62-.24 1.31-.58 2.03-1.05 0 0-.88 1.44-3.2 2.1.53.66 1.15 1.42 1.15 1.42 3.88-.13 5.36-2.65 5.36-2.65 0-4.6-.2-8.33-.2-8.33ZM8.2 11.62c-.98 0-1.78-.86-1.78-1.92 0-1.06.78-1.92 1.78-1.92S10 8.64 9.98 9.7c0 1.06-.79 1.92-1.78 1.92Zm7.38 0c-.98 0-1.78-.86-1.78-1.92 0-1.06.79-1.92 1.78-1.92 1 0 1.8.86 1.78 1.92 0 1.06-.78 1.92-1.78 1.92Z"/></svg>
@@ -188,7 +241,6 @@
           <!-- Bot status card -->
           <div class="mc-bot-card">
             <div class="mc-bot-avatar">
-              <!-- ✅ ĐÃ SỬA: dùng ảnh minevui-avatar.png thay vì Discord avatar -->
               <img src="./minevui-avatar.png" alt="Bot avatar" id="mc-bot-avatar" />
               <span class="mc-bot-status-dot online"></span>
             </div>
