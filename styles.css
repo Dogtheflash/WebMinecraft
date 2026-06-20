@@ -2428,3 +2428,21 @@ body.zen-mode #zen-overlay {
   font-family: 'JetBrains Mono', monospace;
   animation: catBreathe 3s ease-in-out infinite alternate-reverse;
 }
+
+#zen-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://media1.tenor.com/m/l1tC-7vYqjAAAAAd/rain-aesthetic.gif');
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 2s ease;
+  pointer-events: none;
+  z-index: 0; /* Above main video, below UI */
+}
+
+body.zen-mode #zen-bg {
+  opacity: 1;
+}
