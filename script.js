@@ -14,12 +14,12 @@
   if (terminal) terminal.style.visibility = 'hidden';
 
   var msgs = [
-    'Inserting Cassette...',
-    'Rewinding Tape...',
-    'Adjusting Tracking...',
-    'Loading 198X Graphics Engine...',
-    'Synthesizing Audio Channels...',
-    'Ready To Play.'
+    'Whispering to the void...',
+    'Drawing arcane sigils...',
+    'Channeling dark energy...',
+    'Piercing the veil...',
+    'The eye opens...',
+    'Entity summoned.'
   ];
 
   var prog = 0, done = false;
@@ -45,7 +45,7 @@
     if (prog >= 100) {
       clearInterval(iv);
       done = true;
-      if (statusEl) statusEl.textContent = 'Ready To Play.';
+      if (statusEl) statusEl.textContent = 'Entity summoned.';
 
       setTimeout(function () {
         if (fadeEl) fadeEl.classList.add('active');
