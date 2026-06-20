@@ -1898,6 +1898,17 @@ if (interactiveCard) {
       showChat();
     });
 
+    companion.addEventListener('dblclick', () => {
+      const chibiParent = document.querySelector('.css-chibi');
+      if (chibiParent && !chibiParent.classList.contains('backflip')) {
+        chibiParent.classList.add('backflip');
+        // Animation takes 1s
+        setTimeout(() => {
+          chibiParent.classList.remove('backflip');
+        }, 1000);
+      }
+    });
+
     const chatBubble = document.getElementById('comp-chat');
     const quotes = [
       "Bấm vào mình đi!",
