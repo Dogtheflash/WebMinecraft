@@ -943,11 +943,12 @@ body.wide-page-active .mc-bot-avatar {
   position: fixed;
   inset: 0;
   z-index: 999999;
-  background: radial-gradient(circle at center, #1a153a 0%, #080614 100%);
+  background: #0f0c29;
+  background: linear-gradient(to bottom, #0f0c29 0%, #302b63 50%, #24243e 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'JetBrains Mono', monospace;
   opacity: 1;
   visibility: visible;
   transition: opacity 0.9s ease, visibility 0.9s ease;
@@ -955,69 +956,34 @@ body.wide-page-active .mc-bot-avatar {
 }
 #cyber-loading.cl-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-#cyber-loading .astral-stars {
-  position: absolute; inset: 0; pointer-events: none;
-  background-repeat: repeat;
-  opacity: 0.6;
+/* SYNTHWAVE BACKGROUND */
+#cyber-loading .sw-sky {
+  position: absolute; inset: 0 0 50% 0;
+  background: linear-gradient(to bottom, #000000 0%, #2b0b3f 60%, #ff0055 100%);
 }
-#cyber-loading .astral-stars.layer1 {
-  background-image: radial-gradient(1px 1px at 20px 30px, #fff, transparent),
-                    radial-gradient(1.5px 1.5px at 10px 10px, #e0c38c, transparent),
-                    radial-gradient(2px 2px at 40px 40px, #fff, transparent);
+#cyber-loading .sw-sun {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px; height: 300px;
+  background: linear-gradient(to bottom, #ffea00 0%, #ff0055 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 50px #ff0055, 0 0 100px #ffea00;
+  z-index: 1;
+  mask-image: linear-gradient(to bottom, black 50%, transparent 50%, transparent 60%, black 60%, black 75%, transparent 75%, transparent 80%, black 80%);
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 40%, transparent 45%, black 45%, black 55%, transparent 55%, transparent 62%, black 62%, black 75%, transparent 75%, transparent 85%, black 85%);
+}
+#cyber-loading .sw-grid-wrap {
+  position: absolute; top: 50%; left: 0; right: 0; bottom: 0;
+  perspective: 600px; z-index: 2;
+  overflow: hidden;
+}
+#cyber-loading .sw-grid {
+  position: absolute; width: 200%; height: 200%;
+  bottom: -50%; left: -50%;
+  background-image: 
+    linear-gradient(rgba(255,0,85,0.6) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(255,0,85,0.6) 2px, transparent 2px);
   background-size: 60px 60px;
-  animation: starsDrift 60s linear infinite;
-}
-#cyber-loading .astral-stars.layer2 {
-  background-image: radial-gradient(2px 2px at 40px 70px, #fff, transparent),
-                    radial-gradient(1px 1px at 60px 20px, #e0c38c, transparent),
-                    radial-gradient(2.5px 2.5px at 10px 80px, #fff, transparent);
-  background-size: 100px 100px;
-  animation: starsDrift 40s linear infinite;
-  opacity: 0.4;
-}
-#cyber-loading .astral-stars.layer3 {
-  background-image: radial-gradient(3px 3px at 80px 120px, #fff, transparent),
-                    radial-gradient(2px 2px at 150px 40px, #e0c38c, transparent),
-                    radial-gradient(1.5px 1.5px at 10px 180px, #fff, transparent);
-  background-size: 200px 200px;
-  animation: starsDrift 20s linear infinite;
-  opacity: 0.8;
-}
-@keyframes starsDrift { to { transform: translateY(-200px); } }
-
-#cyber-loading .astral-container {
-  position: relative; z-index: 5;
-  display: flex; flex-direction: column; align-items: center; gap: 40px;
-}
-
-/* DIAMOND AND RINGS */
-#cyber-loading .astral-diamond-wrap {
-  position: relative; width: 140px; height: 140px;
-  display: flex; align-items: center; justify-content: center;
-}
-#cyber-loading .astral-ring {
-  position: absolute; inset: 0; border-radius: 50%;
-  border: 1px solid rgba(224,195,140, 0.15);
-}
-#cyber-loading .astral-ring.outer-ring {
-  inset: -30px;
-  border-top: 1px solid #e0c38c;
-  border-bottom: 1px solid #e0c38c;
-  animation: spinSlow 8s linear infinite;
-}
-#cyber-loading .astral-ring.inner-ring {
-  inset: -10px;
-  border-left: 1px solid #e0c38c;
-  animation: spinSlow 5s linear infinite reverse;
-}
-#cyber-loading .astral-ring.dashed-ring {
-  inset: 10px;
-  border: 2px dashed rgba(224,195,140, 0.3);
-  animation: spinSlow 12s linear infinite;
-}
-#cyber-loading .astral-glow-orb {
-  position: absolute; width: 50px; height: 50px;
-  background: #e0c38c; border-radius: 50%;
   filter: blur(25px);
   animation: pulseOrb 2s infinite alternate;
 }
@@ -1027,63 +993,68 @@ body.wide-page-active .mc-bot-avatar {
   100% { opacity: 0.9; transform: scale(1.2); }
 }
 
-#cyber-loading .astral-diamond {
-  position: absolute; width: 70px; height: 70px;
-  border: 1px solid rgba(224,195,140,0.3);
-  transform: rotate(45deg);
-  animation: diamondBreathe 4s ease-in-out infinite;
-  box-shadow: 0 0 30px rgba(224,195,140,0.1);
-}
-#cyber-loading .astral-diamond-inner {
-  position: absolute; width: 50px; height: 50px;
-  background: linear-gradient(135deg, rgba(224,195,140,0.5), rgba(224,195,140,0.05));
-  transform: rotate(45deg);
-  box-shadow: 0 0 20px rgba(224,195,140,0.4);
-  animation: diamondPulse 2s ease-in-out infinite alternate;
-}
-@keyframes diamondBreathe {
-  0%, 100% { transform: rotate(45deg) scale(1); border-color: rgba(224,195,140,0.3); }
-  50% { transform: rotate(45deg) scale(1.1); border-color: rgba(224,195,140,0.8); }
-}
-@keyframes diamondPulse {
-  0% { opacity: 0.3; filter: blur(2px); }
-  100% { opacity: 0.7; filter: blur(0px); box-shadow: 0 0 40px rgba(224,195,140,0.8); }
+/* CONTAINER */
+#cyber-loading .sw-container {
+  position: relative; z-index: 10;
+  display: flex; flex-direction: column; align-items: center; gap: 30px;
+  text-align: center;
 }
 
-/* CENTER TEXT */
-#cyber-loading .astral-center-text {
-  position: absolute; z-index: 10;
-  display: flex; flex-direction: column; align-items: center;
+/* TITLE */
+#cyber-loading .sw-title { display: flex; flex-direction: column; align-items: center; }
+#cyber-loading .sw-neon-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900; font-style: italic;
+  color: #fff; text-transform: uppercase;
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #00e5ff, 0 0 40px #00e5ff, 0 0 80px #00e5ff;
+  letter-spacing: 2px; transform: skewX(-10deg); margin-bottom: 5px;
 }
-#cyber-loading .astral-pct {
-  font-size: 36px; font-weight: 700; color: #fff;
-  letter-spacing: 2px;
-  text-shadow: 0 0 15px rgba(224,195,140,0.9);
-  font-family: 'JetBrains Mono', monospace;
-}
-#cyber-loading .astral-sync {
-  font-size: 11px; color: #e0c38c; letter-spacing: 4px;
-  font-weight: 700; margin-top: -5px;
+#cyber-loading .sw-sub-text {
+  font-size: 14px; letter-spacing: 10px; color: #ff0055;
+  font-weight: 700; text-transform: uppercase;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.8); margin-left: 10px;
 }
 
-/* TEXT */
-#cyber-loading .astral-text-wrap { text-align: center; margin-top: 20px; }
-#cyber-loading .astral-title {
-  font-size: clamp(1.2rem, 3vw, 1.6rem);
-  font-weight: 300; letter-spacing: 6px; color: #e0c38c;
-  text-transform: uppercase; margin-bottom: 12px;
-  text-shadow: 0 0 15px rgba(224,195,140,0.4);
+/* PROGRESS BAR */
+#cyber-loading .sw-progress-wrap {
+  width: min(500px, 90vw); display: flex; flex-direction: column; align-items: center; gap: 15px;
 }
-#cyber-loading .astral-status {
-  font-size: 13px; color: rgba(224,195,140,0.7);
-  letter-spacing: 2px; font-weight: 300;
-  font-family: 'JetBrains Mono', monospace;
-  animation: pulseText 2s infinite alternate;
+#cyber-loading .sw-track {
+  width: 100%; height: 16px;
+  background: rgba(0,0,0,0.5); border: 2px solid #00e5ff; border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,229,255,0.3), inset 0 0 5px rgba(0,0,0,0.8);
+  overflow: hidden;
 }
-@keyframes pulseText {
-  0% { opacity: 0.6; }
-  100% { opacity: 1; }
+#cyber-loading .sw-fill {
+  height: 100%; width: 0%;
+  background: #ff0055; box-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055;
+  border-radius: 6px; transition: width 0.1s linear;
 }
+#cyber-loading .sw-pct {
+  font-size: 20px; font-weight: 700; color: #fff;
+  text-shadow: 0 0 10px #ffea00; letter-spacing: 2px;
+}
+
+/* STATUS TEXT */
+#cyber-loading .sw-status {
+  font-size: 12px; color: #00e5ff; letter-spacing: 4px;
+  text-transform: uppercase; text-shadow: 0 0 5px #00e5ff;
+  animation: pulseText 1.5s infinite alternate;
+}
+
+/* VHS & EFFECTS */
+#cyber-loading .sw-vhs-overlay {
+  position: absolute; inset: 0; pointer-events: none; z-index: 15;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px; opacity: 0.3;
+}
+#cyber-loading .sw-scanlines {
+  position: absolute; inset: 0; pointer-events: none; z-index: 16;
+  background: rgba(255,255,255,0.02);
+  animation: vhsTracking 3s infinite linear;
+}
+@keyframes vhsTracking { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
 
 #cyber-loading .cl-fade-overlay {
   position:absolute; inset:0; background:#080614;
