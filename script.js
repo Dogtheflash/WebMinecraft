@@ -635,8 +635,19 @@ function rotateDecoration() {
 setInterval(rotateDecoration, 5000);
 
 function enterConsole() {
-  showScreen(profileScreen);
-  startMusic();
+  terminalScreen.classList.add('warp-out');
+  
+  setTimeout(() => {
+    showScreen(profileScreen);
+    terminalScreen.classList.remove('warp-out');
+    profileScreen.classList.add('warp-in');
+    
+    setTimeout(() => {
+      profileScreen.classList.remove('warp-in');
+    }, 1000);
+    
+    startMusic();
+  }, 700);
 }
 
 const trackTitle = document.getElementById('track-title');
