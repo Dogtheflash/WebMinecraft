@@ -2233,3 +2233,274 @@ if (interactiveCard) {
     }, 2000);
   }
 })();
+
+/* ============================================================
+   CHIBI RUNNER MINIGAME (EASTER EGG)
+   ============================================================ */
+(function initChibiRunner() {
+  const aboutCard = document.querySelector('.about-card');
+  if (!aboutCard) return;
+
+  const gameContainer = document.createElement('div');
+  gameContainer.id = 'runner-game-container';
+  gameContainer.innerHTML = `
+    <div class="runner-close" title="Đóng game">✖</div>
+    <div class="runner-score">00000</div>
+    <div class="runner-ground"></div>
+    <div class="runner-chibi-wrap" id="runner-chibi"></div>
+    <div class="runner-game-over" id="runner-game-over">
+      GAME OVER
+      <span>Bấm Phím Cách (Space) để chơi lại</span>
+    </div>
+  `;
+  aboutCard.appendChild(gameContainer);
+
+  const chibiWrap = document.getElementById('runner-chibi');
+  const scoreEl = gameContainer.querySelector('.runner-score');
+  const gameOverEl = document.getElementById('runner-game-over');
+  const closeBtn = gameContainer.querySelector('.runner-close');
+
+  const originalChibi = document.querySelector('.css-chibi');
+  if (originalChibi) {
+    const clone = originalChibi.cloneNode(true);
+    const chat = clone.querySelector('.comp-chat');
+    if (chat) chat.remove();
+    clone.style.position = 'relative';
+    clone.style.bottom = '0';
+    clone.style.right = 'auto';
+    clone.style.left = '0';
+    clone.style.zIndex = '1';
+    clone.style.transform = 'scale(0.6)';
+    clone.style.transformOrigin = 'bottom left';
+    chibiWrap.appendChild(clone);
+  }
+
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  let audioCtx;
+  
+  function playSound(type) {
+    if (!audioCtx) {
+      try { audioCtx = new AudioContext(); } catch(e) { return; }
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    if (type === 'jump') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.1);
+    } else if (type === 'die') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+      gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.3);
+    } else if (type === 'score') {
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+      gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.1);
+      
+      setTimeout(() => {
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.type = 'square';
+        osc2.frequency.setValueAtTime(1200, audioCtx.currentTime);
+        gain2.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc2.start();
+        osc2.stop(audioCtx.currentTime + 0.1);
+      }, 100);
+    }
+  }
+
+  let isPlaying = false;
+  let isGameOver = false;
+  let score = 0;
+  let gameSpeed = 4;
+  let gravity = 0.6;
+  let velocityY = 0;
+  let chibiY = 22;
+  let isJumping = false;
+  let obstacles = [];
+  let frameCount = 0;
+  let reqId;
+
+  function startGame() {
+    gameContainer.classList.add('active');
+    resetGame();
+  }
+
+  function resetGame() {
+    isPlaying = true;
+    isGameOver = false;
+    score = 0;
+    gameSpeed = 4;
+    velocityY = 0;
+    chibiY = 22;
+    isJumping = false;
+    frameCount = 0;
+    scoreEl.innerText = "00000";
+    gameOverEl.classList.remove('show');
+    
+    obstacles.forEach(obs => obs.el.remove());
+    obstacles = [];
+    
+    updateChibiPos();
+    cancelAnimationFrame(reqId);
+    reqId = requestAnimationFrame(gameLoop);
+  }
+
+  function stopGame() {
+    isPlaying = false;
+    gameContainer.classList.remove('active');
+    cancelAnimationFrame(reqId);
+  }
+
+  function jump() {
+    if (!isPlaying && !isGameOver) return;
+    if (isGameOver) {
+      resetGame();
+      return;
+    }
+    if (!isJumping) {
+      isJumping = true;
+      velocityY = 10;
+      playSound('jump');
+    }
+  }
+
+  function updateChibiPos() {
+    chibiWrap.style.bottom = chibiY + 'px';
+  }
+
+  function spawnObstacle() {
+    const obsEl = document.createElement('div');
+    obsEl.className = 'runner-obstacle';
+    obsEl.style.left = gameContainer.offsetWidth + 'px';
+    gameContainer.appendChild(obsEl);
+    obstacles.push({ el: obsEl, x: gameContainer.offsetWidth, passed: false });
+  }
+
+  function gameLoop() {
+    if (!isPlaying) return;
+
+    frameCount++;
+    
+    if (isJumping) {
+      chibiY += velocityY;
+      velocityY -= gravity;
+      if (chibiY <= 22) {
+        chibiY = 22;
+        isJumping = false;
+        velocityY = 0;
+      }
+      updateChibiPos();
+    }
+
+    if (frameCount % Math.max(50, 120 - Math.floor(score / 15)) === 0) {
+      spawnObstacle();
+    }
+
+    const chibiRect = chibiWrap.getBoundingClientRect();
+    const hitBox = {
+      left: chibiRect.left + 6,
+      right: chibiRect.right - 6,
+      top: chibiRect.top + 4,
+      bottom: chibiRect.bottom
+    };
+
+    for (let i = 0; i < obstacles.length; i++) {
+      let obs = obstacles[i];
+      obs.x -= gameSpeed;
+      obs.el.style.left = obs.x + 'px';
+
+      if (!obs.passed && obs.x < 30) {
+        obs.passed = true;
+        score += 10;
+        scoreEl.innerText = score.toString().padStart(5, '0');
+        if (score % 100 === 0) {
+          playSound('score');
+          gameSpeed += 0.5;
+        }
+      }
+
+      const obsRect = obs.el.getBoundingClientRect();
+      const obsHitBox = {
+        left: obsRect.left + 4,
+        right: obsRect.right - 4,
+        top: obsRect.top + 6,
+        bottom: obsRect.bottom
+      };
+
+      if (hitBox.left < obsHitBox.right &&
+          hitBox.right > obsHitBox.left &&
+          hitBox.bottom > obsHitBox.top &&
+          hitBox.top < obsHitBox.bottom) {
+        isGameOver = true;
+        isPlaying = false;
+        gameOverEl.classList.add('show');
+        playSound('die');
+        cancelAnimationFrame(reqId);
+        return;
+      }
+    }
+
+    if (obstacles.length > 0 && obstacles[0].x < -30) {
+      obstacles[0].el.remove();
+      obstacles.shift();
+    }
+
+    reqId = requestAnimationFrame(gameLoop);
+  }
+
+  let arrowUpCount = 0;
+  let arrowUpTimer;
+  document.addEventListener('keyup', (e) => {
+    if (e.code === 'ArrowUp') {
+      arrowUpCount++;
+      clearTimeout(arrowUpTimer);
+      if (arrowUpCount >= 2) {
+        if (!gameContainer.classList.contains('active')) {
+          startGame();
+        }
+        arrowUpCount = 0;
+      } else {
+        arrowUpTimer = setTimeout(() => { arrowUpCount = 0; }, 400);
+      }
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+      if (gameContainer.classList.contains('active')) {
+        e.preventDefault();
+        jump();
+      }
+    }
+  });
+
+  gameContainer.addEventListener('click', (e) => {
+    if (e.target !== closeBtn) {
+      jump();
+    }
+  });
+
+  closeBtn.addEventListener('click', () => {
+    stopGame();
+  });
+})();
