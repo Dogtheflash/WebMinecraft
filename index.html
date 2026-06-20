@@ -139,14 +139,6 @@
           <div class="identity-block">
             <div style="display: flex; align-items: center; gap: 15px; position: relative;">
               <h1 id="display-name" style="margin: 0;"><span id="profile-typing-name" class="profile-typing-name">Chinatsu Kamado</span><span class="profile-typing-cursor" aria-hidden="true">|</span></h1>
-              <!-- ========== INTERACTIVE COMPANION ========== -->
-              <div id="companion" class="cyber-companion" aria-hidden="true" title="Bấm vào mình đi!">
-                <div id="comp-chat" class="comp-chat">Bấm vào mình đi!</div>
-                <div class="comp-body">
-                  <div class="comp-eye left"></div>
-                  <div class="comp-eye right"></div>
-                </div>
-              </div>
             </div>
             <p class="username">@<span id="username" class="glitch-hover" data-text="Chinatsu Kamado">Chinatsu Kamado</span></p>
           </div>
@@ -157,14 +149,23 @@
             <h2 id="presence-title">Trạng thái: <span id="custom-status-line">Đang tải...</span></h2>
             <p id="status-text"><span class="inline-dot"></span>Đang kết nối Discord...</p>
           </div>
-          <!-- CLOCK WIDGET (thay sync-pill) -->
-          <div class="clock-inline" aria-label="Giờ Việt Nam">
+          <!-- CLOCK WIDGET & COMPANION -->
+          <div style="position: relative; flex: 0 0 auto;">
+            <div id="companion" class="cyber-companion" aria-hidden="true" title="Bấm vào mình đi!" style="position: absolute; bottom: calc(100% - 12px); right: 20px; z-index: 50; animation: none;">
+              <div id="comp-chat" class="comp-chat">Bấm vào mình đi!</div>
+              <div class="comp-body">
+                <div class="comp-eye left"></div>
+                <div class="comp-eye right"></div>
+              </div>
+            </div>
+            <div class="clock-inline" aria-label="Giờ Việt Nam">
             <div class="clock-inline-top">
               <span class="clock-inline-dot"></span>
               <span class="clock-inline-time"><span id="ci-h">00</span><span class="ci-sep">:</span><span id="ci-m">00</span><span class="ci-sep">:</span><span id="ci-s">00</span></span>
             </div>
             <div class="clock-inline-date" id="ci-date">T2, 01/01</div>
             <div class="clock-inline-phase" id="ci-phase">🌙 GMT+7</div>
+          </div>
           </div>
         </section>
 
