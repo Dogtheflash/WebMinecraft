@@ -4,11 +4,9 @@
    ============================================================ */
 (function () {
   var overlay  = document.getElementById('cyber-loading');
-  var fill     = document.getElementById('cl-fill');
-  var head     = document.getElementById('cl-head');
+  var ring     = document.getElementById('cl-ring');
   var pctEl    = document.getElementById('cl-pct');
   var statusEl = document.getElementById('cl-status');
-  var clockEl  = document.getElementById('cl-clock');
   var fadeEl   = document.getElementById('cl-fade');
   var terminal = document.getElementById('terminal-screen');
 
@@ -26,12 +24,7 @@
     'ACCESS GRANTED. WELCOME.'
   ];
 
-  var prog = 0, s1 = 0, s2 = 0, s3 = 0, done = false;
-
-  /* Đồng hồ realtime */
-  setInterval(function () {
-    if (clockEl) clockEl.textContent = new Date().toTimeString().slice(0, 8);
-  }, 1000);
+  var prog = 0, done = false;
 
   /* Progress bar — ~2 giây để hoàn thành */
   var iv = setInterval(function () {
@@ -43,27 +36,13 @@
             :              (Math.random() * 1.5 + 0.8);
 
     prog = Math.min(prog + inc, 100);
-    s1   = Math.min(s1 + Math.random() * 6 + 3,  100);
-    s2   = Math.min(s2 + Math.random() * 5 + 2.5, 100);
-    s3   = Math.min(s3 + Math.random() * 6 + 2,  100);
 
     var p = Math.floor(prog);
-    if (fill)  fill.style.width  = prog + '%';
-    if (head)  head.style.right  = (100 - prog) + '%';
+    if (ring)  ring.style.background = `conic-gradient(#fcee0a ${prog}%, transparent 0)`;
     if (pctEl) pctEl.textContent = p + '%';
 
     var si = Math.min(Math.floor(prog / 12.5), msgs.length - 1);
     if (statusEl) statusEl.textContent = msgs[si];
-
-    function setBar(id, pid, v) {
-      var el = document.getElementById(id);
-      var ep = document.getElementById(pid);
-      if (el) el.style.width  = Math.floor(v) + '%';
-      if (ep) ep.textContent  = Math.floor(v) + '%';
-    }
-    setBar('cs1', 'cs1p', s1);
-    setBar('cs2', 'cs2p', s2);
-    setBar('cs3', 'cs3p', s3);
 
     if (prog >= 100) {
       clearInterval(iv);
