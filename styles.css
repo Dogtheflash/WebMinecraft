@@ -133,10 +133,6 @@ body.wide-page-active .color-page {
 
 .screen { min-height: 100vh; width: 100%; display: none; place-items: center; padding: 30px 16px 138px; }
 .terminal-screen { padding-bottom: 30px; overscroll-behavior:none; touch-action:none; position: relative; overflow: hidden; }
-.terminal-screen::before, .terminal-screen::after { content: ''; position: absolute; width: 50vw; height: 50vw; border-radius: 50%; filter: blur(120px); z-index: -1; animation: orbit 20s linear infinite; pointer-events: none; }
-.terminal-screen::before { background: rgba(53,232,255,0.25); top: -10%; left: -10%; }
-.terminal-screen::after { background: rgba(255,107,248,0.25); bottom: -10%; right: -10%; animation-delay: -10s; }
-@keyframes orbit { 0% { transform: rotate(0deg) translateX(80px) rotate(0deg); } 100% { transform: rotate(360deg) translateX(80px) rotate(-360deg); } }
 .screen.active { display: grid; animation: screenIn .55s ease both; }
 .glass-panel { background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.08); backdrop-filter: blur(22px) saturate(130%); }
 
