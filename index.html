@@ -99,6 +99,13 @@
 
     <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
       <article class="profile-console glass-panel">
+        <!-- ========== INTERACTIVE COMPANION ========== -->
+        <div id="companion" class="cyber-companion" aria-hidden="true" title="Bấm vào mình đi!">
+          <div class="comp-body">
+            <div class="comp-eye left"></div>
+            <div class="comp-eye right"></div>
+          </div>
+        </div>
         <!-- ========== THEME SWITCHER ========== -->
         <div id="theme-switcher" class="theme-switcher">
           <div id="theme-menu" class="theme-menu hidden">
@@ -427,6 +434,9 @@
           <button id="tc-copy" class="copy-btn" type="button">Copy Unity Rich Text</button>
         </section>
         <!-- ========== END COLOR TOOL PAGE ========== -->
+
+        <!-- AUDIO VISUALIZER CANVAS -->
+        <canvas id="audio-visualizer" class="audio-visualizer" aria-hidden="true"></canvas>
 
       </article>
     </section>
