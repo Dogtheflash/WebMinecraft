@@ -1704,6 +1704,7 @@ body,
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
+  z-index: 10;
   transition: opacity 0.3s ease, transform 0.3s ease;
   box-shadow: 0 6px 16px rgba(0,0,0,0.5);
 }
@@ -1770,7 +1771,7 @@ body,
 }
 
 /* 3. Wizard */
-.chibi-hat.hat-wizard { opacity: 1; top: -24px; }
+.chibi-hat.hat-wizard { opacity: 1; top: -14px; }
 .chibi-hat.hat-wizard::before {
   content: ''; position: absolute; bottom: 2px; left: 20%; width: 60%; height: 28px;
   background: #70a1ff; clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
@@ -1781,13 +1782,18 @@ body,
 }
 
 /* 4. Cat Ears */
-.chibi-hat.hat-catears { opacity: 1; top: -8px; }
+.chibi-hat.hat-catears { opacity: 1; top: -12px; }
 .chibi-hat.hat-catears::before, .chibi-hat.hat-catears::after {
-  content: ''; position: absolute; bottom: 0; width: 12px; height: 12px;
-  background: #2f3542; border: 2px solid #ff7f50; clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  content: ''; position: absolute; bottom: -2px; width: 0; height: 0;
+  background: transparent;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 12px solid #2f3542;
+  filter: drop-shadow(0 -1px 1px #ff7f50);
+  clip-path: none;
 }
-.chibi-hat.hat-catears::before { left: 10%; transform: rotate(-15deg); }
-.chibi-hat.hat-catears::after { right: 10%; transform: rotate(15deg); }
+.chibi-hat.hat-catears::before { left: 5%; transform: rotate(-20deg); }
+.chibi-hat.hat-catears::after { right: 5%; transform: rotate(20deg); }
 
 /* 5. Visor */
 .chibi-hat.hat-visor { opacity: 1; top: 6px; }
