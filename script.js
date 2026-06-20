@@ -4,8 +4,7 @@
    ============================================================ */
 (function () {
   var overlay  = document.getElementById('cyber-loading');
-  var fill     = document.getElementById('cl-fill');
-  var head     = document.getElementById('cl-head');
+  var ring     = document.getElementById('cl-ring');
   var pctEl    = document.getElementById('cl-pct');
   var statusEl = document.getElementById('cl-status');
   var fadeEl   = document.getElementById('cl-fade');
@@ -37,8 +36,7 @@
     prog = Math.min(prog + inc, 100);
 
     var p = Math.floor(prog);
-    if (fill)  fill.style.width  = prog + '%';
-    if (head)  head.style.right  = (100 - prog) + '%';
+    if (ring)  ring.style.background = `conic-gradient(#e0c38c ${prog}%, transparent 0)`;
     if (pctEl) pctEl.textContent = p + '%';
 
     var si = Math.min(Math.floor(prog / 16.6), msgs.length - 1);
