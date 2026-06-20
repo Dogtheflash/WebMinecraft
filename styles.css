@@ -943,7 +943,7 @@ body.wide-page-active .mc-bot-avatar {
   position: fixed;
   inset: 0;
   z-index: 999999;
-  background: #000c10;
+  background: #050505;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -961,8 +961,8 @@ body.wide-page-active .mc-bot-avatar {
 #cyber-loading .cl-grid-bg {
   position: absolute; inset: 0; pointer-events: none;
   background-image:
-    linear-gradient(rgba(0,255,160,0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,160,0.055) 1px, transparent 1px);
+    linear-gradient(rgba(252,238,10,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(252,238,10,0.04) 1px, transparent 1px);
   background-size: 38px 38px;
   animation: clGridBreathe 5s ease-in-out infinite;
 }
@@ -972,52 +972,63 @@ body.wide-page-active .mc-bot-avatar {
   position: absolute; inset: 0; pointer-events: none; z-index: 2;
   background: repeating-linear-gradient(
     0deg, transparent 0px, transparent 2px,
-    rgba(0,255,160,.012) 2px, rgba(0,255,160,.012) 4px
+    rgba(255,0,60,.04) 2px, rgba(255,0,60,.04) 4px
   );
+  animation: scanlineDrift 10s linear infinite;
 }
+@keyframes scanlineDrift { to { background-position: 0 100vh; } }
 
 #cyber-loading .cl-corner { position: absolute; width: 32px; height: 32px; z-index: 3; }
-#cyber-loading .cl-tl { top:14px; left:14px;   border-top:1.5px solid #00ffb4; border-left:1.5px solid #00ffb4; }
-#cyber-loading .cl-tr { top:14px; right:14px;  border-top:1.5px solid #00ffb4; border-right:1.5px solid #00ffb4; }
-#cyber-loading .cl-bl { bottom:14px; left:14px;  border-bottom:1.5px solid #00ffb4; border-left:1.5px solid #00ffb4; }
-#cyber-loading .cl-br { bottom:14px; right:14px; border-bottom:1.5px solid #00ffb4; border-right:1.5px solid #00ffb4; }
+#cyber-loading .cl-tl { top:14px; left:14px;   border-top:2px solid #fcee0a; border-left:2px solid #fcee0a; }
+#cyber-loading .cl-tr { top:14px; right:14px;  border-top:2px solid #fcee0a; border-right:2px solid #fcee0a; }
+#cyber-loading .cl-bl { bottom:14px; left:14px;  border-bottom:2px solid #fcee0a; border-left:2px solid #fcee0a; }
+#cyber-loading .cl-br { bottom:14px; right:14px; border-bottom:2px solid #fcee0a; border-right:2px solid #fcee0a; }
 
 #cyber-loading .cl-card {
   position: relative; z-index: 5;
   width: min(480px, 92vw);
   padding: 40px 44px;
-  background: rgba(0,16,12,.82);
-  border: 1px solid rgba(0,255,180,.2);
-  border-radius: 3px;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(10,10,10,.85);
+  border: 1px solid rgba(252,238,10,.3);
+  border-radius: 2px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow:
-    0 0 0 1px rgba(0,255,180,.05),
-    inset 0 1px 0 rgba(0,255,180,.09),
-    0 28px 80px rgba(0,0,0,.9);
+    0 0 0 1px rgba(255,0,60,.1),
+    0 28px 80px rgba(0,0,0,.9),
+    0 0 30px rgba(252,238,10,.05);
+  animation: cardGlitchShake 3s infinite;
+}
+@keyframes cardGlitchShake {
+  0%, 98%, 100% { transform: translate(0, 0); }
+  98.5% { transform: translate(-3px, 2px); }
+  99% { transform: translate(3px, -2px); }
+  99.5% { transform: translate(-2px, -1px); }
 }
 
 #cyber-loading .cl-top-bar {
-  position: absolute; top:0; left:0; right:0; height:2px; border-radius:3px 3px 0 0;
-  background: linear-gradient(90deg, transparent, #00ffb4 30%, #ff006e 55%, #00b4ff 80%, transparent);
+  position: absolute; top:0; left:0; right:0; height:3px;
+  background: linear-gradient(90deg, transparent, #ff003c 20%, #fcee0a 50%, #00ffff 80%, transparent);
   background-size: 250% auto;
-  animation: clTopBarRun 2.8s linear infinite;
+  animation: clTopBarRun 2s linear infinite;
 }
 @keyframes clTopBarRun { 0%{background-position:100%} 100%{background-position:-100%} }
 
 #cyber-loading .cl-eyebrow {
-  text-align: center; font-size: 9px; letter-spacing: 5px;
-  color: rgba(0,255,180,.4); text-transform: uppercase; margin-bottom: 10px;
+  text-align: center; font-size: 10px; letter-spacing: 4px;
+  color: #ff003c; text-transform: uppercase; margin-bottom: 8px;
+  font-weight: 700;
 }
 
-#cyber-loading .cl-title-wrap { text-align: center; margin-bottom: 30px; }
+#cyber-loading .cl-title-wrap { text-align: center; margin-bottom: 30px; position: relative; }
 #cyber-loading .cl-title {
   font-family: 'Outfit', 'JetBrains Mono', monospace;
-  font-size: clamp(1.3rem, 4vw, 1.85rem);
-  font-weight: 900; letter-spacing: 6px; color: #00ffb4;
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+  font-weight: 900; letter-spacing: 4px; color: #fcee0a;
   text-transform: uppercase;
-  text-shadow: 0 0 18px rgba(0,255,180,.75), 0 0 36px rgba(0,255,180,.25);
+  text-shadow: 2px 0 0 #ff003c, -2px 0 0 #00ffff;
   position: relative; display: inline-block;
+  animation: textGlitchMain 2.5s infinite linear alternate-reverse;
 }
 #cyber-loading .cl-title::before,
 #cyber-loading .cl-title::after {
@@ -1025,100 +1036,96 @@ body.wide-page-active .mc-bot-avatar {
   position: absolute; top:0; left:0; width:100%;
 }
 #cyber-loading .cl-title::before {
-  color: #ff006e;
-  animation: clG1 3.8s infinite;
+  color: #ff003c;
+  animation: clG1 2.8s infinite;
   clip-path: polygon(0 0,100% 0,100% 40%,0 40%);
+  left: -2px;
 }
 #cyber-loading .cl-title::after {
-  color: #00b4ff;
-  animation: clG2 3.8s infinite;
+  color: #00ffff;
+  animation: clG2 2.8s infinite;
   clip-path: polygon(0 62%,100% 62%,100% 100%,0 100%);
+  left: 2px;
 }
-@keyframes clG1 {
-  0%,85%,100%{transform:none;opacity:0}
-  87%{transform:translateX(-3px);opacity:.9}
-  90%{transform:translateX(3px);opacity:.9}
-  93%{transform:translateX(-2px);opacity:.7}
-}
-@keyframes clG2 {
-  0%,85%,100%{transform:none;opacity:0}
-  88%{transform:translateX(3px);opacity:.9}
-  91%{transform:translateX(-3px);opacity:.9}
-  94%{transform:translateX(2px);opacity:.7}
+
+@keyframes textGlitchMain {
+  0%, 100% { text-shadow: 2px 0 0 #ff003c, -2px 0 0 #00ffff; }
+  50% { text-shadow: -2px 0 0 #ff003c, 2px 0 0 #00ffff; }
 }
 
 #cyber-loading .cl-status-row {
   display: flex; align-items: center; gap: 9px; margin-bottom: 12px;
 }
 #cyber-loading .cl-dot {
-  width:7px; height:7px; border-radius:50%; flex-shrink:0;
-  background:#00ffb4; box-shadow:0 0 7px #00ffb4;
-  animation: clDotBlink 1s ease-in-out infinite;
+  width:8px; height:8px; flex-shrink:0; border-radius: 0;
+  background:#fcee0a; box-shadow:0 0 8px #fcee0a;
+  animation: clDotBlink 0.5s steps(2) infinite;
 }
-@keyframes clDotBlink { 0%,100%{opacity:1} 50%{opacity:.1} }
+@keyframes clDotBlink { 0%,100%{opacity:1} 50%{opacity:0} }
 #cyber-loading .cl-status-txt {
-  flex:1; font-size:11px; color:rgba(0,255,180,.62);
+  flex:1; font-size:11px; color:#fcee0a;
   letter-spacing:1px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
+  text-transform: uppercase;
 }
 #cyber-loading .cl-pct {
-  font-size:13px; color:#00ffb4; font-weight:700;
+  font-size:13px; color:#ff003c; font-weight:700;
   letter-spacing:1px; min-width:40px; text-align:right;
 }
 
 #cyber-loading .cl-track {
-  position: relative; height: 4px;
-  background: rgba(0,255,180,.07); margin-bottom: 5px; overflow: visible;
+  position: relative; height: 8px;
+  background: rgba(252,238,10,.1); margin-bottom: 5px; overflow: visible;
+  border: 1px solid rgba(255,0,60,.2);
 }
 #cyber-loading .cl-track::before {
   content:''; position:absolute; inset:0; pointer-events:none;
   background: repeating-linear-gradient(
-    90deg, transparent, transparent 9.9%,
-    rgba(0,255,180,.14) 9.9%, rgba(0,255,180,.14) 10%
+    90deg, transparent, transparent 18px,
+    rgba(10,10,10,1) 18px, rgba(10,10,10,1) 22px
   );
+  z-index: 2;
 }
 #cyber-loading .cl-fill {
   position:absolute; top:0; left:0; height:100%; width:0%;
-  background: linear-gradient(90deg,#00b4ff,#00ffb4,#ff006e);
-  background-size: 200% 100%;
-  animation: clFillRun 2s linear infinite;
+  background: #fcee0a;
+  box-shadow: 0 0 10px #fcee0a, inset 0 0 4px #ff003c;
   transition: width .07s linear;
 }
-@keyframes clFillRun { 0%{background-position:100% 50%} 100%{background-position:0% 50%} }
 #cyber-loading .cl-head {
   position:absolute; top:50%; right:100%;
   transform:translate(50%,-50%);
-  width:9px; height:9px; border-radius:50%; background:#fff;
-  box-shadow:0 0 10px 3px rgba(0,255,180,.9),0 0 22px 7px rgba(0,180,255,.4);
-  transition:right .07s linear; pointer-events:none;
+  width:4px; height:20px; background:#ff003c;
+  box-shadow:0 0 10px 2px rgba(255,0,60,.9);
+  transition:right .07s linear; pointer-events:none; z-index: 3;
 }
 #cyber-loading .cl-hex {
   display:flex; justify-content:space-between; margin-bottom:20px;
-  font-size:9px; color:rgba(0,255,180,.2); letter-spacing:1px;
+  font-size:9px; color:rgba(252,238,10,.4); letter-spacing:1px;
 }
 
 #cyber-loading .cl-subbars { margin-bottom:0; }
 #cyber-loading .cl-sub { display:flex; align-items:center; gap:9px; margin-bottom:9px; }
 #cyber-loading .cl-sub-lbl {
-  font-size:9px; color:rgba(0,255,180,.38); letter-spacing:1px;
-  width:64px; flex-shrink:0; text-transform:uppercase;
+  font-size:9px; color:rgba(252,238,10,.6); letter-spacing:1px;
+  width:64px; flex-shrink:0; text-transform:uppercase; font-weight: 600;
 }
-#cyber-loading .cl-sub-track { flex:1; height:2px; background:rgba(0,255,180,.06); overflow:hidden; }
+#cyber-loading .cl-sub-track { flex:1; height:4px; background:rgba(255,0,60,.15); overflow:hidden; border:1px solid rgba(255,0,60,.3); }
 #cyber-loading .cl-sub-fill { height:100%; width:0%; display:block; transition:width .12s ease; }
 #cyber-loading .cl-sub-pct {
-  font-size:9px; color:rgba(0,255,180,.32); width:28px; text-align:right; flex-shrink:0;
+  font-size:9px; color:#ff003c; width:28px; text-align:right; flex-shrink:0; font-weight: 600;
 }
 
 #cyber-loading .cl-meta {
   display:flex; justify-content:space-between;
   margin-top:18px; padding-top:14px;
-  border-top:1px solid rgba(0,255,180,.08);
-  font-size:9px; color:rgba(0,255,180,.22); letter-spacing:1px;
+  border-top:1px dashed rgba(252,238,10,.2);
+  font-size:9px; color:rgba(252,238,10,.4); letter-spacing:1px;
 }
 
 #cyber-loading .cl-fade-overlay {
-  position:absolute; inset:0; background:#000c10;
+  position:absolute; inset:0; background:#050505;
   opacity:0; pointer-events:none; z-index:20;
-  transition: opacity 0.9s ease;
+  transition: opacity 0.5s ease;
 }
 #cyber-loading .cl-fade-overlay.active { opacity:1; pointer-events:all; }
     /* ============================================================
