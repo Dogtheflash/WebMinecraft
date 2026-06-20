@@ -52,10 +52,12 @@ body {
 .cmd-window { 
   width: min(760px, 94vw); 
   overflow: hidden; 
-  border-radius: 10px; 
-  border: 1px solid rgba(255,255,255,.16); 
-  background: #121212; /* Nền xám đen chuẩn Terminal */
-  box-shadow: 0 26px 90px rgba(0,0,0,.58); 
+  border-radius: 14px; 
+  border: 1px solid rgba(255,255,255,.12); 
+  background: rgba(15, 15, 20, 0.45);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  box-shadow: 0 30px 80px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08); 
   position: relative; 
 }
 
@@ -130,21 +132,25 @@ body.wide-page-active .color-page {
 }
 
 .screen { min-height: 100vh; width: 100%; display: none; place-items: center; padding: 30px 16px 138px; }
-.terminal-screen { padding-bottom: 30px; overscroll-behavior:none; touch-action:none; }
+.terminal-screen { padding-bottom: 30px; overscroll-behavior:none; touch-action:none; position: relative; overflow: hidden; }
+.terminal-screen::before, .terminal-screen::after { content: ''; position: absolute; width: 50vw; height: 50vw; border-radius: 50%; filter: blur(120px); z-index: -1; animation: orbit 20s linear infinite; pointer-events: none; }
+.terminal-screen::before { background: rgba(53,232,255,0.25); top: -10%; left: -10%; }
+.terminal-screen::after { background: rgba(255,107,248,0.25); bottom: -10%; right: -10%; animation-delay: -10s; }
+@keyframes orbit { 0% { transform: rotate(0deg) translateX(80px) rotate(0deg); } 100% { transform: rotate(360deg) translateX(80px) rotate(-360deg); } }
 .screen.active { display: grid; animation: screenIn .55s ease both; }
 .glass-panel { background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.08); backdrop-filter: blur(22px) saturate(130%); }
 
-.cmd-titlebar { height: 34px; display: flex; align-items: center; justify-content: flex-start; background: #000; border-bottom: 1px solid rgba(255,255,255,.08); user-select: none; position: relative; z-index: 2; }
+.cmd-titlebar { height: 38px; display: flex; align-items: center; justify-content: flex-start; background: transparent; border-bottom: 1px solid rgba(255,255,255,.08); user-select: none; position: relative; z-index: 2; padding: 0 12px; gap: 8px; }
 .cmd-tabs { display: flex; align-items: center; height: 100%; min-width: 0; flex:0 1 auto; overflow:hidden; }
-.cmd-tab { height: 100%; min-width:132px; max-width:210px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 0 12px 0 16px; color: #cfcfcf; font: 600 12px "Segoe UI", system-ui, sans-serif; background: #000; border:0; border-right: 1px solid rgba(255,255,255,.08); }
-.cmd-tab.active-tab { color:#fff; background:#000; box-shadow: inset 0 -2px 0 rgba(255,255,255,.5); }
+.cmd-tab { height: 100%; min-width:132px; max-width:210px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 0 12px; color: rgba(255,255,255,0.6); font: 500 13px "Segoe UI", system-ui, sans-serif; background: transparent; border:0; }
+.cmd-tab.active-tab { color:#fff; background:rgba(255,255,255,0.06); border-radius: 6px; height: 28px; margin: 5px 0; }
 .cmd-tab-title { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 .cmd-tab-close { opacity:.55; font-size:14px; line-height:1; }
 .cmd-tab:hover .cmd-tab-close { opacity:1; }
 .cmd-plus { width: 34px; height:100%; text-align: center; color: #d0d0d0; font-size: 17px; flex:0 0 auto; border:0; background:transparent; cursor:inherit; }
 .cmd-controls {
-  margin-left: auto;
-  margin-right: 0;
+  margin-left: 0;
+  margin-right: 12px;
   display: flex;
   gap: 8px;
   height: 100%;
@@ -160,12 +166,12 @@ body.wide-page-active .color-page {
   flex-shrink: 0;
 }
 
-.cmd-controls span:nth-child(1) { background-color: #ff5f56 !important; }
-.cmd-controls span:nth-child(2) { background-color: #ffbd2e !important; }
-.cmd-controls span:nth-child(3) { background-color: #27c93f !important; }
+.cmd-controls span:nth-child(1) { background-color: #ff5f56 !important; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+.cmd-controls span:nth-child(2) { background-color: #ffbd2e !important; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+.cmd-controls span:nth-child(3) { background-color: #27c93f !important; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
 
 .cmd-controls span:hover { filter: brightness(0.8); }
-.cmd-body { min-height: 380px; padding: 18px 20px 20px; color: #f2f2f2; font: 500 clamp(12px, 2vw, 15px) Consolas, "Cascadia Mono", "JetBrains Mono", monospace; line-height: 1.48; position: relative; z-index: 2;}
+.cmd-body { min-height: 380px; padding: 18px 20px 20px; color: #eaf8ff; font: 500 clamp(12px, 2vw, 15px) Consolas, "Cascadia Mono", "JetBrains Mono", monospace; line-height: 1.48; position: relative; z-index: 2;}
 .cmd-plus:hover { background:#2b2b2b; }
 .cmd-log { white-space:pre-wrap; min-height:270px; color:#f2f2f2; }
 .cmd-prompt-line { display:flex; align-items:center; gap:0; color:#f2f2f2; margin:0; }
