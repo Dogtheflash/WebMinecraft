@@ -16,14 +16,14 @@
   if (terminal) terminal.style.visibility = 'hidden';
 
   var msgs = [
-    'Đang khởi động hệ thống...',
-    'Nạp giao thức bảo mật...',
-    'Kết nối neural interface...',
-    'Giải mã ma trận dữ liệu...',
-    'Đồng bộ cyberspace...',
-    'Xác thực danh tính...',
-    'Tải môi trường ảo...',
-    'Hoàn tất. Sẵn sàng!'
+    'UNAUTHORIZED ACCESS DETECTED...',
+    'BYPASSING FIREWALL...',
+    'INJECTING MALICIOUS PAYLOAD...',
+    'OVERRIDING ADMIN PRIVILEGES...',
+    'DECRYPTING SECURE DATA...',
+    'ACCESSING MAINFRAME...',
+    'CORRUPTING SYSTEMS...',
+    'ACCESS GRANTED. WELCOME.'
   ];
 
   var prog = 0, s1 = 0, s2 = 0, s3 = 0, done = false;
@@ -68,7 +68,7 @@
     if (prog >= 100) {
       clearInterval(iv);
       done = true;
-      if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
+      if (statusEl) statusEl.textContent = 'ACCESS GRANTED. WELCOME.';
 
       setTimeout(function () {
         if (fadeEl) fadeEl.classList.add('active');
