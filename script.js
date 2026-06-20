@@ -4,7 +4,7 @@
    ============================================================ */
 (function () {
   var overlay  = document.getElementById('cyber-loading');
-  var fill     = document.getElementById('cl-fill');
+  var ring     = document.getElementById('cl-ring');
   var pctEl    = document.getElementById('cl-pct');
   var statusEl = document.getElementById('cl-status');
   var fadeEl   = document.getElementById('cl-fade');
@@ -14,12 +14,12 @@
   if (terminal) terminal.style.visibility = 'hidden';
 
   var msgs = [
-    'Whispering to the void...',
-    'Drawing arcane sigils...',
-    'Channeling dark energy...',
-    'Piercing the veil...',
-    'The eye opens...',
-    'Entity summoned.'
+    'Establishing Neural Link...',
+    'Bypassing Mainframe Security...',
+    'Decrypting Corrupted Data...',
+    'Injecting Payload...',
+    'Synchronizing Brainwaves...',
+    'Neural Dive Successful.'
   ];
 
   var prog = 0, done = false;
@@ -36,7 +36,7 @@
     prog = Math.min(prog + inc, 100);
 
     var p = Math.floor(prog);
-    if (fill)  fill.style.width = prog + '%';
+    if (ring)  ring.style.background = `conic-gradient(#0ff ${prog}%, transparent 0)`;
     if (pctEl) pctEl.textContent = p + '%';
 
     var si = Math.min(Math.floor(prog / 16.6), msgs.length - 1);
@@ -45,7 +45,7 @@
     if (prog >= 100) {
       clearInterval(iv);
       done = true;
-      if (statusEl) statusEl.textContent = 'Entity summoned.';
+      if (statusEl) statusEl.textContent = 'Neural Dive Successful.';
 
       setTimeout(function () {
         if (fadeEl) fadeEl.classList.add('active');
