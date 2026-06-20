@@ -1638,17 +1638,23 @@ body,
 }
 
 /* ============================================================
-   INTERACTIVE COMPANION (Drone)
+   INTERACTIVE COMPANION (Chibi Person)
    ============================================================ */
-.cyber-companion {
-  position: relative;
+.css-chibi {
+  position: absolute;
+  bottom: calc(100% - 2px);
+  right: 60px;
   width: 40px;
   height: 40px;
   z-index: 50;
   cursor: pointer;
-  animation: floatCompanion 3.5s ease-in-out infinite;
-  filter: drop-shadow(0 0 14px rgba(53,232,255,0.4));
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s;
+}
+.css-chibi:hover {
+  transform: scale(1.1) translateY(-5px);
+}
+.css-chibi:active {
+  transform: scale(0.95);
 }
 
 .comp-chat {
@@ -1683,49 +1689,116 @@ body,
   opacity: 1;
   transform: translateX(-50%) translateY(-5px);
 }
-.comp-body {
-  width: 100%;
-  height: 100%;
-  background: #0d1017;
-  border-radius: 50% 50% 40% 40%;
+
+/* Chibi Parts */
+.chibi-head {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 32px;
+  background: #1a1b26;
   border: 2px solid var(--cyan);
-  position: relative;
-  overflow: hidden;
-  box-shadow: inset 0 -4px 10px rgba(0,0,0,0.8), inset 0 2px 4px rgba(255,255,255,0.2);
+  border-radius: 40% 40% 45% 45%;
+  z-index: 3;
+  box-shadow: inset 0 -4px 6px rgba(0,0,0,0.6), 0 0 10px rgba(53,232,255,0.3);
 }
+
 .comp-eye {
   position: absolute;
-  top: 38%;
-  width: 7px;
-  height: 12px;
+  top: 14px;
+  width: 6px;
+  height: 10px;
   background: var(--cyan);
-  border-radius: 50px;
+  border-radius: 50%;
   box-shadow: 0 0 8px var(--cyan);
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  transition: background 0.3s, box-shadow 0.3s;
   transform: translate(var(--eye-x, 0px), var(--eye-y, 0px));
   animation: compBlink 5s infinite;
 }
-.comp-eye.left { left: 9px; }
-.comp-eye.right { right: 9px; }
+.comp-eye.left { left: 8px; }
+.comp-eye.right { right: 8px; }
 
 @keyframes compBlink {
   0%, 94%, 100% { transform: scaleY(1) translate(var(--eye-x, 0px), var(--eye-y, 0px)); }
   96% { transform: scaleY(0.1) translate(var(--eye-x, 0px), var(--eye-y, 0px)); }
 }
-@keyframes floatCompanion {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+
+.chibi-body {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 26px;
+  background: #1a1b26;
+  border-radius: 40% 40% 10% 10%;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-bottom: none;
+  z-index: 2;
 }
 
-.cyber-companion:hover {
-  transform: scale(1.1) translateY(-5px);
-  filter: drop-shadow(0 0 20px rgba(53,232,255,0.8));
+.chibi-arm {
+  position: absolute;
+  bottom: -2px;
+  width: 10px;
+  height: 18px;
+  background: #24283b;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  z-index: 4;
 }
-.cyber-companion:active {
-  transform: scale(0.95);
+.chibi-arm.left {
+  left: -2px;
+  transform: rotate(25deg);
+}
+.chibi-arm.right {
+  right: -2px;
+  transform: rotate(-25deg);
+}
+
+.chibi-leg {
+  position: absolute;
+  top: 100%;
+  width: 10px;
+  height: 22px;
+  background: #24283b;
+  border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.05);
+  transform-origin: top center;
+  z-index: 1; 
+}
+.chibi-leg::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -2px;
+  width: 12px;
+  height: 8px;
+  background: var(--cyan);
+  border-radius: 4px;
+  box-shadow: 0 0 5px var(--cyan);
+}
+.chibi-leg.left {
+  left: 8px;
+  animation: swingLegLeft 2.5s ease-in-out infinite;
+}
+.chibi-leg.right {
+  right: 8px;
+  animation: swingLegRight 2.5s ease-in-out infinite 0.7s;
+}
+
+@keyframes swingLegLeft {
+  0%, 100% { transform: rotate(-25deg); }
+  50% { transform: rotate(35deg); }
+}
+@keyframes swingLegRight {
+  0%, 100% { transform: rotate(-35deg); }
+  50% { transform: rotate(25deg); }
 }
 
 @media (max-width: 620px) {
-  .cyber-companion { width: 34px; height: 34px; }
+  .css-chibi { transform: scale(0.8); right: 20px; }
   .comp-chat { font-size: 10px; padding: 3px 6px; }
 }
