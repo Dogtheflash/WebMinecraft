@@ -1969,6 +1969,7 @@ body,
   width: 36px;
   height: 24px;
   z-index: 40;
+  cursor: pointer;
 }
 
 .cat-body {
