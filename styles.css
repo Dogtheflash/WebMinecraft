@@ -943,181 +943,115 @@ body.wide-page-active .mc-bot-avatar {
   position: fixed;
   inset: 0;
   z-index: 999999;
-  background: #050505;
+  background: radial-gradient(circle at center, #1a153a 0%, #080614 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Outfit', sans-serif;
   opacity: 1;
   visibility: visible;
   transition: opacity 0.9s ease, visibility 0.9s ease;
+  overflow: hidden;
 }
 #cyber-loading.cl-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-#cyber-loading .cl-grid-bg {
+#cyber-loading .astral-stars {
   position: absolute; inset: 0; pointer-events: none;
-  background-image:
-    linear-gradient(rgba(252,238,10,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(252,238,10,0.04) 1px, transparent 1px);
-  background-size: 38px 38px;
-  animation: clGridBreathe 5s ease-in-out infinite;
+  background-image: radial-gradient(2px 2px at 20px 30px, #e0c38c, rgba(0,0,0,0)),
+                    radial-gradient(2px 2px at 80px 70px, #fff, rgba(0,0,0,0)),
+                    radial-gradient(1.5px 1.5px at 150px 40px, #e0c38c, rgba(0,0,0,0)),
+                    radial-gradient(2.5px 2.5px at 200px 120px, #fff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 250px 250px;
+  animation: starsDrift 40s linear infinite;
+  opacity: 0.6;
 }
-@keyframes clGridBreathe { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes starsDrift { to { transform: translateY(-250px); } }
 
-#cyber-loading .cl-scanlines {
-  position: absolute; inset: 0; pointer-events: none; z-index: 2;
-  background: repeating-linear-gradient(
-    0deg, transparent 0px, transparent 2px,
-    rgba(255,0,60,.04) 2px, rgba(255,0,60,.04) 4px
-  );
-  animation: scanlineDrift 10s linear infinite;
-}
-@keyframes scanlineDrift { to { background-position: 0 100vh; } }
-
-#cyber-loading .cl-glitch-overlay {
-  position: absolute; inset: 0; pointer-events: none; z-index: 2;
-  background: rgba(255,0,60,0.02);
-  animation: bgGlitchFlash 3s infinite;
-}
-@keyframes bgGlitchFlash {
-  0%, 95%, 100% { opacity: 0; }
-  96% { opacity: 1; background: rgba(252,238,10,0.05); }
-  98% { opacity: 1; background: rgba(255,0,60,0.08); }
-}
-
-#cyber-loading .cl-corner { position: absolute; width: 32px; height: 32px; z-index: 3; }
-#cyber-loading .cl-tl { top:14px; left:14px;   border-top:2px solid #fcee0a; border-left:2px solid #fcee0a; }
-#cyber-loading .cl-tr { top:14px; right:14px;  border-top:2px solid #fcee0a; border-right:2px solid #fcee0a; }
-#cyber-loading .cl-bl { bottom:14px; left:14px;  border-bottom:2px solid #fcee0a; border-left:2px solid #fcee0a; }
-#cyber-loading .cl-br { bottom:14px; right:14px; border-bottom:2px solid #fcee0a; border-right:2px solid #fcee0a; }
-
-#cyber-loading .cl-holo-wrapper {
+#cyber-loading .astral-container {
   position: relative; z-index: 5;
   display: flex; flex-direction: column; align-items: center; gap: 40px;
 }
 
-/* HOLOGRAPHIC RING */
-#cyber-loading .cl-ring-wrap {
-  position: relative;
-  width: 260px; height: 260px;
+/* DIAMOND */
+#cyber-loading .astral-diamond-wrap {
+  position: relative; width: 140px; height: 140px;
   display: flex; align-items: center; justify-content: center;
-  filter: drop-shadow(0 0 15px rgba(255,0,60,.3));
 }
-#cyber-loading .cl-ring-bg {
-  position: absolute; inset: 0;
-  border-radius: 50%;
-  border: 4px dashed rgba(252,238,10,.15);
-  animation: spinSlow 20s linear infinite;
+#cyber-loading .astral-diamond {
+  position: absolute; width: 80px; height: 80px;
+  border: 1px solid rgba(224,195,140,0.3);
+  transform: rotate(45deg);
+  animation: diamondBreathe 4s ease-in-out infinite;
+  box-shadow: 0 0 30px rgba(224,195,140,0.1);
 }
-#cyber-loading .cl-ring-fill {
-  position: absolute; inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(#fcee0a 0%, transparent 0%);
-  -webkit-mask: radial-gradient(transparent 65%, #000 66%);
-  mask: radial-gradient(transparent 65%, #000 66%);
-  transition: background 0.1s linear;
+#cyber-loading .astral-diamond-inner {
+  position: absolute; width: 60px; height: 60px;
+  background: linear-gradient(135deg, rgba(224,195,140,0.8), rgba(224,195,140,0.1));
+  transform: rotate(45deg);
+  box-shadow: 0 0 20px rgba(224,195,140,0.4);
+  animation: diamondPulse 2s ease-in-out infinite alternate;
 }
-#cyber-loading .cl-ring-fill::after {
-  content: ''; position: absolute; inset: -4px;
-  border-radius: 50%;
-  border: 2px solid rgba(255,0,60,.5);
-  clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);
-  animation: glitchClip 2s infinite;
+@keyframes diamondBreathe {
+  0%, 100% { transform: rotate(45deg) scale(1); border-color: rgba(224,195,140,0.3); }
+  50% { transform: rotate(45deg) scale(1.1); border-color: rgba(224,195,140,0.8); }
 }
-@keyframes glitchClip {
-  0% { clip-path: polygon(0 0, 100% 0, 100% 10px, 0 10px); }
-  20% { clip-path: polygon(0 40%, 100% 40%, 100% 60%, 0 60%); }
-  40% { clip-path: polygon(0 80%, 100% 80%, 100% 100%, 0 100%); }
-  100% { clip-path: polygon(0 0, 100% 0, 100% 10px, 0 10px); }
+@keyframes diamondPulse {
+  0% { opacity: 0.6; filter: blur(2px); }
+  100% { opacity: 1; filter: blur(0px); box-shadow: 0 0 40px rgba(224,195,140,0.8); }
 }
 
-#cyber-loading .cl-ring-inner {
-  position: absolute; inset: 30px;
-  border-radius: 50%;
-  border: 2px solid rgba(0,255,255,.2);
-  border-left-color: #00ffff; border-right-color: #ff003c;
-  animation: spinSlow 3s linear infinite reverse;
+/* TEXT */
+#cyber-loading .astral-text-wrap { text-align: center; }
+#cyber-loading .astral-title {
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-weight: 300; letter-spacing: 6px; color: #e0c38c;
+  text-transform: uppercase; margin-bottom: 12px;
+  text-shadow: 0 0 15px rgba(224,195,140,0.4);
 }
-#cyber-loading .cl-ring-center {
-  position: relative; z-index: 2;
-  text-align: center;
+#cyber-loading .astral-status {
+  font-size: 13px; color: rgba(224,195,140,0.7);
+  letter-spacing: 2px; font-weight: 300;
+  font-family: 'JetBrains Mono', monospace;
+  animation: pulseText 2s infinite alternate;
 }
-#cyber-loading .cl-pct {
-  font-size: 42px; font-weight: 900; color: #fcee0a;
-  text-shadow: 2px 0 0 #ff003c, -2px 0 0 #00ffff;
-  letter-spacing: -2px; margin-bottom: -5px;
-  animation: textGlitchMain 2s infinite alternate-reverse;
-}
-#cyber-loading .cl-sync-lbl {
-  font-size: 11px; color: #ff003c; letter-spacing: 4px; font-weight: 700;
+@keyframes pulseText {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
 }
 
-#cyber-loading .cl-hud-spin1 {
-  position: absolute; inset: -20px;
-  border-radius: 50%; border: 1px dotted rgba(252,238,10,.3);
-  animation: spinSlow 15s linear infinite;
+/* PROGRESS BAR */
+#cyber-loading .astral-progress-wrap {
+  width: min(400px, 85vw); display: flex; flex-direction: column; align-items: center; gap: 15px;
 }
-#cyber-loading .cl-hud-spin2 {
-  position: absolute; inset: -40px;
-  border-radius: 50%; border: 1px solid transparent;
-  border-top-color: rgba(255,0,60,.4); border-bottom-color: rgba(255,0,60,.4);
-  animation: spinSlow 8s linear infinite reverse;
+#cyber-loading .astral-track {
+  position: relative; width: 100%; height: 2px;
+  background: rgba(224,195,140,0.15);
+  border-radius: 2px;
 }
-@keyframes spinSlow { to { transform: rotate(360deg); } }
-
-/* TERMINAL CARD */
-#cyber-loading .cl-card {
-  width: min(440px, 90vw); text-align: center;
-  background: rgba(10,10,10,.85);
-  border: 1px solid rgba(252,238,10,.3);
-  border-radius: 2px; padding: 20px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 0 0 1px rgba(255,0,60,.1), 0 20px 40px rgba(0,0,0,.9);
-  animation: cardGlitchShake 3s infinite;
+#cyber-loading .astral-fill {
+  position: absolute; top: 0; left: 0; height: 100%; width: 0%;
+  background: #e0c38c;
+  box-shadow: 0 0 10px #e0c38c, 0 0 20px rgba(224,195,140,0.5);
+  transition: width 0.1s linear;
+  border-radius: 2px;
 }
-
-#cyber-loading .cl-eyebrow {
-  font-size: 10px; letter-spacing: 4px; color: #ff003c;
-  text-transform: uppercase; margin-bottom: 8px; font-weight: 700;
+#cyber-loading .astral-head {
+  position: absolute; top: 50%; right: 100%;
+  transform: translate(50%, -50%);
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #fff; box-shadow: 0 0 15px 4px rgba(224,195,140,0.8);
+  transition: right 0.1s linear;
 }
-#cyber-loading .cl-title-wrap { margin-bottom: 15px; position: relative; }
-#cyber-loading .cl-title {
-  font-family: 'Outfit', 'JetBrains Mono', monospace;
-  font-size: clamp(1rem, 3.5vw, 1.3rem);
-  font-weight: 900; letter-spacing: 4px; color: #fcee0a;
-  text-transform: uppercase;
-  text-shadow: 2px 0 0 #ff003c, -2px 0 0 #00ffff;
-  position: relative; display: inline-block;
-  animation: textGlitchMain 2.5s infinite linear alternate-reverse;
-}
-#cyber-loading .cl-title::before, #cyber-loading .cl-title::after {
-  content: attr(data-t); position: absolute; top:0; left:0; width:100%;
-}
-#cyber-loading .cl-title::before {
-  color: #ff003c; animation: clG1 2.8s infinite;
-  clip-path: polygon(0 0,100% 0,100% 40%,0 40%); left: -2px;
-}
-#cyber-loading .cl-title::after {
-  color: #00ffff; animation: clG2 2.8s infinite;
-  clip-path: polygon(0 62%,100% 62%,100% 100%,0 100%); left: 2px;
-}
-
-#cyber-loading .cl-status-row { display: flex; align-items: center; justify-content: center; gap: 9px; }
-#cyber-loading .cl-dot {
-  width:8px; height:8px; flex-shrink:0; background:#fcee0a;
-  box-shadow:0 0 8px #fcee0a; animation: clDotBlink 0.5s steps(2) infinite;
-}
-
-#cyber-loading .cl-status-txt {
-  font-size:11px; color:#fcee0a; letter-spacing:1px;
-  text-transform: uppercase;
+#cyber-loading .astral-pct {
+  font-size: 13px; color: #e0c38c; letter-spacing: 2px;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 #cyber-loading .cl-fade-overlay {
-  position:absolute; inset:0; background:#050505;
+  position:absolute; inset:0; background:#080614;
   opacity:0; pointer-events:none; z-index:20;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.8s ease;
 }
 #cyber-loading .cl-fade-overlay.active { opacity:1; pointer-events:all; }
     /* ============================================================
