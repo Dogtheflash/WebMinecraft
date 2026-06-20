@@ -1650,3 +1650,157 @@ if (interactiveCard) {
 /* ============================================================
    END PARALLAX BANNER
    ============================================================ */
+
+/* ============================================================
+   AUDIO VISUALIZER — Real Web Audio API
+   Connects to #audio-player, draws frequency bars on canvas
+   ============================================================ */
+(function () {
+  var canvas = document.getElementById('audio-visualizer');
+  var audioEl = document.getElementById('audio-player');
+  if (!canvas || !audioEl) return;
+
+  var ctx = canvas.getContext('2d');
+  var audioCtx = null;
+  var analyser = null;
+  var source = null;
+  var dataArray = null;
+  var bufferLength = 0;
+  var rafId = null;
+  var connected = false;
+
+  /* Lazily create AudioContext on first user-triggered play
+     (browsers block AudioContext creation before user gesture) */
+  function ensureAudioContext() {
+    if (connected) return;
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.78;
+      bufferLength = analyser.frequencyBinCount; // 128
+      dataArray = new Uint8Array(bufferLength);
+
+      source = audioCtx.createMediaElementSource(audioEl);
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      connected = true;
+    } catch (e) {
+      console.warn('AudioContext init failed:', e);
+    }
+  }
+
+  /* Resize canvas to match CSS size (retina-aware) */
+  function resize() {
+    var rect = canvas.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  /* Read CSS variable --cyan color or fallback */
+  function getColors() {
+    var style = getComputedStyle(document.documentElement);
+    var cyan = style.getPropertyValue('--cyan').trim() || '#35e8ff';
+    var pink = style.getPropertyValue('--pink').trim() || '#ff4fd8';
+    return { cyan: cyan, pink: pink };
+  }
+
+  /* Main draw loop */
+  function draw() {
+    if (!analyser) return;
+    rafId = requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(dataArray);
+
+    var rect = canvas.getBoundingClientRect();
+    var W = rect.width;
+    var H = rect.height;
+    ctx.clearRect(0, 0, W, H);
+
+    var colors = getColors();
+
+    /* Only draw the useful lower-mid frequencies (first 64 bins) */
+    var useBins = Math.min(64, bufferLength);
+    var barWidth = W / useBins;
+    var centerY = H;
+
+    for (var i = 0; i < useBins; i++) {
+      var value = dataArray[i];
+      var percent = value / 255;
+      var barHeight = percent * H * 0.92;
+
+      /* Gradient per bar: cyan at base → pink at top */
+      var grad = ctx.createLinearGradient(0, centerY, 0, centerY - barHeight);
+      grad.addColorStop(0, colors.cyan);
+      grad.addColorStop(0.6, colors.pink);
+      grad.addColorStop(1, 'rgba(255,255,255,0.9)');
+
+      var x = i * barWidth;
+
+      /* Glow effect */
+      ctx.shadowColor = colors.cyan;
+      ctx.shadowBlur = 8 + percent * 12;
+
+      /* Main bar (rounded top) */
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      var r = Math.min(barWidth * 0.3, 3);
+      var bx = x + 1;
+      var bw = barWidth - 2;
+      var by = centerY - barHeight;
+      if (bw > 0 && barHeight > 0) {
+        ctx.moveTo(bx, centerY);
+        ctx.lineTo(bx, by + r);
+        ctx.quadraticCurveTo(bx, by, bx + r, by);
+        ctx.lineTo(bx + bw - r, by);
+        ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + r);
+        ctx.lineTo(bx + bw, centerY);
+        ctx.fill();
+      }
+
+      /* Mirror reflection (faded, below) — subtle ghost */
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = colors.cyan;
+      var mirrorH = barHeight * 0.3;
+      ctx.fillRect(bx, centerY, bw, mirrorH);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  /* Start / stop visualizer based on audio state */
+  function startVisualizer() {
+    ensureAudioContext();
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    resize();
+    canvas.classList.add('active');
+    if (!rafId) draw();
+  }
+
+  function stopVisualizer() {
+    canvas.classList.remove('active');
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  }
+
+  /* Hook into existing audio events */
+  audioEl.addEventListener('play', startVisualizer);
+  audioEl.addEventListener('pause', stopVisualizer);
+  audioEl.addEventListener('ended', stopVisualizer);
+
+  /* Resize on window resize */
+  window.addEventListener('resize', function () {
+    if (canvas.classList.contains('active')) resize();
+  });
+
+  /* If audio is already playing when this script runs */
+  if (!audioEl.paused) startVisualizer();
+})();
+/* ============================================================
+   END AUDIO VISUALIZER
+   ============================================================ */
