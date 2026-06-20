@@ -1664,8 +1664,8 @@ body,
    ============================================================ */
 .cyber-companion {
   position: absolute;
-  top: -24px;
-  right: 30px;
+  top: 16px;
+  right: 74px;
   width: 40px;
   height: 40px;
   z-index: 50;
@@ -1717,5 +1717,5 @@ body,
 }
 
 @media (max-width: 620px) {
-  .cyber-companion { top: -45px; right: 20px; width: 34px; height: 34px; }
+  .cyber-companion { top: 12px; right: 54px; width: 34px; height: 34px; }
 }
