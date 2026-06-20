@@ -1870,6 +1870,9 @@ if (interactiveCard) {
     const catEyes = cat ? cat.querySelectorAll('.cat-eye') : [];
     
     document.addEventListener('mousemove', (e) => {
+      const gameContainer = document.getElementById('runner-game-container');
+      if (gameContainer && gameContainer.classList.contains('active')) return;
+
       // Chibi Eye Tracking
       const rect = companion.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
@@ -2036,15 +2039,16 @@ if (interactiveCard) {
   }
 
   /* 2. Magnetic Buttons */
-  const magnets = document.querySelectorAll('.social-row a, .play-btn, .next-btn, .volume-toggle, .theme-toggle-btn');
-  
-  magnets.forEach(btn => {
+  document.querySelectorAll('.mini-btn, .copy-btn, .social-row a, .profile-footer a').forEach(btn => {
     btn.addEventListener('mouseenter', () => {
       // Set a quick linear transition for the magnetic pull
       btn.style.transition = 'transform 0.05s linear';
     });
     
     btn.addEventListener('mousemove', (e) => {
+      const gameContainer = document.getElementById('runner-game-container');
+      if (gameContainer && gameContainer.classList.contains('active')) return;
+
       const rect = btn.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
