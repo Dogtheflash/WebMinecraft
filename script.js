@@ -2074,6 +2074,8 @@ if (interactiveCard) {
   
   tiltCards.forEach(card => {
     card.addEventListener('mousemove', (e) => {
+      if (card.classList.contains('game-active')) return;
+      
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
@@ -2113,6 +2115,10 @@ if (interactiveCard) {
   document.addEventListener('mousemove', (e) => {
     // Only show trail when profile screen is active
     if (!document.getElementById('profile-screen').classList.contains('active')) return;
+    
+    // Disable during minigame to save performance
+    const gameContainer = document.getElementById('runner-game-container');
+    if (gameContainer && gameContainer.classList.contains('active')) return;
     
     const now = Date.now();
     if (now - lastTime < 40) return; // limit spawn rate (approx 25fps) to save performance
@@ -2343,6 +2349,9 @@ if (interactiveCard) {
   function startGame() {
     gameContainer.classList.add('active');
     aboutCard.classList.add('game-active');
+    aboutCard.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1) translateZ(0)';
+    const glare = aboutCard.querySelector('.glare');
+    if (glare) glare.style.opacity = '0';
     resetGame();
   }
 
