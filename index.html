@@ -99,13 +99,6 @@
 
     <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
       <article class="profile-console glass-panel">
-        <!-- ========== INTERACTIVE COMPANION ========== -->
-        <div id="companion" class="cyber-companion" aria-hidden="true" title="Bấm vào mình đi!">
-          <div class="comp-body">
-            <div class="comp-eye left"></div>
-            <div class="comp-eye right"></div>
-          </div>
-        </div>
         <!-- ========== THEME SWITCHER ========== -->
         <div id="theme-switcher" class="theme-switcher">
           <div id="theme-menu" class="theme-menu hidden">
@@ -143,7 +136,18 @@
             <span id="status-orb" class="status-orb offline" aria-label="Trạng thái Discord"></span>
           </div>
           <div class="identity-block">
-            <h1 id="display-name"><span id="profile-typing-name" class="profile-typing-name">Chinatsu Kamado</span><span class="profile-typing-cursor" aria-hidden="true">|</span></h1>
+            <h1 id="display-name" style="position: relative; display: inline-flex; align-items: center; flex-wrap: wrap;">
+              <span id="profile-typing-name" class="profile-typing-name">Chinatsu Kamado</span>
+              <span class="profile-typing-cursor" aria-hidden="true">|</span>
+              <!-- Interactive Companion moved next to name -->
+              <div id="companion" class="cyber-companion" aria-hidden="true">
+                <div class="comp-chat">Bấm vào mình đi!</div>
+                <div class="comp-body">
+                  <div class="comp-eye left"></div>
+                  <div class="comp-eye right"></div>
+                </div>
+              </div>
+            </h1>
             <p class="username">@<span id="username" class="glitch-hover" data-text="Chinatsu Kamado">Chinatsu Kamado</span></p>
           </div>
         </header>
