@@ -1813,6 +1813,20 @@ body,
   50% { transform: rotate(-150deg) translateY(-4px) translateX(-2px); }
   100% { transform: rotate(-25deg) translateY(0); }
 }
+
+/* Pet Cat animation */
+.chibi-petting .chibi-arm.left {
+  animation: petCatAnim 2s ease-in-out forwards;
+}
+@keyframes petCatAnim {
+  0% { transform: rotate(25deg) translate(0, 0); }
+  15% { transform: rotate(80deg) translate(-12px, 6px); }
+  35% { transform: rotate(60deg) translate(-6px, 2px); }
+  55% { transform: rotate(80deg) translate(-12px, 6px); }
+  75% { transform: rotate(60deg) translate(-6px, 2px); }
+  100% { transform: rotate(25deg) translate(0, 0); }
+}
+
 .chibi-head {
   position: absolute;
   bottom: 24px;
