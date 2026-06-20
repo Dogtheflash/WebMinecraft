@@ -23,49 +23,40 @@
   <div id="cyber-loading">
     <div class="cl-grid-bg"></div>
     <div class="cl-scanlines"></div>
+    <div class="cl-glitch-overlay"></div>
     <div class="cl-corner cl-tl"></div>
     <div class="cl-corner cl-tr"></div>
     <div class="cl-corner cl-bl"></div>
     <div class="cl-corner cl-br"></div>
-    <div class="cl-card">
-      <div class="cl-top-bar"></div>
-      <div class="cl-eyebrow">UNAUTHORIZED ACCESS DETECTED</div>
-      <div class="cl-title-wrap">
-        <span class="cl-title" id="cl-title" data-t="BYPASSING SECURITY...">BYPASSING SECURITY...</span>
-      </div>
-      <div class="cl-status-row">
-        <div class="cl-dot"></div>
-        <div class="cl-status-txt" id="cl-status">Đang khởi động hệ thống...</div>
-        <div class="cl-pct" id="cl-pct">0%</div>
-      </div>
-      <div class="cl-track">
-        <div class="cl-fill" id="cl-fill"></div>
-        <div class="cl-head" id="cl-head"></div>
-      </div>
-      <div class="cl-hex"><span>0x0000</span><span>0xFFFF</span></div>
-      <div class="cl-subbars">
-        <div class="cl-sub">
-          <span class="cl-sub-lbl">Proxy</span>
-          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs1" style="background:#fcee0a"></div></div>
-          <span class="cl-sub-pct" id="cs1p">0%</span>
+
+    <div class="cl-holo-wrapper">
+      <!-- Circular Holographic Radar -->
+      <div class="cl-ring-wrap">
+        <div class="cl-ring-bg"></div>
+        <div class="cl-ring-fill" id="cl-ring"></div>
+        <div class="cl-ring-inner"></div>
+        <div class="cl-ring-center">
+          <div class="cl-pct" id="cl-pct">0%</div>
+          <div class="cl-sync-lbl">HACKING</div>
         </div>
-        <div class="cl-sub">
-          <span class="cl-sub-lbl">Firewall</span>
-          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs2" style="background:#ff003c"></div></div>
-          <span class="cl-sub-pct" id="cs2p">0%</span>
-        </div>
-        <div class="cl-sub">
-          <span class="cl-sub-lbl">Payload</span>
-          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs3" style="background:#00ffff"></div></div>
-          <span class="cl-sub-pct" id="cs3p">0%</span>
-        </div>
+        <!-- Rotating HUD elements -->
+        <div class="cl-hud-spin1"></div>
+        <div class="cl-hud-spin2"></div>
       </div>
-      <div class="cl-meta">
-        <span>v4.2.0-NEON</span>
-        <span id="cl-clock">00:00:00</span>
-        <span>CYB-OS</span>
+      
+      <!-- Hacker Terminal Text -->
+      <div class="cl-card">
+        <div class="cl-eyebrow">UNAUTHORIZED ACCESS DETECTED</div>
+        <div class="cl-title-wrap">
+          <span class="cl-title" id="cl-title" data-t="BYPASSING SECURITY...">BYPASSING SECURITY...</span>
+        </div>
+        <div class="cl-status-row">
+          <div class="cl-dot"></div>
+          <div class="cl-status-txt" id="cl-status">Đang khởi động hệ thống...</div>
+        </div>
       </div>
     </div>
+
     <div class="cl-fade-overlay" id="cl-fade"></div>
   </div>
   <!-- ========== END CYBER LOADING SCREEN ========== -->
