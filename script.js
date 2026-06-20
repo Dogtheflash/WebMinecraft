@@ -2087,9 +2087,9 @@ if (interactiveCard) {
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
       
-      // Calculate rotation (-6 to 6 degrees)
-      const rotateX = ((y - centerY) / centerY) * -6;
-      const rotateY = ((x - centerX) / centerX) * 6;
+      // Calculate rotation (-15 to 15 degrees for stronger effect)
+      const rotateX = ((y - centerY) / centerY) * -15;
+      const rotateY = ((x - centerX) / centerX) * 15;
       
       // Calculate glare percentage
       const glareX = (x / rect.width) * 100;
