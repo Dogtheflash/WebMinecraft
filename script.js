@@ -4,7 +4,8 @@
    ============================================================ */
 (function () {
   var overlay  = document.getElementById('cyber-loading');
-  var ring     = document.getElementById('cl-ring');
+  var fill     = document.getElementById('cl-fill');
+  var head     = document.getElementById('cl-head');
   var pctEl    = document.getElementById('cl-pct');
   var statusEl = document.getElementById('cl-status');
   var fadeEl   = document.getElementById('cl-fade');
@@ -14,14 +15,12 @@
   if (terminal) terminal.style.visibility = 'hidden';
 
   var msgs = [
-    'UNAUTHORIZED ACCESS DETECTED...',
-    'BYPASSING FIREWALL...',
-    'INJECTING MALICIOUS PAYLOAD...',
-    'OVERRIDING ADMIN PRIVILEGES...',
-    'DECRYPTING SECURE DATA...',
-    'ACCESSING MAINFRAME...',
-    'CORRUPTING SYSTEMS...',
-    'ACCESS GRANTED. WELCOME.'
+    'Aligning astral coordinates...',
+    'Calibrating stellar compass...',
+    'Synchronizing with the universe...',
+    'Drawing energy from the cosmos...',
+    'Navigating through the Milky Way...',
+    'Destination reached.'
   ];
 
   var prog = 0, done = false;
@@ -38,16 +37,17 @@
     prog = Math.min(prog + inc, 100);
 
     var p = Math.floor(prog);
-    if (ring)  ring.style.background = `conic-gradient(#fcee0a ${prog}%, transparent 0)`;
+    if (fill)  fill.style.width  = prog + '%';
+    if (head)  head.style.right  = (100 - prog) + '%';
     if (pctEl) pctEl.textContent = p + '%';
 
-    var si = Math.min(Math.floor(prog / 12.5), msgs.length - 1);
+    var si = Math.min(Math.floor(prog / 16.6), msgs.length - 1);
     if (statusEl) statusEl.textContent = msgs[si];
 
     if (prog >= 100) {
       clearInterval(iv);
       done = true;
-      if (statusEl) statusEl.textContent = 'ACCESS GRANTED. WELCOME.';
+      if (statusEl) statusEl.textContent = 'Connection established.';
 
       setTimeout(function () {
         if (fadeEl) fadeEl.classList.add('active');
