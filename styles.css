@@ -2248,6 +2248,11 @@ body.shaking {
 /* ============================================================
    CHIBI RUNNER MINIGAME
    ============================================================ */
+.about-card.game-active > *:not(#runner-game-container) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
 #runner-game-container {
   position: absolute;
   inset: 0;
