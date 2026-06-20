@@ -1908,21 +1908,32 @@ if (interactiveCard) {
     ];
     let hideTimer = null;
 
+    let typingTimer = null;
+
     function showChat() {
       if (!chatBubble) return;
       clearTimeout(hideTimer);
-      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-      chatBubble.textContent = randomQuote;
+      clearTimeout(typingTimer);
+      
+      // Show "Typing..." animation
+      chatBubble.innerHTML = '<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>';
       chatBubble.classList.add('show');
       
-      hideTimer = setTimeout(() => {
-        chatBubble.classList.remove('show');
-      }, 2500);
+      // After 1.5s, show actual quote
+      typingTimer = setTimeout(() => {
+        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+        chatBubble.textContent = randomQuote;
+        
+        // Hide after 3.5s
+        hideTimer = setTimeout(() => {
+          chatBubble.classList.remove('show');
+        }, 3500);
+      }, 1500);
     }
 
     setInterval(() => {
       showChat();
-    }, 5000);
+    }, 12000); // 12 seconds
   }
 
   /* 2. Magnetic Buttons */
