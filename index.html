@@ -428,8 +428,7 @@
         </section>
         <!-- ========== END COLOR TOOL PAGE ========== -->
 
-        <!-- AUDIO VISUALIZER CANVAS -->
-        <canvas id="audio-visualizer" class="audio-visualizer" aria-hidden="true"></canvas>
+        <!-- AUDIO VISUALIZER is in the music player bar -->
 
       </article>
     </section>
@@ -447,7 +446,7 @@
       <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Mở chỉnh âm lượng">🔊</button>
       <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
     </div>
-    <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <canvas id="audio-visualizer" class="audio-visualizer" aria-hidden="true"></canvas>
     <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
   </aside>
 
