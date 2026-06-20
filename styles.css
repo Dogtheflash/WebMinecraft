@@ -1699,18 +1699,18 @@ body,
 @keyframes chibiBackflipAnim {
   0% { transform: scale(var(--chibi-scale)) translateY(0) rotate(0deg); }
   10% { transform: scale(var(--chibi-scale)) translateY(6px) scaleY(0.7) rotate(0deg); }
-  35% { transform: scale(var(--chibi-scale)) translateY(-70px) scaleY(1) rotate(-180deg); }
-  60% { transform: scale(var(--chibi-scale)) translateY(4px) scaleY(0.6) rotate(-360deg); }
-  85% { transform: scale(var(--chibi-scale)) translateY(4px) scaleY(0.6) rotate(-360deg); }
-  100% { transform: scale(var(--chibi-scale)) translateY(0) scaleY(1) rotate(-360deg); }
+  35% { transform: scale(var(--chibi-scale)) translateY(-70px) scaleY(1) rotate(-150deg); }
+  60% { transform: scale(var(--chibi-scale)) translateY(0px) scaleY(1) rotate(-270deg); } /* Land on back (lying down) */
+  85% { transform: scale(var(--chibi-scale)) translateY(0px) scaleY(1) rotate(-270deg); } /* Rest on back */
+  100% { transform: scale(var(--chibi-scale)) translateY(0) scaleY(1) rotate(-360deg); } /* Stand up */
 }
 .css-chibi.backflip .chibi-leg {
   animation: backflipLegAnim 1.8s forwards !important;
 }
 @keyframes backflipLegAnim {
   0%, 10% { transform: rotate(0deg); }
-  35% { transform: rotate(80deg); }
-  60%, 85% { transform: rotate(-90deg) translateX(-4px) translateY(-6px); }
+  35% { transform: rotate(80deg); } /* Tuck legs while flipping */
+  60%, 85% { transform: rotate(0deg); } /* Legs straight out while lying down */
   100% { transform: rotate(0deg); }
 }
 
