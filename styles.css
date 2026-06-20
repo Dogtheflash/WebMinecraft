@@ -495,12 +495,33 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 .volume-toggle:hover, .volume-control.open .volume-toggle { background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.28); transform:translateY(-1px); }
 .volume-control input { position:absolute; left:46px; width:0; opacity:0; pointer-events:none; accent-color:var(--cyan); cursor:inherit; transition:width .22s ease, opacity .18s ease; }
 .volume-control.open input { width:96px; opacity:1; pointer-events:auto; }
-.visualizer { display:flex; gap:4px; align-items:end; height:30px; }
-.visualizer span { width:4px; height:11px; border-radius:4px; background:var(--cyan); animation:bars .8s ease-in-out infinite alternate; }
-.visualizer span:nth-child(2){ animation-delay:.15s } .visualizer span:nth-child(3){ animation-delay:.3s } .visualizer span:nth-child(4){ animation-delay:.45s }
-.paused .visualizer span { animation-play-state:paused; height:8px; }
-
-@keyframes bars { to { height:27px; } }
+/* Old fake visualizer removed — using real Web Audio API canvas */
+.music-player { overflow: hidden; }
+.music-player .audio-visualizer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 15%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.3) 85%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 15%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.3) 85%, transparent 100%);
+  mix-blend-mode: screen;
+}
+.music-player .audio-visualizer.active {
+  opacity: 1;
+}
+/* Ensure player children stay above the canvas */
+.music-player .play-btn,
+.music-player .next-btn,
+.music-player .track-meta,
+.music-player .volume-control {
+  position: relative;
+  z-index: 2;
+}
 
 /* ============================================================
    RESPONSIVE
@@ -1633,27 +1654,4 @@ body,
   100% { clip-path: polygon(0 44%, 100% 44%, 100% 44%, 0 44%); transform: translate(-2px, -2px); }
 }
 
-/* ============================================================
-   AUDIO VISUALIZER — Real Web Audio API
-   ============================================================ */
-.audio-visualizer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 120px;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
-  mask-image: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
-  mix-blend-mode: screen;
-}
-.audio-visualizer.active {
-  opacity: 1;
-}
-/* on mobile make it shorter */
-@media (max-width: 620px) {
-  .audio-visualizer { height: 80px; }
-}
+/* Audio visualizer profile-card version removed — now lives in the music player bar */
