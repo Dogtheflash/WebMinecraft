@@ -2141,3 +2141,95 @@ if (interactiveCard) {
     }, 800);
   });
 })();
+
+/* ============================================================
+   SHATTERED GLASS EASTER EGG
+   ============================================================ */
+(function initShatteredGlass() {
+  let avatarClickCount = 0;
+  let avatarClickTimer = null;
+  const avatarWrap = document.querySelector('.avatar-wrap');
+  
+  if (!avatarWrap) return;
+
+  avatarWrap.addEventListener('click', (e) => {
+    avatarClickCount++;
+    clearTimeout(avatarClickTimer);
+    
+    if (avatarClickCount >= 5) {
+      triggerShatterEffect(e.clientX, e.clientY);
+      avatarClickCount = 0;
+    } else {
+      avatarClickTimer = setTimeout(() => {
+        avatarClickCount = 0;
+      }, 400); // Must click 5 times quickly
+    }
+  });
+
+  function triggerShatterEffect(x, y) {
+    if (document.getElementById('glass-shatter')) return;
+    
+    document.body.classList.add('shaking');
+    const chibi = document.querySelector('.css-chibi');
+    if (chibi) chibi.classList.add('chibi-scared');
+    
+    const canvas = document.createElement('canvas');
+    canvas.id = 'glass-shatter';
+    canvas.style.cssText = 'position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:1; transition:opacity 0.5s;';
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    document.body.appendChild(canvas);
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Draw cracks
+    const numCracks = 15 + Math.floor(Math.random() * 10);
+    for(let i=0; i<numCracks; i++) {
+      const angle = (Math.PI * 2 / numCracks) * i + (Math.random() * 0.4);
+      let cx = x;
+      let cy = y;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      const length = Math.max(window.innerWidth, window.innerHeight);
+      let dist = 0;
+      
+      while(dist < length) {
+        const step = 30 + Math.random() * 60;
+        dist += step;
+        const angleJitter = angle + (Math.random() - 0.5) * 0.6;
+        cx += Math.cos(angleJitter) * step;
+        cy += Math.sin(angleJitter) * step;
+        ctx.lineTo(cx, cy);
+        
+        if(Math.random() > 0.6) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          const branchAngle = angleJitter + (Math.random() > 0.5 ? 0.6 : -0.6);
+          ctx.lineTo(cx + Math.cos(branchAngle) * 120, cy + Math.sin(branchAngle) * 120);
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.4 + Math.random()*0.5})`;
+          ctx.lineWidth = 1 + Math.random() * 1.5;
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.6 + Math.random()*0.4})`;
+      ctx.lineWidth = 1.5 + Math.random() * 2.5;
+      ctx.stroke();
+    }
+    
+    // Center impact
+    ctx.beginPath();
+    ctx.arc(x, y, 10 + Math.random()*15, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fill();
+    
+    // Auto-heal
+    setTimeout(() => {
+      canvas.style.opacity = '0';
+      document.body.classList.remove('shaking');
+      if (chibi) chibi.classList.remove('chibi-scared');
+      setTimeout(() => canvas.remove(), 500);
+    }, 2000);
+  }
+})();
