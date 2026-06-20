@@ -321,7 +321,7 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 .presence-card > div, .activity-card > div, .about-card > div {
   transform: translateZ(15px);
 }
-.presence-card { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.presence-card { display:flex; justify-content:space-between; align-items:center; gap:12px; z-index:20; position:relative; }
 .presence-card h2, .activity-card h2, .about-card h2 { margin:0 0 5px; font-size:14px; }
 #custom-status-line { color:#cbd5ff; font-weight:500; letter-spacing:0; }
 .presence-card p, .activity-card p, .about-card p { margin:0; color:var(--muted); font-size:14px; }
