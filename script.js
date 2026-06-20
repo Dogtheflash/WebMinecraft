@@ -1846,10 +1846,21 @@ if (interactiveCard) {
       });
     });
 
-    /* Chat bubble logic: show every 5 seconds for 2.5s */
+    /* Chat bubble logic: show random phrases every 5 seconds for 2.5s */
     const chat = companion.querySelector('.comp-chat');
     if (chat) {
+      const phrases = [
+        'Bấm vào mình đi!', 
+        'Hôm nay bạn thế nào?', 
+        'Chúc một ngày tốt lành! ✨',
+        'Cố gắng lên nhé!',
+        'Mình đang nhìn bạn đó 👀'
+      ];
       setInterval(() => {
+        // Randomly pick a phrase
+        const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+        chat.textContent = randomPhrase;
+        
         chat.classList.add('show');
         setTimeout(() => chat.classList.remove('show'), 2500);
       }, 5000);
