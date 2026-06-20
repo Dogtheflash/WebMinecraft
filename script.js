@@ -1942,3 +1942,41 @@ if (interactiveCard) {
     });
   });
 })();
+
+/* ============================================================
+   INTERACTIVE CURSOR TRAILS
+   ============================================================ */
+(function initCursorTrails() {
+  let lastTime = 0;
+  
+  document.addEventListener('mousemove', (e) => {
+    // Only show trail when profile screen is active
+    if (!document.getElementById('profile-screen').classList.contains('active')) return;
+    
+    const now = Date.now();
+    if (now - lastTime < 40) return; // limit spawn rate (approx 25fps) to save performance
+    lastTime = now;
+    
+    // Get current theme
+    const theme = document.body.getAttribute('data-theme') || 'default';
+    
+    const particle = document.createElement('div');
+    particle.className = `cursor-trail-particle theme-${theme}`;
+    
+    // Set position to mouse
+    particle.style.left = `${e.clientX}px`;
+    particle.style.top = `${e.clientY}px`;
+    
+    // Randomize size slightly
+    const size = Math.random() * 6 + 4; // 4px to 10px
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    
+    document.body.appendChild(particle);
+    
+    // Clean up after animation finishes (0.8s max)
+    setTimeout(() => {
+      particle.remove();
+    }, 800);
+  });
+})();
