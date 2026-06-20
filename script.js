@@ -1844,7 +1844,34 @@ if (interactiveCard) {
           eye.style.boxShadow = '0 0 8px var(--cyan)';
         }, 600);
       });
+      showChat();
     });
+
+    const chatBubble = document.getElementById('comp-chat');
+    const quotes = [
+      'Bấm vào mình đi!',
+      'Hôm nay bạn thế nào?',
+      'Chúc một ngày tốt lành! ✨',
+      'Cố gắng lên nhé!',
+      'Mình đang nhìn bạn đó 👀'
+    ];
+    let hideTimer = null;
+
+    function showChat() {
+      if (!chatBubble) return;
+      clearTimeout(hideTimer);
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      chatBubble.textContent = randomQuote;
+      chatBubble.classList.add('show');
+      
+      hideTimer = setTimeout(() => {
+        chatBubble.classList.remove('show');
+      }, 2500);
+    }
+
+    setInterval(() => {
+      showChat();
+    }, 5000);
   }
 
   /* 2. Magnetic Buttons */
