@@ -638,16 +638,16 @@ function enterConsole() {
   terminalScreen.classList.add('warp-out');
   
   setTimeout(() => {
+    profileScreen.classList.add('warp-in');
     showScreen(profileScreen);
     terminalScreen.classList.remove('warp-out');
-    profileScreen.classList.add('warp-in');
     
     setTimeout(() => {
       profileScreen.classList.remove('warp-in');
     }, 1000);
     
     startMusic();
-  }, 700);
+  }, 780);
 }
 
 const trackTitle = document.getElementById('track-title');
