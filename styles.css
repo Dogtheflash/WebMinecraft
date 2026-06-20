@@ -1630,9 +1630,7 @@ body,
    INTERACTIVE COMPANION (Drone)
    ============================================================ */
 .cyber-companion {
-  position: absolute;
-  top: -24px;
-  right: 30px;
+  position: relative;
   width: 40px;
   height: 40px;
   z-index: 50;
@@ -1640,6 +1638,38 @@ body,
   animation: floatCompanion 3.5s ease-in-out infinite;
   filter: drop-shadow(0 0 14px rgba(53,232,255,0.4));
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s;
+}
+
+.comp-chat {
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 1px solid var(--cyan);
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  color: var(--cyan);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 0 10px rgba(53,232,255,0.2);
+}
+.comp-chat::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 4px;
+  border-style: solid;
+  border-color: var(--cyan) transparent transparent transparent;
+}
+.comp-chat.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-5px);
 }
 .comp-body {
   width: 100%;
@@ -1684,5 +1714,6 @@ body,
 }
 
 @media (max-width: 620px) {
-  .cyber-companion { top: -45px; right: 20px; width: 34px; height: 34px; }
+  .cyber-companion { width: 34px; height: 34px; }
+  .comp-chat { font-size: 10px; padding: 3px 6px; }
 }
