@@ -290,7 +290,37 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 .profile-typing-cursor { display:inline-block; margin-left:2px; color:#fff; font-weight:500; text-shadow:0 0 12px rgba(255,255,255,.58); animation:typingCaret .8s infinite; }
 .username { margin:6px 0 0; color:var(--muted); font-weight:600; }
 
-.presence-card, .activity-card, .about-card { margin:0 20px 11px; padding:14px; border:1px solid rgba(255,255,255,.09); background:rgba(255,255,255,.045); border-radius:12px; }
+.presence-card, .activity-card, .about-card {
+  margin:0 20px 11px;
+  padding:14px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.045);
+  border-radius:12px;
+  position: relative;
+  transform: perspective(1000px) rotateX(var(--rotateX, 0deg)) rotateY(var(--rotateY, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94), background .45s ease, border-color .35s ease, box-shadow .45s ease;
+  will-change: transform;
+}
+.presence-card::before, .activity-card::before, .about-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255,255,255,0.12) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+.presence-card:hover::before, .activity-card:hover::before, .about-card:hover::before {
+  opacity: 1;
+}
+
+/* Popping out inner content slightly */
+.presence-card > div, .activity-card > div, .about-card > div {
+  transform: translateZ(15px);
+}
 .presence-card { display:flex; justify-content:space-between; align-items:center; gap:12px; }
 .presence-card h2, .activity-card h2, .about-card h2 { margin:0 0 5px; font-size:14px; }
 #custom-status-line { color:#cbd5ff; font-weight:500; letter-spacing:0; }
@@ -1253,7 +1283,7 @@ body,
 .ambient {
   transition: background .45s ease, background-color .45s ease,
               border-color .35s ease, color .35s ease,
-              box-shadow .45s ease;
+              box-shadow .45s ease, transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .profile-typing-name {
   transition: background .45s ease;
