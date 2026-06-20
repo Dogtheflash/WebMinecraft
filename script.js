@@ -4,9 +4,11 @@
    ============================================================ */
 (function () {
   var overlay  = document.getElementById('cyber-loading');
-  var ring     = document.getElementById('cl-ring');
+  var fill     = document.getElementById('cl-fill');
+  var head     = document.getElementById('cl-head');
   var pctEl    = document.getElementById('cl-pct');
   var statusEl = document.getElementById('cl-status');
+  var clockEl  = document.getElementById('cl-clock');
   var fadeEl   = document.getElementById('cl-fade');
   var terminal = document.getElementById('terminal-screen');
 
@@ -14,15 +16,22 @@
   if (terminal) terminal.style.visibility = 'hidden';
 
   var msgs = [
-    'Establishing Neural Link...',
-    'Bypassing Mainframe Security...',
-    'Decrypting Corrupted Data...',
-    'Injecting Payload...',
-    'Synchronizing Brainwaves...',
-    'Neural Dive Successful.'
+    'Đang khởi động hệ thống...',
+    'Nạp giao thức bảo mật...',
+    'Kết nối neural interface...',
+    'Giải mã ma trận dữ liệu...',
+    'Đồng bộ cyberspace...',
+    'Xác thực danh tính...',
+    'Tải môi trường ảo...',
+    'Hoàn tất. Sẵn sàng!'
   ];
 
-  var prog = 0, done = false;
+  var prog = 0, s1 = 0, s2 = 0, s3 = 0, done = false;
+
+  /* Đồng hồ realtime */
+  setInterval(function () {
+    if (clockEl) clockEl.textContent = new Date().toTimeString().slice(0, 8);
+  }, 1000);
 
   /* Progress bar — ~2 giây để hoàn thành */
   var iv = setInterval(function () {
@@ -34,18 +43,32 @@
             :              (Math.random() * 1.5 + 0.8);
 
     prog = Math.min(prog + inc, 100);
+    s1   = Math.min(s1 + Math.random() * 6 + 3,  100);
+    s2   = Math.min(s2 + Math.random() * 5 + 2.5, 100);
+    s3   = Math.min(s3 + Math.random() * 6 + 2,  100);
 
     var p = Math.floor(prog);
-    if (ring)  ring.style.background = `conic-gradient(#0ff ${prog}%, transparent 0)`;
+    if (fill)  fill.style.width  = prog + '%';
+    if (head)  head.style.right  = (100 - prog) + '%';
     if (pctEl) pctEl.textContent = p + '%';
 
-    var si = Math.min(Math.floor(prog / 16.6), msgs.length - 1);
+    var si = Math.min(Math.floor(prog / 12.5), msgs.length - 1);
     if (statusEl) statusEl.textContent = msgs[si];
+
+    function setBar(id, pid, v) {
+      var el = document.getElementById(id);
+      var ep = document.getElementById(pid);
+      if (el) el.style.width  = Math.floor(v) + '%';
+      if (ep) ep.textContent  = Math.floor(v) + '%';
+    }
+    setBar('cs1', 'cs1p', s1);
+    setBar('cs2', 'cs2p', s2);
+    setBar('cs3', 'cs3p', s3);
 
     if (prog >= 100) {
       clearInterval(iv);
       done = true;
-      if (statusEl) statusEl.textContent = 'Neural Dive Successful.';
+      if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
 
       setTimeout(function () {
         if (fadeEl) fadeEl.classList.add('active');
@@ -58,6 +81,23 @@
             terminal.style.opacity    = '0';
             terminal.style.transition = 'opacity 0.6s ease';
             requestAnimationFrame(function () {
+              requestAnimationFrame(function () {
+                terminal.style.opacity = '1';
+
+                if (typeof window.initCmd === 'function') {
+                  window.initCmd();
+                }
+              });
+            });
+          }
+        }, 950);
+      }, 400);
+    }
+  }, 30);
+})();
+/* ============================================================
+   END CYBER LOADING SCREEN
+   ============================================================ */
               requestAnimationFrame(function () {
                 terminal.style.opacity = '1';
 
