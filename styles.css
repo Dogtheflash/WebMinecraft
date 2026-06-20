@@ -1,494 +1,2430 @@
-<!DOCTYPE html>
-<html lang="vi">
+:root {
+  --bg: #000000;
+  --panel: rgba(15, 18, 32, 0.78);
+  --panel-strong: rgba(20, 24, 42, 0.92);
+  --line: rgba(255, 255, 255, 0.11);
+  --discord: #5865f2;
+  --cyan: #35e8ff;
+  --pink: #ff4fd8;
+  --green: #3ee87d;
+  --yellow: #f0b232;
+  --red: #f45b69;
+  --text: #eef4ff;
+  --muted: #9aa8c7;
+  --shadow: 0 28px 90px rgba(0, 0, 0, 0.52);
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chinatsu Kamado| profile</title>
-  <meta name="description"
-    content="Chào bạn ở đây cũng ko có gì hay cả, nếu muốn có thể xem thử." />
-  <meta name="theme-color" content="#070a15" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="favicon.png" type="image/svg+xml">
-</head>
+  /* fluid typography */
+  --font-h1: clamp(1.3rem, 2.5vw + 0.5rem, 2.1rem);
+  --font-h2: clamp(1rem, 1.8vw + 0.3rem, 1.5rem);
+  --font-body: clamp(0.75rem, 1.2vw + 0.25rem, 0.9rem);
+  --font-mono: clamp(0.65rem, 1.1vw + 0.2rem, 0.82rem);
+  --font-label: clamp(0.6rem, 1vw + 0.15rem, 0.75rem);
+}
 
-<body class="terminal-active">
+#bg-video {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  pointer-events: none;
+}
 
-  <!-- ========== CYBER LOADING SCREEN v2 (premium) ========== -->
-  <div id="cyber-loading">
-    <div class="cl-grid-bg"></div>
-    <div class="cl-scanlines"></div>
-    <div class="cl-corner cl-tl"></div>
-    <div class="cl-corner cl-tr"></div>
-    <div class="cl-corner cl-bl"></div>
-    <div class="cl-corner cl-br"></div>
-    <div class="cl-card">
-      <div class="cl-top-bar"></div>
-      <div class="cl-eyebrow">System Boot Sequence</div>
-      <div class="cl-title-wrap">
-        <span class="cl-title" id="cl-title" data-t="INITIALIZING">Tú Xinh Trai!</span>
-      </div>
-      <div class="cl-status-row">
-        <div class="cl-dot"></div>
-        <div class="cl-status-txt" id="cl-status">Đang khởi động hệ thống...</div>
-        <div class="cl-pct" id="cl-pct">0%</div>
-      </div>
-      <div class="cl-track">
-        <div class="cl-fill" id="cl-fill"></div>
-        <div class="cl-head" id="cl-head"></div>
-      </div>
-      <div class="cl-hex"><span>0x0000</span><span>0xFFFF</span></div>
-      <div class="cl-subbars">
-        <div class="cl-sub">
-          <span class="cl-sub-lbl">Neural</span>
-          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs1" style="background:linear-gradient(90deg,#00b4ff,#00ffb4)"></div></div>
-          <span class="cl-sub-pct" id="cs1p">0%</span>
-        </div>
-        <div class="cl-sub">
-          <span class="cl-sub-lbl">Crypto</span>
-          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs2" style="background:linear-gradient(90deg,#ff006e,#ff9d00)"></div></div>
-          <span class="cl-sub-pct" id="cs2p">0%</span>
-        </div>
-        <div class="cl-sub">
-          <span class="cl-sub-lbl">Interface</span>
-          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs3" style="background:linear-gradient(90deg,#8000ff,#00ffb4)"></div></div>
-          <span class="cl-sub-pct" id="cs3p">0%</span>
-        </div>
-      </div>
-      <div class="cl-meta">
-        <span>v4.2.0-NEON</span>
-        <span id="cl-clock">00:00:00</span>
-        <span>CYB-OS</span>
-      </div>
-    </div>
-    <div class="cl-fade-overlay" id="cl-fade"></div>
-  </div>
-  <!-- ========== END CYBER LOADING SCREEN ========== -->
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scrollbar-width: none; background: transparent; }
+html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar { width:0; height:0; display:none; }
 
-  <div class="ambient ambient-one"></div>
-  <div class="ambient ambient-two"></div>
-  <div id="pointer-glow" class="pointer-glow" aria-hidden="true"></div>
-  <div class="scanlines" aria-hidden="true"></div>
-  <video id="bg-video" class="bg-video" autoplay muted loop playsinline aria-hidden="true">
-    <source src="./data/background/bg-test.mp4" type="video/mp4">
-  </video>
+body {
+  background-image: none !important;
+  background-color: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: 'Consolas', 'Courier New', monospace;
+}
 
-  <main id="app-root">
-    <section id="terminal-screen" class="screen terminal-screen active" aria-label="Windows 11 command prompt intro" style="visibility:hidden;opacity:0;transition:opacity 0.6s ease;">
-      <div class="cmd-window">
-        <div class="cmd-titlebar">
-          <div class="cmd-controls" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div id="cmd-tabs" class="cmd-tabs" role="tablist" aria-label="CMD tabs"></div>
-          <button id="cmd-new-tab" class="cmd-plus" type="button" aria-label="Mở tab CMD mới">+</button>
-        </div>
-        <div class="cmd-body">
-          <div id="cmd-log" class="cmd-log" aria-live="polite"></div>
-          <form id="cmd-form" class="cmd-prompt-line" autocomplete="off">
-            <span>C:\Users\Chinatsu Kamado&gt;</span>
-            <input id="cmd-input" type="text" autocomplete="off" spellcheck="false" aria-label="CMD command input" />
-          </form>
-          <button id="enter-console-btn" class="cmd-continue">Join World</button>
-        </div>
-      </div>
-    </section>
+/* ============================================================
+   PHẦN CHỈNH SỬA: Thay thế ảnh nền bằng style chuẩn Linux
+   ============================================================ */
+.cmd-window { 
+  width: min(760px, 94vw); 
+  overflow: hidden; 
+  border-radius: 14px; 
+  border: 1px solid rgba(255,255,255,.15); 
+  background: rgba(8, 8, 12, 0.75);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,.1); 
+  position: relative; 
+  transform: translateZ(0);
+}
 
-    <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
-      <article class="profile-console glass-panel">
-        <!-- ========== COMPANION MOVED TO HEADER ========== -->
-        <!-- ========== THEME SWITCHER ========== -->
-        <div id="theme-switcher" class="theme-switcher">
-          <div id="theme-menu" class="theme-menu hidden">
-            <button class="theme-option active" data-theme="cyber" title="Dark Cyber">🌙</button>
-            <button class="theme-option" data-theme="sakura" title="Sakura Pink">🌸</button>
-            <button class="theme-option" data-theme="ocean" title="Ocean Blue">🌊</button>
-            <button class="theme-option" data-theme="fire" title="Neon Fire">🔥</button>
-          </div>
-          <button id="zen-toggle" class="zen-toggle-btn" type="button" aria-label="Zen Mode" title="Zen Mode">🧘‍♂️</button>
-          <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi giao diện">🌙</button>
-        </div>
-        <!-- ========== END THEME SWITCHER ========== -->
-        <div class="profile-banner">
-          <!-- Parallax Layer 0: Base image -->
-          <div class="plx-layer" data-depth="0.03">
-            <img id="banner-image" src="./data/background/banner.gif" alt="Ảnh bìa hồ sơ" />
-          </div>
-          <!-- Parallax Layer 1: Light sweep -->
-          <div class="plx-layer plx-light" data-depth="0.06"></div>
-          <!-- Parallax Layer 2: Floating particles -->
-          <div class="plx-layer plx-particles" data-depth="0.10">
-            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-          </div>
-          <!-- Parallax Layer 3: Sparkles -->
-          <div class="plx-layer plx-sparkles" data-depth="0.15">
-            <b>✦</b><b>✧</b><b>✦</b><b>✧</b><b>✦</b>
-          </div>
-          <div class="banner-glow"></div>
-        </div>
+/* Hiệu ứng thở (pulse glow) nhẹ ở nền Terminal */
+.cmd-window::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+  animation: terminalPulse 8s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
 
-        <header class="profile-header">
-          <div class="avatar-wrap">
-            <img id="avatar-image" class="avatar-image" src="https://images-ext-1.discordapp.net/external/Pk9lpqQlm9eiN65fVc4VsGsRbedZwUbAsCBLXPHvHq8/%3Fsize%3D4096/https://cdn.discordapp.com/avatars/917263515209859102/cd121ea4baf2512e6e98f16f0f2a8d04.png?size=4096" alt="Ảnh đại diện Discord" />
-            <div id="avatar-fallback" class="avatar-fallback">T</div>
-            <img id="avatar-decoration" class="avatar-decoration" src="./data/decoration/anime-dang-yeu.png" alt="Trang trí avatar" />
-            <span id="status-orb" class="status-orb offline" aria-label="Trạng thái Discord"></span>
-          </div>
-          <div class="identity-block">
-            <div style="display: flex; align-items: center; gap: 15px; position: relative;">
-              <h1 id="display-name" style="margin: 0;"><span id="profile-typing-name" class="profile-typing-name">Chinatsu Kamado</span><span class="profile-typing-cursor" aria-hidden="true">|</span></h1>
-            </div>
-            <p class="username">@<span id="username" class="glitch-hover" data-text="Chinatsu Kamado">Chinatsu Kamado</span></p>
-          </div>
-        </header>
+@keyframes terminalPulse {
+  0% { transform: scale(0.8); opacity: 0.4; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+/* ============================================================ */
 
-        <section class="presence-card" aria-labelledby="presence-title" style="position: relative;">
-          <!-- ========== INTERACTIVE COMPANION ========== -->
-          <div class="css-chibi" aria-hidden="true">
-            <div id="comp-chat" class="comp-chat">Bấm vào mình đi!</div>
-            
-            <div id="companion" class="chibi-head" title="Bấm vào mình đi!">
-              <div class="chibi-hat"></div>
-              <div class="comp-eye left"></div>
-              <div class="comp-eye right"></div>
-            </div>
-            <div class="chibi-body"></div>
-            <div class="chibi-arm left"></div>
-            <div class="chibi-arm right"></div>
-            <div class="chibi-leg left"></div>
-            <div class="chibi-leg right"></div>
-          </div>
-          <!-- ========== SLEEPING CAT ========== -->
-          <div class="css-cat" aria-hidden="true">
-            <div class="cat-zzz z1">Z</div>
-            <div class="cat-zzz z2">z</div>
-            <div class="cat-zzz z3">z</div>
-            <div class="cat-tail"></div>
-            <div class="cat-body"></div>
-            <div class="cat-head">
-              <div class="cat-ear left"></div>
-              <div class="cat-ear right"></div>
-              <div class="cat-eye left"></div>
-              <div class="cat-eye right"></div>
-            </div>
-          </div>
-          <div>
-            <h2 id="presence-title">Trạng thái: <span id="custom-status-line">Đang tải...</span></h2>
-            <p id="status-text"><span class="inline-dot"></span>Đang kết nối Discord...</p>
-          </div>
-          <!-- CLOCK WIDGET -->
-          <div class="clock-inline" aria-label="Giờ Việt Nam">
-            <div class="clock-inline-top">
-              <span class="clock-inline-dot"></span>
-              <span class="clock-inline-time"><span id="ci-h">00</span><span class="ci-sep">:</span><span id="ci-m">00</span><span class="ci-sep">:</span><span id="ci-s">00</span></span>
-            </div>
-            <div class="clock-inline-date" id="ci-date">T2, 01/01</div>
-            <div class="clock-inline-phase" id="ci-phase">🌙 GMT+7</div>
-          </div>
-        </section>
+.terminal-header {
+  background-color: #161b22;
+  padding: 12px 15px;
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #30363d;
+}
 
-        <section id="activity-card" class="activity-card hidden" aria-labelledby="activity-title">
-          <div id="activity-icon" class="activity-icon">✦</div>
-          <div>
-            <h2 id="activity-title">Hoạt động</h2>
-            <p id="activity-name" class="handle">Không có hoạt động</p>
-            <p id="activity-detail">Khi có game, Spotify hoặc app đang chạy thì sẽ hiện ở đây.</p>
-            <p id="activity-time" class="activity-time"></p>
-          </div>
-        </section>
+.btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
 
-        <section class="meta-grid" aria-label="Thông tin realtime Discord">
-          <div><span>Spotify</span><strong id="spotify-status">Chưa phát hiện</strong></div>
-          <div><span>Huy hiệu</span><strong id="public-flags" class="badge-list">Đang tải</strong></div>
-        </section>
+.close { background-color: #ff5f56; }
+.minimize { background-color: #ffbd2e; }
+.maximize { background-color: #27c93f; }
 
-        <section class="about-card">
-          <h2>Giới thiệu</h2>
-          <p>Một góc hồ sơ nhỏ gọn của Chinatsu Kamado, lấy cảm hứng nhẹ từ Discord nhưng vẫn giữ phong cách anime riêng: tối, gọn, mượt và có chiều sâu.</p>
-          <div class="tags" aria-label="Thẻ hồ sơ">
-            <span>Anime</span>
-            <span>Coder</span>
-            <span>Genshin Impact</span>
-            <span>Cheater</span>
-          </div>
-        </section>
+.terminal-body {
+  padding: 20px;
+  color: #c9d1d9;
+}
 
+.pointer-glow { position:fixed; left:var(--pointer-x, 50vw); top:var(--pointer-y, 50vh); width:420px; height:420px; z-index:1; pointer-events:none; border-radius:50%; transform:translate(-50%, -50%); background:radial-gradient(circle, rgba(53,232,255,.16), rgba(88,101,242,.08) 36%, transparent 68%); mix-blend-mode:screen; opacity:0; filter:blur(4px); transition:opacity .22s ease; }
+body.pointer-active .pointer-glow { opacity:1; }
+.page-ripple { position:fixed; z-index:2; left:var(--ripple-x); top:var(--ripple-y); width:14px; height:14px; border-radius:50%; pointer-events:none; transform:translate(-50%, -50%) scale(0); background:radial-gradient(circle, rgba(255,255,255,.26), rgba(255,79,216,.11) 42%, transparent 70%); mix-blend-mode:screen; animation:pageRipple 1.08s ease-out forwards; }
+a { color: inherit; text-decoration: none; }
+button, a { font: inherit; }
 
+body, button, a, input { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath fill='%23ffffff' stroke='%23111118' stroke-width='1.4' d='M5 3.8 22.6 13 14.7 15.1 11 23.2z'/%3E%3Cpath fill='%23ff9bd8' d='m9.6 7.6 5.1 4.7-3.4.9z'/%3E%3Ccircle cx='18.8' cy='6.6' r='2.1' fill='%23ff9bd8'/%3E%3Ccircle cx='22.6' cy='9.9' r='1.25' fill='%2389f7ff'/%3E%3C/svg%3E") 5 4, auto; }
 
-        <nav class="social-row" aria-label="Liên kết mạng xã hội">
-          <a id="discord-link" href="https://discord.com/users/917263515209859102" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
-            <svg viewBox="0 0 127.14 96.36" aria-hidden="true" class="discord-icon">
-              <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.31,60,73.31,53s5-12.74,11.43-12.74S96.1,46,96,53,91.08,65.69,84.69,65.69Z" fill="currentColor"/>
-              <ellipse cx="42.45" cy="53" rx="12" ry="14" fill="currentColor" class="discord-blink" />
-              <ellipse cx="84.69" cy="53" rx="12" ry="14" fill="currentColor" class="discord-blink" />
-            </svg>
-          </a>
-          <a id="youtube-link" href="https://www.youtube.com/@Dogloser" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.12C19.52 3.58 12 3.58 12 3.58s-7.52 0-9.4.5A3 3 0 0 0 .5 6.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.12c1.88.5 9.4.5 9.4.5s7.52 0 9.4-.5a3 3 0 0 0 2.1-2.12A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-5.8ZM9.6 15.55v-7.1L15.85 12 9.6 15.55Z"/></svg>
-          </a>
-          <a id="x-link" href="https://x.com/Dogkunne" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2h3.68l-8.04 9.18L24 22h-7.4l-5.8-7.58L4.17 22H.48l8.6-9.83L0 2h7.6l5.24 6.93L18.9 2Zm-1.3 18.1h2.04L6.5 3.8H4.31L17.6 20.1Z"/></svg>
-          </a>
-          <a id="github-link" href="https://github.com/Dogtheflash" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12Z"/></svg>
-          </a>
-        </nav>
+.ambient { position: fixed; width: 42vw; height: 42vw; min-width: 300px; min-height: 300px; border-radius: 999px; filter: blur(78px); opacity: 0.24; z-index: -3; animation: drift 14s ease-in-out infinite alternate; }
+.ambient-one { left: -12%; top: 4%; background: var(--discord); }
+.ambient-two { right: -10%; bottom: -12%; background: var(--pink); animation-delay: -5s; }
+.scanlines { position: fixed; inset: 0; pointer-events: none; z-index: 20; opacity: 0.06; background: repeating-linear-gradient(0deg, rgba(255,255,255,.13) 0 1px, transparent 1px 4px); mix-blend-mode: overlay; }
 
-        <footer class="profile-footer">
-          <a id="page-one-link" href="#">Server Minecraft</a>
-          <a id="page-two-link" href="#">
-            <img src="https://cdn-icons-png.flaticon.com/512/3670/3670382.png" alt="Steam" class="steam-icon">
-            My Steam
-          </a>
-          <a id="mal-link" href="#">Text color</a>
-        </footer>
+body.color-page-active .screen { padding-bottom:30px; align-items:start; }
+body.color-page-active .profile-screen { padding-top:34px; }
+body.color-page-active .profile-console { margin-top:0; }
 
-        <!-- ========== MINECRAFT SERVER PAGE ========== -->
-        <section id="minecraft-page" class="color-page hidden" aria-label="Minecraft Server">
-          <div class="color-page-head">
-            <button id="minecraft-back" class="mini-btn" type="button">← Home</button>
-            <div>
-              <p class="eyebrow">MINECRAFT SERVER</p>
-              <h2>Server Minecraft</h2>
-            </div>
-          </div>
+/* Chế độ wide khi mở Steam / Minecraft page */
+body.wide-page-active .profile-console {
+  width: min(860px, 94vw) !important;
+  transition: width .45s cubic-bezier(.16,1,.3,1), transform .16s ease, box-shadow .24s ease;
+}
+body.wide-page-active .color-page {
+  min-height: 520px;
+}
 
-          <!-- Bot status card -->
-          <div class="mc-bot-card">
-            <div class="mc-bot-avatar">
-              <img src="./minevui-avatar.png" alt="Bot avatar" id="mc-bot-avatar" />
-              <span class="mc-bot-status-dot online"></span>
-            </div>
-            <div class="mc-bot-info">
-              <div class="mc-bot-tag">ONLINE · <span id="mc-bot-tag">SERVER BOT#0000</span></div>
-              <div class="mc-bot-name" id="mc-bot-name">Minecraft Skyblock</div>
-              <div class="mc-bot-desc" id="mc-bot-desc">🌿 Server Minecraft sinh tồn · Vanilla SMP</div>
-            </div>
-          </div>
+.screen { min-height: 100vh; width: 100%; display: none; place-items: center; padding: 30px 16px 138px; }
+.terminal-screen { padding-bottom: 30px; overscroll-behavior:none; touch-action:none; position: relative; overflow: hidden; }
+.screen.active { display: grid; animation: screenIn .55s ease both; }
+.glass-panel { background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.08); backdrop-filter: blur(22px) saturate(130%); }
 
-          <!-- Join button + timestamp -->
-          <div class="mc-action-row">
-            <a class="mc-join-btn" href="https://discord.gg/" target="_blank" rel="noopener noreferrer" id="mc-join-btn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.32 4.37A19.8 19.8 0 0 0 15.36 2l-.24.44c1.8.55 2.64 1.34 2.64 1.34a16.5 16.5 0 0 0-5.02-1.55 17.1 17.1 0 0 0-4.24.04c-.13 0-.25.03-.38.05-.75.07-2.56.34-4.84 1.36 0 0 .87-.83 2.78-1.38L5.9 2A19.7 19.7 0 0 0 .94 4.42S0 8.1 0 12.7c0 0 1.47 2.52 5.34 2.65 0 0 .65-.78 1.18-1.45-2.24-.67-3.09-2.08-3.09-2.08s.18.13.5.31l.08.05.12.07c.44.25.88.45 1.29.6.72.28 1.58.56 2.59.75 1.33.25 2.9.34 4.6.02.83-.15 1.68-.4 2.57-.75.62-.24 1.31-.58 2.03-1.05 0 0-.88 1.44-3.2 2.1.53.66 1.15 1.42 1.15 1.42 3.88-.13 5.36-2.65 5.36-2.65 0-4.6-.2-8.33-.2-8.33ZM8.2 11.62c-.98 0-1.78-.86-1.78-1.92 0-1.06.78-1.92 1.78-1.92S10 8.64 9.98 9.7c0 1.06-.79 1.92-1.78 1.92Zm7.38 0c-.98 0-1.78-.86-1.78-1.92 0-1.06.79-1.92 1.78-1.92 1 0 1.8.86 1.78 1.92 0 1.06-.78 1.92-1.78 1.92Z"/></svg>
-              Tham gia Discord
-            </a>
-            <span class="mc-updated" id="mc-updated">Cập nhật --:--:--</span>
-          </div>
+.cmd-titlebar { height: 38px; display: flex; align-items: center; justify-content: flex-start; background: transparent; border-bottom: 1px solid rgba(255,255,255,.08); user-select: none; position: relative; z-index: 2; padding: 0 12px; gap: 8px; }
+.cmd-tabs { display: flex; align-items: center; height: 100%; min-width: 0; flex:0 1 auto; overflow:hidden; }
+.cmd-tab { height: 100%; min-width:132px; max-width:210px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 0 12px; color: rgba(255,255,255,0.6); font: 500 13px "Segoe UI", system-ui, sans-serif; background: transparent; border:0; }
+.cmd-tab.active-tab { color:#fff; background:rgba(255,255,255,0.06); border-radius: 6px; height: 28px; margin: 5px 0; }
+.cmd-tab-title { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.cmd-tab-close { opacity:.55; font-size:14px; line-height:1; }
+.cmd-tab:hover .cmd-tab-close { opacity:1; }
+.cmd-plus { width: 34px; height:100%; text-align: center; color: #d0d0d0; font-size: 17px; flex:0 0 auto; border:0; background:transparent; cursor:inherit; }
+.cmd-controls {
+  margin-left: 0;
+  margin-right: 12px;
+  display: flex;
+  gap: 8px;
+  height: 100%;
+  align-items: center;
+}
 
-          <!-- Stats grid -->
-          <div class="mc-stats-grid">
-            <div class="mc-stat-card">
-              <span class="mc-stat-label">PING</span>
-              <strong class="mc-stat-value" id="mc-ping">--ms</strong>
-            </div>
-            <div class="mc-stat-card">
-              <span class="mc-stat-label">PHIÊN BẢN</span>
-              <strong class="mc-stat-value" id="mc-version">1.21.x</strong>
-            </div>
-            <div class="mc-stat-card">
-              <span class="mc-stat-label">ĐANG CHƠI</span>
-              <strong class="mc-stat-value" id="mc-online">-- người</strong>
-            </div>
-            <div class="mc-stat-card">
-              <span class="mc-stat-label">TỐI ĐA</span>
-              <strong class="mc-stat-value" id="mc-max">-- người</strong>
-            </div>
-            <div class="mc-stat-card wide">
-              <span class="mc-stat-label">ĐỊA CHỈ SERVER</span>
-              <strong class="mc-stat-value mc-ip" id="mc-ip">play.example.com</strong>
-            </div>
-            <div class="mc-stat-card wide">
-              <span class="mc-stat-label">TRẠNG THÁI</span>
-              <strong class="mc-stat-value" id="mc-status-text">Đang kiểm tra...</strong>
-            </div>
-          </div>
+.cmd-controls span {
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+  flex-shrink: 0;
+}
 
-          <!-- Feature cards -->
-          <div class="mc-feature-grid">
-            <div class="mc-feature-card">
-              <div class="mc-feature-num">01</div>
-              <div class="mc-feature-title">Survival SMP</div>
-              <div class="mc-feature-desc">Thế giới sinh tồn vanilla, không hack, không cheat — chơi thuần túy cùng nhau.</div>
-            </div>
-            <div class="mc-feature-card">
-              <div class="mc-feature-num">02</div>
-              <div class="mc-feature-title">Cộng đồng nhỏ</div>
-              <div class="mc-feature-desc">Server riêng tư, chỉ bạn bè thân thiết — không lag, không toxic.</div>
-            </div>
-            <div class="mc-feature-card">
-              <div class="mc-feature-num">03</div>
-              <div class="mc-feature-title">Luôn online</div>
-              <div class="mc-feature-desc">Server chạy 24/7, vào bất cứ lúc nào bạn muốn xây dựng hay khám phá.</div>
-            </div>
-          </div>
-        </section>
-        <!-- ========== END MINECRAFT SERVER PAGE ========== -->
+.cmd-controls span:nth-child(1) { background-color: #ff5f56 !important; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+.cmd-controls span:nth-child(2) { background-color: #ffbd2e !important; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+.cmd-controls span:nth-child(3) { background-color: #27c93f !important; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
 
-        <!-- ========== STEAM PROFILE PAGE ========== -->
-        <section id="steam-page" class="color-page hidden" aria-label="Steam Profile">
-          <div class="color-page-head">
-            <button id="steam-back" class="mini-btn" type="button">← Home</button>
-            <div>
-              <p class="eyebrow">STEAM PROFILE</p>
-              <h2>My Steam</h2>
-            </div>
-          </div>
+.cmd-controls span:hover { filter: brightness(0.8); }
+.cmd-body { min-height: 380px; padding: 18px 20px 20px; color: #eaf8ff; font: 500 clamp(12px, 2vw, 15px) Consolas, "Cascadia Mono", "JetBrains Mono", monospace; line-height: 1.48; position: relative; z-index: 2;}
+.cmd-plus:hover { background:#2b2b2b; }
+.cmd-log { white-space:pre-wrap; min-height:270px; color:#f2f2f2; }
+.cmd-prompt-line { display:flex; align-items:center; gap:0; color:#f2f2f2; margin:0; }
+.cmd-prompt-line span { flex:0 0 auto; }
+.cmd-prompt-line input { flex:1; min-width:0; border:0; outline:0; background:transparent; color:#f2f2f2; font:inherit; caret-color:#f2f2f2; padding:0 0 0 6px; }
+.cmd-body p { margin: 0; }
+#typewriter-output.hidden, .cmd-continue.hidden, .cmd-prompt-line.hidden { display:none; }
+.cmd-log.typing::after { content: "█"; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+.cmd-continue {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin-top: 18px;
+  width: 100%;
+  padding: 13px 14px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: .015em;
+  border: 1px solid rgba(255,255,255,.32);
+  border-radius: 14px;
+  background:
+    radial-gradient(120% 140% at 18% -20%, rgba(255,255,255,.4), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,.03) 42%, rgba(0,0,0,.18) 100%),
+    rgba(40,40,46,.5);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.55),
+    inset 0 -10px 18px -12px rgba(0,0,0,.4),
+    0 10px 26px rgba(0,0,0,.45),
+    0 0 16px rgba(255,255,255,.06);
+  transition: transform .45s cubic-bezier(.16,1,.3,1), box-shadow .45s cubic-bezier(.16,1,.3,1), border-color .35s ease, background .35s ease;
+  animation: liquidBreathe 4.5s ease-in-out infinite;
+}
+.cmd-continue::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.55) 50%, transparent 65%);
+  background-size: 240% 100%;
+  background-position: 180% 0;
+  mix-blend-mode: screen;
+  opacity: .9;
+  transition: background-position 1.15s cubic-bezier(.16,1,.3,1);
+}
+.cmd-continue::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent);
+  filter: blur(.3px);
+  pointer-events: none;
+  z-index: 2;
+}
+.cmd-continue span, .cmd-continue { position: relative; z-index: 3; }
+.cmd-continue:hover {
+  transform: translateY(-2px) scale(1.012);
+  border-color: rgba(255,255,255,.5);
+  background:
+    radial-gradient(120% 140% at 18% -20%, rgba(255,255,255,.5), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,.2) 0%, rgba(255,255,255,.05) 42%, rgba(0,0,0,.16) 100%),
+    rgba(48,48,54,.55);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.7),
+    inset 0 -10px 18px -12px rgba(0,0,0,.4),
+    0 16px 38px rgba(0,0,0,.5),
+    0 0 26px rgba(255,255,255,.16);
+}
+.cmd-continue:hover::before { background-position: -40% 0; }
+.cmd-continue:active {
+  transform: translateY(0) scale(.985);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.5),
+    inset 0 6px 14px -8px rgba(0,0,0,.5),
+    0 6px 16px rgba(0,0,0,.4);
+}
+@keyframes liquidBreathe {
+  0%, 100% { box-shadow: inset 0 1px 1px rgba(255,255,255,.55), inset 0 -10px 18px -12px rgba(0,0,0,.4), 0 10px 26px rgba(0,0,0,.45), 0 0 14px rgba(255,255,255,.05); }
+  50% { box-shadow: inset 0 1px 1px rgba(255,255,255,.65), inset 0 -10px 18px -12px rgba(0,0,0,.4), 0 10px 26px rgba(0,0,0,.45), 0 0 22px rgba(255,255,255,.12); }
+}
 
-          <!-- Steam profile card -->
-          <div class="steam-profile-card">
-            <div class="steam-avatar-wrap">
-              <img id="steam-avatar" src="https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg" alt="Steam avatar" />
-              <span class="steam-status-dot" id="steam-status-dot"></span>
-            </div>
-            <div class="steam-profile-info">
-              <div class="steam-platform-tag">STEAM · <span id="steam-status-label">Đang tải...</span></div>
-              <div class="steam-display-name" id="steam-display-name">nakarotad</div>
-              <div class="steam-real-name" id="steam-real-name">🎮 Chinatsu Kamado</div>
-            </div>
-          </div>
+.profile-console { width: min(560px, 94vw); overflow: hidden; border-radius: 16px; transform: perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(-4px); transform-style:preserve-3d; position:relative; border:0; transition:transform .16s ease, box-shadow .24s ease; will-change:transform; }
+.profile-console.interactive-hover { box-shadow: var(--shadow), 0 0 42px rgba(88,101,242,.16), inset 0 1px 0 rgba(255,255,255,.1); }
+.profile-console.slide-to-color { animation:pageDriftOut .72s cubic-bezier(.16,1,.3,1) both; }
+.profile-console.slide-to-home { animation:pageDriftIn .66s cubic-bezier(.16,1,.3,1) both; }
+.profile-console::before { content:""; position:absolute; inset:0; z-index:2; pointer-events:none; border-radius:inherit; padding:4px; background:linear-gradient(180deg, #ff7adf 0%, #c56cff 34%, rgba(255,255,255,.18) 50%, #5865f2 68%, #35e8ff 100%); -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; opacity:.95; }
+.profile-console::after { content:""; position:absolute; inset:0; z-index:3; pointer-events:none; border-radius:inherit; background:radial-gradient(360px circle at var(--glow-x, 50%) var(--glow-y, 50%), rgba(255,255,255,.18), rgba(53,232,255,.08) 28%, transparent 58%); opacity:0; mix-blend-mode:screen; transition:opacity .22s ease; }
+.profile-console.interactive-hover::after { opacity:0; }
+.hover-ripple { position:absolute; z-index:3; width:12px; height:12px; left:var(--ripple-x); top:var(--ripple-y); border-radius:50%; pointer-events:none; transform:translate(-50%, -50%) scale(0); background:radial-gradient(circle, rgba(255,255,255,.38), rgba(53,232,255,.16) 38%, transparent 68%); animation:hoverRipple .96s ease-out forwards; mix-blend-mode:screen; }
+.profile-banner { height: 128px; position: relative; overflow: hidden; background: #151821; z-index: 1; border-top-left-radius: inherit; border-top-right-radius: inherit; }
+.profile-banner img { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.12) contrast(1.05); }
+.profile-banner::after { content:""; position:absolute; inset:auto 0 0; height:52px; background:linear-gradient(transparent, rgba(15,18,32,.94)); z-index:6; pointer-events:none; }
+.banner-glow { position:absolute; inset:0; background: radial-gradient(circle at 24% 38%, rgba(53,232,255,.22), transparent 34%); animation: glowShift 5s ease infinite alternate; z-index:5; pointer-events:none; }
+.profile-header { display:flex; align-items:end; gap:15px; padding:0 20px 16px; margin-top:-46px; position:relative; z-index:10; }
+.avatar-wrap { position:relative; width:104px; height:104px; flex:0 0 auto; }
+.avatar-image, .avatar-fallback { width:100%; height:100%; border-radius:50%; border:5px solid rgba(15,18,32,.98); object-fit:cover; background:linear-gradient(135deg, #202541, #5865f2); }
+.avatar-fallback { position:absolute; inset:0; display:grid; place-items:center; font-size:42px; font-weight:800; color:#fff; }
+.avatar-image[src]:not([src=""]) { position:relative; z-index:2; }
+.avatar-image[src]:not([src=""]) + .avatar-fallback { display:none; }
+.avatar-decoration { position:absolute; z-index:4; inset:0; width:100%; height:100%; object-fit:contain; pointer-events:none; filter:drop-shadow(0 0 8px rgba(255,79,216,.32)); transform:scale(1.08); transform-origin:center; }
+.status-orb { position:absolute; z-index:5; right:4px; bottom:7px; width:28px; height:28px; border-radius:50%; border:5px solid rgba(15,18,32,.98); background:#828898; box-shadow:none; }
+.status-orb::after { content:""; position:absolute; pointer-events:none; }
+.status-orb.online { background:#23a55a; box-shadow:0 0 16px rgba(35,165,90,.48); }
+.status-orb.online::after { display:none; }
+.status-orb.idle { background:transparent url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 23"%3E%3Cpath fill="%23faa61a" fill-rule="evenodd" d="M 11.550781 -0.00390625 C 11.847656 -0.00390625 12.144531 -0.00390625 12.441406 -0.00390625 C 15.25 0.121094 17.71875 1.054688 19.84375 2.789062 C 21.714844 4.359375 22.972656 6.300781 23.617188 8.613281 C 23.847656 9.484375 23.972656 10.371094 23.996094 11.265625 C 23.996094 11.417969 23.996094 11.574219 23.996094 11.726562 C 23.90625 14.496094 22.933594 16.925781 21.074219 19.023438 C 19.386719 20.871094 17.296875 22.089844 14.800781 22.6875 C 14.023438 22.863281 13.234375 22.964844 12.441406 22.996094 C 12.140625 22.996094 11.84375 22.996094 11.542969 22.996094 C 8.800781 22.871094 6.378906 21.976562 4.273438 20.308594 C 2.367188 18.75 1.074219 16.804688 0.398438 14.476562 C 0.164062 13.621094 0.03125 12.75 -0.00390625 11.863281 C -0.00390625 11.621094 -0.00390625 11.378906 -0.00390625 11.136719 C 0.0234375 10.425781 0.113281 9.722656 0.273438 9.027344 C 0.847656 10.859375 1.988281 12.265625 3.691406 13.246094 C 5.175781 14.058594 6.761719 14.355469 8.457031 14.136719 C 10.15625 13.886719 11.601562 13.171875 12.789062 11.996094 C 14.117188 10.621094 14.796875 8.988281 14.824219 7.101562 C 14.792969 5.203125 14.109375 3.566406 12.765625 2.1875 C 11.832031 1.265625 10.714844 0.621094 9.417969 0.261719 C 10.121094 0.113281 10.832031 0.0234375 11.550781 -0.00390625 Z M 11.550781 -0.00390625"/%3E%3C/svg%3E') center/22px 22px no-repeat; box-shadow:none; }
+.status-orb.idle::after { display:none; }
+.status-orb.dnd { background:#f23f43; box-shadow:0 0 16px rgba(242,63,67,.42); }
+.status-orb.dnd::after { left:50%; top:50%; width:14px; height:5px; border-radius:99px; background:#fff; transform:translate(-50%, -50%); }
+.status-orb.offline { background:#80848e; box-shadow:none; }
+.status-orb.offline::after { inset:5px; border-radius:50%; background:rgba(15,18,32,.98); }
+.identity-block { min-width:0; padding-bottom:5px; }
+.eyebrow { margin:0 0 5px; color:#b9c1ff; text-transform:uppercase; letter-spacing:.12em; font-size:10px; font-weight:800; }
+h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing:-.035em; }
+.profile-typing-name { display:inline; min-height:1em; background:linear-gradient(90deg, #fff, #ffd6f5 42%, #a9f6ff); -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:0 0 22px rgba(255,79,216,.18); }
+.profile-typing-cursor { display:inline-block; margin-left:2px; color:#fff; font-weight:500; text-shadow:0 0 12px rgba(255,255,255,.58); animation:typingCaret .8s infinite; }
+.username { margin:6px 0 0; color:var(--muted); font-weight:600; }
 
-          <!-- Action row -->
-          <div class="mc-action-row">
-            <a class="steam-visit-btn" href="https://steamcommunity.com/id/nakarotad/" target="_blank" rel="noopener noreferrer" id="steam-visit-btn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.718L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.455 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.662 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.252 0-2.265-1.014-2.265-2.265z"/></svg>
-              Xem trang Steam
-            </a>
-            <span class="mc-updated" id="steam-updated">Cập nhật --:--:--</span>
-          </div>
+.presence-card, .activity-card, .about-card {
+  margin:0 20px 11px;
+  padding:14px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.045);
+  border-radius:12px;
+  position: relative;
+  transform: perspective(1000px) rotateX(var(--rotateX, 0deg)) rotateY(var(--rotateY, 0deg)) scale3d(1.02, 1.02, 1.02) translateZ(10px);
+  transform-style: preserve-3d;
+  transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94), background .45s ease, border-color .35s ease, box-shadow .45s ease;
+  will-change: transform;
+}
+.presence-card::before, .activity-card::before, .about-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255,255,255,0.25) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+.presence-card:hover::before, .activity-card:hover::before, .about-card:hover::before {
+  opacity: 1;
+}
 
-          <!-- Stats grid -->
-          <div class="mc-stats-grid">
-            <div class="mc-stat-card">
-              <span class="mc-stat-label">SỐ GIỜ CHƠI</span>
-              <strong class="mc-stat-value" id="steam-hours">-- giờ</strong>
-            </div>
-            <div class="mc-stat-card">
-              <span class="mc-stat-label">SỐ GAME</span>
-              <strong class="mc-stat-value" id="steam-games">-- game</strong>
-            </div>
-            <div class="mc-stat-card">
-              <span class="mc-stat-label">LEVEL STEAM</span>
-              <strong class="mc-stat-value" id="steam-level">--</strong>
-            </div>
-            <div class="mc-stat-card">
-              <span class="mc-stat-label">BẠN BÈ</span>
-              <strong class="mc-stat-value" id="steam-friends">-- người</strong>
-            </div>
-            <div class="mc-stat-card wide" style="display:flex;align-items:center;gap:14px;">
-              <img id="steam-game-thumb" src="" alt="Game thumbnail"
-                style="display:none;width:72px;height:40px;object-fit:cover;border-radius:6px;flex:0 0 auto;border:1px solid rgba(255,255,255,.12);" />
-              <div style="min-width:0;flex:1;">
-                <span class="mc-stat-label">ĐANG CHƠI</span>
-                <strong class="mc-stat-value" id="steam-playing">Đang kết nối...</strong>
-              </div>
-            </div>
-            <div class="mc-stat-card wide">
-              <span class="mc-stat-label">STEAM ID</span>
-              <strong class="mc-stat-value mc-ip">nakarotad</strong>
-            </div>
-          </div>
+/* Popping out inner content slightly */
+.presence-card > div, .activity-card > div, .about-card > div {
+  transform: translateZ(15px);
+}
+.presence-card { display:flex; justify-content:space-between; align-items:center; gap:12px; z-index:20; position:relative; }
+.presence-card h2, .activity-card h2, .about-card h2 { margin:0 0 5px; font-size:14px; }
+#custom-status-line { color:#cbd5ff; font-weight:500; letter-spacing:0; }
+.presence-card p, .activity-card p, .about-card p { margin:0; color:var(--muted); font-size:14px; }
+.inline-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:7px; background:#80848e; }
+.inline-dot.online { background:var(--green); box-shadow:0 0 12px rgba(62,232,125,.5); }
+.inline-dot.idle { background:var(--yellow); }
+.inline-dot.dnd { background:var(--red); }
+/* sync-pill removed — replaced by clock-inline widget */
+.activity-card.hidden { display:none; }
+.activity-card { display:flex; align-items:center; gap:12px; }
+.activity-icon { width:40px; height:40px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(135deg, var(--discord), var(--cyan)); box-shadow:0 0 22px rgba(88,101,242,.24); flex:0 0 auto; }
+.activity-time { margin-top:5px !important; font:700 11px "JetBrains Mono", monospace; color:#c7d0ff !important; }
+.meta-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin:0 20px 11px; }
+.meta-grid div { min-width:0; padding:10px 11px; border:1px solid rgba(255,255,255,.08); border-radius:10px; background:rgba(255,255,255,.035); }
+.meta-grid span { display:block; margin-bottom:4px; color:var(--muted); font-size:12px; font-weight:600; text-transform:none; letter-spacing:0; }
+.meta-grid strong { display:block; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#eef4ff; font-size:13px; }
+.badge-list { display:flex !important; align-items:center; gap:5px; min-height:24px; overflow:visible !important; white-space:normal !important; flex-wrap:wrap; }
+.discord-badge { width:22px; height:22px; border-radius:6px; display:inline-grid; place-items:center; position:relative; transition:.18s ease; }
+.discord-badge:hover { transform:translateY(-1px) scale(1.08); filter:drop-shadow(0 0 8px rgba(88,101,242,.4)); }
+.discord-badge::before { content:attr(data-tooltip); position:absolute; left:50%; bottom:calc(100% + 9px); transform:translateX(-50%) translateY(4px) scale(.98); z-index:80; padding:7px 10px; border-radius:7px; background:#111214; color:#f2f3f5; font:700 12px/1.2 "Inter", sans-serif; white-space:nowrap; box-shadow:0 8px 18px rgba(0,0,0,.34); opacity:0; visibility:hidden; pointer-events:none; transition:opacity .14s ease, transform .14s ease, visibility 0s linear .14s; }
+.discord-badge::after { content:""; position:absolute; left:50%; bottom:calc(100% + 3px); transform:translateX(-50%) translateY(4px); z-index:79; border:6px solid transparent; border-top-color:#111214; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .14s ease, transform .14s ease, visibility 0s linear .14s; }
+.discord-badge:hover::before, .discord-badge:hover::after, .discord-badge:focus-visible::before, .discord-badge:focus-visible::after { opacity:1; visibility:visible; transform:translateX(-50%) translateY(0) scale(1); transition-delay:0s; }
+.discord-badge img { width:22px; height:22px; display:block; object-fit:contain; }
+.discord-badge.nitro { filter:drop-shadow(0 0 8px rgba(255,115,207,.18)); }
+.discord-badge.empty { width:auto; padding:4px 7px; color:var(--muted); font:700 11px "JetBrains Mono", monospace; background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.1); }
+.handle { color:#fff !important; font-weight:800; }
+.tags { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+.tags span { padding:7px 10px; border-radius:999px; background:rgba(88,101,242,.12); border:1px solid rgba(88,101,242,.24); color:#e7eaff; font-size:12px; }
+.social-row { display:flex; justify-content:center; align-items:center; gap:10px; padding:0 20px 13px; }
+.social-row a, .profile-footer a { border:1px solid rgba(255,255,255,.1); border-radius:10px; background:rgba(255,255,255,.055); color:white; padding:10px 8px; text-align:center; transition:.22s ease; font-size:14px; }
+.social-row a { width:38px; height:38px; min-height:0; padding:0; border-radius:999px; display:grid; place-items:center; }
+.social-row svg { width:18px; height:18px; fill:currentColor; filter:drop-shadow(0 0 8px rgba(255,255,255,.12)); transition:.22s ease; }
+.social-row a:hover svg { transform:scale(1.12); }
+.social-row a:hover { color:#0d0f16; background:#f5f5f5; border-color:rgba(255,255,255,.8); }
+.social-row a:hover, .profile-footer a:hover { transform:translateY(-2px); border-color:rgba(88,101,242,.45); background:rgba(88,101,242,.14); }
+.discord-blink {
+  transform-origin: center;
+  animation: discordEyeBlink 4.5s infinite;
+}
+@keyframes discordEyeBlink {
+  0%, 94%, 98%, 100% { transform: scaleY(0); }
+  96% { transform: scaleY(1); }
+}
+.profile-footer { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; align-items:center; padding:13px 20px 17px; border-top:1px solid rgba(255,255,255,.08); color:var(--muted); font-size:13px; }
+.profile-footer a { width:max-content; padding:7px 10px; color:#dfe5ff; font-size:13px; display:inline-flex; align-items:center; gap:6px; }
+.profile-footer a:nth-child(1) { justify-self:start; }
+.profile-footer a:nth-child(2) { justify-self:center; }
+.profile-footer a:nth-child(3) { justify-self:end; }
+.steam-icon { width:16px !important; height:16px !important; object-fit:contain; flex:0 0 auto; display:block; }
 
-          <!-- Feature / game highlight cards -->
-          <div class="mc-feature-grid">
-            <div class="mc-feature-card steam-game-card" id="steam-game-1">
-              <div class="mc-feature-num">01</div>
-              <div class="mc-feature-title">Counter-Strike 2</div>
-              <div class="mc-feature-desc">FPS huyền thoại — tactical shooter số một thế giới.</div>
-            </div>
-            <div class="mc-feature-card steam-game-card" id="steam-game-2">
-              <div class="mc-feature-num">02</div>
-              <div class="mc-feature-title">Genshin Impact</div>
-              <div class="mc-feature-desc">Open-world RPG với đồ họa đẹp và cốt truyện sâu sắc.</div>
-            </div>
-            <div class="mc-feature-card steam-game-card" id="steam-game-3">
-              <div class="mc-feature-num">03</div>
-              <div class="mc-feature-title">Minecraft</div>
-              <div class="mc-feature-desc">Game xây dựng và sinh tồn — sáng tạo không giới hạn.</div>
-            </div>
-          </div>
-        </section>
-        <!-- ========== END STEAM PROFILE PAGE ========== -->
+.color-page { padding:18px 20px 20px; animation:colorPageWipeIn .72s cubic-bezier(.16,1,.3,1) both; transform-origin:right center; transform:perspective(1100px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)); transform-style:preserve-3d; position:relative; overflow:hidden; transition:transform .16s ease, box-shadow .24s ease; will-change:transform; }
+.color-page.interactive-hover { box-shadow: var(--shadow), 0 0 42px rgba(53,232,255,.14), inset 0 1px 0 rgba(255,255,255,.1); }
+.color-page::after { content:""; position:absolute; inset:0; z-index:3; pointer-events:none; border-radius:inherit; background:radial-gradient(360px circle at var(--glow-x, 50%) var(--glow-y, 50%), rgba(255,255,255,.16), rgba(53,232,255,.08) 28%, transparent 58%); opacity:0; mix-blend-mode:screen; transition:opacity .22s ease; }
+.color-page.interactive-hover::after { opacity:1; }
+.color-page.leaving { animation:colorPageWipeOut .54s cubic-bezier(.32,0,.2,1) both; }
+.profile-console.page-mode .profile-banner, .profile-console.page-mode .profile-header, .profile-console.page-mode .presence-card, .profile-console.page-mode .activity-card, .profile-console.page-mode .meta-grid, .profile-console.page-mode .about-card, .profile-console.page-mode .social-row, .profile-console.page-mode .profile-footer { display:none; }
+.color-page-head { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+.color-page-head h2 { margin:0; font-size:24px; letter-spacing:-.03em; }
+.mini-btn, .copy-btn { border:1px solid rgba(255,255,255,.12); color:#fff; background:rgba(255,255,255,.07); border-radius:12px; cursor:inherit; transition:.22s ease; }
+.mini-btn { padding:9px 11px; flex:0 0 auto; }
+.mini-btn:hover, .copy-btn:hover { transform:translateY(-1px); border-color:rgba(53,232,255,.4); background:rgba(53,232,255,.12); }
+.field-block { display:grid; gap:8px; margin-bottom:12px; color:#dfe5ff; font-weight:700; font-size:12px; }
+.field-block textarea, .field-block select, .color-picks label { width:100%; border:1px solid rgba(255,255,255,.11); border-radius:12px; background:rgba(7,10,22,.58); color:#eef4ff; outline:none; }
+.field-block textarea, .field-block select { padding:12px; font:600 13px "JetBrains Mono", monospace; resize:vertical; }
+.field-block select { appearance:none; -webkit-appearance:none; min-height:43px; padding-right:38px; background-image:linear-gradient(135deg, rgba(88,101,242,.18), rgba(53,232,255,.07)), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23bff7ff' d='M4 6l4 4 4-4z'/%3E%3C/svg%3E"); background-repeat:no-repeat, no-repeat; background-position:center, right 12px center; background-size:100% 100%, 16px 16px; box-shadow:inset 0 1px 0 rgba(255,255,255,.05); }
+.field-block select option { color:#eef4ff; background:#101427; font:600 13px "JetBrains Mono", monospace; }
+.field-block textarea:focus, .field-block select:focus { border-color:rgba(53,232,255,.48); box-shadow:0 0 0 3px rgba(53,232,255,.08); }
+.tool-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.tool-grid.compact { align-items:end; }
+.color-picks { display:grid; grid-template-columns:repeat(3, 1fr); gap:9px; margin:3px 0 12px; }
+.color-picks label { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:9px 10px; color:var(--muted); font-size:12px; transition:.2s ease; }
+.color-picks label.disabled { opacity:.34; filter:grayscale(1); pointer-events:none; }
+.color-picks input { width:42px; height:30px; padding:0; border:0; border-radius:8px; background:transparent; }
+.toggle-row { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.toggle-row label { min-height:38px; padding:8px 10px; border:1px solid rgba(255,255,255,.1); border-radius:999px; background:rgba(255,255,255,.045); color:#dfe5ff; font-size:12px; display:inline-flex; align-items:center; gap:7px; line-height:1; }
+.toggle-row input { width:14px; height:14px; margin:0; accent-color:var(--cyan); flex:0 0 auto; }
+.preview-card { margin:2px 0 12px; padding:13px; border-radius:14px; border:1px solid rgba(255,255,255,.1); background:linear-gradient(135deg, rgba(88,101,242,.12), rgba(53,232,255,.06)); }
+.preview-card > span { display:block; color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; margin-bottom:8px; }
+.tc-preview { min-height:38px; word-break:break-word; font-size:16px; line-height:1.45; }
+.output-block textarea { min-height:116px; color:#bff7ff; }
+.copy-btn { width:100%; padding:12px 14px; font-weight:800; background:linear-gradient(135deg, rgba(88,101,242,.32), rgba(53,232,255,.2)); }
+.hidden { display:none !important; }
 
-        <!-- ========== COLOR TOOL PAGE ========== -->
-        <section id="color-page" class="color-page hidden" aria-label="Unity Rich Text Gradient Generator">
-          <div class="color-page-head">
-            <button id="color-back" class="mini-btn" type="button">← Home</button>
-            <div>
-              <p class="eyebrow">Unity tool</p>
-              <h2>Rich Text Colorizer</h2>
-            </div>
-          </div>
-          <label class="field-block">
-            <span>Nhập văn bản</span>
-            <textarea id="tc-input-text" rows="4">Chinatsu Kamado desu</textarea>
-          </label>
-          <div class="tool-grid">
-            <label class="field-block">
-              <span>Hiệu ứng màu</span>
-              <select id="tc-effect">
-                <option value="two">Dải hai màu</option>
-                <option value="mirror">Dải hai màu lặp lại</option>
-                <option value="three">Dải ba màu</option>
-                <option value="solid">Một màu</option>
-                <option value="random">Màu ngẫu nhiên</option>
-                <option value="rainbow">Cầu vồng</option>
-              </select>
-            </label>
-            <label class="field-block">
-              <span>Phông chữ</span>
-              <select id="tc-font">
-                <option value="">Mặc định</option><option>Arial</option><option>Verdana</option><option>Tahoma</option><option>Georgia</option><option>Courier New</option><option>Times New Roman</option><option>Trebuchet MS</option><option>Lucida Console</option>
-              </select>
-            </label>
-          </div>
-          <div class="color-picks" aria-label="Chọn màu">
-            <label><span>Đầu</span><input id="tc-color-1" type="color" value="#ff4fd8"></label>
-            <label><span>Giữa</span><input id="tc-color-2" type="color" value="#5865f2"></label>
-            <label><span>Cuối</span><input id="tc-color-3" type="color" value="#35e8ff"></label>
-          </div>
-          <div class="tool-grid compact">
-            <label class="field-block"><span>Cỡ chữ</span><select id="tc-size"><option value="0">Mặc định</option><option value="12">12</option><option value="18">18</option><option value="24">24</option><option value="30">30</option><option value="36">36</option><option value="48">48</option><option value="60">60</option><option value="72">72</option><option value="90">90</option></select></label>
-            <div class="toggle-row"><label><input id="tc-bold" type="checkbox">Đậm</label><label><input id="tc-italic" type="checkbox">Nghiêng</label><label><input id="tc-word" type="checkbox">Random</label></div>
-          </div>
-          <div class="preview-card">
-            <span>Preview</span>
-            <div id="tc-preview" class="tc-preview"></div>
-          </div>
-          <label class="field-block output-block">
-            <span>Unity Rich Text</span>
-            <textarea id="tc-output" rows="6" readonly></textarea>
-          </label>
-          <button id="tc-copy" class="copy-btn" type="button">Copy Unity Rich Text</button>
-        </section>
-        <!-- ========== END COLOR TOOL PAGE ========== -->
+@keyframes screenIn { from { opacity:0; transform:translateY(14px) scale(.98); } to { opacity:1; transform:none; } }
 
 
+@keyframes drift { to { transform: translate(4%, 3%) scale(1.04); } }
+@keyframes pageDriftOut { 0% { opacity:1; transform:translateY(-4px) translateX(0) scale(1); filter:blur(0); } 55% { opacity:.42; transform:translateY(-4px) translateX(-18px) scale(.975); filter:blur(1.8px); } 100% { opacity:1; transform:translateY(-4px) translateX(0) scale(1); filter:blur(0); } }
+@keyframes pageDriftIn { 0% { opacity:.46; transform:translateY(-4px) translateX(18px) scale(.975); filter:blur(1.8px); } 100% { opacity:1; transform:translateY(-4px) translateX(0) scale(1); filter:blur(0); } }
+@keyframes colorPageWipeIn { 0% { opacity:0; clip-path:inset(0 0 0 100% round 14px); transform:translateX(34px) scale(.985); filter:blur(4px); } 58% { opacity:1; clip-path:inset(0 0 0 0 round 14px); transform:translateX(0) scale(1); filter:blur(.4px); } 100% { opacity:1; clip-path:inset(0 0 0 0 round 14px); transform:none; filter:blur(0); } }
+@keyframes colorPageWipeOut { 0% { opacity:1; clip-path:inset(0 0 0 0 round 14px); transform:none; filter:blur(0); } 100% { opacity:0; clip-path:inset(0 100% 0 0 round 14px); transform:translateX(-26px) scale(.985); filter:blur(3px); } }
+@keyframes glowShift { to { opacity:.55; transform:translateX(3%); } }
+@keyframes hoverRipple { to { opacity:0; transform:translate(-50%, -50%) scale(24); } }
+@keyframes pageRipple { to { opacity:0; transform:translate(-50%, -50%) scale(34); } }
+@keyframes blink { 50% { opacity:0; } }
+@keyframes typingCaret { 50% { opacity:0; } }
 
-      </article>
-    </section>
-  </main>
+/* ============================================================
+   TEXT & CARD REVEAL ANIMATIONS
+   ============================================================ */
+.screen.active .presence-card { animation: cardReveal 0.7s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.screen.active .activity-card { animation: cardReveal 0.7s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.screen.active .meta-grid div { animation: cardReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.screen.active .meta-grid div:nth-child(1) { animation-delay: 0.4s; }
+.screen.active .meta-grid div:nth-child(2) { animation-delay: 0.5s; }
+.screen.active .about-card { animation: cardReveal 0.7s 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.screen.active .social-row a { animation: cardReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.screen.active .social-row a:nth-child(1) { animation-delay: 0.7s; }
+.screen.active .social-row a:nth-child(2) { animation-delay: 0.75s; }
+.screen.active .social-row a:nth-child(3) { animation-delay: 0.8s; }
+.screen.active .social-row a:nth-child(4) { animation-delay: 0.85s; }
+.screen.active .profile-footer { animation: cardReveal 0.7s 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
-  <aside id="music-player" class="music-player glass-panel hidden" aria-label="Trình phát nhạc">
-    <button id="play-toggle" class="play-btn" type="button" aria-label="Phát hoặc tạm dừng">▶</button>
-    <button id="next-track" class="next-btn" type="button" aria-label="Chuyển bài tiếp theo">⏭</button>
-    <div class="track-meta">
-      <strong id="track-title">Beautiful Piano Music</strong>
-      <div class="track-time"><span id="current-time">0:00</span><span id="duration-time">0:00</span></div>
-      <div class="progress"><span id="progress-bar"></span></div>
-    </div>
-    <div id="volume-control" class="volume-control" aria-label="Âm lượng nhạc">
-      <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Mở chỉnh âm lượng">🔊</button>
-      <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
-    </div>
-    <!-- REAL AUDIO VISUALIZER CANVAS -->
-    <canvas id="audio-visualizer" class="audio-visualizer player-visualizer" aria-hidden="true"></canvas>
-    <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
-  </aside>
-  <!-- Zen Mode Overlay -->
-  <div id="zen-overlay"></div>
-  <script src="script.js"></script>
-</body>
-</html>
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(24px); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+/* Block Swipe Reveal for Headers */
+.screen.active h2 {
+  position: relative;
+  display: inline-block;
+  color: transparent;
+  animation: revealColorH2 0s 0.8s forwards;
+}
+.screen.active .meta-grid div > span {
+  position: relative;
+  display: inline-block;
+  color: transparent;
+  animation: revealColorSpan 0s 0.8s forwards;
+}
+.screen.active h2::before, .screen.active .meta-grid div > span::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--cyan);
+  transform-origin: left;
+  transform: scaleX(0);
+  z-index: 10;
+  animation: blockSwipe 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+.screen.active .activity-card h2::before { animation-delay: 0.1s; }
+.screen.active .activity-card h2 { animation-delay: 0.9s; }
+.screen.active .meta-grid div > span::before { animation-delay: 0.25s; }
+.screen.active .meta-grid div > span { animation-delay: 1.05s; }
+.screen.active .about-card h2::before { animation-delay: 0.4s; }
+.screen.active .about-card h2 { animation-delay: 1.2s; }
+
+@keyframes blockSwipe {
+  0% { transform: scaleX(0); transform-origin: left; }
+  50% { transform: scaleX(1); transform-origin: left; }
+  50.1% { transform: scaleX(1); transform-origin: right; }
+  100% { transform: scaleX(0); transform-origin: right; }
+}
+@keyframes revealColorH2 {
+  to { color: #fff; }
+}
+@keyframes revealColorSpan {
+  to { color: var(--muted); }
+}
+
+#discord-link svg { transform:translateY(1px) scale(1.08); transform-origin:center; }
+#discord-link:hover svg { transform:translateY(1px) scale(1.18); }
+
+.music-player { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); width:min(510px, calc(100vw - 72px)); z-index:30; border-radius:14px; padding:10px 12px; display:flex; align-items:center; gap:9px; transition:.25s ease; }
+.music-player.hidden { opacity:0; pointer-events:none; transform:translateX(-50%) translateY(20px); }
+
+.play-btn, .next-btn { width:auto; height:auto; min-width:22px; padding:0 2px; border:0; border-radius:0; color:#eaf8ff; background:transparent; cursor:pointer; flex:0 0 auto; display:grid; place-items:center; font-size:18px; line-height:1; text-shadow:0 0 16px rgba(53,232,255,.45); transition:color .2s ease, opacity .2s ease, transform .2s ease, text-shadow .2s ease; }
+.next-btn { min-width:24px; font-size:17px; color:#cbd7ee; }
+.play-btn:hover, .next-btn:hover { color:#fff; opacity:1; transform:translateY(-1px) scale(1.08); text-shadow:0 0 22px rgba(53,232,255,.65); }
+.player-art { width:42px; height:42px; border-radius:10px; background:linear-gradient(135deg, rgba(88,101,242,.95), rgba(53,232,255,.85)); position:relative; box-shadow:0 0 20px rgba(88,101,242,.22); flex:0 0 auto; }
+.player-art::after { content:"♪"; position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-size:22px; font-weight:800; }
+.track-meta { flex:1; min-width:0; }
+.track-meta strong, .track-meta span { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.track-meta strong { font-weight:500; letter-spacing:-.01em; }
+.track-time { display:flex; justify-content:space-between; gap:10px; margin-top:2px; color:var(--muted); font:500 11px "JetBrains Mono", monospace; }
+.track-meta span { color:var(--muted); font-size:12px; }
+.progress { height:5px; margin-top:6px; border-radius:99px; background:rgba(255,255,255,.12); overflow:hidden; }
+.progress span { display:block; width:0%; height:100%; background:linear-gradient(90deg, var(--discord), var(--pink)); border-radius:inherit; }
+.volume-control { position:relative; display:flex; align-items:center; background:rgba(255,255,255,0.06); border-radius:99px; padding:3px; width:30px; overflow:hidden; transition:width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease, border-color 0.3s ease; flex:0 0 auto; z-index:2; border:1px solid rgba(255,255,255,0.05); box-shadow:inset 0 2px 4px rgba(0,0,0,0.2); }
+.volume-control:hover, .volume-control.open { width:100px; background:rgba(255,255,255,0.1); border-color:rgba(53,232,255,0.3); }
+.volume-toggle { width:22px; height:22px; border-radius:50%; border:none; background:transparent; color:#cbd7ee; display:grid; place-items:center; cursor:pointer; font-size:12px; flex:0 0 auto; transition:0.2s ease; }
+.volume-toggle:hover { color:#fff; transform:scale(1.1); text-shadow:0 0 10px var(--cyan); }
+.volume-control input { width:100%; margin:0 6px 0 4px; opacity:0; pointer-events:none; -webkit-appearance:none; appearance:none; background:transparent; transition:opacity 0.2s ease; cursor:pointer; }
+.volume-control:hover input, .volume-control.open input { opacity:1; pointer-events:auto; transition-delay:0.1s; }
+.volume-control input::-webkit-slider-runnable-track { height:3px; background:rgba(255,255,255,0.2); border-radius:2px; }
+.volume-control input::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:10px; height:10px; border-radius:50%; background:#fff; margin-top:-3.5px; box-shadow:0 0 8px var(--cyan), 0 0 12px var(--cyan); cursor:grab; transition:transform 0.1s; }
+.volume-control input::-webkit-slider-thumb:active { cursor:grabbing; transform:scale(1.2); }
+.volume-control input::-moz-range-track { height:3px; background:rgba(255,255,255,0.2); border-radius:2px; }
+.volume-control input::-moz-range-thumb { width:10px; height:10px; border-radius:50%; background:#fff; border:none; box-shadow:0 0 8px var(--cyan), 0 0 12px var(--cyan); cursor:grab; }
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 620px) {
+  body.terminal-active { position:fixed; inset:0; width:100%; overflow:hidden; }
+  body.terminal-active .terminal-screen { height:100dvh; min-height:100dvh; padding:18px 12px; }
+  body.terminal-active .cmd-window { max-height:calc(100dvh - 36px); }
+  body.color-page-active .screen { padding-bottom:18px; }
+  body.color-page-active .profile-screen { padding-top:18px; }
+  body.color-page-active .profile-console { margin-top:0; }
+  body.color-page-active .color-page { padding:16px; }
+  .screen { padding: 18px 12px 118px; align-items: start; }
+  .terminal-screen { padding-bottom: 18px; align-items: center; }
+  .profile-console { width: min(420px, 96vw); border-radius: 14px; margin-top: 8px; }
+  .profile-banner { height: 116px; }
+  .profile-header { gap: 12px; padding: 0 16px 14px; margin-top: -40px; }
+  .avatar-wrap { width: 92px; height: 92px; }
+  .presence-card, .activity-card, .about-card { margin-left: 16px; margin-right: 16px; padding: 13px; }
+  .meta-grid { margin-left:16px; margin-right:16px; }
+  .presence-card { flex-direction: column; align-items: flex-start; }
+  .social-row { grid-template-columns: repeat(2, 1fr); padding-left: 16px; padding-right: 16px; }
+  .profile-footer { padding-left: 16px; padding-right: 16px; }
+  .music-player { bottom: 10px; width: calc(100vw - 68px); }
+  .bot-page { padding:16px; }
+  .bot-hero { flex-direction:column; align-items:flex-start; }
+  .bot-actions { width:100%; flex-direction:column; align-items:stretch; gap:8px; }
+  .bot-actions .invite-btn { width:100%; text-align:center; }
+  .bot-actions .bot-note { text-align:center; }
+  .bot-live-grid { grid-template-columns:repeat(2, 1fr); }
+  .bot-live-grid article.wide { grid-column:span 2; }
+  .bot-feature-grid { grid-template-columns:1fr; }
+  .visualizer { display:none; }
+}
+
+@media (max-width: 420px) {
+  .cmd-window { border-radius: 8px; }
+  body.terminal-active { position:fixed; inset:0; width:100%; overflow:hidden; }
+  body.terminal-active .terminal-screen { height:100dvh; min-height:100dvh; padding:18px 12px; }
+  body.terminal-active .cmd-window { max-height:calc(100dvh - 36px); }
+  body.color-page-active .screen { padding-bottom:18px; }
+  body.color-page-active .profile-screen { padding-top:18px; }
+  body.color-page-active .profile-console { margin-top:0; }
+  body.color-page-active .color-page { padding:16px; }
+  .screen { padding: 18px 12px 118px; align-items: start; }
+  .terminal-screen { padding-bottom: 18px; align-items: center; }
+  .profile-console { width: min(420px, 96vw); border-radius: 14px; margin-top: 8px; }
+  .profile-banner { height: 116px; }
+  .profile-header { gap: 12px; padding: 0 16px 14px; margin-top: -40px; }
+  .avatar-wrap { width: 92px; height: 92px; }
+  .presence-card, .activity-card, .about-card { margin-left: 16px; margin-right: 16px; padding: 13px; }
+  .meta-grid { margin-left:16px; margin-right:16px; }
+  .presence-card { flex-direction: column; align-items: flex-start; }
+  .social-row { grid-template-columns: repeat(2, 1fr); padding-left: 16px; padding-right: 16px; }
+  .profile-footer { padding-left: 16px; padding-right: 16px; }
+  .cmd-controls { grid-template-columns: repeat(3, 36px); }
+  .cmd-tab { padding: 0 12px; }
+  .cmd-body { min-height: 360px; padding: 14px; font-size: 12px; }
+  #typewriter-output { min-height: 190px; }
+  .profile-console { width: 100%; }
+  .profile-header { align-items: flex-end; }
+  .identity-block { max-width: calc(100% - 104px); }
+  h1 { font-size: 25px; }
+  .username, .presence-card p, .activity-card p, .about-card p { font-size: 13px; }
+}
+
+@media (max-width: 340px) {
+  .profile-header { flex-direction: column; align-items: flex-start; }
+  .identity-block { max-width: 100%; }
+}
+
+/* ============================================================
+   MINECRAFT SERVER PAGE
+   ============================================================ */
+
+/* Bot card */
+.mc-bot-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  background: rgba(255,255,255,.04);
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.mc-bot-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(88,101,242,.08), rgba(53,232,255,.04));
+  pointer-events: none;
+}
+.mc-bot-avatar {
+  position: relative;
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+}
+.mc-bot-avatar img {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,.12);
+}
+.mc-bot-status-dot {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid rgba(15,18,32,.98);
+}
+.mc-bot-status-dot.online { background: var(--green); box-shadow: 0 0 10px rgba(62,232,125,.5); }
+.mc-bot-status-dot.offline { background: #80848e; }
+.mc-bot-info { min-width: 0; }
+.mc-bot-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.mc-bot-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.02em;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mc-bot-desc {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Action row */
+.mc-action-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.mc-join-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font: 700 13px 'JetBrains Mono', monospace;
+  background: linear-gradient(135deg, #5865f2, #4752c4);
+  color: #fff;
+  border: 1px solid rgba(88,101,242,.5);
+  text-decoration: none;
+  transition: .22s ease;
+  box-shadow: 0 4px 18px rgba(88,101,242,.3);
+  flex: 0 0 auto;
+}
+.mc-join-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(88,101,242,.45);
+  background: linear-gradient(135deg, #6a74f5, #5865f2);
+  color: #fff;
+  border-color: rgba(88,101,242,.7);
+}
+.mc-updated {
+  font: 600 11px 'JetBrains Mono', monospace;
+  color: var(--muted);
+  letter-spacing: .02em;
+}
+
+/* Stats grid */
+.mc-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.mc-stat-card {
+  padding: 11px 13px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  background: rgba(255,255,255,.03);
+  min-width: 0;
+  transition: border-color .2s ease;
+}
+.mc-stat-card:hover {
+  border-color: rgba(53,232,255,.22);
+}
+.mc-stat-card.wide {
+  grid-column: span 2;
+}
+.mc-stat-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+.mc-stat-value {
+  display: block;
+  font: 700 14px 'JetBrains Mono', monospace;
+  color: #eef4ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mc-ip {
+  color: var(--cyan) !important;
+  letter-spacing: .04em;
+}
+
+/* Feature cards */
+.mc-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.mc-feature-card {
+  padding: 13px 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  background: rgba(255,255,255,.03);
+  transition: .22s ease;
+}
+.mc-feature-card:hover {
+  border-color: rgba(88,101,242,.3);
+  background: rgba(88,101,242,.06);
+  transform: translateY(-2px);
+}
+.mc-feature-num {
+  font: 800 11px 'JetBrains Mono', monospace;
+  color: var(--discord);
+  letter-spacing: .08em;
+  margin-bottom: 7px;
+}
+.mc-feature-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.mc-feature-desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* Stats grid — wide mode dùng 4 cột */
+body.wide-page-active .mc-stats-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+body.wide-page-active .mc-stats-grid .mc-stat-card.wide {
+  grid-column: span 2;
+}
+body.wide-page-active .mc-feature-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+body.wide-page-active .mc-bot-card {
+  padding: 18px 20px;
+}
+body.wide-page-active .mc-bot-name,
+body.wide-page-active .steam-display-name {
+  font-size: 22px;
+}
+body.wide-page-active .steam-avatar-wrap,
+body.wide-page-active .steam-avatar-wrap img {
+  width: 72px;
+  height: 72px;
+}
+body.wide-page-active .mc-bot-avatar img {
+  width: 68px;
+  height: 68px;
+}
+body.wide-page-active .mc-bot-avatar {
+  width: 68px;
+  height: 68px;
+}
+
+@media (max-width: 420px) {
+  .mc-stats-grid { grid-template-columns: 1fr 1fr; }
+  .mc-feature-grid { grid-template-columns: 1fr; }
+  .mc-feature-card { padding: 11px; }
+  .mc-bot-name { font-size: 15px; }
+}
+
+/* ============================================================
+   STEAM PROFILE PAGE
+   ============================================================ */
+.steam-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  background: rgba(255,255,255,.04);
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.steam-profile-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(23,126,212,.1), rgba(27,40,56,.06));
+  pointer-events: none;
+}
+.steam-avatar-wrap {
+  position: relative;
+  flex: 0 0 auto;
+  width: 60px;
+  height: 60px;
+}
+.steam-avatar-wrap img {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 2px solid rgba(23,126,212,.5);
+  box-shadow: 0 0 16px rgba(23,126,212,.25);
+}
+.steam-status-dot {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid rgba(15,18,32,.98);
+  background: #80848e;
+}
+.steam-status-dot.online  { background: #57cbde; box-shadow: 0 0 10px rgba(87,203,222,.6); }
+.steam-status-dot.ingame  { background: #90ba3c; box-shadow: 0 0 10px rgba(144,186,60,.6); }
+.steam-status-dot.offline { background: #4a5568; }
+
+.steam-profile-info { min-width: 0; }
+.steam-platform-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: #57cbde;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.steam-display-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.02em;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.steam-real-name {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Steam visit button — màu Steam xanh dương */
+.steam-visit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font: 700 13px 'JetBrains Mono', monospace;
+  background: linear-gradient(135deg, #1b82d6, #1565a8);
+  color: #fff;
+  border: 1px solid rgba(23,126,212,.5);
+  text-decoration: none;
+  transition: .22s ease;
+  box-shadow: 0 4px 18px rgba(23,126,212,.3);
+  flex: 0 0 auto;
+}
+.steam-visit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(23,126,212,.5);
+  background: linear-gradient(135deg, #2196f3, #1b82d6);
+  color: #fff;
+  border-color: rgba(23,126,212,.8);
+}
+
+.steam-game-card:hover {
+  border-color: rgba(23,126,212,.35) !important;
+  background: rgba(23,126,212,.07) !important;
+}
+.steam-game-card .mc-feature-num { color: #57cbde; }
+
+@media (max-width: 420px) {
+  .steam-avatar-wrap { width: 50px; height: 50px; }
+  .steam-avatar-wrap img { width: 50px; height: 50px; }
+  .steam-display-name { font-size: 15px; }
+}
+
+/* ============================================================
+   CYBER LOADING SCREEN v2 — Premium Cyberpunk
+   ============================================================ */
+#cyber-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: #000c10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.9s ease, visibility 0.9s ease;
+}
+#cyber-loading.cl-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#cyber-loading .cl-grid-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0,255,160,0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,160,0.055) 1px, transparent 1px);
+  background-size: 38px 38px;
+  animation: clGridBreathe 5s ease-in-out infinite;
+}
+@keyframes clGridBreathe { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+#cyber-loading .cl-scanlines {
+  position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: repeating-linear-gradient(
+    0deg, transparent 0px, transparent 2px,
+    rgba(0,255,160,.012) 2px, rgba(0,255,160,.012) 4px
+  );
+}
+
+#cyber-loading .cl-corner { position: absolute; width: 32px; height: 32px; z-index: 3; }
+#cyber-loading .cl-tl { top:14px; left:14px;   border-top:1.5px solid #00ffb4; border-left:1.5px solid #00ffb4; }
+#cyber-loading .cl-tr { top:14px; right:14px;  border-top:1.5px solid #00ffb4; border-right:1.5px solid #00ffb4; }
+#cyber-loading .cl-bl { bottom:14px; left:14px;  border-bottom:1.5px solid #00ffb4; border-left:1.5px solid #00ffb4; }
+#cyber-loading .cl-br { bottom:14px; right:14px; border-bottom:1.5px solid #00ffb4; border-right:1.5px solid #00ffb4; }
+
+#cyber-loading .cl-card {
+  position: relative; z-index: 5;
+  width: min(480px, 92vw);
+  padding: 40px 44px;
+  background: rgba(0,16,12,.82);
+  border: 1px solid rgba(0,255,180,.2);
+  border-radius: 3px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 0 0 1px rgba(0,255,180,.05),
+    inset 0 1px 0 rgba(0,255,180,.09),
+    0 28px 80px rgba(0,0,0,.9);
+}
+
+#cyber-loading .cl-top-bar {
+  position: absolute; top:0; left:0; right:0; height:2px; border-radius:3px 3px 0 0;
+  background: linear-gradient(90deg, transparent, #00ffb4 30%, #ff006e 55%, #00b4ff 80%, transparent);
+  background-size: 250% auto;
+  animation: clTopBarRun 2.8s linear infinite;
+}
+@keyframes clTopBarRun { 0%{background-position:100%} 100%{background-position:-100%} }
+
+#cyber-loading .cl-eyebrow {
+  text-align: center; font-size: 9px; letter-spacing: 5px;
+  color: rgba(0,255,180,.4); text-transform: uppercase; margin-bottom: 10px;
+}
+
+#cyber-loading .cl-title-wrap { text-align: center; margin-bottom: 30px; }
+#cyber-loading .cl-title {
+  font-family: 'Outfit', 'JetBrains Mono', monospace;
+  font-size: clamp(1.3rem, 4vw, 1.85rem);
+  font-weight: 900; letter-spacing: 6px; color: #00ffb4;
+  text-transform: uppercase;
+  text-shadow: 0 0 18px rgba(0,255,180,.75), 0 0 36px rgba(0,255,180,.25);
+  position: relative; display: inline-block;
+}
+#cyber-loading .cl-title::before,
+#cyber-loading .cl-title::after {
+  content: attr(data-t);
+  position: absolute; top:0; left:0; width:100%;
+}
+#cyber-loading .cl-title::before {
+  color: #ff006e;
+  animation: clG1 3.8s infinite;
+  clip-path: polygon(0 0,100% 0,100% 40%,0 40%);
+}
+#cyber-loading .cl-title::after {
+  color: #00b4ff;
+  animation: clG2 3.8s infinite;
+  clip-path: polygon(0 62%,100% 62%,100% 100%,0 100%);
+}
+@keyframes clG1 {
+  0%,85%,100%{transform:none;opacity:0}
+  87%{transform:translateX(-3px);opacity:.9}
+  90%{transform:translateX(3px);opacity:.9}
+  93%{transform:translateX(-2px);opacity:.7}
+}
+@keyframes clG2 {
+  0%,85%,100%{transform:none;opacity:0}
+  88%{transform:translateX(3px);opacity:.9}
+  91%{transform:translateX(-3px);opacity:.9}
+  94%{transform:translateX(2px);opacity:.7}
+}
+
+#cyber-loading .cl-status-row {
+  display: flex; align-items: center; gap: 9px; margin-bottom: 12px;
+}
+#cyber-loading .cl-dot {
+  width:7px; height:7px; border-radius:50%; flex-shrink:0;
+  background:#00ffb4; box-shadow:0 0 7px #00ffb4;
+  animation: clDotBlink 1s ease-in-out infinite;
+}
+@keyframes clDotBlink { 0%,100%{opacity:1} 50%{opacity:.1} }
+#cyber-loading .cl-status-txt {
+  flex:1; font-size:11px; color:rgba(0,255,180,.62);
+  letter-spacing:1px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
+}
+#cyber-loading .cl-pct {
+  font-size:13px; color:#00ffb4; font-weight:700;
+  letter-spacing:1px; min-width:40px; text-align:right;
+}
+
+#cyber-loading .cl-track {
+  position: relative; height: 4px;
+  background: rgba(0,255,180,.07); margin-bottom: 5px; overflow: visible;
+}
+#cyber-loading .cl-track::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background: repeating-linear-gradient(
+    90deg, transparent, transparent 9.9%,
+    rgba(0,255,180,.14) 9.9%, rgba(0,255,180,.14) 10%
+  );
+}
+#cyber-loading .cl-fill {
+  position:absolute; top:0; left:0; height:100%; width:0%;
+  background: linear-gradient(90deg,#00b4ff,#00ffb4,#ff006e);
+  background-size: 200% 100%;
+  animation: clFillRun 2s linear infinite;
+  transition: width .07s linear;
+}
+@keyframes clFillRun { 0%{background-position:100% 50%} 100%{background-position:0% 50%} }
+#cyber-loading .cl-head {
+  position:absolute; top:50%; right:100%;
+  transform:translate(50%,-50%);
+  width:9px; height:9px; border-radius:50%; background:#fff;
+  box-shadow:0 0 10px 3px rgba(0,255,180,.9),0 0 22px 7px rgba(0,180,255,.4);
+  transition:right .07s linear; pointer-events:none;
+}
+#cyber-loading .cl-hex {
+  display:flex; justify-content:space-between; margin-bottom:20px;
+  font-size:9px; color:rgba(0,255,180,.2); letter-spacing:1px;
+}
+
+#cyber-loading .cl-subbars { margin-bottom:0; }
+#cyber-loading .cl-sub { display:flex; align-items:center; gap:9px; margin-bottom:9px; }
+#cyber-loading .cl-sub-lbl {
+  font-size:9px; color:rgba(0,255,180,.38); letter-spacing:1px;
+  width:64px; flex-shrink:0; text-transform:uppercase;
+}
+#cyber-loading .cl-sub-track { flex:1; height:2px; background:rgba(0,255,180,.06); overflow:hidden; }
+#cyber-loading .cl-sub-fill { height:100%; width:0%; display:block; transition:width .12s ease; }
+#cyber-loading .cl-sub-pct {
+  font-size:9px; color:rgba(0,255,180,.32); width:28px; text-align:right; flex-shrink:0;
+}
+
+#cyber-loading .cl-meta {
+  display:flex; justify-content:space-between;
+  margin-top:18px; padding-top:14px;
+  border-top:1px solid rgba(0,255,180,.08);
+  font-size:9px; color:rgba(0,255,180,.22); letter-spacing:1px;
+}
+
+#cyber-loading .cl-fade-overlay {
+  position:absolute; inset:0; background:#000c10;
+  opacity:0; pointer-events:none; z-index:20;
+  transition: opacity 0.9s ease;
+}
+#cyber-loading .cl-fade-overlay.active { opacity:1; pointer-events:all; }
+    /* ============================================================
+       ANIME CLOCK — INLINE SYNC-PILL STYLE
+       ============================================================ */
+    .clock-inline {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(88,101,242,.13);
+      border: 1px solid rgba(88,101,242,.25);
+      min-width: 118px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .25s ease, background .25s ease;
+    }
+    .clock-inline:hover {
+      border-color: rgba(53,232,255,.35);
+      background: rgba(53,232,255,.08);
+    }
+    .clock-inline::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(88,101,242,.08), transparent 60%);
+      pointer-events: none;
+    }
+    .clock-inline-top {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .clock-inline-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 6px var(--cyan);
+      flex-shrink: 0;
+      animation: ciDotPulse 2s ease-in-out infinite;
+    }
+    @keyframes ciDotPulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:.3; transform:scale(.7); }
+    }
+    .clock-inline-time {
+      font: 700 13px 'JetBrains Mono', monospace;
+      color: #dfe5ff;
+      letter-spacing: .03em;
+      line-height: 1;
+    }
+    .ci-sep {
+      color: var(--discord);
+      animation: ciSepBlink 1s steps(1) infinite;
+    }
+    @keyframes ciSepBlink { 50% { opacity: .15; } }
+    .clock-inline-date {
+      font: 600 9px 'JetBrains Mono', monospace;
+      color: rgba(170,180,255,.42);
+      letter-spacing: .06em;
+      line-height: 1;
+    }
+    .clock-inline-phase {
+      font: 700 9px 'JetBrains Mono', monospace;
+      color: rgba(53,232,255,.55);
+      letter-spacing: .08em;
+      line-height: 1;
+    }
+
+/* ============================================================
+   THEME SWITCHER — UI
+   ============================================================ */
+.theme-switcher {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.theme-toggle-btn, .zen-toggle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #fff;
+  font-size: 16px;
+  display: grid;
+  place-items: center;
+  cursor: inherit;
+  transition: .28s ease;
+  z-index: 2;
+  box-shadow: 0 4px 18px rgba(0,0,0,.4);
+}
+.theme-toggle-btn:hover, .zen-toggle-btn:hover {
+  transform: scale(1.12) rotate(15deg);
+  border-color: rgba(255,255,255,.45);
+  background: rgba(0,0,0,.75);
+  box-shadow: 0 6px 22px rgba(0,0,0,.55);
+}
+
+.theme-menu {
+  display: flex;
+  gap: 4px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.65);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 8px 30px rgba(0,0,0,.55);
+  animation: themeMenuIn .32s cubic-bezier(.16,1,.3,1);
+}
+.theme-menu.hidden {
+  display: none !important;
+}
+
+@keyframes themeMenuIn {
+  from { opacity: 0; transform: translateX(12px) scale(.88); }
+  to   { opacity: 1; transform: none; }
+}
+
+.theme-option {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: rgba(255,255,255,.06);
+  font-size: 14px;
+  display: grid;
+  place-items: center;
+  cursor: inherit;
+  transition: .22s ease;
+}
+.theme-option:hover {
+  transform: scale(1.18);
+  background: rgba(255,255,255,.14);
+}
+.theme-option.active {
+  border-color: var(--cyan);
+  background: rgba(53,232,255,.12);
+  box-shadow: 0 0 12px rgba(53,232,255,.3);
+}
+
+/* Smooth transition on theme switch */
+body,
+.glass-panel,
+.profile-console::before,
+.presence-card, .activity-card, .about-card,
+.meta-grid div,
+.social-row a, .profile-footer a,
+.tags span,
+.clock-inline,
+.music-player,
+.ambient {
+  transition: background .45s ease, background-color .45s ease,
+              border-color .35s ease, color .35s ease,
+              box-shadow .45s ease, transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.profile-typing-name {
+  transition: background .45s ease;
+}
+
+/* ============================================================
+   THEME: SAKURA PINK 🌸
+   ============================================================ */
+[data-theme="sakura"] {
+  --bg: #12080e;
+  --panel: rgba(36, 14, 30, 0.78);
+  --panel-strong: rgba(48, 20, 40, 0.92);
+  --line: rgba(255, 180, 220, 0.13);
+  --discord: #e84393;
+  --cyan: #fd79a8;
+  --pink: #ff6b9d;
+  --green: #55efc4;
+  --yellow: #ffeaa7;
+  --red: #ff7675;
+  --text: #fff0f5;
+  --muted: #c9a0b5;
+  --shadow: 0 28px 90px rgba(40, 0, 20, 0.55);
+}
+[data-theme="sakura"] .profile-console::before {
+  background: linear-gradient(180deg, #ff9a9e 0%, #fecfef 34%, rgba(255,255,255,.18) 50%, #e84393 68%, #fd79a8 100%);
+}
+[data-theme="sakura"] .profile-typing-name {
+  background: linear-gradient(90deg, #fff, #ffd6f0 42%, #ffb8d0);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+[data-theme="sakura"] .banner-glow {
+  background: radial-gradient(circle at 24% 38%, rgba(232,67,147,.28), transparent 34%);
+}
+[data-theme="sakura"] .tags span {
+  background: rgba(232,67,147,.12); border-color: rgba(232,67,147,.24);
+}
+[data-theme="sakura"] .clock-inline {
+  background: rgba(232,67,147,.13); border-color: rgba(232,67,147,.25);
+}
+[data-theme="sakura"] .mc-join-btn {
+  background: linear-gradient(135deg, #e84393, #d63384);
+  border-color: rgba(232,67,147,.5);
+  box-shadow: 0 4px 18px rgba(232,67,147,.3);
+}
+[data-theme="sakura"] .copy-btn {
+  background: linear-gradient(135deg, rgba(232,67,147,.32), rgba(253,121,168,.2));
+}
+[data-theme="sakura"] .preview-card {
+  background: linear-gradient(135deg, rgba(232,67,147,.12), rgba(253,121,168,.06));
+}
+[data-theme="sakura"] .theme-option.active {
+  border-color: var(--cyan); box-shadow: 0 0 12px rgba(253,121,168,.35);
+}
+
+/* ============================================================
+   THEME: OCEAN BLUE 🌊
+   ============================================================ */
+[data-theme="ocean"] {
+  --bg: #020c16;
+  --panel: rgba(8, 22, 42, 0.8);
+  --panel-strong: rgba(10, 28, 52, 0.92);
+  --line: rgba(100, 180, 255, 0.12);
+  --discord: #0984e3;
+  --cyan: #74b9ff;
+  --pink: #a29bfe;
+  --green: #00cec9;
+  --yellow: #fdcb6e;
+  --red: #d63031;
+  --text: #dfe6e9;
+  --muted: #8fa8c7;
+  --shadow: 0 28px 90px rgba(0, 10, 30, 0.6);
+}
+[data-theme="ocean"] .profile-console::before {
+  background: linear-gradient(180deg, #74b9ff 0%, #a29bfe 34%, rgba(255,255,255,.15) 50%, #0984e3 68%, #00cec9 100%);
+}
+[data-theme="ocean"] .profile-typing-name {
+  background: linear-gradient(90deg, #fff, #b8d4ff 42%, #a0f0ed);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+[data-theme="ocean"] .banner-glow {
+  background: radial-gradient(circle at 24% 38%, rgba(9,132,227,.28), transparent 34%);
+}
+[data-theme="ocean"] .tags span {
+  background: rgba(9,132,227,.12); border-color: rgba(9,132,227,.24);
+}
+[data-theme="ocean"] .clock-inline {
+  background: rgba(9,132,227,.13); border-color: rgba(9,132,227,.25);
+}
+[data-theme="ocean"] .mc-join-btn {
+  background: linear-gradient(135deg, #0984e3, #0773c5);
+  border-color: rgba(9,132,227,.5);
+  box-shadow: 0 4px 18px rgba(9,132,227,.3);
+}
+[data-theme="ocean"] .copy-btn {
+  background: linear-gradient(135deg, rgba(9,132,227,.32), rgba(116,185,255,.2));
+}
+[data-theme="ocean"] .preview-card {
+  background: linear-gradient(135deg, rgba(9,132,227,.12), rgba(116,185,255,.06));
+}
+[data-theme="ocean"] .theme-option.active {
+  border-color: var(--cyan); box-shadow: 0 0 12px rgba(116,185,255,.35);
+}
+
+/* ============================================================
+   THEME: NEON FIRE 🔥
+   ============================================================ */
+[data-theme="fire"] {
+  --bg: #0e0600;
+  --panel: rgba(32, 16, 6, 0.8);
+  --panel-strong: rgba(44, 22, 8, 0.92);
+  --line: rgba(255, 140, 50, 0.12);
+  --discord: #e17055;
+  --cyan: #ff9f43;
+  --pink: #ff6348;
+  --green: #2ed573;
+  --yellow: #ffa502;
+  --red: #ff4757;
+  --text: #fff5ee;
+  --muted: #c7a88f;
+  --shadow: 0 28px 90px rgba(30, 8, 0, 0.55);
+}
+[data-theme="fire"] .profile-console::before {
+  background: linear-gradient(180deg, #ff9f43 0%, #e17055 34%, rgba(255,255,255,.15) 50%, #ff6348 68%, #ffa502 100%);
+}
+[data-theme="fire"] .profile-typing-name {
+  background: linear-gradient(90deg, #fff, #ffd4a8 42%, #ffb088);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+[data-theme="fire"] .banner-glow {
+  background: radial-gradient(circle at 24% 38%, rgba(255,99,72,.28), transparent 34%);
+}
+[data-theme="fire"] .tags span {
+  background: rgba(225,112,85,.12); border-color: rgba(225,112,85,.24);
+}
+[data-theme="fire"] .clock-inline {
+  background: rgba(225,112,85,.13); border-color: rgba(225,112,85,.25);
+}
+[data-theme="fire"] .mc-join-btn {
+  background: linear-gradient(135deg, #e17055, #c0392b);
+  border-color: rgba(225,112,85,.5);
+  box-shadow: 0 4px 18px rgba(225,112,85,.3);
+}
+[data-theme="fire"] .copy-btn {
+  background: linear-gradient(135deg, rgba(225,112,85,.32), rgba(255,159,67,.2));
+}
+[data-theme="fire"] .preview-card {
+  background: linear-gradient(135deg, rgba(225,112,85,.12), rgba(255,159,67,.06));
+}
+[data-theme="fire"] .theme-option.active {
+  border-color: var(--cyan); box-shadow: 0 0 12px rgba(255,159,67,.35);
+}
+
+/* ============================================================
+   THEME SWITCHER — Responsive
+   ============================================================ */
+@media (max-width: 420px) {
+  .theme-toggle-btn { width: 32px; height: 32px; font-size: 14px; }
+  .theme-option { width: 26px; height: 26px; font-size: 12px; }
+  .theme-menu { padding: 4px 6px; gap: 3px; }
+}
+
+/* ============================================================
+   PARALLAX BANNER
+   ============================================================ */
+.plx-layer {
+  position: absolute;
+  inset: -16px;
+  z-index: 1;
+  pointer-events: none;
+  will-change: transform;
+  transition: transform .12s ease-out;
+}
+.plx-layer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.12) contrast(1.05);
+}
+
+/* Light sweep overlay */
+.plx-light {
+  z-index: 2;
+  background: linear-gradient(
+    115deg,
+    transparent 25%,
+    rgba(255,255,255,.05) 40%,
+    rgba(255,255,255,.08) 50%,
+    rgba(255,255,255,.05) 60%,
+    transparent 75%
+  );
+  background-size: 250% 100%;
+  animation: plxLightSweep 5s ease-in-out infinite alternate;
+}
+@keyframes plxLightSweep {
+  0%   { background-position: 120% 0; }
+  100% { background-position: -20% 0; }
+}
+
+/* Floating particles */
+.plx-particles { z-index: 3; inset: 0; }
+.plx-particles i {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  background: rgba(255,255,255,.65);
+  box-shadow: 0 0 6px var(--cyan, #35e8ff);
+  animation: plxFloat linear infinite;
+  pointer-events: none;
+}
+.plx-particles i:nth-child(1)  { width:3px; height:3px; left:6%;  bottom:-4px; animation-duration:7s;  animation-delay:0s; }
+.plx-particles i:nth-child(2)  { width:2px; height:2px; left:14%; bottom:-4px; animation-duration:9s;  animation-delay:.7s; }
+.plx-particles i:nth-child(3)  { width:4px; height:4px; left:22%; bottom:-4px; animation-duration:6s;  animation-delay:1.4s; }
+.plx-particles i:nth-child(4)  { width:2px; height:2px; left:33%; bottom:-4px; animation-duration:11s; animation-delay:.2s; }
+.plx-particles i:nth-child(5)  { width:3px; height:3px; left:42%; bottom:-4px; animation-duration:8s;  animation-delay:2s; }
+.plx-particles i:nth-child(6)  { width:2px; height:2px; left:52%; bottom:-4px; animation-duration:10s; animation-delay:.9s; }
+.plx-particles i:nth-child(7)  { width:4px; height:4px; left:60%; bottom:-4px; animation-duration:7s;  animation-delay:2.6s; }
+.plx-particles i:nth-child(8)  { width:2px; height:2px; left:68%; bottom:-4px; animation-duration:9s;  animation-delay:.4s; }
+.plx-particles i:nth-child(9)  { width:3px; height:3px; left:76%; bottom:-4px; animation-duration:6.5s; animation-delay:1.7s; }
+.plx-particles i:nth-child(10) { width:2px; height:2px; left:84%; bottom:-4px; animation-duration:8s;  animation-delay:3s; }
+.plx-particles i:nth-child(11) { width:3px; height:3px; left:10%; bottom:-4px; animation-duration:10s; animation-delay:3.4s; }
+.plx-particles i:nth-child(12) { width:2px; height:2px; left:28%; bottom:-4px; animation-duration:7.5s; animation-delay:4s; }
+.plx-particles i:nth-child(13) { width:4px; height:4px; left:48%; bottom:-4px; animation-duration:9s;  animation-delay:1.1s; }
+.plx-particles i:nth-child(14) { width:2px; height:2px; left:66%; bottom:-4px; animation-duration:11s; animation-delay:2.3s; }
+.plx-particles i:nth-child(15) { width:3px; height:3px; left:90%; bottom:-4px; animation-duration:8s;  animation-delay:.6s; }
+
+@keyframes plxFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  10%  { opacity: .7; }
+  50%  { opacity: .5; }
+  85%  { opacity: .6; }
+  100% { transform: translateY(-170px) translateX(10px); opacity: 0; }
+}
+
+/* Sparkle stars */
+.plx-sparkles { z-index: 4; inset: 0; }
+.plx-sparkles b {
+  position: absolute;
+  font-style: normal;
+  font-weight: normal;
+  color: rgba(255,255,255,.65);
+  text-shadow: 0 0 8px var(--cyan, #35e8ff);
+  animation: plxSparkle ease-in-out infinite;
+  pointer-events: none;
+}
+.plx-sparkles b:nth-child(1) { left:8%;  top:22%; font-size:8px;  animation-duration:3s;   animation-delay:0s; }
+.plx-sparkles b:nth-child(2) { left:28%; top:58%; font-size:12px; animation-duration:3.5s; animation-delay:.6s; }
+.plx-sparkles b:nth-child(3) { left:52%; top:28%; font-size:9px;  animation-duration:2.8s; animation-delay:1.2s; }
+.plx-sparkles b:nth-child(4) { left:73%; top:52%; font-size:11px; animation-duration:3.2s; animation-delay:1.8s; }
+.plx-sparkles b:nth-child(5) { left:88%; top:18%; font-size:8px;  animation-duration:3.6s; animation-delay:2.4s; }
+
+@keyframes plxSparkle {
+  0%, 100% { opacity: .15; transform: scale(.7) rotate(0deg); }
+  50%      { opacity: .85; transform: scale(1.3) rotate(180deg); }
+}
+
+/* Parallax — responsive giảm particles trên mobile */
+@media (max-width: 420px) {
+  .plx-particles i:nth-child(n+9) { display: none; }
+  .plx-sparkles b:nth-child(n+4)  { display: none; }
+}
+
+/* ============================================================
+   CLOCK WIDGET — Mobile Responsive
+   ============================================================ */
+@media (max-width: 620px) {
+  .clock-inline {
+    width: 100%;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 
+      "time date"
+      "time phase";
+    align-items: center;
+    border-radius: 14px;
+    padding: 16px 20px;
+    gap: 4px 12px;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .clock-inline-top {
+    grid-area: time;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .clock-inline-time {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: .02em;
+    color: #fff;
+  }
+  .clock-inline-dot {
+    width: 8px;
+    height: 8px;
+  }
+  .ci-sep {
+    font-size: 24px;
+    opacity: 0.6;
+    margin: 0 1px;
+  }
+  .clock-inline-date {
+    grid-area: date;
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    text-align: right;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 800;
+  }
+  .clock-inline-phase {
+    grid-area: phase;
+    font-size: 13px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--cyan);
+  }
+}
+
+/* ============================================================
+   GLITCH TEXT EFFECT (Hover)
+   ============================================================ */
+.glitch-hover {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+.glitch-hover::before,
+.glitch-hover::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  background: var(--panel);
+}
+.glitch-hover:hover::before {
+  opacity: 1;
+  left: 2px;
+  text-shadow: -2px 0 var(--pink);
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  animation: glitch-anim 0.3s infinite linear alternate-reverse;
+}
+.glitch-hover:hover::after {
+  opacity: 1;
+  left: -2px;
+  text-shadow: -2px 0 var(--cyan), 2px 2px var(--pink);
+  clip-path: polygon(0 80%, 100% 20%, 100% 100%, 0 100%);
+  animation: glitch-anim2 0.4s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% { clip-path: polygon(0 2%, 100% 2%, 100% 5%, 0 5%); transform: translate(-2px, 2px); }
+  20% { clip-path: polygon(0 15%, 100% 15%, 100% 15%, 0 15%); transform: translate(2px, -2px); }
+  40% { clip-path: polygon(0 10%, 100% 10%, 100% 20%, 0 20%); transform: translate(2px, 2px); }
+  60% { clip-path: polygon(0 1%, 100% 1%, 100% 2%, 0 2%); transform: translate(-2px, -2px); }
+  80% { clip-path: polygon(0 33%, 100% 33%, 100% 33%, 0 33%); transform: translate(2px, 2px); }
+  100% { clip-path: polygon(0 44%, 100% 44%, 100% 44%, 0 44%); transform: translate(-2px, -2px); }
+}
+@keyframes glitch-anim2 {
+  0% { clip-path: polygon(0 25%, 100% 25%, 100% 30%, 0 30%); transform: translate(-2px, 2px); }
+  20% { clip-path: polygon(0 3%, 100% 3%, 100% 3%, 0 3%); transform: translate(2px, -2px); }
+  40% { clip-path: polygon(0 5%, 100% 5%, 100% 20%, 0 20%); transform: translate(2px, 2px); }
+  60% { clip-path: polygon(0 15%, 100% 15%, 100% 20%, 0 20%); transform: translate(-2px, -2px); }
+  80% { clip-path: polygon(0 13%, 100% 13%, 100% 13%, 0 13%); transform: translate(2px, 2px); }
+  100% { clip-path: polygon(0 44%, 100% 44%, 100% 44%, 0 44%); transform: translate(-2px, -2px); }
+}
+
+/* ============================================================
+   AUDIO VISUALIZER — Real Web Audio API
+   ============================================================ */
+.audio-visualizer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+  mask-image: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+  mix-blend-mode: screen;
+}
+.audio-visualizer.active {
+  opacity: 1;
+}
+.player-visualizer {
+  height: 40px !important;
+  border-radius: 0 0 14px 14px;
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+  mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+}
+/* on mobile make it shorter */
+@media (max-width: 620px) {
+  .audio-visualizer { height: 80px; }
+  .player-visualizer { height: 35px !important; }
+}
+
+/* ============================================================
+   INTERACTIVE COMPANION (Chibi Person)
+   ============================================================ */
+.css-chibi {
+  position: absolute;
+  bottom: calc(100% - 2px);
+  right: 60px;
+  width: 40px;
+  height: 40px;
+  z-index: 100; /* Increased to ensure it's on top of everything */
+  pointer-events: auto;
+  --chibi-scale: 1;
+  transform: scale(var(--chibi-scale));
+}
+
+.css-chibi.backflip {
+  transform-origin: center center;
+  animation: chibiBackflipAnim 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+@keyframes chibiBackflipAnim {
+  0% { transform: scale(var(--chibi-scale)) translateY(0) rotate(0deg); }
+  10% { transform: scale(var(--chibi-scale)) translateY(6px) scaleY(0.7) rotate(0deg); }
+  35% { transform: scale(var(--chibi-scale)) translateY(-70px) scaleY(1) rotate(-150deg); }
+  60% { transform: scale(var(--chibi-scale)) translateY(0px) scaleY(1) rotate(-270deg); } /* Land on back (lying down) */
+  85% { transform: scale(var(--chibi-scale)) translateY(0px) scaleY(1) rotate(-270deg); } /* Rest on back */
+  100% { transform: scale(var(--chibi-scale)) translateY(0) scaleY(1) rotate(-360deg); } /* Stand up */
+}
+.css-chibi.backflip .chibi-leg {
+  animation: backflipLegAnim 1.8s forwards !important;
+}
+@keyframes backflipLegAnim {
+  0%, 10% { transform: rotate(0deg); }
+  35% { transform: rotate(80deg); } /* Tuck legs while flipping */
+  60%, 85% { transform: rotate(0deg); } /* Legs straight out while lying down */
+  100% { transform: rotate(0deg); }
+}
+
+.comp-chat {
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #222222;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 10;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+}
+.comp-chat::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #ffffff transparent transparent transparent;
+}
+.comp-chat.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-5px);
+}
+
+.typing-dots { display: inline-flex; gap: 2px; align-items: baseline; }
+.typing-dots span {
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+  40% { transform: translateY(-3px); opacity: 1; }
+}
+
+/* Chibi Parts */
+
+/* Chibi Hats */
+.chibi-hat {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 20px;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* 1. Cap */
+.chibi-hat.hat-cap { opacity: 1; }
+.chibi-hat.hat-cap::before {
+  content: ''; position: absolute; bottom: 0; left: 10%; width: 80%; height: 16px;
+  background: #ff4757; border-radius: 16px 16px 0 0;
+}
+.chibi-hat.hat-cap::after {
+  content: ''; position: absolute; bottom: 0; left: -10%; width: 60%; height: 4px;
+  background: #ff4757; border-radius: 4px;
+}
+
+/* 2. Crown */
+.chibi-hat.hat-crown { opacity: 1; }
+.chibi-hat.hat-crown::before {
+  content: ''; position: absolute; bottom: 2px; left: 15%; width: 70%; height: 14px;
+  background: linear-gradient(135deg, #eccc68, #ffa502);
+  clip-path: polygon(0 100%, 100% 100%, 100% 0, 80% 50%, 50% 0, 20% 50%, 0 0);
+}
+
+/* 3. Wizard */
+.chibi-hat.hat-wizard { opacity: 1; top: -14px; }
+.chibi-hat.hat-wizard::before {
+  content: ''; position: absolute; bottom: 2px; left: 20%; width: 60%; height: 28px;
+  background: #70a1ff; clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+.chibi-hat.hat-wizard::after {
+  content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 4px;
+  background: #3742fa; border-radius: 50%;
+}
+
+/* 4. Cat Ears */
+.chibi-hat.hat-catears { opacity: 1; top: -12px; }
+.chibi-hat.hat-catears::before, .chibi-hat.hat-catears::after {
+  content: ''; position: absolute; bottom: -2px; width: 0; height: 0;
+  background: transparent;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 12px solid #2f3542;
+  filter: drop-shadow(0 -1px 1px #ff7f50);
+  clip-path: none;
+}
+.chibi-hat.hat-catears::before { left: 5%; transform: rotate(-20deg); }
+.chibi-hat.hat-catears::after { right: 5%; transform: rotate(20deg); }
+
+/* 5. Visor */
+.chibi-hat.hat-visor { opacity: 1; top: 6px; }
+.chibi-hat.hat-visor::before {
+  content: ''; position: absolute; top: 0; left: -5%; width: 110%; height: 8px;
+  background: rgba(53, 232, 255, 0.2); border-top: 2px solid var(--cyan); border-bottom: 2px solid var(--cyan);
+  box-shadow: 0 0 8px var(--cyan); border-radius: 4px;
+}
+
+/* Hat changing animation */
+.chibi-changing-hat .chibi-arm.right {
+  transform-origin: top right;
+  animation: changeHatAnim 1s ease-in-out forwards;
+}
+@keyframes changeHatAnim {
+  0% { transform: rotate(-25deg) translateY(0); }
+  50% { transform: rotate(-150deg) translateY(-4px) translateX(-2px); }
+  100% { transform: rotate(-25deg) translateY(0); }
+}
+
+/* Pet Cat animation */
+.chibi-petting .chibi-arm.left {
+  animation: petCatAnim 2s ease-in-out forwards;
+}
+@keyframes petCatAnim {
+  0% { transform: rotate(25deg) translate(0, 0); }
+  15% { transform: rotate(80deg) translate(-12px, 6px); }
+  35% { transform: rotate(60deg) translate(-6px, 2px); }
+  55% { transform: rotate(80deg) translate(-12px, 6px); }
+  75% { transform: rotate(60deg) translate(-6px, 2px); }
+  100% { transform: rotate(25deg) translate(0, 0); }
+}
+
+.chibi-head {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 32px;
+  background: #1a1b26;
+  border: 2px solid var(--cyan);
+  border-radius: 40% 40% 45% 45%;
+  z-index: 3;
+  box-shadow: inset 0 -4px 6px rgba(0,0,0,0.6), 0 0 10px rgba(53,232,255,0.3);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
+}
+.chibi-head:hover {
+  transform: translateX(-50%) translateY(-3px) scale(1.05);
+  box-shadow: inset 0 -4px 6px rgba(0,0,0,0.6), 0 0 15px rgba(53,232,255,0.6);
+}
+.chibi-head:active {
+  transform: translateX(-50%) translateY(0) scale(0.95);
+}
+
+.comp-eye {
+  position: absolute;
+  top: 14px;
+  width: 6px;
+  height: 10px;
+  background: var(--cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--cyan);
+  transition: background 0.3s, box-shadow 0.3s;
+  transform: translate(var(--eye-x, 0px), var(--eye-y, 0px));
+  animation: compBlink 5s infinite;
+}
+.comp-eye.left { left: 8px; }
+.comp-eye.right { right: 8px; }
+
+@keyframes compBlink {
+  0%, 94%, 100% { transform: scaleY(1) translate(var(--eye-x, 0px), var(--eye-y, 0px)); }
+  96% { transform: scaleY(0.1) translate(var(--eye-x, 0px), var(--eye-y, 0px)); }
+}
+
+.chibi-body {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 26px;
+  background: #1a1b26;
+  border-radius: 40% 40% 10% 10%;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-bottom: none;
+  z-index: 2;
+}
+
+.chibi-arm {
+  position: absolute;
+  bottom: -2px;
+  width: 10px;
+  height: 18px;
+  background: #24283b;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  z-index: 4;
+}
+.chibi-arm.left {
+  left: -2px;
+  transform: rotate(25deg);
+}
+.chibi-arm.right {
+  right: -2px;
+  transform: rotate(-25deg);
+}
+
+.chibi-leg {
+  position: absolute;
+  top: 100%;
+  width: 10px;
+  height: 22px;
+  background: #24283b;
+  border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.05);
+  transform-origin: top center;
+  z-index: 1; 
+}
+.chibi-leg::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -2px;
+  width: 12px;
+  height: 8px;
+  background: var(--cyan);
+  border-radius: 4px;
+  box-shadow: 0 0 5px var(--cyan);
+}
+.chibi-leg.left {
+  left: 8px;
+  animation: swingLegLeft 2.5s ease-in-out infinite;
+}
+.chibi-leg.right {
+  right: 8px;
+  animation: swingLegRight 2.5s ease-in-out infinite 0.7s;
+}
+
+@keyframes swingLegLeft {
+  0%, 100% { transform: rotate(-25deg); }
+  50% { transform: rotate(35deg); }
+}
+@keyframes swingLegRight {
+  0%, 100% { transform: rotate(-35deg); }
+  50% { transform: rotate(25deg); }
+}
+
+/* ============================================================
+   SLEEPING CAT (CSS Art)
+   ============================================================ */
+.css-cat {
+  position: absolute;
+  bottom: calc(100% - 2px);
+  right: 110px;
+  width: 36px;
+  height: 24px;
+  z-index: 40;
+  cursor: pointer;
+}
+
+.cat-body {
+  position: absolute;
+  bottom: 0;
+  left: 6px;
+  width: 30px;
+  height: 18px;
+  background: #1a1b26;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px 20px 5px 5px;
+  border-bottom: none;
+  z-index: 2;
+  box-shadow: inset 0 -4px 6px rgba(0,0,0,0.6);
+  animation: catBreathe 3s ease-in-out infinite;
+}
+
+.cat-head {
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 16px;
+  height: 14px;
+  background: #1a1b26;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%;
+  z-index: 3;
+  animation: catBreatheHead 3s ease-in-out infinite;
+}
+
+.cat-ear {
+  position: absolute;
+  top: -4px;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 8px solid #1a1b26;
+  z-index: 1;
+}
+.cat-ear.left {
+  left: 0;
+  transform: rotate(-20deg);
+}
+.cat-ear.right {
+  right: 2px;
+  transform: rotate(20deg);
+}
+.cat-ear::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: -1.5px;
+  width: 0;
+  height: 0;
+  border-left: 1.5px solid transparent;
+  border-right: 1.5px solid transparent;
+  border-bottom: 4px solid var(--cyan);
+}
+
+.cat-eye {
+  position: absolute;
+  top: 6px;
+  width: 4px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 1px;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.cat-eye.left { left: 3px; }
+.cat-eye.right { right: 3px; }
+
+/* Awake State */
+.css-cat.awake .cat-zzz {
+  opacity: 0;
+  animation: none;
+}
+.css-cat.awake .cat-eye {
+  height: 4px;
+  top: 5px;
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan);
+  border-radius: 50%;
+  transform: translate(var(--cat-eye-x, 0px), var(--cat-eye-y, 0px));
+}
+.css-cat.awake .cat-head {
+  transform: translateY(-2px);
+}
+.css-cat.awake .cat-tail {
+  animation: awakeTail 0.8s infinite;
+}
+@keyframes awakeTail {
+  0% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+  100% { transform: rotate(-10deg); }
+}
+
+.cat-tail {
+  position: absolute;
+  bottom: 2px;
+  right: -4px;
+  width: 12px;
+  height: 14px;
+  border: 4px solid #1a1b26;
+  border-left: none;
+  border-bottom: none;
+  border-radius: 0 10px 10px 0;
+  z-index: 1;
+}
+
+.cat-zzz {
+  position: absolute;
+  top: -10px;
+  left: -5px;
+  font-size: 10px;
+  color: var(--cyan);
+  font-weight: bold;
+  opacity: 0;
+  pointer-events: none;
+  animation: floatZzz 4s linear infinite;
+  text-shadow: 0 0 5px var(--cyan);
+}
+.cat-zzz.z2 {
+  animation-delay: 1.5s;
+  font-size: 8px;
+  left: 5px;
+}
+.cat-zzz.z3 {
+  animation-delay: 3s;
+  font-size: 12px;
+  left: -2px;
+}
+
+@keyframes catBreathe {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.05) translateY(-1px); }
+}
+@keyframes catBreatheHead {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1px) rotate(-2deg); }
+}
+@keyframes floatZzz {
+  0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 0.8; }
+  100% { transform: translate(-10px, -20px) scale(1.2); opacity: 0; }
+}
+
+@media (max-width: 620px) {
+  .css-chibi { --chibi-scale: 0.8; right: 20px; }
+  .css-cat { transform: scale(0.8); right: 60px; }
+  .comp-chat { font-size: 10px; padding: 3px 6px; }
+}
+
+/* ============================================================
+   CURSOR TRAIL PARTICLES
+   ============================================================ */
+.cursor-trail-particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: particleFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Default (Cyan Neon) */
+.cursor-trail-particle.theme-default {
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+}
+
+/* Sakura (Pink Petals) */
+.cursor-trail-particle.theme-sakura {
+  background: #fd79a8;
+  border-radius: 0 50% 0 50%;
+  box-shadow: 0 0 5px #fd79a8;
+  animation: particleFadeFall 0.8s ease-out forwards;
+}
+
+/* Ocean (Blue Bubbles) */
+.cursor-trail-particle.theme-ocean {
+  background: transparent;
+  border: 1px solid #74b9ff;
+  box-shadow: inset 0 0 4px #74b9ff, 0 0 4px #74b9ff;
+  animation: particleFadeRise 0.7s ease-out forwards;
+}
+
+/* Fire (Orange Embers) */
+.cursor-trail-particle.theme-fire {
+  background: #ff9f43;
+  border-radius: 2px;
+  box-shadow: 0 0 6px #ff9f43;
+  animation: particleFadeRise 0.6s ease-out forwards;
+}
+
+@keyframes particleFade {
+  0% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.1); }
+}
+@keyframes particleFadeFall {
+  0% { opacity: 0.8; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: translate(-30px, 30px) scale(0.2) rotate(90deg); }
+}
+@keyframes particleFadeRise {
+  0% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -80px) scale(0); }
+}
+
+/* ============================================================
+   GLOBAL AUDIO REACTIVITY & GLITCH HEADERS
+   ============================================================ */
+/* Audio Reactivity on Cards */
+.presence-card, .activity-card, .about-card {
+  box-shadow: 0 0 calc(var(--audio-bass, 0) * 20px) var(--cyan);
+  /* Override box-shadow transition to be fast for audio sync */
+  transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94), background .45s ease, border-color .35s ease, box-shadow 0.05s ease-out !important;
+}
+[data-theme="sakura"] .presence-card, [data-theme="sakura"] .activity-card, [data-theme="sakura"] .about-card {
+  box-shadow: 0 0 calc(var(--audio-bass, 0) * 20px) #fd79a8;
+}
+[data-theme="ocean"] .presence-card, [data-theme="ocean"] .activity-card, [data-theme="ocean"] .about-card {
+  box-shadow: 0 0 calc(var(--audio-bass, 0) * 20px) #74b9ff;
+}
+[data-theme="fire"] .presence-card, [data-theme="fire"] .activity-card, [data-theme="fire"] .about-card {
+  box-shadow: 0 0 calc(var(--audio-bass, 0) * 20px) #ff9f43;
+}
+
+/* Audio Reactivity on Avatar */
+.avatar-wrapper {
+  transform: scale(calc(1 + var(--audio-bass, 0) * 0.08));
+  transition: transform 0.05s ease-out;
+}
+
+/* ============================================================
+   SHATTERED GLASS EASTER EGG
+   ============================================================ */
+@keyframes screenShake {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-10px, -10px) rotate(-1deg); }
+  20% { transform: translate(10px, 10px) rotate(1deg); }
+  30% { transform: translate(-10px, 10px) rotate(-1deg); }
+  40% { transform: translate(10px, -10px) rotate(1deg); }
+  50% { transform: translate(-5px, -5px) rotate(-0.5deg); }
+  60% { transform: translate(5px, 5px) rotate(0.5deg); }
+  70% { transform: translate(-5px, 5px) rotate(-0.5deg); }
+  80% { transform: translate(5px, -5px) rotate(0.5deg); }
+}
+body.shaking {
+  animation: screenShake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+.css-chibi.chibi-scared .chibi-arm {
+  animation: chibiScaredArm 0.3s forwards !important;
+}
+@keyframes chibiScaredArm {
+  100% { transform: rotate(160deg) translateY(-10px); }
+}
+.css-chibi.chibi-scared .chibi-head {
+  animation: chibiScaredHead 0.1s infinite;
+}
+@keyframes chibiScaredHead {
+  0%, 100% { transform: translateX(-50%) translateY(2px) rotate(-2deg); }
+  50% { transform: translateX(-50%) translateY(0px) rotate(2deg); }
+}
+
+/* ============================================================
+   CHIBI RUNNER MINIGAME
+   ============================================================ */
+.about-card.game-active > *:not(#runner-game-container) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+#runner-game-container {
+  position: absolute;
+  inset: 0;
+  background: var(--card-bg);
+  z-index: 100;
+  border-radius: inherit;
+  display: none;
+  overflow: hidden;
+}
+#runner-game-container.active {
+  display: block;
+  animation: gameReveal 0.4s ease-out;
+}
+@keyframes gameReveal {
+  0% { transform: scaleY(0); opacity: 0; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+.runner-score {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font: 700 16px "JetBrains Mono", monospace;
+  color: var(--cyan);
+  text-shadow: 0 0 5px var(--cyan);
+}
+.runner-close {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 14px;
+}
+.runner-close:hover { color: var(--red); }
+.runner-ground {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 5px var(--cyan);
+}
+.runner-chibi-wrap {
+  position: absolute;
+  bottom: 22px;
+  left: 30px;
+  width: 24px;
+  height: 24px;
+  z-index: 2;
+}
+.runner-chibi-wrap .css-chibi {
+  position: absolute;
+  bottom: 28px !important;
+  right: auto !important;
+  left: 0 !important;
+  transform: scale(0.6);
+  transform-origin: bottom left;
+}
+.runner-obstacle {
+  position: absolute;
+  bottom: 22px;
+  width: 12px;
+  height: 24px;
+  background: transparent;
+  border: 2px solid var(--pink);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  box-shadow: 0 0 8px var(--pink), inset 0 0 4px var(--pink);
+}
+.runner-obstacle::before {
+  content: ''; position: absolute; top: 10px; left: -8px; width: 6px; height: 8px;
+  border: 2px solid var(--pink); border-right: none; border-top: none;
+}
+.runner-obstacle::after {
+  content: ''; position: absolute; top: 6px; right: -8px; width: 6px; height: 6px;
+  border: 2px solid var(--pink); border-left: none; border-top: none;
+}
+.runner-game-over {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(15, 18, 32, 0.85);
+  color: #fff;
+  font: 700 16px "JetBrains Mono", monospace;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 10;
+}
+.runner-game-over.show { opacity: 1; }
+.runner-game-over span { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+/* ============================================================
+   ZEN MODE
+   ============================================================ */
+body.zen-mode #profile-screen {
+  filter: brightness(0.7) sepia(0.3) hue-rotate(-20deg) contrast(1.1);
+  transition: filter 2s ease;
+}
+#profile-screen {
+  transition: filter 2s ease;
+}
+
+#zen-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: rgba(10, 5, 20, 0.4);
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+
+body.zen-mode #zen-overlay {
+  opacity: 1;
+}
+
+.zen-toggle-btn.active {
+  background: rgba(255, 200, 50, 0.8);
+  color: #000;
+  box-shadow: 0 0 15px rgba(255, 200, 50, 0.6);
+  border-color: rgba(255, 200, 50, 1);
+}
+
+.zen-firefly {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #ffec8b;
+  border-radius: 50%;
+  box-shadow: 0 0 10px 2px rgba(255, 236, 139, 0.8);
+  opacity: 0;
+  pointer-events: none;
+  animation: floatUp 8s linear forwards, flicker 3s ease-in-out infinite alternate;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-20vh) scale(1.5); opacity: 0; }
+}
+
+@keyframes flicker {
+  0% { opacity: 0.3; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Zen Mode Sleeping Companions */
+.css-chibi.zen-sleep .chibi-eye, .css-cat.zen-sleep .cat-eye {
+  height: 2px !important;
+  margin-top: 4px;
+}
+.css-chibi.zen-sleep {
+  animation: catBreathe 3s ease-in-out infinite !important;
+}
+.css-chibi.zen-sleep .chibi-leg.left, .css-chibi.zen-sleep .chibi-leg.right,
+.css-chibi.zen-sleep .chibi-arm.left, .css-chibi.zen-sleep .chibi-arm.right {
+  animation: none !important;
+  transform: rotate(0deg) !important;
+}
+.css-chibi.zen-sleep::before {
+  content: "zZ";
+  position: absolute;
+  top: -15px;
+  right: -5px;
+  font-size: 12px;
+  color: #ffec8b;
+  font-family: 'JetBrains Mono', monospace;
+  animation: catBreathe 3s ease-in-out infinite alternate-reverse;
+}
