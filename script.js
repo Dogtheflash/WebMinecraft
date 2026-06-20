@@ -1804,3 +1804,76 @@ if (interactiveCard) {
 /* ============================================================
    END AUDIO VISUALIZER
    ============================================================ */
+
+/* ============================================================
+   INTERACTIVE COMPANION & MAGNETIC BUTTONS
+   ============================================================ */
+(function initPremiumUI() {
+  /* 1. Interactive Companion Eye Tracking */
+  const companion = document.getElementById('companion');
+  if (companion) {
+    const eyes = companion.querySelectorAll('.comp-eye');
+    
+    document.addEventListener('mousemove', (e) => {
+      const rect = companion.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const maxDist = 300; // max distance before eyes stop moving further
+      const factor = Math.min(dist / maxDist, 1);
+      
+      // Eyes move max 4px
+      const ex = dist > 0 ? (dx / dist) * factor * 4 : 0;
+      const ey = dist > 0 ? (dy / dist) * factor * 4 : 0;
+      
+      eyes.forEach(eye => {
+        eye.style.setProperty('--eye-x', `${ex}px`);
+        eye.style.setProperty('--eye-y', `${ey}px`);
+      });
+    });
+
+    companion.addEventListener('click', () => {
+      eyes.forEach(eye => {
+        eye.style.background = 'var(--pink)';
+        eye.style.boxShadow = '0 0 14px var(--pink)';
+        setTimeout(() => {
+          eye.style.background = 'var(--cyan)';
+          eye.style.boxShadow = '0 0 8px var(--cyan)';
+        }, 600);
+      });
+    });
+  }
+
+  /* 2. Magnetic Buttons */
+  const magnets = document.querySelectorAll('.social-row a, .play-btn, .next-btn, .volume-toggle, .theme-toggle-btn');
+  
+  magnets.forEach(btn => {
+    btn.addEventListener('mouseenter', () => {
+      // Set a quick linear transition for the magnetic pull
+      btn.style.transition = 'transform 0.05s linear';
+    });
+    
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      
+      // Pull strength (0.3 = 30% of the distance from center)
+      const moveX = dx * 0.35;
+      const moveY = dy * 0.35;
+      
+      btn.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+    });
+    
+    btn.addEventListener('mouseleave', () => {
+      // Remove inline transition to let CSS handle the snap back
+      btn.style.transition = '';
+      btn.style.transform = '';
+    });
+  });
+})();
