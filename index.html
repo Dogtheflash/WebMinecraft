@@ -1,2143 +1,492 @@
-/* ============================================================
-   CYBER LOADING SCREEN v2 — Premium Cyberpunk
-   Tốc độ: ~2 giây, tự vào luôn khi đạt 100%
-   ============================================================ */
-(function () {
-  var overlay  = document.getElementById('cyber-loading');
-  var fill     = document.getElementById('cl-fill');
-  var head     = document.getElementById('cl-head');
-  var pctEl    = document.getElementById('cl-pct');
-  var statusEl = document.getElementById('cl-status');
-  var clockEl  = document.getElementById('cl-clock');
-  var fadeEl   = document.getElementById('cl-fade');
-  var terminal = document.getElementById('terminal-screen');
-
-  /* Ẩn CMD ngay từ đầu */
-  if (terminal) terminal.style.visibility = 'hidden';
-
-  var msgs = [
-    'Đang khởi động hệ thống...',
-    'Nạp giao thức bảo mật...',
-    'Kết nối neural interface...',
-    'Giải mã ma trận dữ liệu...',
-    'Đồng bộ cyberspace...',
-    'Xác thực danh tính...',
-    'Tải môi trường ảo...',
-    'Hoàn tất. Sẵn sàng!'
-  ];
-
-  var prog = 0, s1 = 0, s2 = 0, s3 = 0, done = false;
-
-  /* Đồng hồ realtime */
-  setInterval(function () {
-    if (clockEl) clockEl.textContent = new Date().toTimeString().slice(0, 8);
-  }, 1000);
-
-  /* Progress bar — ~2 giây để hoàn thành */
-  var iv = setInterval(function () {
-    if (done) return;
-
-    var inc = prog < 50 ? (Math.random() * 5 + 4)
-            : prog < 80 ? (Math.random() * 3 + 2.5)
-            : prog < 95 ? (Math.random() * 2 + 1)
-            :              (Math.random() * 1.5 + 0.8);
-
-    prog = Math.min(prog + inc, 100);
-    s1   = Math.min(s1 + Math.random() * 6 + 3,  100);
-    s2   = Math.min(s2 + Math.random() * 5 + 2.5, 100);
-    s3   = Math.min(s3 + Math.random() * 6 + 2,  100);
-
-    var p = Math.floor(prog);
-    if (fill)  fill.style.width  = prog + '%';
-    if (head)  head.style.right  = (100 - prog) + '%';
-    if (pctEl) pctEl.textContent = p + '%';
-
-    var si = Math.min(Math.floor(prog / 12.5), msgs.length - 1);
-    if (statusEl) statusEl.textContent = msgs[si];
-
-    function setBar(id, pid, v) {
-      var el = document.getElementById(id);
-      var ep = document.getElementById(pid);
-      if (el) el.style.width  = Math.floor(v) + '%';
-      if (ep) ep.textContent  = Math.floor(v) + '%';
-    }
-    setBar('cs1', 'cs1p', s1);
-    setBar('cs2', 'cs2p', s2);
-    setBar('cs3', 'cs3p', s3);
-
-    if (prog >= 100) {
-      clearInterval(iv);
-      done = true;
-      if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
-
-      setTimeout(function () {
-        if (fadeEl) fadeEl.classList.add('active');
-
-        setTimeout(function () {
-          if (overlay) overlay.classList.add('cl-hidden');
-
-          if (terminal) {
-            terminal.style.visibility = 'visible';
-            terminal.style.opacity    = '0';
-            terminal.style.transition = 'opacity 0.6s ease';
-            requestAnimationFrame(function () {
-              requestAnimationFrame(function () {
-                terminal.style.opacity = '1';
-
-                if (typeof window.initCmd === 'function') {
-                  window.initCmd();
-                }
-              });
-            });
-          }
-        }, 950);
-      }, 400);
-    }
-  }, 30);
-})();
-/* ============================================================
-   END CYBER LOADING SCREEN
-   ============================================================ */
-
-/* ============================================================
-   UI SOUND EFFECTS (Web Audio API)
-   ============================================================ */
-const uiAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-function playUISound(type) {
-  try {
-    if (uiAudioCtx.state === 'suspended') uiAudioCtx.resume();
-    
-    const osc = uiAudioCtx.createOscillator();
-    const gainNode = uiAudioCtx.createGain();
-    osc.connect(gainNode);
-    gainNode.connect(uiAudioCtx.destination);
-    
-    if (type === 'theme') {
-      // Light click/blip for theme change
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(800, uiAudioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1200, uiAudioCtx.currentTime + 0.05);
-      gainNode.gain.setValueAtTime(0.08, uiAudioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, uiAudioCtx.currentTime + 0.1);
-      osc.start(uiAudioCtx.currentTime);
-      osc.stop(uiAudioCtx.currentTime + 0.1);
-    } else if (type === 'page') {
-      // Futuristic swoosh/bloop for page transition
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(400, uiAudioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(50, uiAudioCtx.currentTime + 0.3);
-      gainNode.gain.setValueAtTime(0.12, uiAudioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, uiAudioCtx.currentTime + 0.3);
-      osc.start(uiAudioCtx.currentTime);
-      osc.stop(uiAudioCtx.currentTime + 0.3);
-    }
-  } catch(e) {
-    console.error("Audio playback failed", e);
-  }
-}
-
-const DISCORD_USER_ID = '917263515209859102';
-const DECORATIONS = [
-  'anime-dang-yeu.png',
-  'anime-do-mo-hoi.png',
-  'anime-gian-du.png',
-  'anime-hon-lia-kho-xac.png',
-  'anime-mat-long-lanh.png',
-  'anime-nani.png',
-  'anime-toa-nang-luong.png',
-  'fantasy-hoa-kiem.png',
-  'fantasy-ma-thuat.png',
-  'fantasy-tinh-linh.png',
-  'buom-dem.png',
-];
-
-const terminalScreen = document.getElementById('terminal-screen');
-const profileScreen = document.getElementById('profile-screen');
-const enterButton = document.getElementById('enter-console-btn');
-const playToggle = document.getElementById('play-toggle');
-const player = document.getElementById('music-player');
-const audio = document.getElementById('audio-player');
-const progressBar = document.getElementById('progress-bar');
-const volumeControl = document.getElementById('volume-control');
-const volumeToggle = document.getElementById('volume-toggle');
-const volumeSlider = document.getElementById('volume-slider');
-const cmdTabs = document.getElementById('cmd-tabs');
-const cmdNewTab = document.getElementById('cmd-new-tab');
-const cmdLog = document.getElementById('cmd-log');
-const cmdForm = document.getElementById('cmd-form');
-const cmdInput = document.getElementById('cmd-input');
-
-const presenceEls = {
-  avatar: document.getElementById('avatar-image'),
-  decoration: document.getElementById('avatar-decoration'),
-  displayName: document.getElementById('display-name'),
-  username: document.getElementById('username'),
-  orb: document.getElementById('status-orb'),
-  statusText: document.getElementById('status-text'),
-  customStatusLine: document.getElementById('custom-status-line'),
-
-  activityCard: document.getElementById('activity-card'),
-  activityIcon: document.getElementById('activity-icon'),
-  activityName: document.getElementById('activity-name'),
-  activityDetail: document.getElementById('activity-detail'),
-  activityTime: document.getElementById('activity-time'),
-  spotifyStatus: document.getElementById('spotify-status'),
-  publicFlags: document.getElementById('public-flags'),
-  typingName: document.getElementById('profile-typing-name'),
-};
-
-const statusLabels = {
-  online: 'Đang online',
-  idle: 'Đang rảnh',
-  dnd: 'Đừng làm phiền',
-  offline: 'Đang offline',
-};
-
-const profileTypingWords = ['Chinatsu Kamado', 'Đẹp Trai', 'Hikikomori', 'Chơi Game Hay', 'Fan Anime', 'Minecraft'];
-
-const activityTypes = {
-  0: { label: 'Đang chơi', icon: '🎮' },
-  1: { label: 'Đang stream', icon: '📡' },
-  2: { label: 'Đang nghe', icon: '♪' },
-  3: { label: 'Đang xem', icon: '▶' },
-  5: { label: 'Đang thi đấu', icon: '⚔' },
-};
-
-const discordBadges = [
-  { bit: 1 << 0, icon: '🛡️', label: 'Discord Staff' },
-  { bit: 1 << 1, icon: '🤝', label: 'Partnered Server Owner' },
-  { bit: 1 << 2, icon: '🎤', label: 'HypeSquad Events' },
-  { bit: 1 << 3, icon: '🐞', label: 'Bug Hunter Level 1' },
-  { bit: 1 << 6, icon: '🦁', label: 'HypeSquad Bravery' },
-  { bit: 1 << 7, icon: '💡', label: 'HypeSquad Brilliance' },
-  { bit: 1 << 8, icon: '⚖️', label: 'HypeSquad Balance' },
-  { bit: 1 << 9, icon: '✨', label: 'Early Supporter' },
-  { bit: 1 << 14, icon: '🐞', label: 'Bug Hunter Level 2' },
-  { bit: 1 << 16, icon: '🤖', label: 'Verified Bot' },
-  { bit: 1 << 17, icon: '👨‍💻', label: 'Early Verified Bot Developer' },
-  { bit: 1 << 18, icon: '🛡', label: 'Discord Certified Moderator' },
-  { bit: 1 << 22, icon: '🌱', label: 'Active Developer' },
-];
-
-const introLines = [
-  'C:\\Users\\Chinatsu Kamado> WaiFu',
-  'Chinatsu Kamado.dev',
-  '',
-  'C:\\Users\\Chinatsu Kamado> profile --boot',
-  '[OK] Đang tải giao diện cá nhân...',
-  '[OK] Đang kết nối trạng thái Discord...',
-  '[OK] Đang chuẩn bị trang trí ảnh đại diện...',
-  '[OK] Đang chuẩn bị trang trí ảnh đại diện...',
-  '',
-  'Alias        : Chinatsu Kamado',
-  'Style        : Discord-inspired anime profile',
-  'Location     : Vietnam',
-  'Passion      : Anime, gaming, Minecraft',
-  'Current Mode : Quiet but online',
-  '',
-  'Press Enter to continue.',
-];
-
-let activeTabId = 'boot';
-let tabCount = 1;
-let introTimer;
-const cmdTabsState = [
-  {
-    id: 'boot',
-    title: 'cmd',
-    log: 'Microsoft Windows [Version 11.0.22631.0000]\n(c) Microsoft Corporation. All rights reserved.\n\n',
-    input: '',
-    boot: true,
-    interactive: false,
-    typing: true,
-  },
-];
-
-function activeCmdTab() {
-  return cmdTabsState.find((tab) => tab.id === activeTabId) || cmdTabsState[0];
-}
-
-function renderCmdTabs() {
-  cmdTabs.innerHTML = cmdTabsState.map((tab) => `
-    <button class="cmd-tab ${tab.id === activeTabId ? 'active-tab' : ''}" type="button" data-tab-id="${tab.id}" role="tab" aria-selected="${tab.id === activeTabId}">
-      <span class="cmd-tab-title">${tab.title}</span>
-      ${cmdTabsState.length > 1 && !tab.boot ? '<span class="cmd-tab-close" data-close-tab>×</span>' : ''}
-    </button>
-  `).join('');
-}
-
-function renderCmdBody() {
-  const tab = activeCmdTab();
-  cmdLog.textContent = tab.log;
-  cmdLog.classList.toggle('typing', Boolean(tab.typing));
-  cmdForm.classList.toggle('hidden', !tab.interactive);
-  cmdInput.value = tab.input || '';
-}
-
-function renderCmd() {
-  renderCmdTabs();
-  renderCmdBody();
-}
-
-function switchCmdTab(tabId) {
-  activeTabId = tabId;
-  renderCmd();
-  cmdInput.focus();
-}
-
-function typeIntro() {
-  const tab = activeCmdTab();
-  const prefix = tab.log;
-  const text = introLines.join('\n');
-  let index = 0;
-  introTimer = setInterval(() => {
-    tab.log = prefix + text.slice(0, index);
-    if (tab.id === activeTabId) renderCmdBody();
-    index += 1;
-    if (index > text.length) {
-      tab.typing = false;
-      clearInterval(introTimer);
-      if (tab.id === activeTabId) renderCmdBody();
-    }
-  }, 18);
-}
-
-window.initCmd = function () {
-  renderCmd();
-  typeIntro();
-};
-
-function showScreen(screen) {
-  [terminalScreen, profileScreen].forEach((item) => item.classList.remove('active'));
-  screen.classList.add('active');
-  document.body.classList.toggle('terminal-active', screen === terminalScreen);
-  player.classList.toggle('hidden', screen !== profileScreen);
-}
-
-function typeTextForTab(tab, text, speed = 14, onDone = () => {}) {
-  let index = 0;
-  const prefix = tab.log;
-  tab.typing = true;
-  const timer = setInterval(() => {
-    tab.log = prefix + text.slice(0, index);
-    if (tab.id === activeTabId) renderCmdBody();
-    index += 1;
-    if (index > text.length) {
-      tab.typing = false;
-      clearInterval(timer);
-      onDone();
-      if (tab.id === activeTabId) renderCmdBody();
-    }
-  }, speed);
-}
-
-enterButton.addEventListener('click', enterConsole);
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter' && terminalScreen.classList.contains('active') && document.activeElement !== cmdInput) enterConsole();
-});
-
-function openCmdTab() {
-  const existingInteractiveTab = cmdTabsState.find((tab) => tab.interactive || tab.id === 'cmd-input-tab');
-  if (existingInteractiveTab) {
-    switchCmdTab(existingInteractiveTab.id);
-    return;
-  }
-
-  tabCount += 1;
-  const id = 'cmd-input-tab';
-  const staticHeader = [
-    'Microsoft Windows [Version 11.0.22631.0000]',
-    '(c) Microsoft Corporation. All rights reserved.',
-    '',
-  ].join('\n');
-  const tips = [
-    '\nGợi ý: nhập website như youtube.com rồi nhấn Enter để mở tab mới.',
-    'Gợi ý: thử nhập các lệnh help, status, ping, dir, profile, clear.',
-    '',
-  ].join('\n');
-  const tab = {
-    id,
-    title: 'cmd 2',
-    log: staticHeader,
-    input: '',
-    boot: false,
-    interactive: false,
-    typing: true,
-  };
-  cmdTabsState.push(tab);
-  switchCmdTab(id);
-  typeTextForTab(tab, tips, 12, () => {
-    tab.interactive = true;
-  });
-}
-
-function closeCmdTab(tabId) {
-  if (cmdTabsState.length === 1) return;
-  const index = cmdTabsState.findIndex((tab) => tab.id === tabId);
-  if (index === -1 || cmdTabsState[index].boot) return;
-  cmdTabsState.splice(index, 1);
-  if (activeTabId === tabId) activeTabId = cmdTabsState[Math.max(0, index - 1)].id;
-  renderCmd();
-}
-
-function normalizeUrl(value) {
-  if (/^https?:\/\//i.test(value)) return value;
-  if (/^[\w-]+(\.[\w-]+)+/.test(value)) return `https://${value}`;
-  return '';
-}
-
-function fakeCommand(command) {
-  const lower = command.toLowerCase();
-  if (['help', '?'].includes(lower)) return 'Available: help, clear, profile, status, ping, dir, scan, run <anything>, or paste a URL.';
-  if (lower === 'profile') return 'Opening Chinatsu Kamado profile interface... done. Press Enter outside this input to continue.';
-  if (lower === 'status') return 'Discord presence daemon: ONLINE\nAnime energy: 98%\nCute cursor: armed.';
-  if (lower === 'ping') return 'Pinging moonlight.anime [127.0.0.1]... Reply: time=7ms TTL=uwu';
-  if (lower === 'dir') return ' Directory of C:\\Users\\Chinatsu Kamado\n\n<DIR> anime\n<DIR> lofi\n<DIR> minecraft\n<DIR> secrets\nprofile.exe';
-  if (lower.startsWith('run ') || lower.startsWith('npm ') || lower.startsWith('python ') || lower.startsWith('git ')) {
-    return `Executing "${command}"...\n[OK] Pretending very professionally. No errors found.`;
-  }
-  return `"${command}" is not recognized... but it looks cool, so I will allow it. ✦`;
-}
-
-cmdTabs.addEventListener('click', (event) => {
-  const tabButton = event.target.closest('.cmd-tab');
-  if (!tabButton) return;
-  const tabId = tabButton.dataset.tabId;
-  if (event.target.closest('[data-close-tab]')) closeCmdTab(tabId);
-  else switchCmdTab(tabId);
-});
-cmdNewTab.addEventListener('click', openCmdTab);
-cmdInput.addEventListener('input', () => {
-  activeCmdTab().input = cmdInput.value;
-});
-cmdForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-  const tab = activeCmdTab();
-  const command = cmdInput.value.trim();
-  if (!command) return;
-  if (['cls', 'clear'].includes(command.toLowerCase())) {
-    tab.log = '';
-    tab.input = '';
-    renderCmdBody();
-    return;
-  }
-  tab.log += `${tab.log.endsWith('\n') ? '' : '\n'}C:\\Users\\Chinatsu Kamado> ${command}\n`;
-  const url = normalizeUrl(command);
-  if (url) {
-    window.open(url, '_blank', 'noopener,noreferrer');
-    tab.log += `Opening ${url} in a new tab...\n`;
-  } else {
-    tab.log += `${fakeCommand(command)}\n`;
-  }
-  tab.input = '';
-  renderCmdBody();
-});
-
-function setStatusClass(status) {
-  const normalized = ['online', 'idle', 'dnd', 'offline'].includes(status) ? status : 'offline';
-  presenceEls.orb.className = `status-orb ${normalized}`;
-  const dot = presenceEls.statusText.querySelector('.inline-dot');
-  if (dot) dot.className = `inline-dot ${normalized}`;
-  return normalized;
-}
-
-function getAvatarUrl(user) {
-  if (!user?.avatar) return '';
-  const ext = user.avatar.startsWith('a_') ? 'gif' : 'png';
-  return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${ext}?size=256`;
-}
-
-function getDiscordDecorationUrls(user) {
-  const asset = user?.avatar_decoration_data?.asset;
-  if (!asset) return [];
-  const normalized = asset.replace(/^avatar-decoration-presets\//, '');
-  const ext = normalized.startsWith('a_') ? 'gif' : 'png';
-  return [
-    `https://cdn.discordapp.com/avatar-decoration-presets/${normalized}.${ext}?size=240&passthrough=true`,
-    `https://cdn.discordapp.com/avatar-decoration-presets/${normalized}.png?size=240&passthrough=true`,
-  ];
-}
-
-function getEmojiText(emoji) {
-  if (!emoji) return '';
-  if (emoji.id) return `<${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>`;
-  return emoji.name || '';
-}
-
-function getElapsedText(timestamps) {
-  if (!timestamps?.start) return '';
-  const elapsed = Math.max(0, Date.now() - timestamps.start);
-  const minutes = Math.floor(elapsed / 60000);
-  const hours = Math.floor(minutes / 60);
-  if (hours) return `Đã chạy ${hours}h ${minutes % 60}m`;
-  return `Đã chạy ${minutes}m`;
-}
-
-function findCustomStatus(activities = []) {
-  return activities.find((activity) => activity.type === 4);
-}
-
-function findPrimaryActivity(activities = []) {
-  return activities.find((activity) => activity.type !== 4);
-}
-
-function describeActivity(activity, spotify) {
-  if (spotify) {
-    return {
-      visible: true,
-      icon: '♪',
-      name: `Spotify · ${spotify.song || 'Đang nghe nhạc'}`,
-      detail: [spotify.artist, spotify.album].filter(Boolean).join(' · ') || 'Đang phát qua Spotify.',
-    };
-  }
-
-  if (!activity) return { visible: false, icon: '✦', name: '', detail: '', time: '' };
-  const meta = activityTypes[activity.type] || { label: 'Hoạt động', icon: '✦' };
-  return {
-    visible: true,
-    icon: meta.icon,
-    name: `${meta.label} ${activity.name || ''}`.trim(),
-    detail: [activity.details, activity.state].filter(Boolean).join(' · ') || 'Hoạt động đang chạy.',
-    time: getElapsedText(activity.timestamps),
-  };
-}
-
-function getClientText(data) {
-  return [
-    data.active_on_discord_desktop && 'Desktop',
-    data.active_on_discord_mobile && 'Mobile',
-    data.active_on_discord_web && 'Web',
-  ].filter(Boolean).join(' · ');
-}
-
-function getCustomStatusText(activity) {
-  if (!activity) return '';
-  return [getEmojiText(activity.emoji), activity.state].filter(Boolean).join(' ').trim();
-}
-
-function updateActivityCard(activity) {
-  presenceEls.activityCard.classList.toggle('hidden', !activity.visible);
-  if (!activity.visible) return;
-  presenceEls.activityIcon.textContent = activity.icon;
-  presenceEls.activityName.textContent = activity.name;
-  presenceEls.activityDetail.textContent = activity.detail;
-  presenceEls.activityTime.textContent = activity.time;
-}
-
-const staticDiscordBadges = [
-  { name: 'Orbs Lính Mới', icon: './data/badges/Orbs-linh-moi.png' },
-  { name: 'HypeSquad Quả Cảm', icon: './data/badges/hypesquad-bravery.svg' },
-  { name: 'Nhà Phát Triển Tích Cực', icon: './data/badges/active-developer.svg' },
-  { name: 'Đăng ký từ 6 thg 12, 2021', icon: './data/badges/nitro-new.svg', nitro: true },
-  { name: 'Nitro Boost', icon: './data/badges/boost-6-month.svg', nitro: true },
-  { name: 'nakarotad#2413', icon: './data/badges/legacy-username.svg' },
-];
-
-function renderDiscordBadges() {
-  presenceEls.publicFlags.innerHTML = staticDiscordBadges.map((badge) => `
-    <span class="discord-badge ${badge.nitro ? 'nitro' : ''}" data-tooltip="${badge.name}" aria-label="${badge.name}">
-      <img src="${badge.icon}" alt="${badge.name}">
-    </span>
-  `).join('');
-}
-
-function updateMetaFields(data) {
-  presenceEls.spotifyStatus.textContent = data.listening_to_spotify && data.spotify
-    ? `${data.spotify.song || 'Spotify'} · ${data.spotify.artist || 'Unknown'}`
-    : 'Chưa phát hiện';
-  renderDiscordBadges();
-}
-
-function setLocalDecoration() {
-  const randomImage = DECORATIONS[Math.floor(Math.random() * DECORATIONS.length)];
-  presenceEls.decoration.src = `./data/decoration/${randomImage}`;
-  presenceEls.decoration.dataset.source = 'local';
-}
-
-function setDiscordDecoration(urls) {
-  if (!urls.length) {
-    if (presenceEls.decoration.dataset.source !== 'local') setLocalDecoration();
-    return;
-  }
-
-  let index = 0;
-  presenceEls.decoration.dataset.source = 'discord';
-  presenceEls.decoration.onerror = () => {
-    index += 1;
-    if (urls[index]) {
-      presenceEls.decoration.src = urls[index];
-    } else {
-      presenceEls.decoration.onerror = null;
-      setLocalDecoration();
-    }
-  };
-  presenceEls.decoration.src = urls[index];
-}
-
-
-
-function startProfileNameTyping() {
-  const target = presenceEls.typingName;
-  if (!target) return;
-
-  let wordIndex = 0;
-  let charIndex = 0;
-  let deleting = false;
-
-  const tick = () => {
-    const word = profileTypingWords[wordIndex];
-    target.textContent = word.slice(0, charIndex);
-
-    if (!deleting && charIndex < word.length) {
-      charIndex += 1;
-      setTimeout(tick, 100);
-      return;
-    }
-
-    if (!deleting) {
-      deleting = true;
-      setTimeout(tick, wordIndex === 0 ? 3000 : 1150);
-      return;
-    }
-
-    if (charIndex > 0) {
-      charIndex -= 1;
-      setTimeout(tick, 60);
-      return;
-    }
-
-    deleting = false;
-    wordIndex = (wordIndex + 1) % profileTypingWords.length;
-    setTimeout(tick, 260);
-  };
-
-  tick();
-}
-
-startProfileNameTyping();
-
-let lanyardCache = null;
-
-async function fetchDiscordPresence() {
-  try {
-    const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`, { cache: 'no-store' });
-    const payload = await response.json();
-    if (!payload.success) throw new Error('Lanyard returned unsuccessful response');
-
-    const data = payload.data;
-    lanyardCache = data;
-
-    const user = data.discord_user;
-    const status = setStatusClass(data.discord_status);
-    const statusLabel = statusLabels[status] || 'Đang offline';
-    const clientText = getClientText(data);
-    const customStatusText = getCustomStatusText(findCustomStatus(data.activities));
-    const primaryActivity = describeActivity(findPrimaryActivity(data.activities), data.listening_to_spotify ? data.spotify : null);
-    const avatarUrl = getAvatarUrl(user);
-    const discordDecorationUrls = getDiscordDecorationUrls(user);
-
-    profileTypingWords[0] = 'Chinatsu Kamado';
-    presenceEls.username.textContent = 'Chinatsu Kamado';
-    presenceEls.username.setAttribute('data-text', 'Chinatsu Kamado');
-    presenceEls.customStatusLine.textContent = customStatusText || '...';
-    presenceEls.statusText.innerHTML = `<span class="inline-dot ${status}"></span>${statusLabel}${clientText ? ` - ${clientText}` : ''}`;
-    if (avatarUrl) presenceEls.avatar.src = avatarUrl;
-    presenceEls.avatar.src = 'https://images-ext-1.discordapp.net/external/KglgTpgmix6LkqXu75sNwRMz8sWZuOl9JWnUCLWG_IA/%3Fsize%3D4096/https/cdn.discordapp.com/avatars/917263515209859102/cd121ea4baf2512e6e98f16f0f2a8d04.png?format=webp&quality=lossless&width=656&height=656';
-
-    setDiscordDecoration(discordDecorationUrls);
-    presenceEls.decoration.src = './data/decoration/buom-dem.png';
-
-    updateActivityCard(primaryActivity);
-    updateMetaFields(data, user);
-
-    if (steamPage.page && !steamPage.page.classList.contains('hidden')) {
-      applySteamLanyardFallback(data);
-    }
-  } catch (error) {
-    console.warn('Unable to retrieve Discord presence:', error);
-    const status = setStatusClass('offline');
-    presenceEls.statusText.innerHTML = `<span class="inline-dot ${status}"></span>Chưa thể đồng bộ Discord`;
-    presenceEls.customStatusLine.textContent = 'Không rõ';
-    presenceEls.spotifyStatus.textContent = 'Không rõ';
-    presenceEls.publicFlags.innerHTML = '<span class="discord-badge empty">Không rõ</span>';
-  }
-}
-fetchDiscordPresence();
-setInterval(fetchDiscordPresence, 6000);
-
-function rotateDecoration() {
-  if (presenceEls.decoration.dataset.source === 'discord') return;
-  setLocalDecoration();
-}
-setInterval(rotateDecoration, 5000);
-
-function enterConsole() {
-  if (typeof playUISound === 'function') {
-    playUISound('page');
-  }
-  showScreen(profileScreen);
-  startMusic();
-}
-
-const trackTitle = document.getElementById('track-title');
-const nextTrackButton = document.getElementById('next-track');
-const currentTimeEl = document.getElementById('current-time');
-const durationTimeEl = document.getElementById('duration-time');
-const tracks = [
-  { title: 'Nightcore - Rise Up', src: './Audio/Nightcore-Rise-Up.mp3' },
-  { title: 'Esoa (Ballad Version)', src: './Audio/Esoa-Ballad-version.mp3' },
-  { title: 'My Music', src: './Audio/Music.mp3' }
-];
-let currentTrackIndex = 0;
-let playing = false;
-
-audio.volume = Number(volumeSlider.value) / 100;
-playToggle.textContent = '▶';
-player.classList.add('paused');
-
-function formatTime(seconds) {
-  if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
-  const minutes = Math.floor(seconds / 60);
-  const remaining = Math.floor(seconds % 60).toString().padStart(2, '0');
-  return `${minutes}:${remaining}`;
-}
-
-function renderTrackMeta() {
-  const track = tracks[currentTrackIndex];
-  trackTitle.textContent = track.title;
-  currentTimeEl.textContent = formatTime(audio.currentTime);
-  durationTimeEl.textContent = formatTime(audio.duration);
-}
-
-function loadTrack(index) {
-  currentTrackIndex = (index + tracks.length) % tracks.length;
-  const track = tracks[currentTrackIndex];
-  audio.src = track.src;
-  progressBar.style.width = '0%';
-  currentTimeEl.textContent = '0:00';
-  durationTimeEl.textContent = '0:00';
-  renderTrackMeta();
-}
-
-async function playCurrentTrack() {
-  await audio.play();
-  playing = true;
-  playToggle.textContent = '❚❚';
-  player.classList.remove('paused');
-  renderTrackMeta();
-}
-
-async function startMusic() {
-  try {
-    audio.volume = 0.15;
-    volumeSlider.value = 15;
-    await playCurrentTrack();
-  } catch (error) {
-    console.warn('Autoplay blocked:', error);
-  }
-}
-
-function pauseMusic() {
-  audio.pause();
-  playing = false;
-  playToggle.textContent = '▶';
-  player.classList.add('paused');
-  renderTrackMeta();
-}
-
-playToggle.addEventListener('click', async () => {
-  try {
-    if (playing) {
-      pauseMusic();
-    } else {
-      await playCurrentTrack();
-    }
-  } catch (error) {
-    console.warn('Audio playback blocked or file missing:', error);
-    trackTitle.textContent = 'Không mở được file nhạc';
-  }
-});
-
-nextTrackButton.addEventListener('click', async () => {
-  const shouldResume = playing;
-  loadTrack(currentTrackIndex + 1);
-  if (!shouldResume) return;
-  try {
-    await playCurrentTrack();
-  } catch (error) {
-    console.warn('Unable to switch track:', error);
-    trackTitle.textContent = 'Không mở được file nhạc';
-  }
-});
-
-audio.addEventListener('loadedmetadata', renderTrackMeta);
-audio.addEventListener('error', () => {
-  trackTitle.textContent = 'Không tìm thấy file nhạc';
-});
-audio.addEventListener('ended', () => {
-  if (currentTrackIndex === 0) {
-    audio.currentTime = 0;
-  } else {
-    loadTrack(0);
-  }
-  playCurrentTrack().catch((error) => console.warn('Unable to autoplay next track:', error));
-});
-audio.addEventListener('timeupdate', () => {
-  if (!audio.duration) return;
-  progressBar.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
-  renderTrackMeta();
-});
-
-let volumeAutoCloseTimer;
-
-function scheduleVolumeAutoClose() {
-  clearTimeout(volumeAutoCloseTimer);
-  if (!volumeControl.classList.contains('open')) return;
-  volumeAutoCloseTimer = setTimeout(() => {
-    volumeControl.classList.remove('open');
-  }, 2000);
-}
-
-volumeToggle.addEventListener('click', (event) => {
-  event.stopPropagation();
-  volumeControl.classList.toggle('open');
-  if (volumeControl.classList.contains('open')) {
-    volumeSlider.focus();
-    scheduleVolumeAutoClose();
-  } else {
-    clearTimeout(volumeAutoCloseTimer);
-  }
-});
-
-volumeControl.addEventListener('pointermove', scheduleVolumeAutoClose);
-volumeControl.addEventListener('pointerdown', scheduleVolumeAutoClose);
-
-volumeSlider.addEventListener('input', () => {
-  const volume = Number(volumeSlider.value) / 100;
-  audio.volume = volume;
-  const icon = volume === 0 ? '🔇' : volume < 0.45 ? '🔉' : '🔊';
-  volumeToggle.textContent = icon;
-  scheduleVolumeAutoClose();
-});
-
-const colorTool = {
-  page: document.getElementById('color-page'),
-  profile: document.querySelector('.profile-console'),
-  open: document.getElementById('mal-link'),
-  back: document.getElementById('color-back'),
-  text: document.getElementById('tc-input-text'),
-  effect: document.getElementById('tc-effect'),
-  font: document.getElementById('tc-font'),
-  size: document.getElementById('tc-size'),
-  c1: document.getElementById('tc-color-1'),
-  c2: document.getElementById('tc-color-2'),
-  c3: document.getElementById('tc-color-3'),
-  bold: document.getElementById('tc-bold'),
-  italic: document.getElementById('tc-italic'),
-  word: document.getElementById('tc-word'),
-  colorLabels: [...document.querySelectorAll('.color-picks label')],
-  preview: document.getElementById('tc-preview'),
-  output: document.getElementById('tc-output'),
-  copy: document.getElementById('tc-copy'),
-};
-
-renderTrackMeta();
-
-colorTool.open.addEventListener('click', (e) => { e.preventDefault(); showColorPage(); });
-colorTool.back.addEventListener('click', hideColorPage);
-
-colorTool.text.addEventListener('input', buildUnityRichText);
-colorTool.effect.addEventListener('change', buildUnityRichText);
-colorTool.font.addEventListener('change', buildUnityRichText);
-colorTool.size.addEventListener('change', buildUnityRichText);
-colorTool.c1.addEventListener('input', buildUnityRichText);
-colorTool.c2.addEventListener('input', buildUnityRichText);
-colorTool.c3.addEventListener('input', buildUnityRichText);
-colorTool.bold.addEventListener('change', buildUnityRichText);
-colorTool.italic.addEventListener('change', buildUnityRichText);
-colorTool.word.addEventListener('change', buildUnityRichText);
-
-colorTool.copy.addEventListener('click', () => {
-  colorTool.output.select();
-  navigator.clipboard.writeText(colorTool.output.value).then(() => {
-    const original = colorTool.copy.textContent;
-    colorTool.copy.textContent = 'Đã copy!';
-    setTimeout(() => { colorTool.copy.textContent = original; }, 1500);
-  });
-});
-
-let activeInnerPage = null;
-
-function hexToRgb(hex) {
-  const value = hex.replace('#', '');
-  return [0, 2, 4].map((index) => parseInt(value.slice(index, index + 2), 16));
-}
-
-function rgbToHex([r, g, b]) {
-  return [r, g, b].map((value) => Math.max(0, Math.min(255, Math.round(value))).toString(16).padStart(2, '0')).join('').toUpperCase();
-}
-
-function lerpColor(start, end, step, total) {
-  const ratio = total <= 1 ? 0 : step / (total - 1);
-  return start.map((value, index) => value + (end[index] - value) * ratio);
-}
-
-function colorAt(index, total, effect) {
-  const first = hexToRgb(colorTool.c1.value);
-  const mid = hexToRgb(colorTool.c2.value);
-  const last = hexToRgb(colorTool.c3.value);
-  if (effect === 'solid') return rgbToHex(first);
-  if (effect === 'rainbow') {
-    const hue = Math.round((index / Math.max(1, total)) * 300);
-    const tmp = document.createElement('span');
-    tmp.style.color = `hsl(${hue}, 100%, 62%)`;
-    document.body.appendChild(tmp);
-    const rgb = getComputedStyle(tmp).color.match(/\d+/g).slice(0, 3).map(Number);
-    tmp.remove();
-    return rgbToHex(rgb);
-  }
-  if (effect === 'three') {
-    const half = Math.max(1, Math.floor((total - 1) / 2));
-    return index <= half ? rgbToHex(lerpColor(first, mid, index, half + 1)) : rgbToHex(lerpColor(mid, last, index - half, total - half));
-  }
-  if (effect === 'mirror') {
-    const half = Math.max(1, Math.floor((total - 1) / 2));
-    return index <= half ? rgbToHex(lerpColor(first, mid, index, half + 1)) : rgbToHex(lerpColor(mid, first, index - half, total - half));
-  }
-  return rgbToHex(lerpColor(first, last, index, total));
-}
-
-function updateColorPickState() {
-  const effect = colorTool.effect.value;
-  const enabledMap = {
-    two: [true, false, true],
-    mirror: [true, true, false],
-    three: [true, true, true],
-    solid: [true, false, false],
-    random: [false, false, false],
-    rainbow: [false, false, false],
-  };
-  const enabled = enabledMap[effect] || [true, true, true];
-  colorTool.colorLabels.forEach((label, index) => {
-    label.classList.toggle('disabled', !enabled[index]);
-    const input = label.querySelector('input');
-    if (input) input.disabled = !enabled[index];
-  });
-  colorTool.word.closest('label')?.classList.toggle('disabled', effect !== 'random');
-  colorTool.word.disabled = effect !== 'random';
-}
-
-function buildUnityRichText() {
-  updateColorPickState();
-  const raw = colorTool.text.value || '';
-  const effect = colorTool.effect.value;
-  const tokens = effect === 'random' && colorTool.word.checked ? raw.split(/(\s+)/) : [...raw];
-  const visibleTokens = tokens.filter((token) => token.trim()).length || raw.length || 1;
-  let visibleIndex = 0;
-  let html = '';
-  let rich = '';
-
-  tokens.forEach((token, index) => {
-    if (!token.trim()) {
-      html += token;
-      rich += token;
-      return;
-    }
-    const color = effect === 'random'
-      ? rgbToHex([Math.random() * 255, Math.random() * 255, Math.random() * 255])
-      : colorAt(visibleIndex, visibleTokens, effect);
-    html += `<span style="color:#${color}">${token}</span>`;
-    rich += `<color=#${color}>${token}</color>`;
-    visibleIndex += 1;
-  });
-
-  if (colorTool.font.value) {
-    html = `<span style="font-family:${colorTool.font.value}">${html}</span>`;
-  }
-  if (colorTool.size.value !== '0') {
-    html = `<span style="font-size:${colorTool.size.value}px">${html}</span>`;
-    rich = `<size=${colorTool.size.value}>${rich}</size>`;
-  }
-  if (colorTool.italic.checked) {
-    html = `<i>${html}</i>`;
-    rich = `<i>${rich}</i>`;
-  }
-  if (colorTool.bold.checked) {
-    html = `<b>${html}</b>`;
-    rich = `<b>${rich}</b>`;
-  }
-
-  colorTool.preview.innerHTML = html || 'Preview sẽ hiện ở đây';
-  colorTool.output.value = rich;
-}
-
-function showInnerPage(page, afterShow, wide = false) {
-  if (!page) return;
-  resetCardPointer();
-  activeInnerPage?.classList.add('hidden');
-  activeInnerPage?.classList.remove('leaving');
-  activeInnerPage = page;
-  page.style.setProperty('--tilt-x', '0deg');
-  page.style.setProperty('--tilt-y', '0deg');
-  document.body.classList.add('color-page-active');
-  if (wide) document.body.classList.add('wide-page-active');
-  else document.body.classList.remove('wide-page-active');
-  colorTool.profile.classList.remove('slide-to-home');
-  colorTool.profile.classList.add('slide-to-color', 'page-mode');
-  page.classList.remove('hidden', 'leaving');
-  player.classList.add('hidden');
-  afterShow?.();
-  setTimeout(() => {
-    colorTool.profile.classList.remove('slide-to-color');
-    resetCardPointer();
-  }, 760);
-}
-
-function hideInnerPage(page) {
-  if (!page) return;
-  resetCardPointer();
-  page.classList.add('leaving');
-  colorTool.profile.classList.remove('slide-to-color');
-  colorTool.profile.classList.add('slide-to-home');
-  setTimeout(() => {
-    document.body.classList.remove('color-page-active');
-    document.body.classList.remove('wide-page-active');
-    colorTool.profile.classList.remove('page-mode', 'slide-to-home');
-    page.classList.add('hidden');
-    page.classList.remove('leaving');
-    if (activeInnerPage === page) activeInnerPage = null;
-    player.classList.remove('hidden');
-    resetCardPointer();
-  }, 560);
-}
-
-function showColorPage() {
-  showInnerPage(colorTool.page, buildUnityRichText);
-}
-
-function hideColorPage() {
-  hideInnerPage(colorTool.page);
-}
-
-/* ============================================================
-   MINECRAFT SERVER PAGE
-   ============================================================ */
-const minecraftPage = {
-  page: document.getElementById('minecraft-page'),
-  back: document.getElementById('minecraft-back'),
-  open: document.getElementById('page-one-link'),
-  ping: document.getElementById('mc-ping'),
-  version: document.getElementById('mc-version'),
-  online: document.getElementById('mc-online'),
-  max: document.getElementById('mc-max'),
-  ip: document.getElementById('mc-ip'),
-  statusText: document.getElementById('mc-status-text'),
-  updated: document.getElementById('mc-updated'),
-  joinBtn: document.getElementById('mc-join-btn'),
-};
-
-// ⚙️ CẤU HÌNH SERVER — chỉnh sửa tại đây
-const MC_CONFIG = {
-  ip: 'Sv.Minevui.Net',        // ← ĐÃ SỬA: địa chỉ server mới
-  port: 25565,
-  discordInvite: 'https://discord.gg/',
-  botName: 'Minecraft Skyblock',  // ← ĐÃ SỬA: tên server mới
-  botDesc: '🌿 Server Minecraft sinh tồn · Vanilla SMP',
-  version: '1.21.x',
-};
-
-function formatMcTime() {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'Asia/Ho_Chi_Minh',
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-  }).formatToParts(new Date());
-  const get = (t) => parts.find((p) => p.type === t)?.value || '';
-  return `Cập nhật ${get('hour')}:${get('minute')}:${get('second')}`;
-}
-
-async function fetchMinecraftStatus() {
-  if (!minecraftPage.page) return;
-  const ip = MC_CONFIG.ip;
-  const port = MC_CONFIG.port;
-  const apiUrl = `https://api.mcsrvstat.us/3/${ip}${port !== 25565 ? ':' + port : ''}`;
-
-  try {
-    const res = await fetch(apiUrl);
-    const data = await res.json();
-
-    if (data.online) {
-      // Nếu API trả về online, dùng data thật nhưng ưu tiên cấu hình tĩnh
-      if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';       // ← ĐÃ SỬA: cố định 20ms
-      if (minecraftPage.online) minecraftPage.online.textContent = '0 người'; // ← ĐÃ SỬA: cố định 0
-      if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';    // ← ĐÃ SỬA: cố định 1000
-      if (minecraftPage.version) minecraftPage.version.textContent = data.version || MC_CONFIG.version;
-      if (minecraftPage.statusText) {
-        minecraftPage.statusText.textContent = '🟢 Online — Đang hoạt động';
-        minecraftPage.statusText.style.color = 'var(--green)';
-      }
-    } else {
-      if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';        // ← ĐÃ SỬA
-      if (minecraftPage.online) minecraftPage.online.textContent = '0 người'; // ← ĐÃ SỬA
-      if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';    // ← ĐÃ SỬA
-      if (minecraftPage.version) minecraftPage.version.textContent = MC_CONFIG.version;
-      if (minecraftPage.statusText) {
-        minecraftPage.statusText.textContent = '🔴 Offline — Server đang tắt';
-        minecraftPage.statusText.style.color = 'var(--red)';
-      }
-    }
-  } catch {
-    if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';          // ← ĐÃ SỬA
-    if (minecraftPage.online) minecraftPage.online.textContent = '0 người';   // ← ĐÃ SỬA
-    if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';      // ← ĐÃ SỬA
-    if (minecraftPage.statusText) {
-      minecraftPage.statusText.textContent = '⚠️ Không thể kiểm tra';
-      minecraftPage.statusText.style.color = 'var(--yellow)';
-    }
-  }
-
-  if (minecraftPage.ip) minecraftPage.ip.textContent = ip;
-  if (minecraftPage.updated) minecraftPage.updated.textContent = formatMcTime();
-  if (minecraftPage.joinBtn) minecraftPage.joinBtn.href = MC_CONFIG.discordInvite;
-
-  // Gán tên bot card từ config
-  const botNameEl = document.getElementById('mc-bot-name');
-  if (botNameEl) botNameEl.textContent = MC_CONFIG.botName;
-  const botDescEl = document.getElementById('mc-bot-desc');
-  if (botDescEl) botDescEl.textContent = MC_CONFIG.botDesc;
-
-  // ← Gắn nút copy IP + rainbow text (chỉ gắn 1 lần)
-  const ipCard = minecraftPage.ip?.closest('.mc-stat-card');
-  if (ipCard && !ipCard.querySelector('.mc-copy-ip-btn')) {
-    // Layout: label trên, hàng dưới gồm [IP rainbow + nút copy]
-    ipCard.style.display = 'flex';
-    ipCard.style.flexDirection = 'column';
-    ipCard.style.gap = '6px';
-
-    // Thêm class rainbow cho chữ IP
-    if (minecraftPage.ip) {
-      minecraftPage.ip.classList.add('mc-ip-rainbow');
-    }
-
-    // Hàng dưới chứa IP + nút copy
-    const bottomRow = document.createElement('div');
-    bottomRow.className = 'mc-ip-bottom-row';
-
-    // Di chuyển phần tử IP vào bottomRow
-    if (minecraftPage.ip) {
-      bottomRow.appendChild(minecraftPage.ip);
-    }
-
-    // Nút copy
-    const copyBtn = document.createElement('button');
-    copyBtn.className = 'mc-copy-ip-btn';
-    copyBtn.title = 'Copy địa chỉ server';
-    copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`;
-    copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(MC_CONFIG.ip).then(() => {
-        copyBtn.innerHTML = `✓`;
-        copyBtn.style.color = 'var(--green)';
-        setTimeout(() => {
-          copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`;
-          copyBtn.style.color = '';
-        }, 1500);
-      });
-    });
-
-    bottomRow.appendChild(copyBtn);
-    ipCard.appendChild(bottomRow);
-  }
-}
-
-function showMinecraftPage() {
-  showInnerPage(minecraftPage.page, () => {
-    fetchMinecraftStatus();
-  }, false);
-}
-
-function hideMinecraftPage() {
-  hideInnerPage(minecraftPage.page);
-}
-
-if (minecraftPage.open) {
-  minecraftPage.open.addEventListener('click', (e) => { e.preventDefault(); showMinecraftPage(); });
-}
-if (minecraftPage.back) {
-  minecraftPage.back.addEventListener('click', hideMinecraftPage);
-}
-
-setInterval(() => {
-  if (minecraftPage.page && !minecraftPage.page.classList.contains('hidden')) {
-    fetchMinecraftStatus();
-  }
-}, 30000);
-
-/* ============================================================
-   STEAM PROFILE PAGE — Real Steam API via Cloudflare Worker
-   ============================================================ */
-const STEAM_WORKER_URL = 'https://steam-proxy.bbtu223344.workers.dev/';
-
-const steamPage = {
-  page:        document.getElementById('steam-page'),
-  back:        document.getElementById('steam-back'),
-  open:        document.getElementById('page-two-link'),
-  avatar:      document.getElementById('steam-avatar'),
-  statusDot:   document.getElementById('steam-status-dot'),
-  statusLabel: document.getElementById('steam-status-label'),
-  displayName: document.getElementById('steam-display-name'),
-  realName:    document.getElementById('steam-real-name'),
-  hours:       document.getElementById('steam-hours'),
-  games:       document.getElementById('steam-games'),
-  level:       document.getElementById('steam-level'),
-  friends:     document.getElementById('steam-friends'),
-  playing:     document.getElementById('steam-playing'),
-  updated:     document.getElementById('steam-updated'),
-  gameThumb:   document.getElementById('steam-game-thumb'),
-};
-
-const STEAM_STATIC = {
-  realName: '🎮 Chinatsu Kamado',
-  level:    '--',
-  friends:  '-- người',
-};
-
-function formatSteamTime() {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'Asia/Ho_Chi_Minh',
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-  }).formatToParts(new Date());
-  const get = (t) => parts.find((p) => p.type === t)?.value || '';
-  return `Cập nhật ${get('hour')}:${get('minute')}:${get('second')}`;
-}
-
-async function fetchSteamData() {
-  const res  = await fetch(STEAM_WORKER_URL, { cache: 'no-store' });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error);
-  return data;
-}
-
-function applySteamData(data) {
-  if (steamPage.avatar && data.avatar)
-    steamPage.avatar.src = data.avatar;
-
-  if (steamPage.displayName)
-    steamPage.displayName.textContent = data.displayName || 'nakarotad';
-
-  if (steamPage.realName)  steamPage.realName.textContent  = STEAM_STATIC.realName;
-
-  if (steamPage.level)
-    steamPage.level.textContent = (data.level ?? null) !== null ? `${data.level}` : STEAM_STATIC.level;
-
-  if (steamPage.friends)
-    steamPage.friends.textContent = (data.friendsCount ?? null) !== null ? `${data.friendsCount} người` : STEAM_STATIC.friends;
-
-  if (steamPage.games)
-    steamPage.games.textContent = `${data.totalGames} game`;
-  if (steamPage.hours)
-    steamPage.hours.textContent = `${data.totalHours.toLocaleString()} giờ`;
-
-  const isIngame = Boolean(data.currentGame);
-  const isOnline = data.statusCode > 0;
-  let dotClass   = 'offline';
-  let statusText = 'Offline';
-  if (isIngame)      { dotClass = 'ingame'; statusText = 'In-Game'; }
-  else if (isOnline) { dotClass = 'online'; statusText = data.status || 'Online'; }
-
-  if (steamPage.statusDot)   steamPage.statusDot.className    = `steam-status-dot ${dotClass}`;
-  if (steamPage.statusLabel) steamPage.statusLabel.textContent = statusText;
-
-  if (steamPage.playing) {
-    if (isIngame) {
-      steamPage.playing.innerHTML =
-        `🎮 <strong style="color:#fff">${data.currentGame}</strong>`;
-    } else {
-      steamPage.playing.textContent = 'Không có game đang chạy';
-    }
-  }
-
-  if (steamPage.gameThumb) {
-    if (isIngame && data.currentGameThumb) {
-      steamPage.gameThumb.src = data.currentGameThumb;
-      steamPage.gameThumb.style.display = 'block';
-    } else {
-      steamPage.gameThumb.style.display = 'none';
-    }
-  }
-
-  if (data.topGames?.length) {
-    data.topGames.forEach((game, i) => {
-      const card = document.getElementById(`steam-game-${i + 1}`);
-      if (!card) return;
-      const title = card.querySelector('.mc-feature-title');
-      const desc  = card.querySelector('.mc-feature-desc');
-      if (title) title.textContent = game.name;
-      if (desc)  desc.textContent  = `${game.hours.toLocaleString()} giờ chơi`;
-    });
-  }
-
-  if (steamPage.updated) steamPage.updated.textContent = formatSteamTime();
-}
-
-function applySteamLanyardFallback(data) {
-  if (!steamPage.page) return;
-  const activities = data.activities || [];
-  const steamActivity = activities.find(a =>
-    a.type === 0 && a.id !== 'spotify:1' && a.application_id
-  );
-  if (!steamActivity) return;
-
-  const gameName   = steamActivity.name || 'Unknown Game';
-  const gameDetail = steamActivity.details || '';
-  const gameState  = steamActivity.state   || '';
-  const elapsed    = getElapsedText(steamActivity.timestamps);
-
-  if (steamPage.statusDot)   steamPage.statusDot.className    = 'steam-status-dot ingame';
-  if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'In-Game';
-
-  if (steamPage.playing) {
-    steamPage.playing.innerHTML =
-      `🎮 <strong style="color:#fff">${gameName}</strong>` +
-      (gameDetail ? `<br><span style="font-size:11px;color:var(--muted)">${gameDetail}${gameState ? ' · ' + gameState : ''}</span>` : '') +
-      (elapsed    ? `<br><span style="font-size:11px;color:var(--cyan)">${elapsed}</span>` : '');
-  }
-
-  if (steamActivity?.assets?.large_image && steamPage.gameThumb) {
-    const appId = steamActivity.application_id;
-    steamPage.gameThumb.src = `https://cdn.discordapp.com/app-assets/${appId}/${steamActivity.assets.large_image}.png`;
-    steamPage.gameThumb.style.display = 'block';
-  }
-
-  if (steamPage.updated) steamPage.updated.textContent = formatSteamTime();
-}
-
-async function initSteamPage() {
-  if (!steamPage.page) return;
-
-  if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'Đang tải...';
-  if (steamPage.playing)     steamPage.playing.textContent     = 'Đang kết nối Steam...';
-  if (steamPage.realName)    steamPage.realName.textContent    = STEAM_STATIC.realName;
-  if (steamPage.level)       steamPage.level.textContent       = STEAM_STATIC.level;
-  if (steamPage.friends)     steamPage.friends.textContent     = STEAM_STATIC.friends;
-
-  try {
-    const data = await fetchSteamData();
-    applySteamData(data);
-
-    if (lanyardCache) applySteamLanyardFallback(lanyardCache);
-  } catch (err) {
-    console.warn('Steam Worker fetch error:', err);
-
-    if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'Lỗi kết nối Steam API';
-    if (steamPage.playing)     steamPage.playing.textContent     = 'Đang dùng dữ liệu Discord...';
-    if (steamPage.updated)     steamPage.updated.textContent     = formatSteamTime();
-
-    if (lanyardCache) applySteamLanyardFallback(lanyardCache);
-  }
-}
-
-function showSteamPage() {
-  showInnerPage(steamPage.page, () => { initSteamPage(); }, true);
-}
-
-function hideSteamPage() {
-  hideInnerPage(steamPage.page);
-}
-
-if (steamPage.open) {
-  steamPage.open.addEventListener('click', (e) => { e.preventDefault(); showSteamPage(); });
-}
-if (steamPage.back) {
-  steamPage.back.addEventListener('click', hideSteamPage);
-}
-
-setInterval(() => {
-  if (steamPage.page && !steamPage.page.classList.contains('hidden')) {
-    fetchSteamData().then(data => {
-      applySteamData(data);
-      if (lanyardCache) applySteamLanyardFallback(lanyardCache);
-    }).catch(() => {
-      if (lanyardCache) applySteamLanyardFallback(lanyardCache);
-    });
-  }
-}, 30000);
-
-/* ============================================================
-   END STEAM PROFILE PAGE
-   ============================================================ */
-
-function setText(element, value) {
-  if (element) element.textContent = value;
-}
-
-const interactiveCard = document.querySelector('.profile-console');
-const pointerGlow = document.getElementById('pointer-glow');
-let activeTiltTarget = null;
-let rippleCooldown = 0;
-let pageRippleCooldown = 0;
-
-const CARD_RIPPLE_INTERVAL = 920;
-const PAGE_RIPPLE_INTERVAL = 1250;
-
-function updateGlobalPointer(event) {
-  document.body.style.setProperty('--pointer-x', `${event.clientX}px`);
-  document.body.style.setProperty('--pointer-y', `${event.clientY}px`);
-  document.body.classList.add('pointer-active');
-}
-
-function spawnPageRipple(event) {
-  if (document.body.classList.contains('terminal-active')) return;
-  const now = Date.now();
-  if (event.type === 'pointermove' && now - pageRippleCooldown < PAGE_RIPPLE_INTERVAL) return;
-  pageRippleCooldown = now;
-  const ripple = document.createElement('span');
-  ripple.className = 'page-ripple';
-  ripple.style.setProperty('--ripple-x', `${event.clientX}px`);
-  ripple.style.setProperty('--ripple-y', `${event.clientY}px`);
-  document.body.appendChild(ripple);
-  ripple.addEventListener('animationend', () => ripple.remove(), { once: true });
-}
-
-function getTiltTarget() {
-  if (!interactiveCard) return null;
-  if (activeInnerPage && !activeInnerPage.classList.contains('hidden')) return activeInnerPage;
-  return interactiveCard;
-}
-
-function updateCardPointer(event) {
-  const target = getTiltTarget();
-  if (!target) return;
-  if (activeTiltTarget && activeTiltTarget !== target) resetCardPointer();
-  activeTiltTarget = target;
-  const rect = target.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  const px = x / rect.width;
-  const py = y / rect.height;
-  const tiltY = (px - 0.5) * 9;
-  const tiltX = (0.5 - py) * 9;
-  target.style.setProperty('--glow-x', `${px * 100}%`);
-  target.style.setProperty('--glow-y', `${py * 100}%`);
-  target.style.setProperty('--tilt-x', `${tiltX.toFixed(2)}deg`);
-  target.style.setProperty('--tilt-y', `${tiltY.toFixed(2)}deg`);
-  target.classList.add('interactive-hover');
-}
-
-function resetCardPointer() {
-  const target = activeTiltTarget || interactiveCard;
-  if (!target) return;
-  target.classList.remove('interactive-hover');
-  target.style.setProperty('--tilt-x', '0deg');
-  target.style.setProperty('--tilt-y', '0deg');
-  activeTiltTarget = null;
-}
-
-function spawnCardRipple(event) {
-  const target = getTiltTarget();
-  if (!target) return;
-  const now = Date.now();
-  if (event.type === 'pointermove' && now - rippleCooldown < CARD_RIPPLE_INTERVAL) return;
-  rippleCooldown = now;
-  const rect = target.getBoundingClientRect();
-  const ripple = document.createElement('span');
-  ripple.className = 'hover-ripple';
-  ripple.style.setProperty('--ripple-x', `${event.clientX - rect.left}px`);
-  ripple.style.setProperty('--ripple-y', `${event.clientY - rect.top}px`);
-  target.appendChild(ripple);
-  ripple.addEventListener('animationend', () => ripple.remove(), { once: true });
-}
-
-if (pointerGlow) {
-  document.addEventListener('pointermove', (event) => {
-    updateGlobalPointer(event);
-    spawnPageRipple(event);
-  });
-  document.addEventListener('pointerdown', (event) => {
-    updateGlobalPointer(event);
-    spawnPageRipple(event);
-  });
-  document.addEventListener('pointerleave', () => document.body.classList.remove('pointer-active'));
-}
-
-if (interactiveCard) {
-  document.addEventListener('pointermove', (event) => {
-    const target = getTiltTarget();
-    if (!target || !target.contains(event.target)) {
-      if (activeTiltTarget) resetCardPointer();
-      return;
-    }
-    updateCardPointer(event);
-    spawnCardRipple(event);
-  });
-  document.addEventListener('pointerdown', (event) => {
-    const target = getTiltTarget();
-    if (!target || !target.contains(event.target)) return;
-    spawnCardRipple(event);
-  });
-  document.addEventListener('pointerover', (event) => {
-    const target = getTiltTarget();
-    if (target && target.contains(event.target)) activeTiltTarget = target;
-  });
-  document.addEventListener('pointerout', (event) => {
-    const target = activeTiltTarget;
-    if (target && !target.contains(event.relatedTarget)) resetCardPointer();
-  });
-}
-
-/* ============================================================
-   CSS NÚT COPY IP + RAINBOW IP — inject vào <style> khi trang load
-   ============================================================ */
-(function injectCopyBtnStyle() {
-  const style = document.createElement('style');
-  style.textContent = `
-    /* Hàng dưới trong ô địa chỉ: IP bên trái, nút copy bên phải */
-    .mc-ip-bottom-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      width: 100%;
-    }
-
-    /* Rainbow animation cho chữ IP */
-    .mc-ip-rainbow {
-      background: linear-gradient(
-        90deg,
-        #ff4fd8, #ff6b6b, #ffd93d,
-        #6bcb77, #35e8ff, #5865f2,
-        #ff4fd8
-      );
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      color: transparent !important;
-      animation: rainbowShift 3s linear infinite;
-      font-weight: 800 !important;
-      letter-spacing: .04em;
-    }
-    @keyframes rainbowShift {
-      0%   { background-position: 0% center; }
-      100% { background-position: 200% center; }
-    }
-
-    /* Nút copy */
-    .mc-copy-ip-btn {
-      flex: 0 0 auto;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      border: 1px solid rgba(53,232,255,.28);
-      border-radius: 8px;
-      background: rgba(53,232,255,.09);
-      color: var(--cyan);
-      cursor: pointer;
-      transition: .2s ease;
-      font-size: 13px;
-      font-weight: 700;
-    }
-    .mc-copy-ip-btn:hover {
-      background: rgba(53,232,255,.22);
-      border-color: rgba(53,232,255,.55);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(53,232,255,.22);
-    }
-  `;
-  document.head.appendChild(style);
-})();
-    /* ============================================================
-       ANIME CLOCK INLINE — thay thế sync-pill
-       ============================================================ */
-    (function () {
-      var VN_DAYS = ['CN','T2','T3','T4','T5','T6','T7'];
-      var VN_PHASES = [
-        { s:5,  e:11, l:'🌅 Buổi sáng'  },
-        { s:11, e:13, l:'☀️ Giờ trưa'   },
-        { s:13, e:18, l:'🌤 Buổi chiều'  },
-        { s:18, e:22, l:'🌆 Buổi tối'   },
-        { s:22, e:24, l:'🌙 Đêm khuya'  },
-        { s:0,  e:5,  l:'🌃 Nửa đêm'   },
-      ];
-      function getVN() {
-        return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
-      }
-      function pad(n) { return String(n).padStart(2, '0'); }
-      function getPhase(h) {
-        for (var i = 0; i < VN_PHASES.length; i++) {
-          var p = VN_PHASES[i];
-          if (h >= p.s && h < p.e) return p.l;
-        }
-        return '🌙 GMT+7';
-      }
-      function tickClock() {
-        var d = getVN();
-        var h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
-        var hEl    = document.getElementById('ci-h');
-        var mEl    = document.getElementById('ci-m');
-        var sEl    = document.getElementById('ci-s');
-        var dateEl = document.getElementById('ci-date');
-        var phEl   = document.getElementById('ci-phase');
-        if (!hEl) return;
-        hEl.textContent    = pad(h);
-        mEl.textContent    = pad(m);
-        sEl.textContent    = pad(s);
-        dateEl.textContent = VN_DAYS[d.getDay()] + ', ' + pad(d.getDate()) + '/' + pad(d.getMonth() + 1);
-        phEl.textContent   = getPhase(h);
-      }
-      tickClock();
-      setInterval(tickClock, 1000);
-    })();
-    /* ============================================================
-       END ANIME CLOCK INLINE
-       ============================================================ */
-
-/* ============================================================
-   THEME SWITCHER
-   ============================================================ */
-(function () {
-  var THEMES = ['cyber', 'sakura', 'ocean', 'fire'];
-  var THEME_ICONS = { cyber: '🌙', sakura: '🌸', ocean: '🌊', fire: '🔥' };
-  var STORAGE_KEY = 'profile-theme';
-
-  var toggleBtn = document.getElementById('theme-toggle');
-  var menu = document.getElementById('theme-menu');
-  var options = document.querySelectorAll('.theme-option');
-
-  if (!toggleBtn || !menu) return;
-
-  function applyTheme(theme) {
-    if (THEMES.indexOf(theme) === -1) theme = 'cyber';
-    document.documentElement.setAttribute('data-theme', theme);
-    toggleBtn.textContent = THEME_ICONS[theme] || '🌙';
-    options.forEach(function (opt) {
-      opt.classList.toggle('active', opt.dataset.theme === theme);
-    });
-    try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
-  }
-
-  // Load saved theme on page load
-  var saved = '';
-  try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) {}
-  applyTheme(saved || 'cyber');
-
-  // Toggle menu open/close
-  toggleBtn.addEventListener('click', function (e) {
-    e.stopPropagation();
-    menu.classList.toggle('hidden');
-  });
-
-  // Select theme
-  options.forEach(function (opt) {
-    opt.addEventListener('click', function () {
-      applyTheme(opt.dataset.theme);
-      setTimeout(function () {
-        menu.classList.add('hidden');
-      }, 150);
-    });
-  });
-
-  // Close menu when clicking outside
-  document.addEventListener('click', function (e) {
-    if (!menu.contains(e.target) && e.target !== toggleBtn) {
-      menu.classList.add('hidden');
-    }
-  });
-})();
-/* ============================================================
-   END THEME SWITCHER
-   ============================================================ */
-
-/* ============================================================
-   PARALLAX BANNER — Mouse-driven layer movement
-   ============================================================ */
-(function () {
-  var card = document.querySelector('.profile-console');
-  var layers = document.querySelectorAll('.plx-layer');
-  if (!card || !layers.length) return;
-
-  var MX = 200;   // max horizontal shift (px per depth unit)
-  var MY = 120;   // max vertical shift
-  var ticking = false;
-
-  function onMove(e) {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(function () {
-      var rect = card.getBoundingClientRect();
-      var px = (e.clientX - rect.left) / rect.width - 0.5;   // -0.5 → 0.5
-      var py = (e.clientY - rect.top) / rect.height - 0.5;
-
-      for (var i = 0; i < layers.length; i++) {
-        var depth = parseFloat(layers[i].dataset.depth) || 0;
-        var dx = (px * depth * MX).toFixed(2);
-        var dy = (py * depth * MY).toFixed(2);
-        layers[i].style.transform = 'translate3d(' + dx + 'px,' + dy + 'px,0)';
-      }
-      ticking = false;
-    });
-  }
-
-  function onLeave() {
-    for (var i = 0; i < layers.length; i++) {
-      layers[i].style.transform = 'translate3d(0,0,0)';
-    }
-  }
-
-  card.addEventListener('pointermove', onMove, { passive: true });
-  card.addEventListener('pointerleave', onLeave);
-})();
-/* ============================================================
-   END PARALLAX BANNER
-   ============================================================ */
-
-/* ============================================================
-   AUDIO VISUALIZER — Real Web Audio API
-   Connects to #audio-player, draws frequency bars on canvas
-   ============================================================ */
-(function () {
-  var canvas = document.getElementById('audio-visualizer');
-  var audioEl = document.getElementById('audio-player');
-  if (!canvas || !audioEl) return;
-
-  var ctx = canvas.getContext('2d');
-  var audioCtx = null;
-  var analyser = null;
-  var source = null;
-  var dataArray = null;
-  var bufferLength = 0;
-  var rafId = null;
-  var connected = false;
-
-  /* Lazily create AudioContext on first user-triggered play
-     (browsers block AudioContext creation before user gesture) */
-  function ensureAudioContext() {
-    if (connected) return;
-    try {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = 0.78;
-      bufferLength = analyser.frequencyBinCount; // 128
-      dataArray = new Uint8Array(bufferLength);
-
-      source = audioCtx.createMediaElementSource(audioEl);
-      source.connect(analyser);
-      analyser.connect(audioCtx.destination);
-      connected = true;
-    } catch (e) {
-      console.warn('AudioContext init failed:', e);
-    }
-  }
-
-  /* Resize canvas to match CSS size (retina-aware) */
-  function resize() {
-    var rect = canvas.getBoundingClientRect();
-    var dpr = window.devicePixelRatio || 1;
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  /* Read CSS variable --cyan color or fallback */
-  function getColors() {
-    var style = getComputedStyle(document.documentElement);
-    var cyan = style.getPropertyValue('--cyan').trim() || '#35e8ff';
-    var pink = style.getPropertyValue('--pink').trim() || '#ff4fd8';
-    return { cyan: cyan, pink: pink };
-  }
-
-  /* Main draw loop */
-  function draw() {
-    if (!analyser) return;
-    rafId = requestAnimationFrame(draw);
-    analyser.getByteFrequencyData(dataArray);
-
-    var rect = canvas.getBoundingClientRect();
-    var W = rect.width;
-    var H = rect.height;
-    ctx.clearRect(0, 0, W, H);
-    
-    // --- GLOBAL AUDIO REACTIVITY ---
-    // Calculate average bass/low frequencies (first 8 bins)
-    var bassSum = 0;
-    for (var j = 0; j < 8; j++) {
-      bassSum += dataArray[j];
-    }
-    var bassAvg = bassSum / 8;
-    // Normalize (0 to 1) and set CSS variable on body
-    document.body.style.setProperty('--audio-bass', bassAvg / 255);
-    // --------------------------------
-
-    var colors = getColors();
-
-    /* Only draw the useful lower-mid frequencies (first 64 bins) */
-    var useBins = Math.min(64, bufferLength);
-    var barWidth = W / useBins;
-    var centerY = H;
-
-    for (var i = 0; i < useBins; i++) {
-      var value = dataArray[i];
-      var percent = value / 255;
-      var barHeight = percent * H * 0.92;
-
-      /* Gradient per bar: cyan at base → pink at top */
-      var grad = ctx.createLinearGradient(0, centerY, 0, centerY - barHeight);
-      grad.addColorStop(0, colors.cyan);
-      grad.addColorStop(0.6, colors.pink);
-      grad.addColorStop(1, 'rgba(255,255,255,0.9)');
-
-      var x = i * barWidth;
-
-      /* Glow effect */
-      ctx.shadowColor = colors.cyan;
-      ctx.shadowBlur = 8 + percent * 12;
-
-      /* Main bar (rounded top) */
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      var r = Math.min(barWidth * 0.3, 3);
-      var bx = x + 1;
-      var bw = barWidth - 2;
-      var by = centerY - barHeight;
-      if (bw > 0 && barHeight > 0) {
-        ctx.moveTo(bx, centerY);
-        ctx.lineTo(bx, by + r);
-        ctx.quadraticCurveTo(bx, by, bx + r, by);
-        ctx.lineTo(bx + bw - r, by);
-        ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + r);
-        ctx.lineTo(bx + bw, centerY);
-        ctx.fill();
-      }
-
-      /* Mirror reflection (faded, below) — subtle ghost */
-      ctx.shadowBlur = 0;
-      ctx.globalAlpha = 0.15;
-      ctx.fillStyle = colors.cyan;
-      var mirrorH = barHeight * 0.3;
-      ctx.fillRect(bx, centerY, bw, mirrorH);
-      ctx.globalAlpha = 1;
-    }
-  }
-
-  /* Start / stop visualizer based on audio state */
-  function startVisualizer() {
-    ensureAudioContext();
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
-    resize();
-    canvas.classList.add('active');
-    if (!rafId) draw();
-  }
-
-  function stopVisualizer() {
-    canvas.classList.remove('active');
-    if (rafId) {
-      cancelAnimationFrame(rafId);
-      rafId = null;
-    }
-  }
-
-  /* Hook into existing audio events */
-  audioEl.addEventListener('play', startVisualizer);
-  audioEl.addEventListener('pause', stopVisualizer);
-  audioEl.addEventListener('ended', stopVisualizer);
-
-  /* Resize on window resize */
-  window.addEventListener('resize', function () {
-    if (canvas.classList.contains('active')) resize();
-  });
-
-  /* If audio is already playing when this script runs */
-  if (!audioEl.paused) startVisualizer();
-})();
-/* ============================================================
-   END AUDIO VISUALIZER
-   ============================================================ */
-
-/* ============================================================
-   INTERACTIVE COMPANION & MAGNETIC BUTTONS
-   ============================================================ */
-(function initPremiumUI() {
-  /* 1. Interactive Companion Eye Tracking & Cat */
-  const companion = document.getElementById('companion');
-  const cat = document.querySelector('.css-cat');
-  let catSleepTimer = null;
-
-  if (companion) {
-    const eyes = companion.querySelectorAll('.comp-eye');
-    const catEyes = cat ? cat.querySelectorAll('.cat-eye') : [];
-    
-    document.addEventListener('mousemove', (e) => {
-      // Chibi Eye Tracking
-      const rect = companion.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
-      
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const maxDist = 300; // max distance before eyes stop moving further
-      const factor = Math.min(dist / maxDist, 1);
-      
-      // Eyes move max 4px
-      const ex = dist > 0 ? (dx / dist) * factor * 4 : 0;
-      const ey = dist > 0 ? (dy / dist) * factor * 4 : 0;
-      
-      eyes.forEach(eye => {
-        eye.style.setProperty('--eye-x', `${ex}px`);
-        eye.style.setProperty('--eye-y', `${ey}px`);
-      });
-
-      // Cat Eye Tracking
-      if (cat && cat.classList.contains('awake')) {
-        const cRect = cat.getBoundingClientRect();
-        const ccx = cRect.left + cRect.width / 2;
-        const ccy = cRect.top + cRect.height / 2;
-        const cdx = e.clientX - ccx;
-        const cdy = e.clientY - ccy;
-        const cDist = Math.sqrt(cdx * cdx + cdy * cdy);
-        const cFactor = Math.min(cDist / 200, 1);
-        const cex = cDist > 0 ? (cdx / cDist) * cFactor * 3 : 0;
-        const cey = cDist > 0 ? (cdy / cDist) * cFactor * 3 : 0;
-        
-        catEyes.forEach(eye => {
-          eye.style.setProperty('--cat-eye-x', `${cex}px`);
-          eye.style.setProperty('--cat-eye-y', `${cey}px`);
-        });
-        
-        if (cDist < 100) resetCatSleepTimer();
-      }
-    });
-
-    if (cat) {
-      cat.addEventListener('click', wakeUpCat);
-    }
-    
-    function wakeUpCat() {
-      cat.classList.add('awake');
-      resetCatSleepTimer();
-    }
-    
-    function resetCatSleepTimer() {
-      clearTimeout(catSleepTimer);
-      catSleepTimer = setTimeout(() => {
-        cat.classList.remove('awake');
-      }, 5000); // Sleep after 5 seconds of no interaction
-    }
-
-    companion.addEventListener('click', () => {
-      eyes.forEach(eye => {
-        eye.style.background = 'var(--pink)';
-        eye.style.boxShadow = '0 0 14px var(--pink)';
-        setTimeout(() => {
-          eye.style.background = 'var(--cyan)';
-          eye.style.boxShadow = '0 0 8px var(--cyan)';
-        }, 600);
-      });
-      showChat();
-    });
-
-    companion.addEventListener('dblclick', () => {
-      const chibiParent = document.querySelector('.css-chibi');
-      if (chibiParent && !chibiParent.classList.contains('backflip')) {
-        chibiParent.classList.add('backflip');
-        // Animation takes 1.8s
-        setTimeout(() => {
-          chibiParent.classList.remove('backflip');
-        }, 1800);
-      }
-    });
-
-    const chatBubble = document.getElementById('comp-chat');
-    const quotes = [
-      "Bấm vào mình đi!",
-      "Hôm nay bạn thế nào?",
-      "Chúc một ngày tốt lành! ✨",
-      "Cố gắng lên nhé!",
-      "Mình đang nhìn bạn đó 👀"
-    ];
-    let hideTimer = null;
-
-    let typingTimer = null;
-
-    function showChat() {
-      if (!chatBubble) return;
-      clearTimeout(hideTimer);
-      clearTimeout(typingTimer);
-      
-      // Show "Typing..." animation
-      chatBubble.innerHTML = '<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>';
-      chatBubble.classList.add('show');
-      
-      // After 1.5s, show actual quote
-      typingTimer = setTimeout(() => {
-        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-        chatBubble.textContent = randomQuote;
-        
-        // Hide after 3.5s
-        hideTimer = setTimeout(() => {
-          chatBubble.classList.remove('show');
-        }, 3500);
-      }, 1500);
-    }
-
-    setInterval(() => {
-      showChat();
-    }, 12000); // 12 seconds
-    
-    // --- Hat Swapping Logic ---
-    const chibiParent = document.querySelector('.css-chibi');
-    const chibiHat = document.querySelector('.chibi-hat');
-    const hatTypes = ['hat-cap', 'hat-crown', 'hat-wizard', 'hat-catears', 'hat-visor'];
-    let currentHatIndex = -1;
-
-    if (chibiParent && chibiHat) {
-      setInterval(() => {
-        // Trigger arm animation
-        chibiParent.classList.add('chibi-changing-hat');
-        
-        // Wait exactly 0.5s (when hand covers the head)
-        setTimeout(() => {
-          // Remove old hat class
-          if (currentHatIndex >= 0) {
-            chibiHat.classList.remove(hatTypes[currentHatIndex]);
-          }
-          
-          // Pick a random new hat (different from current)
-          let newHatIndex;
-          do {
-            newHatIndex = Math.floor(Math.random() * hatTypes.length);
-          } while (newHatIndex === currentHatIndex && hatTypes.length > 1);
-          
-          currentHatIndex = newHatIndex;
-          chibiHat.classList.add(hatTypes[currentHatIndex]);
-        }, 500); // 500ms syncs with CSS 50% keyframe
-        
-        // Remove animation class after it finishes (1s)
-        setTimeout(() => {
-          chibiParent.classList.remove('chibi-changing-hat');
-        }, 1000);
-      }, 7000); // Change hat every 7 seconds
-      
-      // --- Petting Cat Logic ---
-      setInterval(() => {
-        // Prevent petting while changing hat or typing to avoid weird overlapping arms
-        if (!chibiParent.classList.contains('chibi-changing-hat')) {
-          chibiParent.classList.add('chibi-petting');
-          
-          setTimeout(() => {
-            chibiParent.classList.remove('chibi-petting');
-          }, 2000); // Animation takes 2s
-        }
-      }, 6000); // Pet cat every 6 seconds
-    }
-  }
-
-  /* 2. Magnetic Buttons */
-  const magnets = document.querySelectorAll('.social-row a, .play-btn, .next-btn, .volume-toggle, .theme-toggle-btn');
-  
-  magnets.forEach(btn => {
-    btn.addEventListener('mouseenter', () => {
-      // Set a quick linear transition for the magnetic pull
-      btn.style.transition = 'transform 0.05s linear';
-    });
-    
-    btn.addEventListener('mousemove', (e) => {
-      const rect = btn.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
-      
-      // Pull strength (0.3 = 30% of the distance from center)
-      const moveX = dx * 0.35;
-      const moveY = dy * 0.35;
-      
-      btn.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
-    });
-    
-    btn.addEventListener('mouseleave', () => {
-      // Remove inline transition to let CSS handle the snap back
-      btn.style.transition = '';
-      btn.style.transform = '';
-    });
-  });
-})();
-
-/* ============================================================
-   HOLOGRAPHIC 3D TILT CARDS
-   ============================================================ */
-(function initTiltCards() {
-  const tiltCards = document.querySelectorAll('.presence-card, .activity-card, .about-card');
-  
-  tiltCards.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      
-      // Calculate rotation (-6 to 6 degrees)
-      const rotateX = ((y - centerY) / centerY) * -6;
-      const rotateY = ((x - centerX) / centerX) * 6;
-      
-      // Calculate glare percentage
-      const glareX = (x / rect.width) * 100;
-      const glareY = (y / rect.height) * 100;
-      
-      card.style.setProperty('--rotateX', `${rotateX}deg`);
-      card.style.setProperty('--rotateY', `${rotateY}deg`);
-      card.style.setProperty('--glare-x', `${glareX}%`);
-      card.style.setProperty('--glare-y', `${glareY}%`);
-    });
-    
-    card.addEventListener('mouseleave', () => {
-      card.style.setProperty('--rotateX', '0deg');
-      card.style.setProperty('--rotateY', '0deg');
-      card.style.setProperty('--glare-x', '50%');
-      card.style.setProperty('--glare-y', '50%');
-    });
-  });
-})();
-
-/* ============================================================
-   INTERACTIVE CURSOR TRAILS
-   ============================================================ */
-(function initCursorTrails() {
-  let lastTime = 0;
-  
-  document.addEventListener('mousemove', (e) => {
-    // Only show trail when profile screen is active
-    if (!document.getElementById('profile-screen').classList.contains('active')) return;
-    
-    const now = Date.now();
-    if (now - lastTime < 40) return; // limit spawn rate (approx 25fps) to save performance
-    lastTime = now;
-    
-    // Get current theme
-    const theme = document.body.getAttribute('data-theme') || 'default';
-    
-    const particle = document.createElement('div');
-    particle.className = `cursor-trail-particle theme-${theme}`;
-    
-    // Set position to mouse
-    particle.style.left = `${e.clientX}px`;
-    particle.style.top = `${e.clientY}px`;
-    
-    // Randomize size slightly
-    const size = Math.random() * 6 + 4; // 4px to 10px
-    particle.style.width = `${size}px`;
-    particle.style.height = `${size}px`;
-    
-    document.body.appendChild(particle);
-    
-    // Clean up after animation finishes (0.8s max)
-    setTimeout(() => {
-      particle.remove();
-    }, 800);
-  });
-})();
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chinatsu Kamado| profile</title>
+  <meta name="description"
+    content="Chào bạn ở đây cũng ko có gì hay cả, nếu muốn có thể xem thử." />
+  <meta name="theme-color" content="#070a15" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.png" type="image/svg+xml">
+</head>
+
+<body class="terminal-active">
+
+  <!-- ========== CYBER LOADING SCREEN v2 (premium) ========== -->
+  <div id="cyber-loading">
+    <div class="cl-grid-bg"></div>
+    <div class="cl-scanlines"></div>
+    <div class="cl-corner cl-tl"></div>
+    <div class="cl-corner cl-tr"></div>
+    <div class="cl-corner cl-bl"></div>
+    <div class="cl-corner cl-br"></div>
+    <div class="cl-card">
+      <div class="cl-top-bar"></div>
+      <div class="cl-eyebrow">System Boot Sequence</div>
+      <div class="cl-title-wrap">
+        <span class="cl-title" id="cl-title" data-t="INITIALIZING">Tú Xinh Trai!</span>
+      </div>
+      <div class="cl-status-row">
+        <div class="cl-dot"></div>
+        <div class="cl-status-txt" id="cl-status">Đang khởi động hệ thống...</div>
+        <div class="cl-pct" id="cl-pct">0%</div>
+      </div>
+      <div class="cl-track">
+        <div class="cl-fill" id="cl-fill"></div>
+        <div class="cl-head" id="cl-head"></div>
+      </div>
+      <div class="cl-hex"><span>0x0000</span><span>0xFFFF</span></div>
+      <div class="cl-subbars">
+        <div class="cl-sub">
+          <span class="cl-sub-lbl">Neural</span>
+          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs1" style="background:linear-gradient(90deg,#00b4ff,#00ffb4)"></div></div>
+          <span class="cl-sub-pct" id="cs1p">0%</span>
+        </div>
+        <div class="cl-sub">
+          <span class="cl-sub-lbl">Crypto</span>
+          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs2" style="background:linear-gradient(90deg,#ff006e,#ff9d00)"></div></div>
+          <span class="cl-sub-pct" id="cs2p">0%</span>
+        </div>
+        <div class="cl-sub">
+          <span class="cl-sub-lbl">Interface</span>
+          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs3" style="background:linear-gradient(90deg,#8000ff,#00ffb4)"></div></div>
+          <span class="cl-sub-pct" id="cs3p">0%</span>
+        </div>
+      </div>
+      <div class="cl-meta">
+        <span>v4.2.0-NEON</span>
+        <span id="cl-clock">00:00:00</span>
+        <span>CYB-OS</span>
+      </div>
+    </div>
+    <div class="cl-fade-overlay" id="cl-fade"></div>
+  </div>
+  <!-- ========== END CYBER LOADING SCREEN ========== -->
+
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div id="pointer-glow" class="pointer-glow" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+  <video id="bg-video" class="bg-video" autoplay muted loop playsinline aria-hidden="true">
+    <source src="./data/background/bg-test.mp4" type="video/mp4">
+  </video>
+
+  <main id="app-root">
+    <section id="terminal-screen" class="screen terminal-screen active" aria-label="Windows 11 command prompt intro" style="visibility:hidden;opacity:0;transition:opacity 0.6s ease;">
+      <div class="cmd-window">
+        <div class="cmd-titlebar">
+          <div class="cmd-controls" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div id="cmd-tabs" class="cmd-tabs" role="tablist" aria-label="CMD tabs"></div>
+          <button id="cmd-new-tab" class="cmd-plus" type="button" aria-label="Mở tab CMD mới">+</button>
+        </div>
+        <div class="cmd-body">
+          <div id="cmd-log" class="cmd-log" aria-live="polite"></div>
+          <form id="cmd-form" class="cmd-prompt-line" autocomplete="off">
+            <span>C:\Users\Chinatsu Kamado&gt;</span>
+            <input id="cmd-input" type="text" autocomplete="off" spellcheck="false" aria-label="CMD command input" />
+          </form>
+          <button id="enter-console-btn" class="cmd-continue">Join World</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
+      <article class="profile-console glass-panel">
+        <!-- ========== COMPANION MOVED TO HEADER ========== -->
+        <!-- ========== THEME SWITCHER ========== -->
+        <div id="theme-switcher" class="theme-switcher">
+          <div id="theme-menu" class="theme-menu hidden">
+            <button class="theme-option active" data-theme="cyber" title="Dark Cyber">🌙</button>
+            <button class="theme-option" data-theme="sakura" title="Sakura Pink">🌸</button>
+            <button class="theme-option" data-theme="ocean" title="Ocean Blue">🌊</button>
+            <button class="theme-option" data-theme="fire" title="Neon Fire">🔥</button>
+          </div>
+          <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi giao diện">🌙</button>
+        </div>
+        <!-- ========== END THEME SWITCHER ========== -->
+        <div class="profile-banner">
+          <!-- Parallax Layer 0: Base image -->
+          <div class="plx-layer" data-depth="0.03">
+            <img id="banner-image" src="./data/background/banner.gif" alt="Ảnh bìa hồ sơ" />
+          </div>
+          <!-- Parallax Layer 1: Light sweep -->
+          <div class="plx-layer plx-light" data-depth="0.06"></div>
+          <!-- Parallax Layer 2: Floating particles -->
+          <div class="plx-layer plx-particles" data-depth="0.10">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <!-- Parallax Layer 3: Sparkles -->
+          <div class="plx-layer plx-sparkles" data-depth="0.15">
+            <b>✦</b><b>✧</b><b>✦</b><b>✧</b><b>✦</b>
+          </div>
+          <div class="banner-glow"></div>
+        </div>
+
+        <header class="profile-header">
+          <div class="avatar-wrap">
+            <img id="avatar-image" class="avatar-image" src="https://images-ext-1.discordapp.net/external/Pk9lpqQlm9eiN65fVc4VsGsRbedZwUbAsCBLXPHvHq8/%3Fsize%3D4096/https://cdn.discordapp.com/avatars/917263515209859102/cd121ea4baf2512e6e98f16f0f2a8d04.png?size=4096" alt="Ảnh đại diện Discord" />
+            <div id="avatar-fallback" class="avatar-fallback">T</div>
+            <img id="avatar-decoration" class="avatar-decoration" src="./data/decoration/anime-dang-yeu.png" alt="Trang trí avatar" />
+            <span id="status-orb" class="status-orb offline" aria-label="Trạng thái Discord"></span>
+          </div>
+          <div class="identity-block">
+            <div style="display: flex; align-items: center; gap: 15px; position: relative;">
+              <h1 id="display-name" style="margin: 0;"><span id="profile-typing-name" class="profile-typing-name">Chinatsu Kamado</span><span class="profile-typing-cursor" aria-hidden="true">|</span></h1>
+            </div>
+            <p class="username">@<span id="username" class="glitch-hover" data-text="Chinatsu Kamado">Chinatsu Kamado</span></p>
+          </div>
+        </header>
+
+        <section class="presence-card" aria-labelledby="presence-title" style="position: relative;">
+          <!-- ========== INTERACTIVE COMPANION ========== -->
+          <div class="css-chibi" aria-hidden="true">
+            <div id="comp-chat" class="comp-chat">Bấm vào mình đi!</div>
+            
+            <div id="companion" class="chibi-head" title="Bấm vào mình đi!">
+              <div class="chibi-hat"></div>
+              <div class="comp-eye left"></div>
+              <div class="comp-eye right"></div>
+            </div>
+            <div class="chibi-body"></div>
+            <div class="chibi-arm left"></div>
+            <div class="chibi-arm right"></div>
+            <div class="chibi-leg left"></div>
+            <div class="chibi-leg right"></div>
+          </div>
+          <!-- ========== SLEEPING CAT ========== -->
+          <div class="css-cat" aria-hidden="true">
+            <div class="cat-zzz z1">Z</div>
+            <div class="cat-zzz z2">z</div>
+            <div class="cat-zzz z3">z</div>
+            <div class="cat-tail"></div>
+            <div class="cat-body"></div>
+            <div class="cat-head">
+              <div class="cat-ear left"></div>
+              <div class="cat-ear right"></div>
+              <div class="cat-eye left"></div>
+              <div class="cat-eye right"></div>
+            </div>
+          </div>
+          <div>
+            <h2 id="presence-title">Trạng thái: <span id="custom-status-line">Đang tải...</span></h2>
+            <p id="status-text"><span class="inline-dot"></span>Đang kết nối Discord...</p>
+          </div>
+          <!-- CLOCK WIDGET -->
+          <div class="clock-inline" aria-label="Giờ Việt Nam">
+            <div class="clock-inline-top">
+              <span class="clock-inline-dot"></span>
+              <span class="clock-inline-time"><span id="ci-h">00</span><span class="ci-sep">:</span><span id="ci-m">00</span><span class="ci-sep">:</span><span id="ci-s">00</span></span>
+            </div>
+            <div class="clock-inline-date" id="ci-date">T2, 01/01</div>
+            <div class="clock-inline-phase" id="ci-phase">🌙 GMT+7</div>
+          </div>
+        </section>
+
+        <section id="activity-card" class="activity-card hidden" aria-labelledby="activity-title">
+          <div id="activity-icon" class="activity-icon">✦</div>
+          <div>
+            <h2 id="activity-title">Hoạt động</h2>
+            <p id="activity-name" class="handle">Không có hoạt động</p>
+            <p id="activity-detail">Khi có game, Spotify hoặc app đang chạy thì sẽ hiện ở đây.</p>
+            <p id="activity-time" class="activity-time"></p>
+          </div>
+        </section>
+
+        <section class="meta-grid" aria-label="Thông tin realtime Discord">
+          <div><span>Spotify</span><strong id="spotify-status">Chưa phát hiện</strong></div>
+          <div><span>Huy hiệu</span><strong id="public-flags" class="badge-list">Đang tải</strong></div>
+        </section>
+
+        <section class="about-card">
+          <h2>Giới thiệu</h2>
+          <p>Một góc hồ sơ nhỏ gọn của Chinatsu Kamado, lấy cảm hứng nhẹ từ Discord nhưng vẫn giữ phong cách anime riêng: tối, gọn, mượt và có chiều sâu.</p>
+          <div class="tags" aria-label="Thẻ hồ sơ">
+            <span>Anime</span>
+            <span>Coder</span>
+            <span>Genshin Impact</span>
+            <span>Cheater</span>
+          </div>
+        </section>
+
+
+
+        <nav class="social-row" aria-label="Liên kết mạng xã hội">
+          <a id="discord-link" href="https://discord.com/users/917263515209859102" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
+            <svg viewBox="0 0 127.14 96.36" aria-hidden="true" class="discord-icon">
+              <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.31,60,73.31,53s5-12.74,11.43-12.74S96.1,46,96,53,91.08,65.69,84.69,65.69Z" fill="currentColor"/>
+              <ellipse cx="42.45" cy="53" rx="12" ry="14" fill="currentColor" class="discord-blink" />
+              <ellipse cx="84.69" cy="53" rx="12" ry="14" fill="currentColor" class="discord-blink" />
+            </svg>
+          </a>
+          <a id="youtube-link" href="https://www.youtube.com/@Dogloser" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.12C19.52 3.58 12 3.58 12 3.58s-7.52 0-9.4.5A3 3 0 0 0 .5 6.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.12c1.88.5 9.4.5 9.4.5s7.52 0 9.4-.5a3 3 0 0 0 2.1-2.12A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-5.8ZM9.6 15.55v-7.1L15.85 12 9.6 15.55Z"/></svg>
+          </a>
+          <a id="x-link" href="https://x.com/Dogkunne" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2h3.68l-8.04 9.18L24 22h-7.4l-5.8-7.58L4.17 22H.48l8.6-9.83L0 2h7.6l5.24 6.93L18.9 2Zm-1.3 18.1h2.04L6.5 3.8H4.31L17.6 20.1Z"/></svg>
+          </a>
+          <a id="github-link" href="https://github.com/Dogtheflash" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12Z"/></svg>
+          </a>
+        </nav>
+
+        <footer class="profile-footer">
+          <a id="page-one-link" href="#">Server Minecraft</a>
+          <a id="page-two-link" href="#">
+            <img src="https://cdn-icons-png.flaticon.com/512/3670/3670382.png" alt="Steam" class="steam-icon">
+            My Steam
+          </a>
+          <a id="mal-link" href="#">Text color</a>
+        </footer>
+
+        <!-- ========== MINECRAFT SERVER PAGE ========== -->
+        <section id="minecraft-page" class="color-page hidden" aria-label="Minecraft Server">
+          <div class="color-page-head">
+            <button id="minecraft-back" class="mini-btn" type="button">← Home</button>
+            <div>
+              <p class="eyebrow">MINECRAFT SERVER</p>
+              <h2>Server Minecraft</h2>
+            </div>
+          </div>
+
+          <!-- Bot status card -->
+          <div class="mc-bot-card">
+            <div class="mc-bot-avatar">
+              <img src="./minevui-avatar.png" alt="Bot avatar" id="mc-bot-avatar" />
+              <span class="mc-bot-status-dot online"></span>
+            </div>
+            <div class="mc-bot-info">
+              <div class="mc-bot-tag">ONLINE · <span id="mc-bot-tag">SERVER BOT#0000</span></div>
+              <div class="mc-bot-name" id="mc-bot-name">Minecraft Skyblock</div>
+              <div class="mc-bot-desc" id="mc-bot-desc">🌿 Server Minecraft sinh tồn · Vanilla SMP</div>
+            </div>
+          </div>
+
+          <!-- Join button + timestamp -->
+          <div class="mc-action-row">
+            <a class="mc-join-btn" href="https://discord.gg/" target="_blank" rel="noopener noreferrer" id="mc-join-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.32 4.37A19.8 19.8 0 0 0 15.36 2l-.24.44c1.8.55 2.64 1.34 2.64 1.34a16.5 16.5 0 0 0-5.02-1.55 17.1 17.1 0 0 0-4.24.04c-.13 0-.25.03-.38.05-.75.07-2.56.34-4.84 1.36 0 0 .87-.83 2.78-1.38L5.9 2A19.7 19.7 0 0 0 .94 4.42S0 8.1 0 12.7c0 0 1.47 2.52 5.34 2.65 0 0 .65-.78 1.18-1.45-2.24-.67-3.09-2.08-3.09-2.08s.18.13.5.31l.08.05.12.07c.44.25.88.45 1.29.6.72.28 1.58.56 2.59.75 1.33.25 2.9.34 4.6.02.83-.15 1.68-.4 2.57-.75.62-.24 1.31-.58 2.03-1.05 0 0-.88 1.44-3.2 2.1.53.66 1.15 1.42 1.15 1.42 3.88-.13 5.36-2.65 5.36-2.65 0-4.6-.2-8.33-.2-8.33ZM8.2 11.62c-.98 0-1.78-.86-1.78-1.92 0-1.06.78-1.92 1.78-1.92S10 8.64 9.98 9.7c0 1.06-.79 1.92-1.78 1.92Zm7.38 0c-.98 0-1.78-.86-1.78-1.92 0-1.06.79-1.92 1.78-1.92 1 0 1.8.86 1.78 1.92 0 1.06-.78 1.92-1.78 1.92Z"/></svg>
+              Tham gia Discord
+            </a>
+            <span class="mc-updated" id="mc-updated">Cập nhật --:--:--</span>
+          </div>
+
+          <!-- Stats grid -->
+          <div class="mc-stats-grid">
+            <div class="mc-stat-card">
+              <span class="mc-stat-label">PING</span>
+              <strong class="mc-stat-value" id="mc-ping">--ms</strong>
+            </div>
+            <div class="mc-stat-card">
+              <span class="mc-stat-label">PHIÊN BẢN</span>
+              <strong class="mc-stat-value" id="mc-version">1.21.x</strong>
+            </div>
+            <div class="mc-stat-card">
+              <span class="mc-stat-label">ĐANG CHƠI</span>
+              <strong class="mc-stat-value" id="mc-online">-- người</strong>
+            </div>
+            <div class="mc-stat-card">
+              <span class="mc-stat-label">TỐI ĐA</span>
+              <strong class="mc-stat-value" id="mc-max">-- người</strong>
+            </div>
+            <div class="mc-stat-card wide">
+              <span class="mc-stat-label">ĐỊA CHỈ SERVER</span>
+              <strong class="mc-stat-value mc-ip" id="mc-ip">play.example.com</strong>
+            </div>
+            <div class="mc-stat-card wide">
+              <span class="mc-stat-label">TRẠNG THÁI</span>
+              <strong class="mc-stat-value" id="mc-status-text">Đang kiểm tra...</strong>
+            </div>
+          </div>
+
+          <!-- Feature cards -->
+          <div class="mc-feature-grid">
+            <div class="mc-feature-card">
+              <div class="mc-feature-num">01</div>
+              <div class="mc-feature-title">Survival SMP</div>
+              <div class="mc-feature-desc">Thế giới sinh tồn vanilla, không hack, không cheat — chơi thuần túy cùng nhau.</div>
+            </div>
+            <div class="mc-feature-card">
+              <div class="mc-feature-num">02</div>
+              <div class="mc-feature-title">Cộng đồng nhỏ</div>
+              <div class="mc-feature-desc">Server riêng tư, chỉ bạn bè thân thiết — không lag, không toxic.</div>
+            </div>
+            <div class="mc-feature-card">
+              <div class="mc-feature-num">03</div>
+              <div class="mc-feature-title">Luôn online</div>
+              <div class="mc-feature-desc">Server chạy 24/7, vào bất cứ lúc nào bạn muốn xây dựng hay khám phá.</div>
+            </div>
+          </div>
+        </section>
+        <!-- ========== END MINECRAFT SERVER PAGE ========== -->
+
+        <!-- ========== STEAM PROFILE PAGE ========== -->
+        <section id="steam-page" class="color-page hidden" aria-label="Steam Profile">
+          <div class="color-page-head">
+            <button id="steam-back" class="mini-btn" type="button">← Home</button>
+            <div>
+              <p class="eyebrow">STEAM PROFILE</p>
+              <h2>My Steam</h2>
+            </div>
+          </div>
+
+          <!-- Steam profile card -->
+          <div class="steam-profile-card">
+            <div class="steam-avatar-wrap">
+              <img id="steam-avatar" src="https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg" alt="Steam avatar" />
+              <span class="steam-status-dot" id="steam-status-dot"></span>
+            </div>
+            <div class="steam-profile-info">
+              <div class="steam-platform-tag">STEAM · <span id="steam-status-label">Đang tải...</span></div>
+              <div class="steam-display-name" id="steam-display-name">nakarotad</div>
+              <div class="steam-real-name" id="steam-real-name">🎮 Chinatsu Kamado</div>
+            </div>
+          </div>
+
+          <!-- Action row -->
+          <div class="mc-action-row">
+            <a class="steam-visit-btn" href="https://steamcommunity.com/id/nakarotad/" target="_blank" rel="noopener noreferrer" id="steam-visit-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.718L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.455 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.662 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.252 0-2.265-1.014-2.265-2.265z"/></svg>
+              Xem trang Steam
+            </a>
+            <span class="mc-updated" id="steam-updated">Cập nhật --:--:--</span>
+          </div>
+
+          <!-- Stats grid -->
+          <div class="mc-stats-grid">
+            <div class="mc-stat-card">
+              <span class="mc-stat-label">SỐ GIỜ CHƠI</span>
+              <strong class="mc-stat-value" id="steam-hours">-- giờ</strong>
+            </div>
+            <div class="mc-stat-card">
+              <span class="mc-stat-label">SỐ GAME</span>
+              <strong class="mc-stat-value" id="steam-games">-- game</strong>
+            </div>
+            <div class="mc-stat-card">
+              <span class="mc-stat-label">LEVEL STEAM</span>
+              <strong class="mc-stat-value" id="steam-level">--</strong>
+            </div>
+            <div class="mc-stat-card">
+              <span class="mc-stat-label">BẠN BÈ</span>
+              <strong class="mc-stat-value" id="steam-friends">-- người</strong>
+            </div>
+            <div class="mc-stat-card wide" style="display:flex;align-items:center;gap:14px;">
+              <img id="steam-game-thumb" src="" alt="Game thumbnail"
+                style="display:none;width:72px;height:40px;object-fit:cover;border-radius:6px;flex:0 0 auto;border:1px solid rgba(255,255,255,.12);" />
+              <div style="min-width:0;flex:1;">
+                <span class="mc-stat-label">ĐANG CHƠI</span>
+                <strong class="mc-stat-value" id="steam-playing">Đang kết nối...</strong>
+              </div>
+            </div>
+            <div class="mc-stat-card wide">
+              <span class="mc-stat-label">STEAM ID</span>
+              <strong class="mc-stat-value mc-ip">nakarotad</strong>
+            </div>
+          </div>
+
+          <!-- Feature / game highlight cards -->
+          <div class="mc-feature-grid">
+            <div class="mc-feature-card steam-game-card" id="steam-game-1">
+              <div class="mc-feature-num">01</div>
+              <div class="mc-feature-title">Counter-Strike 2</div>
+              <div class="mc-feature-desc">FPS huyền thoại — tactical shooter số một thế giới.</div>
+            </div>
+            <div class="mc-feature-card steam-game-card" id="steam-game-2">
+              <div class="mc-feature-num">02</div>
+              <div class="mc-feature-title">Genshin Impact</div>
+              <div class="mc-feature-desc">Open-world RPG với đồ họa đẹp và cốt truyện sâu sắc.</div>
+            </div>
+            <div class="mc-feature-card steam-game-card" id="steam-game-3">
+              <div class="mc-feature-num">03</div>
+              <div class="mc-feature-title">Minecraft</div>
+              <div class="mc-feature-desc">Game xây dựng và sinh tồn — sáng tạo không giới hạn.</div>
+            </div>
+          </div>
+        </section>
+        <!-- ========== END STEAM PROFILE PAGE ========== -->
+
+        <!-- ========== COLOR TOOL PAGE ========== -->
+        <section id="color-page" class="color-page hidden" aria-label="Unity Rich Text Gradient Generator">
+          <div class="color-page-head">
+            <button id="color-back" class="mini-btn" type="button">← Home</button>
+            <div>
+              <p class="eyebrow">Unity tool</p>
+              <h2>Rich Text Colorizer</h2>
+            </div>
+          </div>
+          <label class="field-block">
+            <span>Nhập văn bản</span>
+            <textarea id="tc-input-text" rows="4">Chinatsu Kamado desu</textarea>
+          </label>
+          <div class="tool-grid">
+            <label class="field-block">
+              <span>Hiệu ứng màu</span>
+              <select id="tc-effect">
+                <option value="two">Dải hai màu</option>
+                <option value="mirror">Dải hai màu lặp lại</option>
+                <option value="three">Dải ba màu</option>
+                <option value="solid">Một màu</option>
+                <option value="random">Màu ngẫu nhiên</option>
+                <option value="rainbow">Cầu vồng</option>
+              </select>
+            </label>
+            <label class="field-block">
+              <span>Phông chữ</span>
+              <select id="tc-font">
+                <option value="">Mặc định</option><option>Arial</option><option>Verdana</option><option>Tahoma</option><option>Georgia</option><option>Courier New</option><option>Times New Roman</option><option>Trebuchet MS</option><option>Lucida Console</option>
+              </select>
+            </label>
+          </div>
+          <div class="color-picks" aria-label="Chọn màu">
+            <label><span>Đầu</span><input id="tc-color-1" type="color" value="#ff4fd8"></label>
+            <label><span>Giữa</span><input id="tc-color-2" type="color" value="#5865f2"></label>
+            <label><span>Cuối</span><input id="tc-color-3" type="color" value="#35e8ff"></label>
+          </div>
+          <div class="tool-grid compact">
+            <label class="field-block"><span>Cỡ chữ</span><select id="tc-size"><option value="0">Mặc định</option><option value="12">12</option><option value="18">18</option><option value="24">24</option><option value="30">30</option><option value="36">36</option><option value="48">48</option><option value="60">60</option><option value="72">72</option><option value="90">90</option></select></label>
+            <div class="toggle-row"><label><input id="tc-bold" type="checkbox">Đậm</label><label><input id="tc-italic" type="checkbox">Nghiêng</label><label><input id="tc-word" type="checkbox">Random</label></div>
+          </div>
+          <div class="preview-card">
+            <span>Preview</span>
+            <div id="tc-preview" class="tc-preview"></div>
+          </div>
+          <label class="field-block output-block">
+            <span>Unity Rich Text</span>
+            <textarea id="tc-output" rows="6" readonly></textarea>
+          </label>
+          <button id="tc-copy" class="copy-btn" type="button">Copy Unity Rich Text</button>
+        </section>
+        <!-- ========== END COLOR TOOL PAGE ========== -->
+
+
+
+      </article>
+    </section>
+  </main>
+
+  <aside id="music-player" class="music-player glass-panel hidden" aria-label="Trình phát nhạc">
+    <button id="play-toggle" class="play-btn" type="button" aria-label="Phát hoặc tạm dừng">▶</button>
+    <button id="next-track" class="next-btn" type="button" aria-label="Chuyển bài tiếp theo">⏭</button>
+    <div class="track-meta">
+      <strong id="track-title">Beautiful Piano Music</strong>
+      <div class="track-time"><span id="current-time">0:00</span><span id="duration-time">0:00</span></div>
+      <div class="progress"><span id="progress-bar"></span></div>
+    </div>
+    <div id="volume-control" class="volume-control" aria-label="Âm lượng nhạc">
+      <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Mở chỉnh âm lượng">🔊</button>
+      <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
+    </div>
+    <!-- REAL AUDIO VISUALIZER CANVAS -->
+    <canvas id="audio-visualizer" class="audio-visualizer player-visualizer" aria-hidden="true"></canvas>
+    <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
+  </aside>
+
+  <script src="script.js"></script>
+</body>
+</html>
