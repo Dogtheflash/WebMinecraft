@@ -1915,3 +1915,41 @@ if (interactiveCard) {
     });
   });
 })();
+
+/* ============================================================
+   HOLOGRAPHIC 3D TILT CARDS
+   ============================================================ */
+(function initTiltCards() {
+  const tiltCards = document.querySelectorAll('.presence-card, .activity-card, .about-card');
+  
+  tiltCards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      // Calculate rotation (-6 to 6 degrees)
+      const rotateX = ((y - centerY) / centerY) * -6;
+      const rotateY = ((x - centerX) / centerX) * 6;
+      
+      // Calculate glare percentage
+      const glareX = (x / rect.width) * 100;
+      const glareY = (y / rect.height) * 100;
+      
+      card.style.setProperty('--rotateX', `${rotateX}deg`);
+      card.style.setProperty('--rotateY', `${rotateY}deg`);
+      card.style.setProperty('--glare-x', `${glareX}%`);
+      card.style.setProperty('--glare-y', `${glareY}%`);
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.setProperty('--rotateX', '0deg');
+      card.style.setProperty('--rotateY', '0deg');
+      card.style.setProperty('--glare-x', '50%');
+      card.style.setProperty('--glare-y', '50%');
+    });
+  });
+})();
