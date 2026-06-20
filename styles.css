@@ -2306,7 +2306,7 @@ body.shaking {
 }
 .runner-chibi-wrap .css-chibi {
   position: absolute;
-  bottom: 0 !important;
+  bottom: 28px !important;
   right: auto !important;
   left: 0 !important;
   transform: scale(0.6);
