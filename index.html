@@ -20,46 +20,30 @@
 <body class="terminal-active">
 
   <!-- ========== CYBER LOADING SCREEN v2 (premium) ========== -->
-  <div id="cyber-loading" class="eldritch-theme">
-    <!-- Cosmic starfield background -->
-    <div class="eld-stars"></div>
-    <div class="eld-stars eld-stars-2"></div>
+  <div id="cyber-loading" class="glitch-hologram-theme">
+    <div class="gh-noise"></div>
+    <div class="gh-crt-overlay"></div>
+    <div class="gh-scratches"></div>
 
-    <!-- The Eye — background image -->
-    <div class="eld-eye-wrap">
-      <div class="eld-eye-img"></div>
-      <div class="eld-eye-glow"></div>
-    </div>
-
-    <!-- Rune circles around the eye -->
-    <div class="eld-rune-ring eld-rune-outer"></div>
-    <div class="eld-rune-ring eld-rune-inner"></div>
-
-    <!-- Purple energy tendrils -->
-    <div class="eld-tendril eld-t1"></div>
-    <div class="eld-tendril eld-t2"></div>
-    <div class="eld-tendril eld-t3"></div>
-    <div class="eld-tendril eld-t4"></div>
-
-    <!-- UI overlay -->
-    <div class="eld-ui">
-      <!-- Gothic progress bar (top area) -->
-      <div class="eld-progress-area">
-        <div class="eld-pct" id="cl-pct">0%</div>
-        <div class="eld-bar-wrap">
-          <div class="eld-bar-ornament eld-bar-left"></div>
-          <div class="eld-bar-track">
-            <div class="eld-bar-fill" id="cl-fill"></div>
-          </div>
-          <div class="eld-bar-ornament eld-bar-right"></div>
-        </div>
-        <div class="eld-status" id="cl-status">Loading...</div>
+    <div class="gh-container">
+      <!-- Restored original title -->
+      <div class="gh-title-wrap">
+        <div class="gh-title" data-text="Tú Xinh Trai!">Tú Xinh Trai!</div>
+        <div class="gh-subtitle">NEURAL DIVE INITIALIZING...</div>
       </div>
 
-      <!-- SUMMONING text (bottom) -->
-      <div class="eld-summon-text">S U M M O N I N G . . .</div>
-    </div>
+      <!-- Holographic Ring -->
+      <div class="gh-ring-wrap">
+        <div class="gh-ring-bg"></div>
+        <div class="gh-ring-glitch" id="cl-ring"></div>
+        <div class="gh-ring-inner"></div>
+        <div class="gh-pct" id="cl-pct">0%</div>
+      </div>
 
+      <!-- Status Text -->
+      <div class="gh-status" id="cl-status">Establishing connection...</div>
+    </div>
+    
     <div class="cl-fade-overlay" id="cl-fade"></div>
   </div>
   <!-- ========== END CYBER LOADING SCREEN ========== -->
