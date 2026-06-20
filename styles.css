@@ -2012,3 +2012,46 @@ body,
   0% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
   100% { opacity: 0; transform: translate(-50%, -80px) scale(0); }
 }
+
+/* ============================================================
+   GLOBAL AUDIO REACTIVITY & GLITCH HEADERS
+   ============================================================ */
+/* Audio Reactivity on Cards */
+.presence-card, .activity-card, .about-card {
+  box-shadow: 0 0 calc(var(--audio-bass, 0) * 20px) var(--cyan);
+  /* Override box-shadow transition to be fast for audio sync */
+  transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94), background .45s ease, border-color .35s ease, box-shadow 0.05s ease-out !important;
+}
+[data-theme="sakura"] .presence-card, [data-theme="sakura"] .activity-card, [data-theme="sakura"] .about-card {
+  box-shadow: 0 0 calc(var(--audio-bass, 0) * 20px) #fd79a8;
+}
+[data-theme="ocean"] .presence-card, [data-theme="ocean"] .activity-card, [data-theme="ocean"] .about-card {
+  box-shadow: 0 0 calc(var(--audio-bass, 0) * 20px) #74b9ff;
+}
+[data-theme="fire"] .presence-card, [data-theme="fire"] .activity-card, [data-theme="fire"] .about-card {
+  box-shadow: 0 0 calc(var(--audio-bass, 0) * 20px) #ff9f43;
+}
+
+/* Audio Reactivity on Avatar */
+.avatar-wrapper {
+  transform: scale(calc(1 + var(--audio-bass, 0) * 0.08));
+  transition: transform 0.05s ease-out;
+}
+
+/* RGB Glitch Headers */
+.presence-card h2, .activity-card h2, .about-card h2 {
+  transition: text-shadow 0.2s ease, transform 0.1s ease;
+}
+.presence-card h2:hover, .activity-card h2:hover, .about-card h2:hover {
+  animation: glitchText 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+  color: #fff;
+}
+
+@keyframes glitchText {
+  0% { transform: translate(0); text-shadow: 2px 0 0 red, -2px 0 0 cyan; }
+  20% { transform: translate(-2px, 1px); text-shadow: -2px 0 0 red, 2px 0 0 cyan; }
+  40% { transform: translate(-2px, -1px); text-shadow: 2px 0 0 red, -2px 0 0 cyan; }
+  60% { transform: translate(2px, 1px); text-shadow: -2px 0 0 red, 2px 0 0 cyan; }
+  80% { transform: translate(2px, -1px); text-shadow: 2px 0 0 red, -2px 0 0 cyan; }
+  100% { transform: translate(0); text-shadow: -2px 0 0 red, 2px 0 0 cyan; }
+}
