@@ -2038,20 +2038,3 @@ body,
   transition: transform 0.05s ease-out;
 }
 
-/* RGB Glitch Headers */
-.presence-card h2, .activity-card h2, .about-card h2 {
-  transition: text-shadow 0.2s ease, transform 0.1s ease;
-}
-.presence-card h2:hover, .activity-card h2:hover, .about-card h2:hover {
-  animation: glitchText 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-  color: #fff;
-}
-
-@keyframes glitchText {
-  0% { transform: translate(0); text-shadow: 2px 0 0 red, -2px 0 0 cyan; }
-  20% { transform: translate(-2px, 1px); text-shadow: -2px 0 0 red, 2px 0 0 cyan; }
-  40% { transform: translate(-2px, -1px); text-shadow: 2px 0 0 red, -2px 0 0 cyan; }
-  60% { transform: translate(2px, 1px); text-shadow: -2px 0 0 red, 2px 0 0 cyan; }
-  80% { transform: translate(2px, -1px); text-shadow: 2px 0 0 red, -2px 0 0 cyan; }
-  100% { transform: translate(0); text-shadow: -2px 0 0 red, 2px 0 0 cyan; }
-}
