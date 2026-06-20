@@ -2342,6 +2342,7 @@ if (interactiveCard) {
 
   function startGame() {
     gameContainer.classList.add('active');
+    aboutCard.classList.add('game-active');
     resetGame();
   }
 
@@ -2368,6 +2369,7 @@ if (interactiveCard) {
   function stopGame() {
     isPlaying = false;
     gameContainer.classList.remove('active');
+    aboutCard.classList.remove('game-active');
     cancelAnimationFrame(reqId);
   }
 
