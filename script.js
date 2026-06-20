@@ -1968,6 +1968,18 @@ if (interactiveCard) {
           chibiParent.classList.remove('chibi-changing-hat');
         }, 1000);
       }, 7000); // Change hat every 7 seconds
+      
+      // --- Petting Cat Logic ---
+      setInterval(() => {
+        // Prevent petting while changing hat or typing to avoid weird overlapping arms
+        if (!chibiParent.classList.contains('chibi-changing-hat')) {
+          chibiParent.classList.add('chibi-petting');
+          
+          setTimeout(() => {
+            chibiParent.classList.remove('chibi-petting');
+          }, 2000); // Animation takes 2s
+        }
+      }, 6000); // Pet cat every 6 seconds
     }
   }
 
