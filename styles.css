@@ -368,6 +368,26 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 .hidden { display:none !important; }
 
 @keyframes screenIn { from { opacity:0; transform:translateY(14px) scale(.98); } to { opacity:1; transform:none; } }
+
+/* ========== WARP PORTAL TRANSITION ========== */
+.warp-out {
+  animation: portalWarpOut 0.8s cubic-bezier(0.5, 0, 0.2, 1) forwards !important;
+  pointer-events: none;
+}
+@keyframes portalWarpOut {
+  0% { transform: scale(1); filter: blur(0) brightness(1); opacity: 1; }
+  30% { transform: scale(0.95); filter: blur(2px) brightness(1.2); opacity: 1; }
+  100% { transform: scale(4) translateZ(0); filter: blur(20px) brightness(3); opacity: 0; }
+}
+
+.warp-in {
+  animation: portalWarpIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+@keyframes portalWarpIn {
+  0% { transform: scale(0.2); filter: blur(20px) brightness(3); opacity: 0; }
+  100% { transform: scale(1); filter: blur(0) brightness(1); opacity: 1; }
+}
+/* ============================================ */
 @keyframes drift { to { transform: translate(4%, 3%) scale(1.04); } }
 @keyframes pageDriftOut { 0% { opacity:1; transform:translateY(-4px) translateX(0) scale(1); filter:blur(0); } 55% { opacity:.42; transform:translateY(-4px) translateX(-18px) scale(.975); filter:blur(1.8px); } 100% { opacity:1; transform:translateY(-4px) translateX(0) scale(1); filter:blur(0); } }
 @keyframes pageDriftIn { 0% { opacity:.46; transform:translateY(-4px) translateX(18px) scale(.975); filter:blur(1.8px); } 100% { opacity:1; transform:translateY(-4px) translateX(0) scale(1); filter:blur(0); } }
