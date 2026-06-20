@@ -1860,12 +1860,17 @@ if (interactiveCard) {
    INTERACTIVE COMPANION & MAGNETIC BUTTONS
    ============================================================ */
 (function initPremiumUI() {
-  /* 1. Interactive Companion Eye Tracking */
+  /* 1. Interactive Companion Eye Tracking & Cat */
   const companion = document.getElementById('companion');
+  const cat = document.querySelector('.css-cat');
+  let catSleepTimer = null;
+
   if (companion) {
     const eyes = companion.querySelectorAll('.comp-eye');
+    const catEyes = cat ? cat.querySelectorAll('.cat-eye') : [];
     
     document.addEventListener('mousemove', (e) => {
+      // Chibi Eye Tracking
       const rect = companion.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
@@ -1884,7 +1889,43 @@ if (interactiveCard) {
         eye.style.setProperty('--eye-x', `${ex}px`);
         eye.style.setProperty('--eye-y', `${ey}px`);
       });
+
+      // Cat Eye Tracking
+      if (cat && cat.classList.contains('awake')) {
+        const cRect = cat.getBoundingClientRect();
+        const ccx = cRect.left + cRect.width / 2;
+        const ccy = cRect.top + cRect.height / 2;
+        const cdx = e.clientX - ccx;
+        const cdy = e.clientY - ccy;
+        const cDist = Math.sqrt(cdx * cdx + cdy * cdy);
+        const cFactor = Math.min(cDist / 200, 1);
+        const cex = cDist > 0 ? (cdx / cDist) * cFactor * 3 : 0;
+        const cey = cDist > 0 ? (cdy / cDist) * cFactor * 3 : 0;
+        
+        catEyes.forEach(eye => {
+          eye.style.setProperty('--cat-eye-x', `${cex}px`);
+          eye.style.setProperty('--cat-eye-y', `${cey}px`);
+        });
+        
+        if (cDist < 100) resetCatSleepTimer();
+      }
     });
+
+    if (cat) {
+      cat.addEventListener('click', wakeUpCat);
+    }
+    
+    function wakeUpCat() {
+      cat.classList.add('awake');
+      resetCatSleepTimer();
+    }
+    
+    function resetCatSleepTimer() {
+      clearTimeout(catSleepTimer);
+      catSleepTimer = setTimeout(() => {
+        cat.classList.remove('awake');
+      }, 5000); // Sleep after 5 seconds of no interaction
+    }
 
     companion.addEventListener('click', () => {
       eyes.forEach(eye => {
