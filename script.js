@@ -4,7 +4,7 @@
    ============================================================ */
 (function () {
   var overlay  = document.getElementById('cyber-loading');
-  var ring     = document.getElementById('cl-ring');
+  var fill     = document.getElementById('cl-fill');
   var pctEl    = document.getElementById('cl-pct');
   var statusEl = document.getElementById('cl-status');
   var fadeEl   = document.getElementById('cl-fade');
@@ -14,12 +14,12 @@
   if (terminal) terminal.style.visibility = 'hidden';
 
   var msgs = [
-    'Aligning astral coordinates...',
-    'Calibrating stellar compass...',
-    'Synchronizing with the universe...',
-    'Drawing energy from the cosmos...',
-    'Navigating through the Milky Way...',
-    'Destination reached.'
+    'Inserting Cassette...',
+    'Rewinding Tape...',
+    'Adjusting Tracking...',
+    'Loading 198X Graphics Engine...',
+    'Synthesizing Audio Channels...',
+    'Ready To Play.'
   ];
 
   var prog = 0, done = false;
@@ -36,7 +36,7 @@
     prog = Math.min(prog + inc, 100);
 
     var p = Math.floor(prog);
-    if (ring)  ring.style.background = `conic-gradient(#e0c38c ${prog}%, transparent 0)`;
+    if (fill)  fill.style.width = prog + '%';
     if (pctEl) pctEl.textContent = p + '%';
 
     var si = Math.min(Math.floor(prog / 16.6), msgs.length - 1);
@@ -45,7 +45,7 @@
     if (prog >= 100) {
       clearInterval(iv);
       done = true;
-      if (statusEl) statusEl.textContent = 'Connection established.';
+      if (statusEl) statusEl.textContent = 'Ready To Play.';
 
       setTimeout(function () {
         if (fadeEl) fadeEl.classList.add('active');
