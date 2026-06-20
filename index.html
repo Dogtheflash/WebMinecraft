@@ -136,18 +136,7 @@
             <span id="status-orb" class="status-orb offline" aria-label="Trạng thái Discord"></span>
           </div>
           <div class="identity-block">
-            <h1 id="display-name" style="position: relative; display: inline-flex; align-items: center; flex-wrap: wrap;">
-              <span id="profile-typing-name" class="profile-typing-name">Chinatsu Kamado</span>
-              <span class="profile-typing-cursor" aria-hidden="true">|</span>
-              <!-- Interactive Companion moved next to name -->
-              <div id="companion" class="cyber-companion" aria-hidden="true">
-                <div class="comp-chat">Bấm vào mình đi!</div>
-                <div class="comp-body">
-                  <div class="comp-eye left"></div>
-                  <div class="comp-eye right"></div>
-                </div>
-              </div>
-            </h1>
+            <h1 id="display-name"><span id="profile-typing-name" class="profile-typing-name">Chinatsu Kamado</span><span class="profile-typing-cursor" aria-hidden="true">|</span></h1>
             <p class="username">@<span id="username" class="glitch-hover" data-text="Chinatsu Kamado">Chinatsu Kamado</span></p>
           </div>
         </header>
@@ -439,8 +428,6 @@
         </section>
         <!-- ========== END COLOR TOOL PAGE ========== -->
 
-        <!-- AUDIO VISUALIZER is in the music player bar -->
-
       </article>
     </section>
   </main>
@@ -457,7 +444,7 @@
       <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Mở chỉnh âm lượng">🔊</button>
       <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
     </div>
-    <canvas id="audio-visualizer" class="audio-visualizer" aria-hidden="true"></canvas>
+    <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
     <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
   </aside>
 
