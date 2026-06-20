@@ -20,31 +20,46 @@
 <body class="terminal-active">
 
   <!-- ========== CYBER LOADING SCREEN v2 (premium) ========== -->
-  <div id="cyber-loading" class="synthwave-theme">
-    <div class="sw-sky"></div>
-    <div class="sw-sun"></div>
-    <div class="sw-grid-wrap">
-      <div class="sw-grid"></div>
+  <div id="cyber-loading" class="eldritch-theme">
+    <!-- Cosmic starfield background -->
+    <div class="eld-stars"></div>
+    <div class="eld-stars eld-stars-2"></div>
+
+    <!-- The Eye — background image -->
+    <div class="eld-eye-wrap">
+      <div class="eld-eye-img"></div>
+      <div class="eld-eye-glow"></div>
     </div>
-    
-    <div class="sw-container">
-      <div class="sw-title">
-        <span class="sw-neon-text">Tú Xinh Trai!</span>
-        <span class="sw-sub-text">198X SYSTEM INITIATION</span>
-      </div>
-      
-      <div class="sw-progress-wrap">
-        <div class="sw-track">
-          <div class="sw-fill" id="cl-fill"></div>
+
+    <!-- Rune circles around the eye -->
+    <div class="eld-rune-ring eld-rune-outer"></div>
+    <div class="eld-rune-ring eld-rune-inner"></div>
+
+    <!-- Purple energy tendrils -->
+    <div class="eld-tendril eld-t1"></div>
+    <div class="eld-tendril eld-t2"></div>
+    <div class="eld-tendril eld-t3"></div>
+    <div class="eld-tendril eld-t4"></div>
+
+    <!-- UI overlay -->
+    <div class="eld-ui">
+      <!-- Gothic progress bar (top area) -->
+      <div class="eld-progress-area">
+        <div class="eld-pct" id="cl-pct">0%</div>
+        <div class="eld-bar-wrap">
+          <div class="eld-bar-ornament eld-bar-left"></div>
+          <div class="eld-bar-track">
+            <div class="eld-bar-fill" id="cl-fill"></div>
+          </div>
+          <div class="eld-bar-ornament eld-bar-right"></div>
         </div>
-        <div class="sw-pct" id="cl-pct">0%</div>
+        <div class="eld-status" id="cl-status">Loading...</div>
       </div>
-      
-      <div class="sw-status" id="cl-status">Loading Cassette...</div>
+
+      <!-- SUMMONING text (bottom) -->
+      <div class="eld-summon-text">S U M M O N I N G . . .</div>
     </div>
-    
-    <div class="sw-vhs-overlay"></div>
-    <div class="sw-scanlines"></div>
+
     <div class="cl-fade-overlay" id="cl-fade"></div>
   </div>
   <!-- ========== END CYBER LOADING SCREEN ========== -->
