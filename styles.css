@@ -2245,3 +2245,102 @@ body.shaking {
   50% { transform: translateX(-50%) translateY(0px) rotate(2deg); }
 }
 
+/* ============================================================
+   CHIBI RUNNER MINIGAME
+   ============================================================ */
+#runner-game-container {
+  position: absolute;
+  inset: 0;
+  background: var(--card-bg);
+  z-index: 100;
+  border-radius: inherit;
+  display: none;
+  overflow: hidden;
+}
+#runner-game-container.active {
+  display: block;
+  animation: gameReveal 0.4s ease-out;
+}
+@keyframes gameReveal {
+  0% { transform: scaleY(0); opacity: 0; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+.runner-score {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font: 700 16px "JetBrains Mono", monospace;
+  color: var(--cyan);
+  text-shadow: 0 0 5px var(--cyan);
+}
+.runner-close {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 14px;
+}
+.runner-close:hover { color: var(--red); }
+.runner-ground {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 5px var(--cyan);
+}
+.runner-chibi-wrap {
+  position: absolute;
+  bottom: 22px;
+  left: 30px;
+  width: 24px;
+  height: 24px;
+  z-index: 2;
+}
+.runner-chibi-wrap .css-chibi {
+  position: absolute;
+  bottom: 0 !important;
+  right: auto !important;
+  left: 0 !important;
+  transform: scale(0.6);
+  transform-origin: bottom left;
+}
+.runner-obstacle {
+  position: absolute;
+  bottom: 22px;
+  width: 12px;
+  height: 24px;
+  background: transparent;
+  border: 2px solid var(--pink);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  box-shadow: 0 0 8px var(--pink), inset 0 0 4px var(--pink);
+}
+.runner-obstacle::before {
+  content: ''; position: absolute; top: 10px; left: -8px; width: 6px; height: 8px;
+  border: 2px solid var(--pink); border-right: none; border-top: none;
+}
+.runner-obstacle::after {
+  content: ''; position: absolute; top: 6px; right: -8px; width: 6px; height: 6px;
+  border: 2px solid var(--pink); border-left: none; border-top: none;
+}
+.runner-game-over {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(15, 18, 32, 0.85);
+  color: #fff;
+  font: 700 16px "JetBrains Mono", monospace;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 10;
+}
+.runner-game-over.show { opacity: 1; }
+.runner-game-over span { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
