@@ -1650,7 +1650,7 @@ body,
   padding: 4px 8px;
   border-radius: 8px;
   font-size: 11px;
-  color: var(--cyan);
+  color: #ffffff;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
