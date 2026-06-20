@@ -2214,3 +2214,34 @@ body,
   transition: transform 0.05s ease-out;
 }
 
+/* ============================================================
+   SHATTERED GLASS EASTER EGG
+   ============================================================ */
+@keyframes screenShake {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-10px, -10px) rotate(-1deg); }
+  20% { transform: translate(10px, 10px) rotate(1deg); }
+  30% { transform: translate(-10px, 10px) rotate(-1deg); }
+  40% { transform: translate(10px, -10px) rotate(1deg); }
+  50% { transform: translate(-5px, -5px) rotate(-0.5deg); }
+  60% { transform: translate(5px, 5px) rotate(0.5deg); }
+  70% { transform: translate(-5px, 5px) rotate(-0.5deg); }
+  80% { transform: translate(5px, -5px) rotate(0.5deg); }
+}
+body.shaking {
+  animation: screenShake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+.css-chibi.chibi-scared .chibi-arm {
+  animation: chibiScaredArm 0.3s forwards !important;
+}
+@keyframes chibiScaredArm {
+  100% { transform: rotate(160deg) translateY(-10px); }
+}
+.css-chibi.chibi-scared .chibi-head {
+  animation: chibiScaredHead 0.1s infinite;
+}
+@keyframes chibiScaredHead {
+  0%, 100% { transform: translateX(-50%) translateY(2px) rotate(-2deg); }
+  50% { transform: translateX(-50%) translateY(0px) rotate(2deg); }
+}
+
