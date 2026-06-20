@@ -1404,7 +1404,6 @@ function getTiltTarget() {
 }
 
 function updateCardPointer(event) {
-  return; // Disabled by user request
   const target = getTiltTarget();
   if (!target) return;
   if (activeTiltTarget && activeTiltTarget !== target) resetCardPointer();
@@ -2075,7 +2074,6 @@ if (interactiveCard) {
    HOLOGRAPHIC 3D TILT CARDS
    ============================================================ */
 (function initTiltCards() {
-  return; // Disabled by user request
   const tiltCards = document.querySelectorAll('.presence-card, .activity-card, .about-card');
   
   tiltCards.forEach(card => {
