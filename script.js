@@ -1934,6 +1934,41 @@ if (interactiveCard) {
     setInterval(() => {
       showChat();
     }, 12000); // 12 seconds
+    
+    // --- Hat Swapping Logic ---
+    const chibiParent = document.querySelector('.css-chibi');
+    const chibiHat = document.querySelector('.chibi-hat');
+    const hatTypes = ['hat-cap', 'hat-crown', 'hat-wizard', 'hat-catears', 'hat-visor'];
+    let currentHatIndex = -1;
+
+    if (chibiParent && chibiHat) {
+      setInterval(() => {
+        // Trigger arm animation
+        chibiParent.classList.add('chibi-changing-hat');
+        
+        // Wait exactly 0.5s (when hand covers the head)
+        setTimeout(() => {
+          // Remove old hat class
+          if (currentHatIndex >= 0) {
+            chibiHat.classList.remove(hatTypes[currentHatIndex]);
+          }
+          
+          // Pick a random new hat (different from current)
+          let newHatIndex;
+          do {
+            newHatIndex = Math.floor(Math.random() * hatTypes.length);
+          } while (newHatIndex === currentHatIndex && hatTypes.length > 1);
+          
+          currentHatIndex = newHatIndex;
+          chibiHat.classList.add(hatTypes[currentHatIndex]);
+        }, 500); // 500ms syncs with CSS 50% keyframe
+        
+        // Remove animation class after it finishes (1s)
+        setTimeout(() => {
+          chibiParent.classList.remove('chibi-changing-hat');
+        }, 1000);
+      }, 7000); // Change hat every 7 seconds
+    }
   }
 
   /* 2. Magnetic Buttons */
