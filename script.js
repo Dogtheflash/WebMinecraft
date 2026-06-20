@@ -2114,6 +2114,7 @@ if (interactiveCard) {
    INTERACTIVE CURSOR TRAILS
    ============================================================ */
 (function initCursorTrails() {
+  return; // Disabled by user request
   let lastTime = 0;
   
   document.addEventListener('mousemove', (e) => {
