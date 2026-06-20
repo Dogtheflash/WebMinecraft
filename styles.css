@@ -297,7 +297,7 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   background:rgba(255,255,255,.045);
   border-radius:12px;
   position: relative;
-  transform: perspective(1000px) rotateX(var(--rotateX, 0deg)) rotateY(var(--rotateY, 0deg));
+  transform: perspective(1000px) rotateX(var(--rotateX, 0deg)) rotateY(var(--rotateY, 0deg)) scale3d(1.02, 1.02, 1.02) translateZ(10px);
   transform-style: preserve-3d;
   transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94), background .45s ease, border-color .35s ease, box-shadow .45s ease;
   will-change: transform;
@@ -307,7 +307,7 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255,255,255,0.12) 0%, transparent 60%);
+  background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255,255,255,0.25) 0%, transparent 60%);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
