@@ -1687,6 +1687,20 @@ body,
   width: 40px;
   height: 40px;
   z-index: 50;
+  --chibi-scale: 1;
+  transform: scale(var(--chibi-scale));
+}
+
+.css-chibi.backflip {
+  animation: chibiBackflipAnim 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+@keyframes chibiBackflipAnim {
+  0% { transform: scale(var(--chibi-scale)) translateY(0) rotate(0deg); }
+  30% { transform: scale(var(--chibi-scale)) translateY(-50px) rotate(-180deg); }
+  60% { transform: scale(var(--chibi-scale)) translateY(-80px) rotate(-360deg); }
+  80% { transform: scale(var(--chibi-scale)) translateY(0) rotate(-360deg); }
+  90% { transform: scale(var(--chibi-scale)) translateY(-15px) rotate(-360deg); }
+  100% { transform: scale(var(--chibi-scale)) translateY(0) rotate(0deg); }
 }
 
 .comp-chat {
@@ -2065,7 +2079,7 @@ body,
 }
 
 @media (max-width: 620px) {
-  .css-chibi { transform: scale(0.8); right: 20px; }
+  .css-chibi { --chibi-scale: 0.8; right: 20px; }
   .css-cat { transform: scale(0.8); right: 60px; }
   .comp-chat { font-size: 10px; padding: 3px 6px; }
 }
