@@ -108,6 +108,7 @@
             <button class="theme-option" data-theme="ocean" title="Ocean Blue">🌊</button>
             <button class="theme-option" data-theme="fire" title="Neon Fire">🔥</button>
           </div>
+          <button id="zen-toggle" class="zen-toggle-btn" type="button" aria-label="Zen Mode" title="Zen Mode">🧘‍♂️</button>
           <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi giao diện">🌙</button>
         </div>
         <!-- ========== END THEME SWITCHER ========== -->
@@ -486,7 +487,8 @@
     <canvas id="audio-visualizer" class="audio-visualizer player-visualizer" aria-hidden="true"></canvas>
     <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
   </aside>
-
+  <!-- Zen Mode Overlay -->
+  <div id="zen-overlay"></div>
   <script src="script.js"></script>
 </body>
 </html>
