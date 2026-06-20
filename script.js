@@ -1845,6 +1845,15 @@ if (interactiveCard) {
         }, 600);
       });
     });
+
+    /* Chat bubble logic: show every 5 seconds for 2.5s */
+    const chat = companion.querySelector('.comp-chat');
+    if (chat) {
+      setInterval(() => {
+        chat.classList.add('show');
+        setTimeout(() => chat.classList.remove('show'), 2500);
+      }, 5000);
+    }
   }
 
   /* 2. Magnetic Buttons */
