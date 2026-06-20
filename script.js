@@ -1943,10 +1943,10 @@ if (interactiveCard) {
       const chibiParent = document.querySelector('.css-chibi');
       if (chibiParent && !chibiParent.classList.contains('backflip')) {
         chibiParent.classList.add('backflip');
-        // Animation takes 1s
+        // Animation takes 1.8s
         setTimeout(() => {
           chibiParent.classList.remove('backflip');
-        }, 1000);
+        }, 1800);
       }
     });
 
