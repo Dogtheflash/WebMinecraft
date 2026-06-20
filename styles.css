@@ -989,7 +989,7 @@ body.wide-page-active .mc-bot-avatar {
 }
 #cyber-loading .eld-eye-img {
   position: absolute; inset: 0;
-  background: url('eldritch-bg.png') center center / cover no-repeat;
+  background: url('https://files.catbox.moe/k1f21c.png') center center / cover no-repeat;
   border-radius: 50%;
   mask-image: radial-gradient(circle, black 40%, transparent 70%);
   -webkit-mask-image: radial-gradient(circle, black 40%, transparent 70%);
