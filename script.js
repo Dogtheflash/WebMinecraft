@@ -2520,3 +2520,112 @@ if (interactiveCard) {
     stopGame();
   });
 })();
+
+/* ============================================================
+   ZEN MODE & RAIN AUDIO SYNTHESIS
+   ============================================================ */
+(function initZenMode() {
+  const zenBtn = document.getElementById('zen-toggle');
+  const overlay = document.getElementById('zen-overlay');
+  if (!zenBtn || !overlay) return;
+
+  let isZen = false;
+  let audioCtx = null;
+  let noiseNode = null;
+  let filterNode = null;
+  let gainNode = null;
+  let fireflyInterval = null;
+
+  function createRainSound() {
+    if (!audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return; 
+      audioCtx = new AudioContext();
+    }
+    
+    const bufferSize = audioCtx.sampleRate * 2; 
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const output = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1; 
+    }
+    
+    noiseNode = audioCtx.createBufferSource();
+    noiseNode.buffer = buffer;
+    noiseNode.loop = true;
+    
+    filterNode = audioCtx.createBiquadFilter();
+    filterNode.type = 'lowpass';
+    filterNode.frequency.value = 800; 
+    
+    gainNode = audioCtx.createGain();
+    gainNode.gain.value = 0;
+    
+    noiseNode.connect(filterNode);
+    filterNode.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    noiseNode.start();
+    
+    // Fade in
+    gainNode.gain.setTargetAtTime(0.4, audioCtx.currentTime, 1);
+  }
+  
+  function stopRainSound() {
+    if (gainNode) {
+      gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 1);
+      setTimeout(() => {
+        if (noiseNode) {
+          noiseNode.stop();
+          noiseNode.disconnect();
+          noiseNode = null;
+        }
+      }, 2000);
+    }
+  }
+
+  function spawnFirefly() {
+    if (!isZen) return;
+    const f = document.createElement('div');
+    f.className = 'zen-firefly';
+    f.style.left = Math.random() * 100 + 'vw';
+    f.style.animationDuration = (6 + Math.random() * 4) + 's, ' + (2 + Math.random() * 2) + 's';
+    overlay.appendChild(f);
+    
+    setTimeout(() => {
+      if (f.parentNode) f.remove();
+    }, 12000);
+  }
+
+  zenBtn.addEventListener('click', () => {
+    isZen = !isZen;
+    document.body.classList.toggle('zen-mode', isZen);
+    zenBtn.classList.toggle('active', isZen);
+    
+    if (isZen) {
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      createRainSound();
+      
+      fireflyInterval = setInterval(spawnFirefly, 400);
+      
+      // Sleep companions
+      document.querySelector('.css-chibi')?.classList.add('zen-sleep');
+      document.querySelector('.css-cat')?.classList.remove('awake');
+      document.querySelector('.css-cat')?.classList.add('zen-sleep');
+    } else {
+      stopRainSound();
+      clearInterval(fireflyInterval);
+      
+      // Wake companions
+      document.querySelector('.css-chibi')?.classList.remove('zen-sleep');
+      document.querySelector('.css-cat')?.classList.remove('zen-sleep');
+      
+      // Clear fireflies gracefully
+      const flies = overlay.querySelectorAll('.zen-firefly');
+      flies.forEach(f => {
+        f.style.opacity = '0';
+        setTimeout(() => f.remove(), 2000);
+      });
+    }
+  });
+})();
