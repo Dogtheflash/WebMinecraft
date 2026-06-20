@@ -1717,6 +1717,17 @@ if (interactiveCard) {
     var W = rect.width;
     var H = rect.height;
     ctx.clearRect(0, 0, W, H);
+    
+    // --- GLOBAL AUDIO REACTIVITY ---
+    // Calculate average bass/low frequencies (first 8 bins)
+    var bassSum = 0;
+    for (var j = 0; j < 8; j++) {
+      bassSum += dataArray[j];
+    }
+    var bassAvg = bassSum / 8;
+    // Normalize (0 to 1) and set CSS variable on body
+    document.body.style.setProperty('--audio-bass', bassAvg / 255);
+    // --------------------------------
 
     var colors = getColors();
 
