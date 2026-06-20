@@ -20,40 +20,26 @@
 <body class="terminal-active">
 
   <!-- ========== CYBER LOADING SCREEN v2 (premium) ========== -->
-  <div id="cyber-loading">
-    <div class="cl-grid-bg"></div>
-    <div class="cl-scanlines"></div>
-    <div class="cl-glitch-overlay"></div>
-    <div class="cl-corner cl-tl"></div>
-    <div class="cl-corner cl-tr"></div>
-    <div class="cl-corner cl-bl"></div>
-    <div class="cl-corner cl-br"></div>
+  <div id="cyber-loading" class="astral-theme">
+    <div class="astral-stars"></div>
 
-    <div class="cl-holo-wrapper">
-      <!-- Circular Holographic Radar -->
-      <div class="cl-ring-wrap">
-        <div class="cl-ring-bg"></div>
-        <div class="cl-ring-fill" id="cl-ring"></div>
-        <div class="cl-ring-inner"></div>
-        <div class="cl-ring-center">
-          <div class="cl-pct" id="cl-pct">0%</div>
-          <div class="cl-sync-lbl">HACKING</div>
-        </div>
-        <!-- Rotating HUD elements -->
-        <div class="cl-hud-spin1"></div>
-        <div class="cl-hud-spin2"></div>
+    <div class="astral-container">
+      <div class="astral-diamond-wrap">
+        <div class="astral-diamond"></div>
+        <div class="astral-diamond-inner"></div>
       </div>
       
-      <!-- Hacker Terminal Text -->
-      <div class="cl-card">
-        <div class="cl-eyebrow">UNAUTHORIZED ACCESS DETECTED</div>
-        <div class="cl-title-wrap">
-          <span class="cl-title" id="cl-title" data-t="BYPASSING SECURITY...">BYPASSING SECURITY...</span>
+      <div class="astral-text-wrap">
+        <div class="astral-title">Establishing Astral Connection</div>
+        <div class="astral-status" id="cl-status">Connecting to stellar network...</div>
+      </div>
+      
+      <div class="astral-progress-wrap">
+        <div class="astral-track">
+          <div class="astral-fill" id="cl-fill"></div>
+          <div class="astral-head" id="cl-head"></div>
         </div>
-        <div class="cl-status-row">
-          <div class="cl-dot"></div>
-          <div class="cl-status-txt" id="cl-status">Đang khởi động hệ thống...</div>
-        </div>
+        <div class="astral-pct" id="cl-pct">0%</div>
       </div>
     </div>
 
