@@ -99,6 +99,43 @@
    END CYBER LOADING SCREEN
    ============================================================ */
 
+/* ============================================================
+   UI SOUND EFFECTS (Web Audio API)
+   ============================================================ */
+const uiAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playUISound(type) {
+  try {
+    if (uiAudioCtx.state === 'suspended') uiAudioCtx.resume();
+    
+    const osc = uiAudioCtx.createOscillator();
+    const gainNode = uiAudioCtx.createGain();
+    osc.connect(gainNode);
+    gainNode.connect(uiAudioCtx.destination);
+    
+    if (type === 'theme') {
+      // Light click/blip for theme change
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(800, uiAudioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1200, uiAudioCtx.currentTime + 0.05);
+      gainNode.gain.setValueAtTime(0.08, uiAudioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, uiAudioCtx.currentTime + 0.1);
+      osc.start(uiAudioCtx.currentTime);
+      osc.stop(uiAudioCtx.currentTime + 0.1);
+    } else if (type === 'page') {
+      // Futuristic swoosh/bloop for page transition
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(400, uiAudioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(50, uiAudioCtx.currentTime + 0.3);
+      gainNode.gain.setValueAtTime(0.12, uiAudioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, uiAudioCtx.currentTime + 0.3);
+      osc.start(uiAudioCtx.currentTime);
+      osc.stop(uiAudioCtx.currentTime + 0.3);
+    }
+  } catch(e) {
+    console.error("Audio playback failed", e);
+  }
+}
+
 const DISCORD_USER_ID = '917263515209859102';
 const DECORATIONS = [
   'anime-dang-yeu.png',
@@ -635,6 +672,9 @@ function rotateDecoration() {
 setInterval(rotateDecoration, 5000);
 
 function enterConsole() {
+  if (typeof playUISound === 'function') {
+    playUISound('page');
+  }
   showScreen(profileScreen);
   startMusic();
 }
