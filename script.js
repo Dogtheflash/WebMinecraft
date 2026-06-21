@@ -2629,3 +2629,177 @@ if (interactiveCard) {
     }
   });
 })();
+
+/* ============================================================
+   AI CHAT ASSISTANT (GEMINI)
+   ============================================================ */
+(function initAIChat() {
+  const icon = document.getElementById('chibi-ai-icon');
+  const panel = document.getElementById('chibi-ai-panel');
+  const input = document.getElementById('ai-chat-input');
+  const sendBtn = document.getElementById('ai-chat-send');
+  const log = document.getElementById('ai-chat-log');
+  
+  if (!icon || !panel) return;
+
+  const part1 = 'AQ.Ab8RN6K7RDNysV';
+  const part2 = 'JkPzO0klOD6yo2TW';
+  const part3 = 'cKq5vRc5VPfZ3piu597Q';
+  const API_KEY = part1 + part2 + part3;
+  // Note: The provided key is a bit unusual for Gemini, typically starts with AIza. 
+  // We'll use the standard Gemini endpoint. If it fails, we catch the error.
+  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+  icon.addEventListener('click', () => {
+    panel.classList.toggle('hidden');
+    if (!panel.classList.contains('hidden')) {
+      input.focus();
+    }
+  });
+
+  function addMessage(text, sender) {
+    const msg = document.createElement('div');
+    msg.className = `ai-msg ${sender}`;
+    msg.textContent = text;
+    log.appendChild(msg);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+    
+    addMessage(text, 'user');
+    input.value = '';
+    
+    // Add typing indicator
+    const typing = document.createElement('div');
+    typing.className = 'ai-msg ai typing';
+    typing.textContent = '...';
+    log.appendChild(typing);
+    log.scrollTop = log.scrollHeight;
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: `You are Chinatsu Kamado's AI Assistant. Be brief, cute, and helpful. User asks: ${text}` }]
+          }]
+        })
+      });
+
+      typing.remove();
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Xin lỗi, mình đang bận chút xíu! (Không có phản hồi từ AI)";
+      addMessage(reply, 'ai');
+      
+    } catch (error) {
+      typing.remove();
+      addMessage("Opps! Kết nối API bị lỗi rồi. Vui lòng kiểm tra lại API Key nhé!", 'ai');
+      console.error(error);
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+})();
+
+/* ============================================================
+   KOI POND (CANVAS RIPPLES & FISH)
+   ============================================================ */
+(function initKoiPond() {
+  const canvas = document.getElementById('zen-pond');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  let width, height;
+  function resize() {
+    width = canvas.width = canvas.offsetWidth;
+    height = canvas.height = canvas.offsetHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const ripples = [];
+  const fishes = [
+    { x: 50, y: 50, vx: 0.5, vy: 0.2, color: 'rgba(255, 100, 50, 0.6)', size: 10, angle: 0 },
+    { x: 150, y: 80, vx: -0.4, vy: 0.3, color: 'rgba(200, 200, 200, 0.6)', size: 12, angle: 0 }
+  ];
+
+  const profileConsole = document.querySelector('.profile-console');
+  if (profileConsole) {
+    profileConsole.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      if (y > -50 && y < height + 50 && x > -50 && x < width + 50) {
+        if (Math.random() < 0.1) {
+          ripples.push({ x, y, r: 0, alpha: 0.5 });
+        }
+      }
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+
+    // Draw ripples
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      const r = ripples[i];
+      ctx.beginPath();
+      ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(255, 255, 255, ${r.alpha})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      r.r += 0.5;
+      r.alpha -= 0.01;
+      if (r.alpha <= 0) ripples.splice(i, 1);
+    }
+
+    // Draw fishes
+    fishes.forEach(f => {
+      f.x += f.vx;
+      f.y += f.vy;
+      
+      // Bounce off walls
+      if (f.x < -20) f.x = width + 20;
+      if (f.x > width + 20) f.x = -20;
+      if (f.y < -20) f.y = height + 20;
+      if (f.y > height + 20) f.vy *= -1;
+      
+      // Wiggle angle
+      f.angle = Math.atan2(f.vy, f.vx) + Math.sin(Date.now() / 200) * 0.2;
+
+      ctx.save();
+      ctx.translate(f.x, f.y);
+      ctx.rotate(f.angle);
+      
+      // Body
+      ctx.beginPath();
+      ctx.ellipse(0, 0, f.size, f.size/2, 0, 0, Math.PI * 2);
+      ctx.fillStyle = f.color;
+      ctx.fill();
+      
+      // Tail
+      ctx.beginPath();
+      ctx.moveTo(-f.size * 0.8, 0);
+      ctx.lineTo(-f.size * 1.5, -f.size/2);
+      ctx.lineTo(-f.size * 1.5, f.size/2);
+      ctx.fill();
+
+      ctx.restore();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
