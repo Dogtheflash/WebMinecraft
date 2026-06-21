@@ -2646,8 +2646,6 @@ if (interactiveCard) {
   const part2 = 'VA52_esEAKjBjsE7';
   const part3 = 'XU0HXWTZzriXtxGamA';
   const API_KEY = part1 + part2 + part3;
-  // Note: The provided key is a bit unusual for Gemini, typically starts with AIza. 
-  // We'll use the standard Gemini endpoint. If it fails, we catch the error.
   const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
   icon.addEventListener('click', () => {
