@@ -2771,39 +2771,63 @@ if (interactiveCard) {
     monkey.classList.add('swinging');
 
     const oRect = origin.getBoundingClientRect();
-    const dx = (cRect.left + bx) - oRect.left - 10;
-    const dy = (cRect.top + by) - oRect.top - 10;
+    const targetX = (cRect.left + bx) - oRect.left - 10;
+    const targetY = (cRect.top + by) - oRect.top - 10;
 
-    monkey.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx > 0 ? 15 : -15}deg)`;
+    const duration = 1200; // ms
+    const arcHeight = 120; // How deep the swing dips
+    let startSwing = null;
 
-    // Wait for swing to finish
-    setTimeout(() => {
-      // Reached banana
-      banana.remove();
-      monkeyState = 'returning';
+    function animateSwing(timestamp) {
+      if (!startSwing) startSwing = timestamp;
+      const p = Math.min((timestamp - startSwing) / duration, 1);
       
-      // Swing back
-      monkey.style.transform = `translate(0px, 0px) rotate(0deg)`;
+      // ease-in-out curve
+      const ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
       
-      setTimeout(() => {
-        // Reached origin
-        monkey.classList.remove('swinging');
-        monkey.classList.add('eating');
-        monkeyState = 'eating';
+      const currentX = targetX * ease;
+      const currentY = targetY * ease + Math.sin(p * Math.PI) * arcHeight;
+      const rotation = Math.sin(p * Math.PI * 2) * 25; // Wobble back and forth
 
-        // Eat for 2 seconds
-        setTimeout(() => {
-          monkey.classList.remove('eating');
-          monkey.classList.add('idle');
-          monkeyState = 'idle';
+      monkey.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${rotation}deg)`;
+
+      if (p < 1) {
+        requestAnimationFrame(animateSwing);
+      } else {
+        banana.remove();
+        monkeyState = 'returning';
+        
+        let startReturn = null;
+        function animateReturn(t) {
+          if (!startReturn) startReturn = t;
+          const rp = Math.min((t - startReturn) / duration, 1);
+          const rEase = rp < 0.5 ? 2 * rp * rp : 1 - Math.pow(-2 * rp + 2, 2) / 2;
           
-          // Schedule next banana
-          scheduleNextBanana();
-        }, 2000);
+          const rx = targetX * (1 - rEase);
+          const ry = targetY * (1 - rEase) + Math.sin(rp * Math.PI) * arcHeight;
+          const rRot = Math.sin(rp * Math.PI * 2) * -25;
+          
+          monkey.style.transform = `translate(${rx}px, ${ry}px) rotate(${rRot}deg)`;
+          
+          if (rp < 1) {
+            requestAnimationFrame(animateReturn);
+          } else {
+            monkey.classList.remove('swinging');
+            monkey.classList.add('eating');
+            monkeyState = 'eating';
 
-      }, 1200); // returning time
-
-    }, 1200); // swinging time
+            setTimeout(() => {
+              monkey.classList.remove('eating');
+              monkey.classList.add('idle');
+              monkeyState = 'idle';
+              scheduleNextBanana();
+            }, 2000);
+          }
+        }
+        requestAnimationFrame(animateReturn);
+      }
+    }
+    requestAnimationFrame(animateSwing);
   }
 
   function scheduleNextBanana() {
