@@ -2751,7 +2751,7 @@ if (interactiveCard) {
   
   function spawnAndFetchBanana() {
     if (monkeyState !== 'idle') return;
-    if (document.body.classList.contains('zen-mode')) return; // No banana in zen mode
+    if (document.body.classList.contains('zen-mode')) return;
 
     // Spawn banana
     const cRect = consoleEl.getBoundingClientRect();
@@ -2765,69 +2765,61 @@ if (interactiveCard) {
     banana.style.top = by + 'px';
     consoleEl.appendChild(banana);
 
-    // Calculate delta for monkey to swing
-    monkeyState = 'swinging';
+    monkeyState = 'stretching';
     monkey.classList.remove('idle');
-    monkey.classList.add('swinging');
 
-    const oRect = origin.getBoundingClientRect();
-    const targetX = (cRect.left + bx) - oRect.left - 10;
-    const targetY = (cRect.top + by) - oRect.top - 10;
+    // Lấy tọa độ cánh tay trái để kéo dài
+    const arm = monkey.querySelector('.monkey-arm.left');
+    const armRect = arm.getBoundingClientRect();
+    const shoulderX = armRect.left + armRect.width / 2;
+    const shoulderY = armRect.top;
+    
+    // Tọa độ tâm quả chuối
+    const bananaX = cRect.left + bx + 12; 
+    const bananaY = cRect.top + by + 12;
+    
+    const dx = bananaX - shoulderX;
+    const dy = bananaY - shoulderY;
+    const distance = Math.sqrt(dx*dx + dy*dy);
+    
+    // Tính góc xoay tay (tay mặc định chỉ thẳng xuống dưới là 0deg trong logic của mình)
+    const angle = Math.atan2(dy, dx) * 180 / Math.PI - 90;
+    
+    // Hiệu ứng vươn tay dài ra như Luffy
+    arm.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+    arm.style.transform = `rotate(${angle}deg) scaleY(${distance / 16})`;
 
-    const duration = 1200; // ms
-    const arcHeight = 120; // How deep the swing dips
-    let startSwing = null;
-
-    function animateSwing(timestamp) {
-      if (!startSwing) startSwing = timestamp;
-      const p = Math.min((timestamp - startSwing) / duration, 1);
+    // Đợi tay vươn tới chuối
+    setTimeout(() => {
+      // Bắt đầu thu tay về
+      arm.style.transition = 'transform 0.4s ease-in';
+      arm.style.transform = `rotate(${angle}deg) scaleY(1)`;
       
-      // ease-in-out curve
-      const ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      // Đồng thời kéo quả chuối bay về phía mồm khỉ
+      banana.style.transition = 'left 0.4s ease-in, top 0.4s ease-in';
+      banana.style.left = (shoulderX - cRect.left - 10) + 'px';
+      banana.style.top = (shoulderY - cRect.top - 10) + 'px';
       
-      const currentX = targetX * ease;
-      const currentY = targetY * ease + Math.sin(p * Math.PI) * arcHeight;
-      const rotation = Math.sin(p * Math.PI * 2) * 25; // Wobble back and forth
-
-      monkey.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${rotation}deg)`;
-
-      if (p < 1) {
-        requestAnimationFrame(animateSwing);
-      } else {
-        banana.remove();
-        monkeyState = 'returning';
+      setTimeout(() => {
+        // Thu tay xong, reset lại CSS mặc định của tay
+        arm.style.transition = '';
+        arm.style.transform = '';
         
-        let startReturn = null;
-        function animateReturn(t) {
-          if (!startReturn) startReturn = t;
-          const rp = Math.min((t - startReturn) / duration, 1);
-          const rEase = rp < 0.5 ? 2 * rp * rp : 1 - Math.pow(-2 * rp + 2, 2) / 2;
-          
-          const rx = targetX * (1 - rEase);
-          const ry = targetY * (1 - rEase) + Math.sin(rp * Math.PI) * arcHeight;
-          const rRot = Math.sin(rp * Math.PI * 2) * -25;
-          
-          monkey.style.transform = `translate(${rx}px, ${ry}px) rotate(${rRot}deg)`;
-          
-          if (rp < 1) {
-            requestAnimationFrame(animateReturn);
-          } else {
-            monkey.classList.remove('swinging');
-            monkey.classList.add('eating');
-            monkeyState = 'eating';
-
-            setTimeout(() => {
-              monkey.classList.remove('eating');
-              monkey.classList.add('idle');
-              monkeyState = 'idle';
-              scheduleNextBanana();
-            }, 2000);
-          }
-        }
-        requestAnimationFrame(animateReturn);
-      }
-    }
-    requestAnimationFrame(animateSwing);
+        banana.remove();
+        monkeyState = 'eating';
+        monkey.classList.add('eating');
+        
+        // Ăn chuối xong về lại idle
+        setTimeout(() => {
+          monkey.classList.remove('eating');
+          monkey.classList.add('idle');
+          monkeyState = 'idle';
+          scheduleNextBanana();
+        }, 2000);
+        
+      }, 400); // Thời gian thu tay
+      
+    }, 600); // Thời gian vươn tay
   }
 
   function scheduleNextBanana() {
