@@ -2738,6 +2738,84 @@ if (interactiveCard) {
 })();
 
 /* ============================================================
+   SWINGING MONKEY LOGIC
+   ============================================================ */
+(function initMonkey() {
+  const monkey = document.getElementById('css-monkey');
+  const origin = document.getElementById('monkey-origin');
+  const consoleEl = document.querySelector('.profile-console');
+  if (!monkey || !origin || !consoleEl) return;
+
+  monkey.classList.add('idle');
+  let monkeyState = 'idle'; // idle, swinging, returning, eating
+  
+  function spawnAndFetchBanana() {
+    if (monkeyState !== 'idle') return;
+    if (document.body.classList.contains('zen-mode')) return; // No banana in zen mode
+
+    // Spawn banana
+    const cRect = consoleEl.getBoundingClientRect();
+    const bx = Math.random() * (cRect.width - 60) + 30;
+    const by = Math.random() * (cRect.height - 100) + 50;
+
+    const banana = document.createElement('div');
+    banana.className = 'dropped-banana';
+    banana.textContent = '🍌';
+    banana.style.left = bx + 'px';
+    banana.style.top = by + 'px';
+    consoleEl.appendChild(banana);
+
+    // Calculate delta for monkey to swing
+    monkeyState = 'swinging';
+    monkey.classList.remove('idle');
+    monkey.classList.add('swinging');
+
+    const oRect = origin.getBoundingClientRect();
+    const dx = (cRect.left + bx) - oRect.left - 10;
+    const dy = (cRect.top + by) - oRect.top - 10;
+
+    monkey.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx > 0 ? 15 : -15}deg)`;
+
+    // Wait for swing to finish
+    setTimeout(() => {
+      // Reached banana
+      banana.remove();
+      monkeyState = 'returning';
+      
+      // Swing back
+      monkey.style.transform = `translate(0px, 0px) rotate(0deg)`;
+      
+      setTimeout(() => {
+        // Reached origin
+        monkey.classList.remove('swinging');
+        monkey.classList.add('eating');
+        monkeyState = 'eating';
+
+        // Eat for 2 seconds
+        setTimeout(() => {
+          monkey.classList.remove('eating');
+          monkey.classList.add('idle');
+          monkeyState = 'idle';
+          
+          // Schedule next banana
+          scheduleNextBanana();
+        }, 2000);
+
+      }, 1200); // returning time
+
+    }, 1200); // swinging time
+  }
+
+  function scheduleNextBanana() {
+    const delay = Math.random() * 2000 + 5000; // 5 to 7 seconds
+    setTimeout(spawnAndFetchBanana, delay);
+  }
+
+  // Start the loop
+  scheduleNextBanana();
+})();
+
+/* ============================================================
    KOI POND (CANVAS RIPPLES & FISH)
    ============================================================ */
 (function initKoiPond() {
