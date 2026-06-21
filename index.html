@@ -100,6 +100,9 @@
 
     <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
       <article class="profile-console glass-panel">
+        <!-- ========== WEATHER OVERLAY ========== -->
+        <canvas id="weather-canvas" class="weather-canvas"></canvas>
+        <div id="weather-badge" class="weather-badge" title="Thời tiết thật"></div>
         <!-- ========== COMPANION MOVED TO HEADER ========== -->
         <!-- ========== THEME SWITCHER ========== -->
         <div id="theme-switcher" class="theme-switcher">
@@ -149,6 +152,7 @@
         <section class="presence-card" aria-labelledby="presence-title" style="position: relative;">
           <!-- ========== INTERACTIVE COMPANION ========== -->
           <div class="css-chibi" aria-hidden="true">
+            <div class="thought-bubble chibi-thought" id="chibi-thought"></div>
             <div id="comp-chat" class="comp-chat">Bấm vào mình đi!</div>
             
             <!-- AI Chat UI -->
@@ -177,6 +181,7 @@
           <!-- ========== SWINGING MONKEY ========== -->
           <div id="monkey-origin" style="position: absolute; right: 180px; bottom: 100%; width: 40px; height: 40px; pointer-events: none;"></div>
           <div class="css-monkey" id="css-monkey" aria-hidden="true">
+            <div class="thought-bubble monkey-thought" id="monkey-thought"></div>
             <div class="monkey-arm left"></div>
             <div class="monkey-arm right"></div>
             <div class="monkey-body"></div>
@@ -196,6 +201,7 @@
           </div>
           <!-- ========== SLEEPING CAT ========== -->
           <div class="css-cat" aria-hidden="true">
+            <div class="thought-bubble cat-thought" id="cat-thought"></div>
             <div class="cat-zzz z1">Z</div>
             <div class="cat-zzz z2">z</div>
             <div class="cat-zzz z3">z</div>
