@@ -1596,8 +1596,8 @@ if (interactiveCard) {
    THEME SWITCHER
    ============================================================ */
 (function () {
-  var THEMES = ['cyber', 'sakura', 'ocean', 'fire'];
-  var THEME_ICONS = { cyber: '🌙', sakura: '🌸', ocean: '🌊', fire: '🔥' };
+  var THEMES = ['cyber', 'sakura', 'ocean', 'fire', 'terrarium'];
+  var THEME_ICONS = { cyber: '🌙', sakura: '🌸', ocean: '🌊', fire: '🔥', terrarium: '🪴' };
   var STORAGE_KEY = 'profile-theme';
 
   var toggleBtn = document.getElementById('theme-toggle');
