@@ -2615,13 +2615,12 @@ body.zen-mode #zen-bg {
    ============================================================ */
 .zen-pond {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   width: 100%;
-  height: 150px;
+  height: 100%;
   pointer-events: none;
-  z-index: 99; /* Ensure it is above all cards */
+  z-index: 1; /* Nằm dưới chữ nhưng trên background */
   opacity: 0.9;
-  border-bottom-left-radius: inherit;
-  border-bottom-right-radius: inherit;
+  border-radius: inherit;
 }
