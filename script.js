@@ -2729,8 +2729,8 @@ if (interactiveCard) {
 
   const ripples = [];
   const fishes = [
-    { x: 50, y: 50, vx: 0.5, vy: 0.2, color: 'rgba(255, 100, 50, 0.6)', size: 10, angle: 0 },
-    { x: 150, y: 80, vx: -0.4, vy: 0.3, color: 'rgba(200, 200, 200, 0.6)', size: 12, angle: 0 }
+    { x: 50, y: 50, vx: 0.5, vy: 0.2, color: 'rgba(255, 80, 50, 0.9)', size: 16, angle: 0 },
+    { x: 150, y: 80, vx: -0.4, vy: 0.3, color: 'rgba(255, 255, 255, 0.9)', size: 14, angle: 0 }
   ];
 
   const profileConsole = document.querySelector('.profile-console');
