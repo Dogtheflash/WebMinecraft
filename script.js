@@ -1918,9 +1918,35 @@ if (interactiveCard) {
       cat.addEventListener('click', wakeUpCat);
     }
     
-    function wakeUpCat() {
+    const meowAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/86/86-preview.mp3');
+    meowAudio.volume = 0.4;
+
+    function wakeUpCat(e) {
+      if (document.body.classList.contains('zen-mode')) return;
       cat.classList.add('awake');
       resetCatSleepTimer();
+      
+      meowAudio.cloneNode().play().catch(e => console.log("Audio not allowed yet"));
+      
+      const heart = document.createElement('div');
+      heart.textContent = '❤️';
+      heart.style.position = 'fixed';
+      heart.style.left = (e.clientX || cat.getBoundingClientRect().left + 15) + 'px';
+      heart.style.top = (e.clientY || cat.getBoundingClientRect().top) + 'px';
+      heart.style.fontSize = '20px';
+      heart.style.pointerEvents = 'none';
+      heart.style.zIndex = '9999';
+      heart.style.transition = 'all 1.2s cubic-bezier(0.16, 1, 0.3, 1)';
+      heart.style.transform = 'translate(-50%, -50%) scale(0.5)';
+      heart.style.opacity = '1';
+      document.body.appendChild(heart);
+      
+      requestAnimationFrame(() => {
+        heart.style.transform = `translate(-50%, calc(-50% - 80px)) scale(1.5) rotate(${Math.random() * 40 - 20}deg)`;
+        heart.style.opacity = '0';
+      });
+      
+      setTimeout(() => heart.remove(), 1200);
     }
     
     function resetCatSleepTimer() {
