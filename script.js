@@ -2642,9 +2642,9 @@ if (interactiveCard) {
   
   if (!icon || !panel) return;
 
-  const part1 = 'AQ.Ab8RN6K7RDNysV';
-  const part2 = 'JkPzO0klOD6yo2TW';
-  const part3 = 'cKq5vRc5VPfZ3piu597Q';
+  const part1 = 'AQ.Ab8RN6Ivt0jH6J6B';
+  const part2 = 'VA52_esEAKjBjsE7';
+  const part3 = 'XU0HXWTZzriXtxGamA';
   const API_KEY = part1 + part2 + part3;
   // Note: The provided key is a bit unusual for Gemini, typically starts with AIza. 
   // We'll use the standard Gemini endpoint. If it fails, we catch the error.
