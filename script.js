@@ -2765,29 +2765,33 @@ if (interactiveCard) {
     banana.style.top = by + 'px';
     consoleEl.appendChild(banana);
 
-    monkeyState = 'stretching';
-    monkey.classList.remove('idle');
+    monkeyState = 'waiting'; // Đợi chuối rơi xong mới phản ứng
+    
+    // Khỉ nhìn thấy chuối, chờ 1.5 giây rồi mới vươn tay
+    setTimeout(() => {
+      monkey.classList.remove('idle');
+      monkeyState = 'stretching';
 
-    // Lấy tọa độ cánh tay trái để kéo dài
-    const arm = monkey.querySelector('.monkey-arm.left');
-    const armRect = arm.getBoundingClientRect();
-    const shoulderX = armRect.left + armRect.width / 2;
-    const shoulderY = armRect.top;
-    
-    // Tọa độ tâm quả chuối
-    const bananaX = cRect.left + bx + 12; 
-    const bananaY = cRect.top + by + 12;
-    
-    const dx = bananaX - shoulderX;
-    const dy = bananaY - shoulderY;
-    const distance = Math.sqrt(dx*dx + dy*dy);
-    
-    // Tính góc xoay tay (tay mặc định chỉ thẳng xuống dưới là 0deg trong logic của mình)
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI - 90;
-    
-    // Hiệu ứng vươn tay dài ra như Luffy
-    arm.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-    arm.style.transform = `rotate(${angle}deg) scaleY(${distance / 16})`;
+      // Lấy tọa độ cánh tay trái để kéo dài
+      const arm = monkey.querySelector('.monkey-arm.left');
+      const armRect = arm.getBoundingClientRect();
+      const shoulderX = armRect.left + armRect.width / 2;
+      const shoulderY = armRect.top;
+      
+      // Tọa độ tâm quả chuối
+      const bananaX = cRect.left + bx + 12; 
+      const bananaY = cRect.top + by + 12;
+      
+      const dx = bananaX - shoulderX;
+      const dy = bananaY - shoulderY;
+      const distance = Math.sqrt(dx*dx + dy*dy);
+      
+      // Tính góc xoay tay
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI - 90;
+      
+      // Hiệu ứng vươn tay dài ra như Luffy
+      arm.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+      arm.style.transform = `rotate(${angle}deg) scaleY(${distance / 16})`;
 
     // Đợi tay vươn tới chuối
     setTimeout(() => {
@@ -2820,6 +2824,8 @@ if (interactiveCard) {
       }, 400); // Thời gian thu tay
       
     }, 600); // Thời gian vươn tay
+
+    }, 1500); // Khỉ chờ 1.5 giây ngắm chuối rồi mới vươn tay
   }
 
   function scheduleNextBanana() {
