@@ -2845,3 +2845,14 @@ body.zen-mode #zen-bg {
   bottom: calc(100% + 4px);
   left: 18px;
 }
+
+/* Fix overlaps when thought bubbles are shown */
+.css-chibi:has(.chibi-thought.show) .comp-chat {
+  opacity: 0 !important;
+  visibility: hidden;
+  transition: opacity 0.2s;
+}
+
+.css-cat:has(.cat-thought.show) {
+  z-index: 110 !important;
+}
