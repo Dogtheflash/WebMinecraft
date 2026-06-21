@@ -2738,6 +2738,250 @@ if (interactiveCard) {
 })();
 
 /* ============================================================
+   LIVE WEATHER EFFECTS
+   ============================================================ */
+(function initWeather() {
+  const canvas = document.getElementById('weather-canvas');
+  const badge = document.getElementById('weather-badge');
+  if (!canvas || !badge) return;
+  const ctx = canvas.getContext('2d');
+  let w, h;
+  function resize() { w = canvas.width = canvas.offsetWidth; h = canvas.height = canvas.offsetHeight; }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let particles = [];
+  let weatherType = 'clear'; // rain, snow, clear, clouds, storm
+
+  const weatherMap = {
+    '0': 'clear', '1': 'clear',
+    '2': 'clouds', '3': 'clouds',
+    '45': 'clouds', '48': 'clouds',
+    '51': 'rain', '53': 'rain', '55': 'rain',
+    '56': 'rain', '57': 'rain',
+    '61': 'rain', '63': 'rain', '65': 'storm',
+    '66': 'rain', '67': 'storm',
+    '71': 'snow', '73': 'snow', '75': 'snow',
+    '77': 'snow',
+    '80': 'rain', '81': 'rain', '82': 'storm',
+    '85': 'snow', '86': 'snow',
+    '95': 'storm', '96': 'storm', '99': 'storm'
+  };
+
+  const weatherEmoji = {
+    'clear': '☀️', 'clouds': '☁️', 'rain': '🌧️', 'snow': '❄️', 'storm': '⛈️'
+  };
+  const weatherLabel = {
+    'clear': 'Trời nắng', 'clouds': 'Nhiều mây', 'rain': 'Trời mưa', 'snow': 'Tuyết rơi', 'storm': 'Giông bão'
+  };
+
+  // Fetch weather from open-meteo (free, no API key needed)
+  async function fetchWeather() {
+    try {
+      // Default: Ho Chi Minh City coords
+      let lat = 10.82, lon = 106.63;
+      
+      const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+      const data = await res.json();
+      const code = String(data.current_weather.weathercode);
+      const temp = Math.round(data.current_weather.temperature);
+      weatherType = weatherMap[code] || 'clear';
+
+      badge.innerHTML = `${weatherEmoji[weatherType]} ${weatherLabel[weatherType]} ${temp}°C`;
+      badge.classList.add('visible');
+      
+      initParticles();
+    } catch (e) {
+      console.log('Weather fetch failed, using clear sky');
+      weatherType = 'clear';
+      badge.innerHTML = `☀️ Trời nắng`;
+      badge.classList.add('visible');
+    }
+  }
+
+  function initParticles() {
+    particles = [];
+    let count = 0;
+    if (weatherType === 'rain') count = 80;
+    else if (weatherType === 'storm') count = 150;
+    else if (weatherType === 'snow') count = 60;
+    
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        speed: weatherType === 'snow' ? Math.random() * 1 + 0.5 : Math.random() * 4 + 3,
+        size: weatherType === 'snow' ? Math.random() * 3 + 1 : Math.random() * 1.5 + 0.5,
+        wind: weatherType === 'snow' ? Math.sin(Math.random() * Math.PI) * 0.5 : (weatherType === 'storm' ? 3 : 0.5),
+        opacity: Math.random() * 0.5 + 0.3
+      });
+    }
+  }
+
+  let lightningTimer = 0;
+  let lightningFlash = 0;
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+
+    // Sun rays for clear weather
+    if (weatherType === 'clear') {
+      const gradient = ctx.createRadialGradient(w * 0.85, 0, 0, w * 0.85, 0, w * 0.5);
+      gradient.addColorStop(0, 'rgba(255, 200, 50, 0.08)');
+      gradient.addColorStop(1, 'rgba(255, 200, 50, 0)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    // Cloud overlay
+    if (weatherType === 'clouds') {
+      const gradient = ctx.createLinearGradient(0, 0, 0, h * 0.3);
+      gradient.addColorStop(0, 'rgba(150, 150, 170, 0.08)');
+      gradient.addColorStop(1, 'rgba(150, 150, 170, 0)');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    // Lightning flash
+    if (weatherType === 'storm') {
+      lightningTimer++;
+      if (lightningTimer > 300 + Math.random() * 200) {
+        lightningFlash = 3;
+        lightningTimer = 0;
+      }
+      if (lightningFlash > 0) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${lightningFlash * 0.05})`;
+        ctx.fillRect(0, 0, w, h);
+        lightningFlash--;
+      }
+    }
+
+    // Draw particles (rain/snow)
+    particles.forEach(p => {
+      if (weatherType === 'snow') {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
+        ctx.fill();
+        p.x += Math.sin(Date.now() / 1000 + p.y) * p.wind;
+      } else {
+        // Rain
+        ctx.strokeStyle = `rgba(174, 194, 224, ${p.opacity})`;
+        ctx.lineWidth = p.size;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x + p.wind, p.y + p.speed * 3);
+        ctx.stroke();
+      }
+
+      p.y += p.speed;
+      p.x += p.wind * 0.3;
+      if (p.y > h) { p.y = -5; p.x = Math.random() * w; }
+      if (p.x > w) p.x = 0;
+      if (p.x < 0) p.x = w;
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  fetchWeather();
+  draw();
+
+  // Refresh weather every 10 minutes
+  setInterval(fetchWeather, 600000);
+})();
+
+/* ============================================================
+   RANDOM THOUGHT BUBBLES
+   ============================================================ */
+(function initThoughtBubbles() {
+  const chibiThought = document.getElementById('chibi-thought');
+  const monkeyThought = document.getElementById('monkey-thought');
+  const catThought = document.getElementById('cat-thought');
+  if (!chibiThought || !monkeyThought || !catThought) return;
+
+  const chibiQuotes = [
+    "Hôm nay code gì ta... 🤔",
+    "Bạn ơi, ở lại chơi nhé! 🥺",
+    "Đang nghe nhạc chill quá~ 🎵",
+    "Profile đẹp chưa nè? ✨",
+    "Ước gì có trà sữa... 🧋",
+    "Click vào mình đi mà~ 😊",
+    "Bug ở đâu ra thế?! 🐛",
+    "Wibu là số 1! 🌸",
+    "Mình buồn ngủ quá... 😴",
+    "Bạn có khỏe không? 💕"
+  ];
+
+  const monkeyQuotes = [
+    "Chuối ở đâu?! 🍌",
+    "Gomu gomu no... 🤜💨",
+    "Gãi đầu... gãi đầu... 🐒",
+    "Tay tui dài lắm nha! 💪",
+    "Luffy senpai! ✨",
+    "Hehe... ăn vụng chuối 😋",
+    "Ai giấu chuối của tui?! 😤",
+    "Đu cành cây vui ghê~ 🌴",
+    "One Piece có thật! 🏴‍☠️",
+    "*nhìn quanh tìm chuối* 👀"
+  ];
+
+  const catQuotes = [
+    "Zzz... mơ thấy cá... 🐟",
+    "Meow~ đừng chạm vào... 😾",
+    "Ngủ thêm 5 phút nữa... 😴",
+    "Zzz... hộp các-tông... 📦",
+    "*rung rung đuôi* 🐾",
+    "Mình là boss đây! 👑",
+    "Cái khỉ ồn quá... 😒",
+    "Nắng ấm quá... purr~ ☀️",
+    "Zzz... chuột... zzz... 🐭",
+    "*liếm chân* sạch rồi~ 🐱"
+  ];
+
+  const characters = [
+    { el: chibiThought, quotes: chibiQuotes, name: 'chibi' },
+    { el: monkeyThought, quotes: monkeyQuotes, name: 'monkey' },
+    { el: catThought, quotes: catQuotes, name: 'cat' }
+  ];
+
+  let lastChar = -1;
+
+  function showRandomThought() {
+    if (document.body.classList.contains('zen-mode')) {
+      scheduleNext();
+      return;
+    }
+
+    // Pick a different character than last time
+    let idx;
+    do { idx = Math.floor(Math.random() * characters.length); } while (idx === lastChar);
+    lastChar = idx;
+
+    const char = characters[idx];
+    const quote = char.quotes[Math.floor(Math.random() * char.quotes.length)];
+
+    char.el.textContent = quote;
+    char.el.classList.add('show');
+
+    // Hide after 4 seconds
+    setTimeout(() => {
+      char.el.classList.remove('show');
+    }, 4000);
+
+    scheduleNext();
+  }
+
+  function scheduleNext() {
+    const delay = Math.random() * 5000 + 10000; // 10-15 seconds
+    setTimeout(showRandomThought, delay);
+  }
+
+  // Start after 5 seconds
+  setTimeout(showRandomThought, 5000);
+})();
+
+/* ============================================================
    SWINGING MONKEY LOGIC
    ============================================================ */
 (function initMonkey() {
