@@ -2844,150 +2844,216 @@ body.zen-mode #zen-bg {
 .cat-thought {
   bottom: calc(100% + 4px);
   left: 18px;
-}
-
-/* Fix overlaps when thought bubbles are shown */
-.css-chibi:has(.chibi-thought.show) .comp-chat {
-  opacity: 0 !important;
-  visibility: hidden;
-  transition: opacity 0.2s;
-}
-
-.css-cat:has(.cat-thought.show) {
-  z-index: 110 !important;
-}
-
-/* ============================================================
-   STORY SCROLL
+}/* ============================================================
+   GARDEN PAGE — khung cảnh lớn gộp 3 companion + weather + firefly
+   Companion/weather DOM thật được JS "teleport" vào đây, nên ta
+   chỉ cần định nghĩa style cho khung chứa + override vị trí.
    ============================================================ */
-.story-scroll .scroll-paper {
-  position: relative;
-  background:
-    linear-gradient(135deg, rgba(139, 109, 71, 0.15) 0%, rgba(87, 65, 40, 0.1) 100%),
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 28px,
-      rgba(139, 109, 71, 0.07) 28px,
-      rgba(139, 109, 71, 0.07) 29px
-    );
-  border: 1px solid rgba(139, 109, 71, 0.25);
-  border-radius: 6px;
-  padding: 14px 16px;
-  margin: 8px 0;
-  min-height: 60px;
-  box-shadow:
-    inset 0 0 30px rgba(0, 0, 0, 0.15),
-    0 2px 8px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-}
-.story-scroll .scroll-paper::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.2) 100%);
-  pointer-events: none;
-}
-.scroll-text {
-  font-family: 'Georgia', 'Times New Roman', serif;
-  font-size: 12px;
-  line-height: 1.7;
-  color: rgba(220, 200, 170, 0.95);
-  letter-spacing: 0.3px;
-  position: relative;
-  z-index: 1;
-}
-.scroll-text .cursor-blink {
-  display: inline-block;
-  width: 2px;
-  height: 14px;
-  background: var(--cyan);
-  margin-left: 2px;
-  vertical-align: text-bottom;
-  animation: cursorBlink 0.7s step-end infinite;
-}
-@keyframes cursorBlink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-.scroll-stamp {
-  position: absolute;
-  bottom: 8px;
-  right: 12px;
-  font-size: 28px;
-  font-weight: 900;
-  color: rgba(200, 50, 50, 0);
-  font-family: serif;
-  border: 3px solid rgba(200, 50, 50, 0);
-  border-radius: 6px;
-  padding: 2px 6px;
-  transform: rotate(-15deg);
-  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  z-index: 2;
-}
-.scroll-stamp.stamped {
-  color: rgba(200, 50, 50, 0.6);
-  border-color: rgba(200, 50, 50, 0.4);
-  text-shadow: 0 0 8px rgba(200, 50, 50, 0.3);
-}
 
-/* ============================================================
-   PIXEL MINI MAP
-   ============================================================ */
-.mini-map-card {
-  background: rgba(10, 15, 25, 0.6);
-  border: 1px solid rgba(0, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 12px 16px;
-  margin-top: 8px;
-}
-.mini-map-card h2 {
-  font-size: 13px;
-  color: var(--cyan);
-  margin-bottom: 8px;
-}
-.mini-map-wrap {
-  position: relative;
-  border-radius: 8px;
-  overflow: hidden;
-  background: rgba(0, 10, 30, 0.8);
-  border: 1px solid rgba(0, 255, 255, 0.1);
-}
-.pixel-map {
-  display: block;
-  width: 100%;
-  height: 120px;
-  image-rendering: pixelated;
-}
-.map-tooltip {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
+.garden-page {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(0, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 10px;
-  color: #ccc;
-}
-.map-flag {
-  font-size: 16px;
-}
-.map-location {
-  color: var(--cyan);
-  font-weight: 600;
-  font-size: 11px;
-}
-.map-timezone, .map-weather-sync {
-  opacity: 0.7;
+  gap: 14px;
 }
 
-/* Pin blink on map */
-@keyframes pinBlink {
-  0%, 100% { opacity: 1; box-shadow: 0 0 4px rgba(255, 50, 50, 0.8); }
-  50% { opacity: 0.4; box-shadow: 0 0 8px rgba(255, 50, 50, 0.4); }
+.garden-scene {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+  border-radius: 16px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 120% 70% at 50% 0%, rgba(88,101,242,.16), transparent 60%),
+    linear-gradient(180deg, #0b0f1f 0%, #11162a 55%, #161b30 100%);
+  border: 1px solid rgba(255,255,255,.09);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), inset 0 -40px 60px -30px rgba(0,0,0,.6);
 }
+
+/* Slot chứa weather-canvas thật (đã teleport vào) — full scene */
+.garden-sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.garden-sky .weather-canvas {
+  /* Ghi đè style gốc (vốn absolute fill profile-console) để fill đúng garden-scene */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  border-radius: inherit;
+}
+.garden-sky .weather-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+}
+
+/* Stars nền nhẹ cho cảm giác chiều sâu ban đêm */
+.garden-scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 15%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 60% 25%, rgba(255,255,255,.35), transparent),
+    radial-gradient(1.5px 1.5px at 80% 10%, rgba(255,255,255,.4), transparent),
+    radial-gradient(1px 1px at 35% 8%, rgba(255,255,255,.3), transparent),
+    radial-gradient(1px 1px at 90% 30%, rgba(255,255,255,.25), transparent);
+  background-repeat: no-repeat;
+  opacity: .8;
+}
+
+/* Mặt đất — nơi 3 companion đứng cạnh nhau, thay vì chen trong presence-card chật hẹp */
+.garden-ground {
+  position: relative;
+  z-index: 2;
+  height: 200px;
+  margin-top: auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 56px;
+  padding-bottom: 18px;
+}
+.garden-ground::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 46px;
+  background: linear-gradient(180deg, rgba(62,232,125,.06), rgba(62,232,125,.14));
+  border-top: 1px solid rgba(62,232,125,.18);
+  border-radius: 0 0 16px 16px;
+}
+
+/* Khi companion được teleport vào garden-ground, chúng vốn position:absolute
+   với "bottom: calc(100% - 2px); right: 60px" (thiết kế để đứng trên 1 thanh ngang).
+   Trong Garden ta cho mỗi companion một "bệ" riêng để giữ đúng cơ chế absolute đó. */
+.garden-companion-slot {
+  position: relative;
+  width: 60px;
+  height: 2px; /* chiều cao giả lập cạnh trên mà companion cũ đang bám vào */
+  flex: 0 0 auto;
+}
+.garden-companion-slot .css-chibi,
+.garden-companion-slot .css-monkey,
+.garden-companion-slot .css-cat {
+  right: 50%;
+  transform: translateX(50%) scale(var(--chibi-scale, 1));
+}
+.garden-companion-slot .css-monkey {
+  /* monkey gốc dùng position khác (xem patch JS), giữ nguyên qua inline style đã set sẵn */
+}
+
+/* Monkey clone hiển thị trong Garden — chỉ để xem, không có logic bắt chuối
+   (logic gốc vẫn chạy bình thường ở monkey thật trong presence-card) */
+.garden-monkey-clone {
+  position: relative !important;
+  bottom: auto !important;
+  right: 50% !important;
+  transform: translateX(50%) !important;
+  pointer-events: none;
+}
+.garden-monkey-clone .monkey-thought {
+  display: none;
+}
+
+/* ============================================================
+   GARDEN — Khỉ đu dây ngang qua scene
+   Animation hoàn toàn độc lập, không đụng logic bắt chuối gốc.
+   Dùng đúng pose .swinging đã có sẵn (tay/chân đu kiểu Tarzan),
+   chỉ thêm phần di chuyển ngang qua màn hình.
+   ============================================================ */
+.garden-monkey-swinger {
+  position: absolute;
+  top: 14%;
+  left: -60px;
+  width: 40px;
+  height: 40px;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+}
+.garden-monkey-swinger.swing-active {
+  animation: gardenMonkeySwingAcross 4.2s cubic-bezier(.45,.05,.55,.95) forwards;
+}
+@keyframes gardenMonkeySwingAcross {
+  0%   { left: -60px; top: 14%;  opacity: 0;   transform: rotate(-8deg); }
+  6%   { opacity: 1; }
+  25%  { top: 6%;  transform: rotate(10deg); }
+  50%  { top: 20%; transform: rotate(-10deg); }
+  75%  { top: 6%;  transform: rotate(10deg); }
+  94%  { opacity: 1; }
+  100% { left: calc(100% + 60px); top: 14%; opacity: 0; transform: rotate(-6deg); }
+}
+/* ============================================================
+   END GARDEN MONKEY SWINGER
+   ============================================================ */
+
+/* Firefly layer riêng cho Garden — không cần bật zen-mode toàn cục body */
+.garden-firefly-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+}
+.garden-firefly-layer .zen-firefly {
+  position: absolute;
+}
+
+/* Controls dưới scene */
+.garden-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.garden-ambience-btn {
+  flex: 0 0 auto;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.garden-ambience-btn.active {
+  background: rgba(255,200,50,.18);
+  border-color: rgba(255,200,50,.4);
+  color: #ffe9a8;
+}
+.garden-hint {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Ambience đêm — overlay tối nhẹ + mưa giống zen-mode nhưng scoped riêng cho Garden */
+.garden-scene.garden-night {
+  background:
+    radial-gradient(ellipse 120% 70% at 50% 0%, rgba(88,101,242,.1), transparent 60%),
+    linear-gradient(180deg, #05070f 0%, #080b18 55%, #0c0f1e 100%);
+}
+.garden-scene.garden-night::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: rgba(10,5,20,.35);
+  transition: opacity 1.2s ease;
+}
+
+@media (max-width: 620px) {
+  .garden-ground { gap: 32px; }
+  .garden-scene { min-height: 240px; }
+}
+@media (max-width: 420px) {
+  .garden-ground { gap: 20px; }
+  .garden-scene { min-height: 220px; }
+  .garden-hint { display: none; }
+}
+/* ============================================================
+   END GARDEN PAGE
+   ============================================================ */
