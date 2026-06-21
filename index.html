@@ -112,6 +112,7 @@
             <button class="theme-option" data-theme="ocean" title="Ocean Blue">🌊</button>
             <button class="theme-option" data-theme="fire" title="Neon Fire">🔥</button>
           </div>
+          <button id="garden-open-btn" class="zen-toggle-btn" type="button" aria-label="Mở Garden" title="Garden — Khu vườn companion">🌿</button>
           <button id="zen-toggle" class="zen-toggle-btn" type="button" aria-label="Zen Mode" title="Zen Mode">🧘‍♂️</button>
           <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi giao diện">🌙</button>
         </div>
@@ -247,12 +248,9 @@
           </div>
         </section>
 
-        <section class="about-card story-scroll" id="story-scroll">
-          <h2>📜 Giới thiệu</h2>
-          <div class="scroll-paper">
-            <p class="scroll-text" id="scroll-text"></p>
-            <div class="scroll-stamp" id="scroll-stamp">鎮</div>
-          </div>
+        <section class="about-card">
+          <h2>Giới thiệu</h2>
+          <p>Một góc hồ sơ nhỏ gọn của Chinatsu Kamado, lấy cảm hứng nhẹ từ Discord nhưng vẫn giữ phong cách anime riêng: tối, gọn, mượt và có chiều sâu.</p>
           <div class="tags" aria-label="Thẻ hồ sơ">
             <span>Anime</span>
             <span>Coder</span>
@@ -261,19 +259,6 @@
           </div>
         </section>
 
-        <!-- ========== PIXEL MINI MAP ========== -->
-        <section class="mini-map-card" id="mini-map-card">
-          <h2>🗺️ Vị trí</h2>
-          <div class="mini-map-wrap" id="mini-map-wrap">
-            <canvas id="pixel-map" class="pixel-map" width="280" height="120"></canvas>
-            <div class="map-tooltip" id="map-tooltip">
-              <span class="map-flag">🇻🇳</span>
-              <span class="map-location">Việt Nam</span>
-              <span class="map-timezone" id="map-timezone"></span>
-              <span class="map-weather-sync" id="map-weather-sync"></span>
-            </div>
-          </div>
-        </section>
 
 
         <nav class="social-row" aria-label="Liên kết mạng xã hội">
@@ -469,6 +454,36 @@
           </div>
         </section>
         <!-- ========== END STEAM PROFILE PAGE ========== -->
+
+        <!-- ========== GARDEN PAGE ========== -->
+        <section id="garden-page" class="color-page garden-page hidden" aria-label="Garden — Khu vườn companion">
+          <div class="color-page-head">
+            <button id="garden-back" class="mini-btn" type="button">← Home</button>
+            <div>
+              <p class="eyebrow">GARDEN</p>
+              <h2>Khu vườn nhỏ</h2>
+            </div>
+          </div>
+
+          <div class="garden-scene" id="garden-scene">
+            <!-- Weather canvas sẽ được teleport vào đây -->
+            <div class="garden-sky" id="garden-sky-slot"></div>
+
+            <!-- Ground / nền đất nơi companion đứng -->
+            <div class="garden-ground" id="garden-ground-slot">
+              <!-- 3 companion (chibi, monkey, cat) sẽ được teleport vào đây -->
+            </div>
+
+            <!-- Firefly riêng cho Garden, không cần bật zen-mode toàn cục -->
+            <div class="garden-firefly-layer" id="garden-firefly-layer"></div>
+          </div>
+
+          <div class="garden-controls">
+            <button id="garden-ambience-toggle" class="mini-btn garden-ambience-btn" type="button">🌙 Bật ambience đêm</button>
+            <span class="garden-hint">Bấm vào từng bạn nhỏ để tương tác · Vuốt ve mèo bằng cách bấm đúp vào chibi</span>
+          </div>
+        </section>
+        <!-- ========== END GARDEN PAGE ========== -->
 
         <!-- ========== COLOR TOOL PAGE ========== -->
         <section id="color-page" class="color-page hidden" aria-label="Unity Rich Text Gradient Generator">
