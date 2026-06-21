@@ -2738,6 +2738,179 @@ if (interactiveCard) {
 })();
 
 /* ============================================================
+   STORY SCROLL (TYPEWRITER)
+   ============================================================ */
+(function initStoryScroll() {
+  const el = document.getElementById('scroll-text');
+  const stamp = document.getElementById('scroll-stamp');
+  if (!el) return;
+
+  const fullText = 'Một góc hồ sơ nhỏ gọn của Chinatsu Kamado, lấy cảm hứng nhẹ từ Discord nhưng vẫn giữ phong cách anime riêng: tối, gọn, mượt và có chiều sâu.';
+  let i = 0;
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor-blink';
+  el.appendChild(cursor);
+
+  function type() {
+    if (i < fullText.length) {
+      el.insertBefore(document.createTextNode(fullText[i]), cursor);
+      i++;
+      const delay = fullText[i - 1] === ',' || fullText[i - 1] === ':' ? 120 : 35 + Math.random() * 25;
+      setTimeout(type, delay);
+    } else {
+      // Typing done - stamp it
+      setTimeout(() => {
+        cursor.remove();
+        if (stamp) stamp.classList.add('stamped');
+      }, 500);
+    }
+  }
+
+  // Start typing when section is in view
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        setTimeout(type, 600);
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const section = document.getElementById('story-scroll');
+  if (section) observer.observe(section);
+})();
+
+/* ============================================================
+   PIXEL MINI MAP
+   ============================================================ */
+(function initPixelMap() {
+  const canvas = document.getElementById('pixel-map');
+  const timezoneEl = document.getElementById('map-timezone');
+  const weatherSyncEl = document.getElementById('map-weather-sync');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  const W = canvas.width;
+  const H = canvas.height;
+
+  // Simplified world map continents as pixel blocks (very rough shapes)
+  const continents = [
+    // North America
+    { x: 30, y: 15, w: 55, h: 40, color: '#1a3a2a' },
+    { x: 20, y: 25, w: 20, h: 20, color: '#1a3a2a' },
+    // South America
+    { x: 55, y: 55, w: 25, h: 45, color: '#1a3a2a' },
+    { x: 50, y: 60, w: 15, h: 25, color: '#1a3a2a' },
+    // Europe
+    { x: 120, y: 12, w: 30, h: 25, color: '#1a3a2a' },
+    // Africa
+    { x: 125, y: 40, w: 30, h: 45, color: '#1a3a2a' },
+    { x: 130, y: 35, w: 25, h: 15, color: '#1a3a2a' },
+    // Asia (big)
+    { x: 150, y: 8, w: 70, h: 45, color: '#1a3a2a' },
+    { x: 160, y: 15, w: 55, h: 35, color: '#1a3a2a' },
+    // Southeast Asia + Vietnam area
+    { x: 195, y: 45, w: 20, h: 20, color: '#1a3a2a' },
+    // Australia
+    { x: 210, y: 70, w: 30, h: 22, color: '#1a3a2a' },
+    // Japan/Korea
+    { x: 225, y: 25, w: 8, h: 15, color: '#1a3a2a' },
+  ];
+
+  // Vietnam approximate position on this mini map
+  const vnX = 200;
+  const vnY = 48;
+
+  let pulseRadius = 0;
+  let frame = 0;
+
+  function draw() {
+    frame++;
+    ctx.clearRect(0, 0, W, H);
+
+    // Ocean background with subtle grid
+    ctx.fillStyle = '#0a0e1a';
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid lines (subtle)
+    ctx.strokeStyle = 'rgba(0, 255, 255, 0.03)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 20) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let y = 0; y < H; y += 20) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    // Draw continents
+    continents.forEach(c => {
+      ctx.fillStyle = c.color;
+      // Pixelated edges
+      for (let px = c.x; px < c.x + c.w; px += 4) {
+        for (let py = c.y; py < c.y + c.h; py += 4) {
+          const noise = Math.sin(px * 0.3 + py * 0.5) * 0.5 + 0.5;
+          if (noise > 0.2) {
+            ctx.globalAlpha = 0.6 + noise * 0.4;
+            ctx.fillRect(px, py, 4, 4);
+          }
+        }
+      }
+    });
+    ctx.globalAlpha = 1;
+
+    // Pulse ring around Vietnam
+    pulseRadius = (frame % 60) / 60 * 20;
+    const pulseAlpha = 1 - (frame % 60) / 60;
+    ctx.beginPath();
+    ctx.arc(vnX, vnY, pulseRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(255, 60, 60, ${pulseAlpha * 0.6})`;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Red pin dot
+    ctx.beginPath();
+    ctx.arc(vnX, vnY, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#ff3c3c';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(vnX, vnY, 1.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+
+    // Label
+    ctx.font = '8px monospace';
+    ctx.fillStyle = 'rgba(0, 255, 255, 0.7)';
+    ctx.fillText('VN', vnX + 6, vnY + 3);
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+
+  // Update timezone display
+  function updateTimezone() {
+    const now = new Date();
+    const vnTime = now.toLocaleTimeString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', hour: '2-digit', minute: '2-digit' });
+    if (timezoneEl) timezoneEl.textContent = `🕐 ${vnTime} (GMT+7)`;
+  }
+  updateTimezone();
+  setInterval(updateTimezone, 30000);
+
+  // Sync with weather badge if available
+  setTimeout(() => {
+    const weatherBadge = document.getElementById('weather-badge');
+    if (weatherBadge && weatherSyncEl) {
+      weatherSyncEl.textContent = weatherBadge.textContent || '';
+      // Keep syncing
+      const obs = new MutationObserver(() => {
+        weatherSyncEl.textContent = weatherBadge.textContent || '';
+      });
+      obs.observe(weatherBadge, { childList: true, characterData: true, subtree: true });
+    }
+  }, 3000);
+})();
+
+/* ============================================================
    LIVE WEATHER EFFECTS
    ============================================================ */
 (function initWeather() {
@@ -3171,198 +3344,3 @@ if (interactiveCard) {
   }
   draw();
 })();
-
-/* ============================================================
-   GARDEN PAGE — gộp companion + weather + firefly vào 1 khung cảnh
-   Chiến lược: TELEPORT DOM thật của chibi + cat (chúng dùng
-   getBoundingClientRect linh hoạt nên an toàn di chuyển), giữ
-   nguyên mọi animation/event listener đã gắn sẵn — không viết lại.
-   Riêng monkey vẫn ở nguyên vị trí gốc (logic bắt chuối phụ thuộc
-   .profile-console cố định) — Garden chỉ "mượn tạm" weather-canvas
-   và chibi/cat, monkey được hiện qua overlay fixed riêng khi mở Garden.
-   ============================================================ */
-(function initGardenPage() {
-  const gardenPage   = document.getElementById('garden-page');
-  const gardenOpen   = document.getElementById('garden-open-btn');
-  const gardenBack   = document.getElementById('garden-back');
-  const gardenGround = document.getElementById('garden-ground-slot');
-  const gardenSky    = document.getElementById('garden-sky-slot');
-  const gardenScene  = document.getElementById('garden-scene');
-  const fireflyLayer = document.getElementById('garden-firefly-layer');
-  const ambienceBtn  = document.getElementById('garden-ambience-toggle');
-
-  if (!gardenPage || !gardenOpen) return;
-
-  const chibiEl   = document.querySelector('.css-chibi');
-  const catEl     = document.querySelector('.css-cat');
-  const weatherEl = document.getElementById('weather-canvas');
-  const weatherBadgeEl = document.getElementById('weather-badge');
-
-  // Lưu lại vị trí gốc (parent + nextSibling) để trả về đúng chỗ khi đóng Garden
-  const originalSlots = new Map();
-  function rememberOriginalSlot(el) {
-    if (!el || originalSlots.has(el)) return;
-    originalSlots.set(el, { parent: el.parentElement, next: el.nextElementSibling });
-  }
-  function restoreOriginalSlot(el) {
-    const slot = originalSlots.get(el);
-    if (!el || !slot || !slot.parent) return;
-    if (slot.next && slot.next.parentElement === slot.parent) {
-      slot.parent.insertBefore(el, slot.next);
-    } else {
-      slot.parent.appendChild(el);
-    }
-  }
-
-  rememberOriginalSlot(chibiEl);
-  rememberOriginalSlot(catEl);
-  rememberOriginalSlot(weatherEl);
-  rememberOriginalSlot(weatherBadgeEl);
-
-  let gardenOpened = false;
-  let fireflyInterval = null;
-  let ambienceOn = false;
-
-  function buildSlots() {
-    // Tạo 2 "bệ" cho chibi và cat đứng cạnh nhau trong garden-ground
-    gardenGround.innerHTML = '';
-    const chibiSlot = document.createElement('div');
-    chibiSlot.className = 'garden-companion-slot';
-    chibiSlot.id = 'garden-chibi-slot';
-    const catSlot = document.createElement('div');
-    catSlot.className = 'garden-companion-slot';
-    catSlot.id = 'garden-cat-slot';
-
-    gardenGround.appendChild(chibiSlot);
-    gardenGround.appendChild(catSlot);
-    return { chibiSlot, catSlot };
-  }
-
-  function teleportIn() {
-    const { chibiSlot, catSlot } = buildSlots();
-
-    if (chibiEl) {
-      chibiSlot.appendChild(chibiEl);
-      chibiEl.style.right = '50%';
-      chibiEl.style.transform = 'translateX(50%) scale(var(--chibi-scale, 1))';
-    }
-    if (catEl) {
-      catSlot.appendChild(catEl);
-      catEl.style.right = '50%';
-      catEl.style.transform = 'translateX(50%) scale(var(--chibi-scale, 1))';
-    }
-    if (weatherEl) {
-      gardenSky.appendChild(weatherEl);
-      // Trigger resize để canvas vẽ đúng kích thước garden-scene mới
-      window.dispatchEvent(new Event('resize'));
-    }
-    if (weatherBadgeEl) {
-      gardenSky.appendChild(weatherBadgeEl);
-    }
-  }
-
-  function teleportOut() {
-    if (chibiEl) {
-      chibiEl.style.right = '';
-      chibiEl.style.transform = '';
-      restoreOriginalSlot(chibiEl);
-    }
-    if (catEl) {
-      catEl.style.right = '';
-      catEl.style.transform = '';
-      restoreOriginalSlot(catEl);
-    }
-    if (weatherEl) {
-      restoreOriginalSlot(weatherEl);
-      window.dispatchEvent(new Event('resize'));
-    }
-    if (weatherBadgeEl) {
-      restoreOriginalSlot(weatherBadgeEl);
-    }
-  }
-
-  // ---- Monkey visual clone (không động vào logic bắt chuối gốc) ----
-  // Khi mở Garden, ẩn monkey gốc khỏi presence-card (để tránh 2 con cùng nhìn thấy
-  // nếu presence-card vẫn render phía sau) và hiện 1 bản clone thuần hiển thị trong Garden.
-  let monkeyClone = null;
-  function showMonkeyClone() {
-    const monkeySource = document.getElementById('css-monkey');
-    if (!monkeySource || !gardenGround) return;
-    monkeyClone = monkeySource.cloneNode(true);
-    monkeyClone.removeAttribute('id');
-    monkeyClone.classList.add('garden-monkey-clone');
-    monkeyClone.classList.remove('swinging', 'eating');
-    monkeyClone.classList.add('idle');
-
-    const monkeySlot = document.createElement('div');
-    monkeySlot.className = 'garden-companion-slot';
-    monkeySlot.id = 'garden-monkey-slot';
-    monkeySlot.appendChild(monkeyClone);
-    gardenGround.appendChild(monkeySlot);
-
-    monkeyClone.style.right = '50%';
-    monkeyClone.style.transform = 'translateX(50%)';
-  }
-  function hideMonkeyClone() {
-    if (monkeyClone && monkeyClone.parentElement) {
-      monkeyClone.parentElement.remove();
-    }
-    monkeyClone = null;
-  }
-
-  // ---- Firefly riêng cho Garden (không cần bật zen-mode toàn cục) ----
-  function spawnGardenFirefly() {
-    if (!fireflyLayer) return;
-    const f = document.createElement('div');
-    f.className = 'zen-firefly';
-    f.style.left = Math.random() * 100 + '%';
-    f.style.bottom = '0';
-    f.style.animationDuration = (5 + Math.random() * 3) + 's, ' + (2 + Math.random() * 2) + 's';
-    fireflyLayer.appendChild(f);
-    setTimeout(() => { if (f.parentNode) f.remove(); }, 9000);
-  }
-
-  function setAmbience(on) {
-    ambienceOn = on;
-    gardenScene.classList.toggle('garden-night', on);
-    ambienceBtn.classList.toggle('active', on);
-    ambienceBtn.textContent = on ? '☀️ Tắt ambience đêm' : '🌙 Bật ambience đêm';
-
-    if (on) {
-      fireflyInterval = setInterval(spawnGardenFirefly, 450);
-      chibiEl?.classList.add('zen-sleep');
-      catEl?.classList.remove('awake');
-      catEl?.classList.add('zen-sleep');
-    } else {
-      clearInterval(fireflyInterval);
-      fireflyInterval = null;
-      chibiEl?.classList.remove('zen-sleep');
-      catEl?.classList.remove('zen-sleep');
-      if (fireflyLayer) fireflyLayer.innerHTML = '';
-    }
-  }
-
-  function openGarden() {
-    if (gardenOpened) return;
-    gardenOpened = true;
-    teleportIn();
-    showMonkeyClone();
-    showInnerPage(gardenPage, () => {}, true);
-  }
-
-  function closeGarden() {
-    if (!gardenOpened) return;
-    gardenOpened = false;
-    setAmbience(false);
-    teleportOut();
-    hideMonkeyClone();
-    hideInnerPage(gardenPage);
-  }
-
-  gardenOpen.addEventListener('click', (e) => { e.preventDefault(); openGarden(); });
-  if (gardenBack) gardenBack.addEventListener('click', closeGarden);
-  if (ambienceBtn) ambienceBtn.addEventListener('click', () => setAmbience(!ambienceOn));
-})();
-/* ============================================================
-   END GARDEN PAGE
-   ============================================================ */
