@@ -2657,7 +2657,7 @@ if (interactiveCard) {
 })();
 
 /* ============================================================
-   AI CHAT ASSISTANT (GEMINI)
+   AI CHAT ASSISTANT (GITHUB MODELS API)
    ============================================================ */
 (function initAIChat() {
   const icon = document.getElementById('chibi-ai-icon');
@@ -2670,7 +2670,7 @@ if (interactiveCard) {
 
   const GITHUB_TOKEN = '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'; 
   const API_URL = 'https://models.inference.ai.azure.com/chat/completions';
-  const MODEL_NAME = 'gpt-4o-mini';
+  const MODEL_NAME = 'gpt-4o-mini'; 
 
   icon.addEventListener('click', () => {
     panel.classList.toggle('hidden');
@@ -2694,7 +2694,6 @@ if (interactiveCard) {
     addMessage(text, 'user');
     input.value = '';
     
-    // Add typing indicator
     const typing = document.createElement('div');
     typing.className = 'ai-msg ai typing';
     typing.textContent = '...';
@@ -2704,27 +2703,42 @@ if (interactiveCard) {
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${GITHUB_TOKEN}`
+        },
         body: JSON.stringify({
-          contents: [{
-            parts: [{ text: `You are Chinatsu Kamado's AI Assistant. Be brief, cute, and helpful. User asks: ${text}` }]
-          }]
+          model: MODEL_NAME,
+          messages: [
+            {
+              role: "system",
+              content: "You are Chinatsu Kamado's AI Assistant. Be brief, cute, and helpful. Please respond in Vietnamese."
+            },
+            {
+              role: "user",
+              content: text
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 300
         })
       });
 
       typing.remove();
-
+      
       if (!response.ok) {
+        const errorData = await response.json();
+        console.error("API Error:", errorData);
         throw new Error(`API Error: ${response.status}`);
       }
 
       const data = await response.json();
-      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Xin lỗi, mình đang bận chút xíu! (Không có phản hồi từ AI)";
+      const reply = data.choices?.[0]?.message?.content || "Xin lỗi, mình đang bận chút xíu! (Không có phản hồi từ AI)";
       addMessage(reply, 'ai');
       
     } catch (error) {
       typing.remove();
-      addMessage("Opps! Kết nối API bị lỗi rồi. Vui lòng kiểm tra lại API Key nhé!", 'ai');
+      addMessage("Opps! Kết nối API bị lỗi rồi. Bạn kiểm tra lại GitHub Token nhé!", 'ai');
       console.error(error);
     }
   }
@@ -2734,7 +2748,6 @@ if (interactiveCard) {
     if (e.key === 'Enter') sendMessage();
   });
 })();
-
 
 
 /* ============================================================
