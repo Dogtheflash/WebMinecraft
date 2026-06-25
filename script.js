@@ -2668,11 +2668,9 @@ if (interactiveCard) {
   
   if (!icon || !panel) return;
 
-  const part1 = 'AQ.Ab8RN6Ivt0jH6J6B';
-  const part2 = 'VA52_esEAKjBjsE7';
-  const part3 = 'XU0HXWTZzriXtxGamA';
-  const API_KEY = part1 + part2 + part3;
-  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+  const GITHUB_TOKEN = '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'; 
+  const API_URL = 'https://models.inference.ai.azure.com/chat/completions';
+  const MODEL_NAME = 'gpt-4o-mini';
 
   icon.addEventListener('click', () => {
     panel.classList.toggle('hidden');
