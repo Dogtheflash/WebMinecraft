@@ -27,10 +27,12 @@
   ];
 
   var prog = 0, s1 = 0, s2 = 0, s3 = 0, done = false;
+
   /* Đồng hồ realtime */
   setInterval(function () {
     if (clockEl) clockEl.textContent = new Date().toTimeString().slice(0, 8);
   }, 1000);
+
   /* Progress bar — ~2 giây để hoàn thành */
   var iv = setInterval(function () {
     if (done) return;
@@ -38,8 +40,7 @@
     var inc = prog < 50 ? (Math.random() * 5 + 4)
             : prog < 80 ? (Math.random() * 3 + 2.5)
             : prog < 95 ? (Math.random() * 2 + 1)
-            :               
-             (Math.random() * 1.5 + 0.8);
+            :              (Math.random() * 1.5 + 0.8);
 
     prog = Math.min(prog + inc, 100);
     s1   = Math.min(s1 + Math.random() * 6 + 3,  100);
@@ -149,6 +150,7 @@ const DECORATIONS = [
   'fantasy-tinh-linh.png',
   'buom-dem.png',
 ];
+
 const terminalScreen = document.getElementById('terminal-screen');
 const profileScreen = document.getElementById('profile-screen');
 const enterButton = document.getElementById('enter-console-btn');
@@ -164,6 +166,7 @@ const cmdNewTab = document.getElementById('cmd-new-tab');
 const cmdLog = document.getElementById('cmd-log');
 const cmdForm = document.getElementById('cmd-form');
 const cmdInput = document.getElementById('cmd-input');
+
 const presenceEls = {
   avatar: document.getElementById('avatar-image'),
   decoration: document.getElementById('avatar-decoration'),
@@ -182,13 +185,16 @@ const presenceEls = {
   publicFlags: document.getElementById('public-flags'),
   typingName: document.getElementById('profile-typing-name'),
 };
+
 const statusLabels = {
   online: 'Đang online',
   idle: 'Đang rảnh',
   dnd: 'Đừng làm phiền',
   offline: 'Đang offline',
 };
+
 const profileTypingWords = ['Chinatsu Kamado', 'Đẹp Trai', 'Hikikomori', 'Chơi Game Hay', 'Fan Anime', 'Minecraft'];
+
 const activityTypes = {
   0: { label: 'Đang chơi', icon: '🎮' },
   1: { label: 'Đang stream', icon: '📡' },
@@ -196,6 +202,7 @@ const activityTypes = {
   3: { label: 'Đang xem', icon: '▶' },
   5: { label: 'Đang thi đấu', icon: '⚔' },
 };
+
 const discordBadges = [
   { bit: 1 << 0, icon: '🛡️', label: 'Discord Staff' },
   { bit: 1 << 1, icon: '🤝', label: 'Partnered Server Owner' },
@@ -211,11 +218,12 @@ const discordBadges = [
   { bit: 1 << 18, icon: '🛡', label: 'Discord Certified Moderator' },
   { bit: 1 << 22, icon: '🌱', label: 'Active Developer' },
 ];
+
 const introLines = [
-  'C:\Users\Chinatsu Kamado> WaiFu',
+  'C:\\Users\\Chinatsu Kamado> WaiFu',
   'Chinatsu Kamado.dev',
   '',
-  'C:\Users\Chinatsu Kamado> profile --boot',
+  'C:\\Users\\Chinatsu Kamado> profile --boot',
   '[OK] Đang tải giao diện cá nhân...',
   '[OK] Đang kết nối trạng thái Discord...',
   '[OK] Đang chuẩn bị trang trí ảnh đại diện...',
@@ -237,16 +245,14 @@ const cmdTabsState = [
   {
     id: 'boot',
     title: 'cmd',
-    log: 'Microsoft Windows [Version 11.0.22631.0000]
-(c) Microsoft Corporation. All rights reserved.
-
-',
+    log: 'Microsoft Windows [Version 11.0.22631.0000]\n(c) Microsoft Corporation. All rights reserved.\n\n',
     input: '',
     boot: true,
     interactive: false,
     typing: true,
   },
 ];
+
 function activeCmdTab() {
   return cmdTabsState.find((tab) => tab.id === activeTabId) || cmdTabsState[0];
 }
@@ -282,8 +288,7 @@ function switchCmdTab(tabId) {
 function typeIntro() {
   const tab = activeCmdTab();
   const prefix = tab.log;
-  const text = introLines.join('
-');
+  const text = introLines.join('\n');
   let index = 0;
   introTimer = setInterval(() => {
     tab.log = prefix + text.slice(0, index);
@@ -330,6 +335,7 @@ enterButton.addEventListener('click', enterConsole);
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Enter' && terminalScreen.classList.contains('active') && document.activeElement !== cmdInput) enterConsole();
 });
+
 function openCmdTab() {
   const existingInteractiveTab = cmdTabsState.find((tab) => tab.interactive || tab.id === 'cmd-input-tab');
   if (existingInteractiveTab) {
@@ -343,15 +349,12 @@ function openCmdTab() {
     'Microsoft Windows [Version 11.0.22631.0000]',
     '(c) Microsoft Corporation. All rights reserved.',
     '',
-  ].join('
-');
+  ].join('\n');
   const tips = [
-    '
-Gợi ý: nhập website như youtube.com rồi nhấn Enter để mở tab mới.',
+    '\nGợi ý: nhập website như youtube.com rồi nhấn Enter để mở tab mới.',
     'Gợi ý: thử nhập các lệnh help, status, ping, dir, profile, clear.',
     '',
-  ].join('
-');
+  ].join('\n');
   const tab = {
     id,
     title: 'cmd 2',
@@ -368,7 +371,7 @@ Gợi ý: nhập website như youtube.com rồi nhấn Enter để mở tab mớ
   });
 }
 
-function deleteCmdTab(tabId) { // updated from original closeCmdTab to avoid keyword matching issues if any
+function closeCmdTab(tabId) {
   if (cmdTabsState.length === 1) return;
   const index = cmdTabsState.findIndex((tab) => tab.id === tabId);
   if (index === -1 || cmdTabsState[index].boot) return;
@@ -387,21 +390,11 @@ function fakeCommand(command) {
   const lower = command.toLowerCase();
   if (['help', '?'].includes(lower)) return 'Available: help, clear, profile, status, ping, dir, scan, run <anything>, or paste a URL.';
   if (lower === 'profile') return 'Opening Chinatsu Kamado profile interface... done. Press Enter outside this input to continue.';
-  if (lower === 'status') return 'Discord presence daemon: ONLINE
-Anime energy: 98%
-Cute cursor: armed.';
+  if (lower === 'status') return 'Discord presence daemon: ONLINE\nAnime energy: 98%\nCute cursor: armed.';
   if (lower === 'ping') return 'Pinging moonlight.anime [127.0.0.1]... Reply: time=7ms TTL=uwu';
-  if (lower === 'dir') return ' Directory of C:\Users\Chinatsu Kamado
-
-<DIR> anime
-<DIR> lofi
-<DIR> minecraft
-<DIR> secrets
-profile.exe';
+  if (lower === 'dir') return ' Directory of C:\\Users\\Chinatsu Kamado\n\n<DIR> anime\n<DIR> lofi\n<DIR> minecraft\n<DIR> secrets\nprofile.exe';
   if (lower.startsWith('run ') || lower.startsWith('npm ') || lower.startsWith('python ') || lower.startsWith('git ')) {
-    return `Executing "${command}"...
-[OK] Pretending very professionally.
-No errors found.`;
+    return `Executing "${command}"...\n[OK] Pretending very professionally. No errors found.`;
   }
   return `"${command}" is not recognized... but it looks cool, so I will allow it. ✦`;
 }
@@ -410,7 +403,7 @@ cmdTabs.addEventListener('click', (event) => {
   const tabButton = event.target.closest('.cmd-tab');
   if (!tabButton) return;
   const tabId = tabButton.dataset.tabId;
-  if (event.target.closest('[data-close-tab]')) deleteCmdTab(tabId);
+  if (event.target.closest('[data-close-tab]')) closeCmdTab(tabId);
   else switchCmdTab(tabId);
 });
 cmdNewTab.addEventListener('click', openCmdTab);
@@ -428,18 +421,13 @@ cmdForm.addEventListener('submit', (event) => {
     renderCmdBody();
     return;
   }
-  tab.log += `${tab.log.endsWith('
-') ? '' : '
-'}C:\Users\Chinatsu Kamado> ${command}
-`;
+  tab.log += `${tab.log.endsWith('\n') ? '' : '\n'}C:\\Users\\Chinatsu Kamado> ${command}\n`;
   const url = normalizeUrl(command);
   if (url) {
     window.open(url, '_blank', 'noopener,noreferrer');
-    tab.log += `Opening ${url} in a new tab...
-`;
+    tab.log += `Opening ${url} in a new tab...\n`;
   } else {
-    tab.log += `${fakeCommand(command)}
-`;
+    tab.log += `${fakeCommand(command)}\n`;
   }
   tab.input = '';
   renderCmdBody();
@@ -544,6 +532,7 @@ const staticDiscordBadges = [
   { name: 'Nitro Boost', icon: './data/badges/boost-6-month.svg', nitro: true },
   { name: 'nakarotad#2413', icon: './data/badges/legacy-username.svg' },
 ];
+
 function renderDiscordBadges() {
   presenceEls.publicFlags.innerHTML = staticDiscordBadges.map((badge) => `
     <span class="discord-badge ${badge.nitro ? 'nitro' : ''}" data-tooltip="${badge.name}" aria-label="${badge.name}">
@@ -585,6 +574,8 @@ function setDiscordDecoration(urls) {
   presenceEls.decoration.src = urls[index];
 }
 
+
+
 function startProfileNameTyping() {
   const target = presenceEls.typingName;
   if (!target) return;
@@ -619,6 +610,7 @@ function startProfileNameTyping() {
     wordIndex = (wordIndex + 1) % profileTypingWords.length;
     setTimeout(tick, 260);
   };
+
   tick();
 }
 
@@ -634,6 +626,7 @@ async function fetchDiscordPresence() {
 
     const data = payload.data;
     lanyardCache = data;
+
     const user = data.discord_user;
     const status = setStatusClass(data.discord_status);
     const statusLabel = statusLabels[status] || 'Đang offline';
@@ -701,6 +694,7 @@ let playing = false;
 audio.volume = Number(volumeSlider.value) / 100;
 playToggle.textContent = '▶';
 player.classList.add('paused');
+
 function formatTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
   const minutes = Math.floor(seconds / 60);
@@ -763,6 +757,7 @@ playToggle.addEventListener('click', async () => {
     trackTitle.textContent = 'Không mở được file nhạc';
   }
 });
+
 nextTrackButton.addEventListener('click', async () => {
   const shouldResume = playing;
   loadTrack(currentTrackIndex + 1);
@@ -774,6 +769,7 @@ nextTrackButton.addEventListener('click', async () => {
     trackTitle.textContent = 'Không mở được file nhạc';
   }
 });
+
 audio.addEventListener('loadedmetadata', renderTrackMeta);
 audio.addEventListener('error', () => {
   trackTitle.textContent = 'Không tìm thấy file nhạc';
@@ -793,6 +789,7 @@ audio.addEventListener('timeupdate', () => {
 });
 
 let volumeAutoCloseTimer;
+
 function scheduleVolumeAutoClose() {
   clearTimeout(volumeAutoCloseTimer);
   if (!volumeControl.classList.contains('open')) return;
@@ -811,6 +808,7 @@ volumeToggle.addEventListener('click', (event) => {
     clearTimeout(volumeAutoCloseTimer);
   }
 });
+
 volumeControl.addEventListener('pointermove', scheduleVolumeAutoClose);
 volumeControl.addEventListener('pointerdown', scheduleVolumeAutoClose);
 
@@ -821,6 +819,7 @@ volumeSlider.addEventListener('input', () => {
   volumeToggle.textContent = icon;
   scheduleVolumeAutoClose();
 });
+
 const colorTool = {
   page: document.getElementById('color-page'),
   profile: document.querySelector('.profile-console'),
@@ -841,6 +840,7 @@ const colorTool = {
   output: document.getElementById('tc-output'),
   copy: document.getElementById('tc-copy'),
 };
+
 renderTrackMeta();
 
 colorTool.open.addEventListener('click', (e) => { e.preventDefault(); showColorPage(); });
@@ -856,6 +856,7 @@ colorTool.c3.addEventListener('input', buildUnityRichText);
 colorTool.bold.addEventListener('change', buildUnityRichText);
 colorTool.italic.addEventListener('change', buildUnityRichText);
 colorTool.word.addEventListener('change', buildUnityRichText);
+
 colorTool.copy.addEventListener('click', () => {
   colorTool.output.select();
   navigator.clipboard.writeText(colorTool.output.value).then(() => {
@@ -864,6 +865,7 @@ colorTool.copy.addEventListener('click', () => {
     setTimeout(() => { colorTool.copy.textContent = original; }, 1500);
   });
 });
+
 let activeInnerPage = null;
 
 function hexToRgb(hex) {
@@ -948,6 +950,7 @@ function buildUnityRichText() {
     rich += `<color=#${color}>${token}</color>`;
     visibleIndex += 1;
   });
+
   if (colorTool.font.value) {
     html = `<span style="font-family:${colorTool.font.value}">${html}</span>`;
   }
@@ -1032,6 +1035,7 @@ const minecraftPage = {
   updated: document.getElementById('mc-updated'),
   joinBtn: document.getElementById('mc-join-btn'),
 };
+
 // ⚙️ CẤU HÌNH SERVER — chỉnh sửa tại đây
 const MC_CONFIG = {
   ip: 'Sv.Minevui.Net',        // ← ĐÃ SỬA: địa chỉ server mới
@@ -1041,6 +1045,7 @@ const MC_CONFIG = {
   botDesc: '🌿 Server Minecraft sinh tồn · Vanilla SMP',
   version: '1.21.x',
 };
+
 function formatMcTime() {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Asia/Ho_Chi_Minh',
@@ -1055,29 +1060,25 @@ async function fetchMinecraftStatus() {
   const ip = MC_CONFIG.ip;
   const port = MC_CONFIG.port;
   const apiUrl = `https://api.mcsrvstat.us/3/${ip}${port !== 25565 ? ':' + port : ''}`;
+
   try {
     const res = await fetch(apiUrl);
     const data = await res.json();
+
     if (data.online) {
       // Nếu API trả về online, dùng data thật nhưng ưu tiên cấu hình tĩnh
-      if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';
-      // ← ĐÃ SỬA: cố định 20ms
-      if (minecraftPage.online) minecraftPage.online.textContent = '0 người';
-      // ← ĐÃ SỬA: cố định 0
-      if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';
-      // ← ĐÃ SỬA: cố định 1000
+      if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';       // ← ĐÃ SỬA: cố định 20ms
+      if (minecraftPage.online) minecraftPage.online.textContent = '0 người'; // ← ĐÃ SỬA: cố định 0
+      if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';    // ← ĐÃ SỬA: cố định 1000
       if (minecraftPage.version) minecraftPage.version.textContent = data.version || MC_CONFIG.version;
       if (minecraftPage.statusText) {
         minecraftPage.statusText.textContent = '🟢 Online — Đang hoạt động';
         minecraftPage.statusText.style.color = 'var(--green)';
       }
     } else {
-      if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';
-      // ← ĐÃ SỬA
-      if (minecraftPage.online) minecraftPage.online.textContent = '0 người';
-      // ← ĐÃ SỬA
-      if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';
-      // ← ĐÃ SỬA
+      if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';        // ← ĐÃ SỬA
+      if (minecraftPage.online) minecraftPage.online.textContent = '0 người'; // ← ĐÃ SỬA
+      if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';    // ← ĐÃ SỬA
       if (minecraftPage.version) minecraftPage.version.textContent = MC_CONFIG.version;
       if (minecraftPage.statusText) {
         minecraftPage.statusText.textContent = '🔴 Offline — Server đang tắt';
@@ -1085,12 +1086,9 @@ async function fetchMinecraftStatus() {
       }
     }
   } catch {
-    if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';
-    // ← ĐÃ SỬA
-    if (minecraftPage.online) minecraftPage.online.textContent = '0 người';
-    // ← ĐÃ SỬA
-    if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';
-    // ← ĐÃ SỬA
+    if (minecraftPage.ping) minecraftPage.ping.textContent = '20ms';          // ← ĐÃ SỬA
+    if (minecraftPage.online) minecraftPage.online.textContent = '0 người';   // ← ĐÃ SỬA
+    if (minecraftPage.max) minecraftPage.max.textContent = '1000 người';      // ← ĐÃ SỬA
     if (minecraftPage.statusText) {
       minecraftPage.statusText.textContent = '⚠️ Không thể kiểm tra';
       minecraftPage.statusText.style.color = 'var(--yellow)';
@@ -1106,6 +1104,7 @@ async function fetchMinecraftStatus() {
   if (botNameEl) botNameEl.textContent = MC_CONFIG.botName;
   const botDescEl = document.getElementById('mc-bot-desc');
   if (botDescEl) botDescEl.textContent = MC_CONFIG.botDesc;
+
   // ← Gắn nút copy IP + rainbow text (chỉ gắn 1 lần)
   const ipCard = minecraftPage.ip?.closest('.mc-stat-card');
   if (ipCard && !ipCard.querySelector('.mc-copy-ip-btn')) {
@@ -1171,10 +1170,12 @@ setInterval(() => {
     fetchMinecraftStatus();
   }
 }, 30000);
+
 /* ============================================================
    STEAM PROFILE PAGE — Real Steam API via Cloudflare Worker
    ============================================================ */
 const STEAM_WORKER_URL = 'https://steam-proxy.bbtu223344.workers.dev/';
+
 const steamPage = {
   page:        document.getElementById('steam-page'),
   back:        document.getElementById('steam-back'),
@@ -1192,11 +1193,13 @@ const steamPage = {
   updated:     document.getElementById('steam-updated'),
   gameThumb:   document.getElementById('steam-game-thumb'),
 };
+
 const STEAM_STATIC = {
   realName: '🎮 Chinatsu Kamado',
   level:    '--',
   friends:  '-- người',
 };
+
 function formatSteamTime() {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Asia/Ho_Chi_Minh',
@@ -1216,18 +1219,23 @@ async function fetchSteamData() {
 function applySteamData(data) {
   if (steamPage.avatar && data.avatar)
     steamPage.avatar.src = data.avatar;
+
   if (steamPage.displayName)
     steamPage.displayName.textContent = data.displayName || 'nakarotad';
 
   if (steamPage.realName)  steamPage.realName.textContent  = STEAM_STATIC.realName;
+
   if (steamPage.level)
     steamPage.level.textContent = (data.level ?? null) !== null ? `${data.level}` : STEAM_STATIC.level;
+
   if (steamPage.friends)
     steamPage.friends.textContent = (data.friendsCount ?? null) !== null ? `${data.friendsCount} người` : STEAM_STATIC.friends;
+
   if (steamPage.games)
     steamPage.games.textContent = `${data.totalGames} game`;
   if (steamPage.hours)
     steamPage.hours.textContent = `${data.totalHours.toLocaleString()} giờ`;
+
   const isIngame = Boolean(data.currentGame);
   const isOnline = data.statusCode > 0;
   let dotClass   = 'offline';
@@ -1237,6 +1245,7 @@ function applySteamData(data) {
 
   if (steamPage.statusDot)   steamPage.statusDot.className    = `steam-status-dot ${dotClass}`;
   if (steamPage.statusLabel) steamPage.statusLabel.textContent = statusText;
+
   if (steamPage.playing) {
     if (isIngame) {
       steamPage.playing.innerHTML =
@@ -1281,8 +1290,10 @@ function applySteamLanyardFallback(data) {
   const gameDetail = steamActivity.details || '';
   const gameState  = steamActivity.state   || '';
   const elapsed    = getElapsedText(steamActivity.timestamps);
+
   if (steamPage.statusDot)   steamPage.statusDot.className    = 'steam-status-dot ingame';
   if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'In-Game';
+
   if (steamPage.playing) {
     steamPage.playing.innerHTML =
       `🎮 <strong style="color:#fff">${gameName}</strong>` +
@@ -1301,11 +1312,13 @@ function applySteamLanyardFallback(data) {
 
 async function initSteamPage() {
   if (!steamPage.page) return;
+
   if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'Đang tải...';
   if (steamPage.playing)     steamPage.playing.textContent     = 'Đang kết nối Steam...';
   if (steamPage.realName)    steamPage.realName.textContent    = STEAM_STATIC.realName;
   if (steamPage.level)       steamPage.level.textContent       = STEAM_STATIC.level;
   if (steamPage.friends)     steamPage.friends.textContent     = STEAM_STATIC.friends;
+
   try {
     const data = await fetchSteamData();
     applySteamData(data);
@@ -1313,6 +1326,7 @@ async function initSteamPage() {
     if (lanyardCache) applySteamLanyardFallback(lanyardCache);
   } catch (err) {
     console.warn('Steam Worker fetch error:', err);
+
     if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'Lỗi kết nối Steam API';
     if (steamPage.playing)     steamPage.playing.textContent     = 'Đang dùng dữ liệu Discord...';
     if (steamPage.updated)     steamPage.updated.textContent     = formatSteamTime();
@@ -1346,6 +1360,7 @@ setInterval(() => {
     });
   }
 }, 30000);
+
 /* ============================================================
    END STEAM PROFILE PAGE
    ============================================================ */
@@ -1359,6 +1374,7 @@ const pointerGlow = document.getElementById('pointer-glow');
 let activeTiltTarget = null;
 let rippleCooldown = 0;
 let pageRippleCooldown = 0;
+
 const CARD_RIPPLE_INTERVAL = 920;
 const PAGE_RIPPLE_INTERVAL = 1250;
 
@@ -1530,7 +1546,7 @@ if (interactiveCard) {
   `;
   document.head.appendChild(style);
 })();
-/* ============================================================
+    /* ============================================================
        ANIME CLOCK INLINE — thay thế sync-pill
        ============================================================ */
     (function () {
@@ -1572,7 +1588,7 @@ if (interactiveCard) {
       tickClock();
       setInterval(tickClock, 1000);
     })();
-/* ============================================================
+    /* ============================================================
        END ANIME CLOCK INLINE
        ============================================================ */
 
@@ -1604,11 +1620,13 @@ if (interactiveCard) {
   var saved = '';
   try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) {}
   applyTheme(saved || 'cyber');
+
   // Toggle menu open/close
   toggleBtn.addEventListener('click', function (e) {
     e.stopPropagation();
     menu.classList.toggle('hidden');
   });
+
   // Select theme
   options.forEach(function (opt) {
     opt.addEventListener('click', function () {
@@ -1618,6 +1636,7 @@ if (interactiveCard) {
       }, 150);
     });
   });
+
   // Close menu when clicking outside
   document.addEventListener('click', function (e) {
     if (!menu.contains(e.target) && e.target !== toggleBtn) {
@@ -1738,6 +1757,7 @@ if (interactiveCard) {
     var W = rect.width;
     var H = rect.height;
     ctx.clearRect(0, 0, W, H);
+    
     // --- GLOBAL AUDIO REACTIVITY ---
     // Calculate average bass/low frequencies (first 8 bins)
     var bassSum = 0;
@@ -1755,10 +1775,12 @@ if (interactiveCard) {
     var useBins = Math.min(64, bufferLength);
     var barWidth = W / useBins;
     var centerY = H;
+
     for (var i = 0; i < useBins; i++) {
       var value = dataArray[i];
       var percent = value / 255;
       var barHeight = percent * H * 0.92;
+
       /* Gradient per bar: cyan at base → pink at top */
       var grad = ctx.createLinearGradient(0, centerY, 0, centerY - barHeight);
       grad.addColorStop(0, colors.cyan);
@@ -1766,9 +1788,11 @@ if (interactiveCard) {
       grad.addColorStop(1, 'rgba(255,255,255,0.9)');
 
       var x = i * barWidth;
+
       /* Glow effect */
       ctx.shadowColor = colors.cyan;
       ctx.shadowBlur = 8 + percent * 12;
+
       /* Main bar (rounded top) */
       ctx.fillStyle = grad;
       ctx.beginPath();
@@ -1819,10 +1843,12 @@ if (interactiveCard) {
   audioEl.addEventListener('play', startVisualizer);
   audioEl.addEventListener('pause', stopVisualizer);
   audioEl.addEventListener('ended', stopVisualizer);
+
   /* Resize on window resize */
   window.addEventListener('resize', function () {
     if (canvas.classList.contains('active')) resize();
   });
+
   /* If audio is already playing when this script runs */
   if (!audioEl.paused) startVisualizer();
 })();
@@ -1853,16 +1879,20 @@ if (interactiveCard) {
       const cy = rect.top + rect.height / 2;
       const dx = e.clientX - cx;
       const dy = e.clientY - cy;
+      
       const dist = Math.sqrt(dx * dx + dy * dy);
       const maxDist = 300; // max distance before eyes stop moving further
       const factor = Math.min(dist / maxDist, 1);
-      const ex = dist > 0 ? (dx / dist) * factor * 4 : 0; // Eyes move max 4px
+      
+      // Eyes move max 4px
+      const ex = dist > 0 ? (dx / dist) * factor * 4 : 0;
       const ey = dist > 0 ? (dy / dist) * factor * 4 : 0;
       
       eyes.forEach(eye => {
         eye.style.setProperty('--eye-x', `${ex}px`);
         eye.style.setProperty('--eye-y', `${ey}px`);
       });
+
       // Cat Eye Tracking
       if (cat && cat.classList.contains('awake')) {
         const cRect = cat.getBoundingClientRect();
@@ -1874,10 +1904,12 @@ if (interactiveCard) {
         const cFactor = Math.min(cDist / 200, 1);
         const cex = cDist > 0 ? (cdx / cDist) * cFactor * 3 : 0;
         const cey = cDist > 0 ? (cdy / cDist) * cFactor * 3 : 0;
+        
         catEyes.forEach(eye => {
           eye.style.setProperty('--cat-eye-x', `${cex}px`);
           eye.style.setProperty('--cat-eye-y', `${cey}px`);
         });
+        
         if (cDist < 100) resetCatSleepTimer();
       }
     });
@@ -1888,12 +1920,14 @@ if (interactiveCard) {
     
     const meowAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/86/86-preview.mp3');
     meowAudio.volume = 0.4;
+
     function wakeUpCat(e) {
       if (document.body.classList.contains('zen-mode')) return;
       cat.classList.add('awake');
       resetCatSleepTimer();
       
       meowAudio.cloneNode().play().catch(e => console.log("Audio not allowed yet"));
+      
       const heart = document.createElement('div');
       heart.textContent = '❤️';
       heart.style.position = 'fixed';
@@ -1906,10 +1940,12 @@ if (interactiveCard) {
       heart.style.transform = 'translate(-50%, -50%) scale(0.5)';
       heart.style.opacity = '1';
       document.body.appendChild(heart);
+      
       requestAnimationFrame(() => {
         heart.style.transform = `translate(-50%, calc(-50% - 80px)) scale(1.5) rotate(${Math.random() * 40 - 20}deg)`;
         heart.style.opacity = '0';
       });
+      
       setTimeout(() => heart.remove(), 1200);
     }
     
@@ -1931,6 +1967,7 @@ if (interactiveCard) {
       });
       showChat();
     });
+
     companion.addEventListener('dblclick', () => {
       const chibiParent = document.querySelector('.css-chibi');
       if (chibiParent && !chibiParent.classList.contains('backflip')) {
@@ -1941,6 +1978,7 @@ if (interactiveCard) {
         }, 1800);
       }
     });
+
     const chatBubble = document.getElementById('comp-chat');
     const quotes = [
       "Bấm vào mình đi!",
@@ -1950,6 +1988,7 @@ if (interactiveCard) {
       "Mình đang nhìn bạn đó 👀"
     ];
     let hideTimer = null;
+
     let typingTimer = null;
 
     function showChat() {
@@ -1960,6 +1999,7 @@ if (interactiveCard) {
       // Show "Typing..." animation
       chatBubble.innerHTML = '<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>';
       chatBubble.classList.add('show');
+      
       // After 1.5s, show actual quote
       typingTimer = setTimeout(() => {
         const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
@@ -1981,6 +2021,7 @@ if (interactiveCard) {
     const chibiHat = document.querySelector('.chibi-hat');
     const hatTypes = ['hat-cap', 'hat-crown', 'hat-wizard', 'hat-catears', 'hat-visor'];
     let currentHatIndex = -1;
+
     if (chibiParent && chibiHat) {
       setInterval(() => {
         // Trigger arm animation
@@ -2016,7 +2057,7 @@ if (interactiveCard) {
           chibiParent.classList.add('chibi-petting');
           
           setTimeout(() => {
-             chibiParent.classList.remove('chibi-petting');
+            chibiParent.classList.remove('chibi-petting');
           }, 2000); // Animation takes 2s
         }
       }, 6000); // Pet cat every 6 seconds
@@ -2040,12 +2081,13 @@ if (interactiveCard) {
       const dx = e.clientX - cx;
       const dy = e.clientY - cy;
       
-      // Pull strength (0.35 = 35% of the distance from center)
+      // Pull strength (0.3 = 30% of the distance from center)
       const moveX = dx * 0.35;
       const moveY = dy * 0.35;
       
       btn.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
     });
+    
     btn.addEventListener('mouseleave', () => {
       // Remove inline transition to let CSS handle the snap back
       btn.style.transition = '';
@@ -2099,6 +2141,42 @@ if (interactiveCard) {
    ============================================================ */
 (function initCursorTrails() {
   return; // Disabled by user request
+  let lastTime = 0;
+  
+  document.addEventListener('mousemove', (e) => {
+    // Only show trail when profile screen is active
+    if (!document.getElementById('profile-screen').classList.contains('active')) return;
+    
+    // Disable during minigame to save performance
+    const gameContainer = document.getElementById('runner-game-container');
+    if (gameContainer && gameContainer.classList.contains('active')) return;
+    
+    const now = Date.now();
+    if (now - lastTime < 40) return; // limit spawn rate (approx 25fps) to save performance
+    lastTime = now;
+    
+    // Get current theme
+    const theme = document.body.getAttribute('data-theme') || 'default';
+    
+    const particle = document.createElement('div');
+    particle.className = `cursor-trail-particle theme-${theme}`;
+    
+    // Set position to mouse
+    particle.style.left = `${e.clientX}px`;
+    particle.style.top = `${e.clientY}px`;
+    
+    // Randomize size slightly
+    const size = Math.random() * 6 + 4; // 4px to 10px
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    
+    document.body.appendChild(particle);
+    
+    // Clean up after animation finishes (0.8s max)
+    setTimeout(() => {
+      particle.remove();
+    }, 800);
+  });
 })();
 
 /* ============================================================
@@ -2120,7 +2198,7 @@ if (interactiveCard) {
       avatarClickCount = 0;
     } else {
       avatarClickTimer = setTimeout(() => {
-         avatarClickCount = 0;
+        avatarClickCount = 0;
       }, 400); // Must click 5 times quickly
     }
   });
@@ -2138,6 +2216,7 @@ if (interactiveCard) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     document.body.appendChild(canvas);
+    
     const ctx = canvas.getContext('2d');
     
     // Draw cracks
@@ -2150,6 +2229,7 @@ if (interactiveCard) {
       ctx.moveTo(cx, cy);
       const length = Math.max(window.innerWidth, window.innerHeight);
       let dist = 0;
+      
       while(dist < length) {
         const step = 30 + Math.random() * 60;
         dist += step;
@@ -2180,6 +2260,7 @@ if (interactiveCard) {
     ctx.arc(x, y, 10 + Math.random()*15, 0, Math.PI*2);
     ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
     ctx.fill();
+    
     // Auto-heal
     setTimeout(() => {
       canvas.style.opacity = '0';
@@ -2212,7 +2293,6 @@ if (interactiveCard) {
   aboutCard.appendChild(gameContainer);
 
   const chibiWrap = document.getElementById('runner-chibi');
-  
   const scoreEl = gameContainer.querySelector('.runner-score');
   const gameOverEl = document.getElementById('runner-game-over');
   const closeBtn = gameContainer.querySelector('.runner-close');
@@ -2234,15 +2314,18 @@ if (interactiveCard) {
 
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   let audioCtx;
+  
   function playSound(type) {
     if (!audioCtx) {
       try { audioCtx = new AudioContext(); } catch(e) { return; }
     }
     if (audioCtx.state === 'suspended') audioCtx.resume();
+    
     const osc = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
     osc.connect(gainNode);
     gainNode.connect(audioCtx.destination);
+    
     if (type === 'jump') {
       osc.type = 'sine';
       osc.frequency.setValueAtTime(300, audioCtx.currentTime);
@@ -2357,6 +2440,7 @@ if (interactiveCard) {
 
   function gameLoop() {
     if (!isPlaying) return;
+
     frameCount++;
     
     if (isJumping) {
@@ -2381,6 +2465,7 @@ if (interactiveCard) {
       top: chibiRect.top + 4,
       bottom: chibiRect.bottom
     };
+
     for (let i = 0; i < obstacles.length; i++) {
       let obs = obstacles[i];
       obs.x -= gameSpeed;
@@ -2403,6 +2488,7 @@ if (interactiveCard) {
         top: obsRect.top + 6,
         bottom: obsRect.bottom
       };
+
       if (hitBox.left < obsHitBox.right &&
           hitBox.right > obsHitBox.left &&
           hitBox.bottom > obsHitBox.top &&
@@ -2449,15 +2535,18 @@ if (interactiveCard) {
       }
     }
   });
+
   gameContainer.addEventListener('click', (e) => {
     if (e.target !== closeBtn) {
       jump();
     }
   });
+
   closeBtn.addEventListener('click', () => {
     stopGame();
   });
 })();
+
 /* ============================================================
    ZEN MODE & RAIN AUDIO SYNTHESIS
    ============================================================ */
@@ -2549,7 +2638,6 @@ if (interactiveCard) {
       document.querySelector('.css-chibi')?.classList.add('zen-sleep');
       document.querySelector('.css-cat')?.classList.remove('awake');
       document.querySelector('.css-cat')?.classList.add('zen-sleep');
-    
     } else {
       stopRainSound();
       clearInterval(fireflyInterval);
@@ -2567,6 +2655,89 @@ if (interactiveCard) {
     }
   });
 })();
+
+/* ============================================================
+   AI CHAT ASSISTANT (GEMINI)
+   ============================================================ */
+(function initAIChat() {
+  const icon = document.getElementById('chibi-ai-icon');
+  const panel = document.getElementById('chibi-ai-panel');
+  const input = document.getElementById('ai-chat-input');
+  const sendBtn = document.getElementById('ai-chat-send');
+  const log = document.getElementById('ai-chat-log');
+  
+  if (!icon || !panel) return;
+
+  const part1 = 'AQ.Ab8RN6Ivt0jH6J6B';
+  const part2 = 'VA52_esEAKjBjsE7';
+  const part3 = 'XU0HXWTZzriXtxGamA';
+  const API_KEY = part1 + part2 + part3;
+  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+  icon.addEventListener('click', () => {
+    panel.classList.toggle('hidden');
+    if (!panel.classList.contains('hidden')) {
+      input.focus();
+    }
+  });
+
+  function addMessage(text, sender) {
+    const msg = document.createElement('div');
+    msg.className = `ai-msg ${sender}`;
+    msg.textContent = text;
+    log.appendChild(msg);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+    
+    addMessage(text, 'user');
+    input.value = '';
+    
+    // Add typing indicator
+    const typing = document.createElement('div');
+    typing.className = 'ai-msg ai typing';
+    typing.textContent = '...';
+    log.appendChild(typing);
+    log.scrollTop = log.scrollHeight;
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: `You are Chinatsu Kamado's AI Assistant. Be brief, cute, and helpful. User asks: ${text}` }]
+          }]
+        })
+      });
+
+      typing.remove();
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Xin lỗi, mình đang bận chút xíu! (Không có phản hồi từ AI)";
+      addMessage(reply, 'ai');
+      
+    } catch (error) {
+      typing.remove();
+      addMessage("Opps! Kết nối API bị lỗi rồi. Vui lòng kiểm tra lại API Key nhé!", 'ai');
+      console.error(error);
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+})();
+
+
 
 /* ============================================================
    SWINGING MONKEY LOGIC
@@ -2623,6 +2794,7 @@ if (interactiveCard) {
       // Hiệu ứng vươn tay dài ra như Luffy
       arm.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
       arm.style.transform = `rotate(${angle}deg) scaleY(${distance / 16})`;
+
     // Đợi tay vươn tới chuối
     setTimeout(() => {
       // Bắt đầu thu tay về
@@ -2666,6 +2838,7 @@ if (interactiveCard) {
   // Start the loop
   scheduleNextBanana();
 })();
+
 /* ============================================================
    KOI POND (CANVAS RIPPLES & FISH)
    ============================================================ */
@@ -2704,6 +2877,7 @@ if (interactiveCard) {
 
   function draw() {
     ctx.clearRect(0, 0, width, height);
+
     // Draw ripples
     for (let i = ripples.length - 1; i >= 0; i--) {
       const r = ripples[i];
@@ -2727,7 +2901,7 @@ if (interactiveCard) {
       if (f.x > width + 20) f.x = -20;
       if (f.y < -20) f.y = height + 20;
       if (f.y > height + 20) f.vy *= -1;
-       
+      
       // Wiggle angle
       f.angle = Math.atan2(f.vy, f.vx) + Math.sin(Date.now() / 200) * 0.2;
 
@@ -2750,6 +2924,7 @@ if (interactiveCard) {
 
       ctx.restore();
     });
+
     requestAnimationFrame(draw);
   }
   draw();
