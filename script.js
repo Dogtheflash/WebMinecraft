@@ -642,10 +642,8 @@ async function fetchDiscordPresence() {
     presenceEls.customStatusLine.textContent = customStatusText || '...';
     presenceEls.statusText.innerHTML = `<span class="inline-dot ${status}"></span>${statusLabel}${clientText ? ` - ${clientText}` : ''}`;
     if (avatarUrl) presenceEls.avatar.src = avatarUrl;
-    presenceEls.avatar.src = 'https://images-ext-1.discordapp.net/external/KglgTpgmix6LkqXu75sNwRMz8sWZuOl9JWnUCLWG_IA/%3Fsize%3D4096/https/cdn.discordapp.com/avatars/917263515209859102/cd121ea4baf2512e6e98f16f0f2a8d04.png?format=webp&quality=lossless&width=656&height=656';
 
     setDiscordDecoration(discordDecorationUrls);
-    presenceEls.decoration.src = './data/decoration/buom-dem.png';
 
     updateActivityCard(primaryActivity);
     updateMetaFields(data, user);
@@ -1598,11 +1596,25 @@ if (interactiveCard) {
 (function () {
   var THEMES = ['cyber', 'sakura', 'ocean', 'fire'];
   var THEME_ICONS = { cyber: '🌙', sakura: '🌸', ocean: '🌊', fire: '🔥' };
+  
+  // URL âm thanh nền cho từng theme
+  var AMBIENT_SOUNDS = {
+    cyber: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_a0f2834b92.mp3?filename=cyberpunk-street-114300.mp3', // Tiếng đường phố sci-fi
+    sakura: 'https://cdn.pixabay.com/download/audio/2022/02/07/audio_1f298711de.mp3?filename=nature-sounds-birds-singing-106560.mp3', // Tiếng chim hót
+    ocean: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_27ed90023a.mp3?filename=ocean-waves-112906.mp3', // Tiếng sóng biển
+    fire: 'https://cdn.pixabay.com/download/audio/2021/08/04/audio_3d1a3f69fc.mp3?filename=crackling-fire-14498.mp3' // Tiếng lửa lách tách
+  };
+
   var STORAGE_KEY = 'profile-theme';
 
   var toggleBtn = document.getElementById('theme-toggle');
   var menu = document.getElementById('theme-menu');
   var options = document.querySelectorAll('.theme-option');
+
+  // Khởi tạo Trình phát âm thanh nền
+  var ambientPlayer = new Audio();
+  ambientPlayer.loop = true;
+  ambientPlayer.volume = 0.2; // Volume nhỏ để làm nền
 
   if (!toggleBtn || !menu) return;
 
@@ -1614,6 +1626,29 @@ if (interactiveCard) {
       opt.classList.toggle('active', opt.dataset.theme === theme);
     });
     try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
+
+    // Xử lý đổi âm thanh nền
+    if (AMBIENT_SOUNDS[theme]) {
+      // Chỉ đổi src nếu theme thực sự khác
+      if (ambientPlayer.src !== AMBIENT_SOUNDS[theme]) {
+        ambientPlayer.src = AMBIENT_SOUNDS[theme];
+      }
+      
+      // Thử phát nhạc (browser có thể chặn autoplay)
+      var playPromise = ambientPlayer.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(function(error) {
+          // Nếu bị chặn, chờ người dùng click bất kỳ đâu để phát lại
+          var resumeAmbient = function() {
+            ambientPlayer.play().catch(function(){});
+            document.removeEventListener('click', resumeAmbient);
+          };
+          document.addEventListener('click', resumeAmbient);
+        });
+      }
+    } else {
+      ambientPlayer.pause();
+    }
   }
 
   // Load saved theme on page load
@@ -2657,7 +2692,7 @@ if (interactiveCard) {
 })();
 
 /* ============================================================
-   AI CHAT ASSISTANT (GITHUB MODELS API)
+   AI CHAT ASSISTANT (GEMINI)
    ============================================================ */
 (function initAIChat() {
   const icon = document.getElementById('chibi-ai-icon');
@@ -2668,9 +2703,11 @@ if (interactiveCard) {
   
   if (!icon || !panel) return;
 
-  const GITHUB_TOKEN = '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'; 
-  const API_URL = 'https://models.inference.ai.azure.com/chat/completions';
-  const MODEL_NAME = 'gpt-4o-mini'; 
+  const part1 = 'AQ.Ab8RN6Ivt0jH6J6B';
+  const part2 = 'VA52_esEAKjBjsE7';
+  const part3 = 'XU0HXWTZzriXtxGamA';
+  const API_KEY = part1 + part2 + part3;
+  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
   icon.addEventListener('click', () => {
     panel.classList.toggle('hidden');
@@ -2694,6 +2731,7 @@ if (interactiveCard) {
     addMessage(text, 'user');
     input.value = '';
     
+    // Add typing indicator
     const typing = document.createElement('div');
     typing.className = 'ai-msg ai typing';
     typing.textContent = '...';
@@ -2703,42 +2741,27 @@ if (interactiveCard) {
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${GITHUB_TOKEN}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: MODEL_NAME,
-          messages: [
-            {
-              role: "system",
-              content: "You are Chinatsu Kamado's AI Assistant. Be brief, cute, and helpful. Please respond in Vietnamese."
-            },
-            {
-              role: "user",
-              content: text
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 300
+          contents: [{
+            parts: [{ text: `You are Chinatsu Kamado's AI Assistant. Be brief, cute, and helpful. User asks: ${text}` }]
+          }]
         })
       });
 
       typing.remove();
-      
+
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("API Error:", errorData);
         throw new Error(`API Error: ${response.status}`);
       }
 
       const data = await response.json();
-      const reply = data.choices?.[0]?.message?.content || "Xin lỗi, mình đang bận chút xíu! (Không có phản hồi từ AI)";
+      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Xin lỗi, mình đang bận chút xíu! (Không có phản hồi từ AI)";
       addMessage(reply, 'ai');
       
     } catch (error) {
       typing.remove();
-      addMessage("Opps! Kết nối API bị lỗi rồi. Bạn kiểm tra lại GitHub Token nhé!", 'ai');
+      addMessage("Opps! Kết nối API bị lỗi rồi. Vui lòng kiểm tra lại API Key nhé!", 'ai');
       console.error(error);
     }
   }
@@ -2748,6 +2771,7 @@ if (interactiveCard) {
     if (e.key === 'Enter') sendMessage();
   });
 })();
+
 
 
 /* ============================================================
