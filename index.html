@@ -487,6 +487,7 @@
 
   <!-- ========== MUSIC PLAYER ========== -->
   <aside id="music-player" class="music-player glass-panel hidden" aria-label="Trình phát nhạc">
+    <div class="player-art"></div>
     <button id="play-toggle" class="play-btn" type="button" aria-label="Phát hoặc tạm dừng">▶</button>
     <button id="next-track" class="next-btn" type="button" aria-label="Chuyển bài tiếp theo">⏭</button>
     <div class="track-meta">
@@ -498,8 +499,7 @@
       <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Mở chỉnh âm lượng">🔊</button>
       <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
     </div>
-    <!-- REAL AUDIO VISUALIZER CANVAS -->
-    <canvas id="audio-visualizer" class="audio-visualizer player-visualizer" aria-hidden="true"></canvas>
+    <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
     <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
   </aside>
   <!-- ========== END MUSIC PLAYER ========== -->
