@@ -75,7 +75,7 @@
   <div id="pointer-glow" class="pointer-glow" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
   <video id="bg-video" class="bg-video" autoplay muted loop playsinline aria-hidden="true">
-    <source src="./data/background/chillnight.mp4" type="video/mp4">
+    <source src="./data/background/bg-test.mp4" type="video/mp4">
   </video>
   <div id="zen-bg" class="zen-bg"></div>
 
@@ -487,22 +487,90 @@
     </section>
   </main>
 
-  <aside id="music-player" class="music-player glass-panel hidden" aria-label="Trình phát nhạc">
-    <button id="play-toggle" class="play-btn" type="button" aria-label="Phát hoặc tạm dừng">▶</button>
-    <button id="next-track" class="next-btn" type="button" aria-label="Chuyển bài tiếp theo">⏭</button>
-    <div class="track-meta">
-      <strong id="track-title">Beautiful Piano Music</strong>
-      <div class="track-time"><span id="current-time">0:00</span><span id="duration-time">0:00</span></div>
-      <div class="progress"><span id="progress-bar"></span></div>
+  <!-- ========== LO-FI RADIO STATION ========== -->
+  <aside id="music-player" class="lofi-radio glass-panel hidden" aria-label="Lo-fi Radio Station">
+    <!-- Antenna -->
+    <div class="radio-antenna" id="radio-antenna">
+      <div class="antenna-rod"></div>
+      <div class="antenna-tip"></div>
+      <div class="antenna-signal s1"></div>
+      <div class="antenna-signal s2"></div>
+      <div class="antenna-signal s3"></div>
     </div>
-    <div id="volume-control" class="volume-control" aria-label="Âm lượng nhạc">
-      <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Mở chỉnh âm lượng">🔊</button>
-      <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
+
+    <!-- Radio Body -->
+    <div class="radio-body">
+      <!-- Top row: LCD Screen + LEDs -->
+      <div class="radio-top-row">
+        <!-- LED Indicators -->
+        <div class="radio-leds">
+          <span class="radio-led led-power" id="radio-led-power" title="Power"></span>
+          <span class="radio-led led-signal" id="radio-led-signal" title="Signal"></span>
+          <span class="radio-led led-beat" id="radio-led-beat" title="Beat"></span>
+        </div>
+
+        <!-- LCD Display -->
+        <div class="radio-lcd">
+          <div class="lcd-scanline"></div>
+          <div class="lcd-content">
+            <div class="lcd-channel" id="radio-channel">CH.01</div>
+            <div class="lcd-title" id="track-title">Lo-fi Radio</div>
+            <div class="lcd-waveform" id="radio-waveform">
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="lcd-time-row">
+              <span id="current-time">0:00</span>
+              <span class="lcd-freq" id="radio-freq">87.5 FM</span>
+              <span id="duration-time">0:00</span>
+            </div>
+            <div class="lcd-progress">
+              <span id="progress-bar"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom row: Controls -->
+      <div class="radio-controls">
+        <!-- Channel/Frequency Dial -->
+        <div class="radio-dial-wrap">
+          <div class="radio-dial" id="radio-dial" title="Xoay để đổi kênh">
+            <div class="dial-notch"></div>
+          </div>
+          <span class="dial-label">TUNE</span>
+        </div>
+
+        <!-- Transport Buttons -->
+        <div class="radio-transport">
+          <button id="play-toggle" class="radio-btn radio-btn-play" type="button" aria-label="Phát hoặc tạm dừng">▶</button>
+          <button id="next-track" class="radio-btn radio-btn-next" type="button" aria-label="Chuyển kênh tiếp theo">⏭</button>
+        </div>
+
+        <!-- Volume Knob -->
+        <div class="radio-vol-wrap">
+          <div class="radio-vol-knob" id="radio-vol-knob" title="Xoay để chỉnh âm lượng">
+            <div class="vol-knob-notch"></div>
+          </div>
+          <span class="dial-label">VOL</span>
+          <!-- Hidden native slider for accessibility -->
+          <input id="volume-slider" type="range" min="0" max="100" value="50" class="radio-vol-hidden" aria-label="Chỉnh âm lượng" />
+        </div>
+      </div>
+
+      <!-- Speaker Grille -->
+      <div class="radio-speaker">
+        <div class="speaker-grille"></div>
+      </div>
     </div>
-    <!-- REAL AUDIO VISUALIZER CANVAS -->
-    <canvas id="audio-visualizer" class="audio-visualizer player-visualizer" aria-hidden="true"></canvas>
+
+    <!-- Visualizer Canvas (hidden behind speaker) -->
+    <canvas id="audio-visualizer" class="audio-visualizer radio-visualizer" aria-hidden="true"></canvas>
     <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
   </aside>
+  <!-- ========== END LO-FI RADIO STATION ========== -->
   <!-- Zen Mode Overlay -->
   <div id="zen-overlay"></div>
   <script src="script.js"></script>
