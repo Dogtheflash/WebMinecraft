@@ -495,8 +495,11 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 .play-btn, .next-btn { width:auto; height:auto; min-width:22px; padding:0 2px; border:0; border-radius:0; color:#eaf8ff; background:transparent; cursor:pointer; flex:0 0 auto; display:grid; place-items:center; font-size:18px; line-height:1; text-shadow:0 0 16px rgba(53,232,255,.45); transition:color .2s ease, opacity .2s ease, transform .2s ease, text-shadow .2s ease; }
 .next-btn { min-width:24px; font-size:17px; color:#cbd7ee; }
 .play-btn:hover, .next-btn:hover { color:#fff; opacity:1; transform:translateY(-1px) scale(1.08); text-shadow:0 0 22px rgba(53,232,255,.65); }
-.player-art { width:42px; height:42px; border-radius:10px; background:linear-gradient(135deg, rgba(88,101,242,.95), rgba(53,232,255,.85)); position:relative; box-shadow:0 0 20px rgba(88,101,242,.22); flex:0 0 auto; }
-.player-art::after { content:"♪"; position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-size:22px; font-weight:800; }
+.player-art { width:42px; height:42px; border-radius:50%; background:repeating-radial-gradient(#111 0%, #111 4%, #222 5%, #222 6%); border:2px solid #000; position:relative; box-shadow:0 0 10px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.1); flex:0 0 auto; display:grid; place-items:center; animation:spinRecord 4s linear infinite; }
+.player-art::before { content:""; position:absolute; width:14px; height:14px; background:linear-gradient(135deg, var(--cyan), var(--pink)); border-radius:50%; box-shadow:0 0 4px rgba(0,0,0,0.5); }
+.player-art::after { content:""; position:absolute; width:4px; height:4px; background:#fff; border-radius:50%; }
+.paused .player-art { animation-play-state:paused; }
+@keyframes spinRecord { to { transform:rotate(360deg); } }
 .track-meta { flex:1; min-width:0; }
 .track-meta strong, .track-meta span { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .track-meta strong { font-weight:500; letter-spacing:-.01em; }
