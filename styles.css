@@ -487,9 +487,34 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 #discord-link:hover svg { transform:translateY(1px) scale(1.18); }
 
 /* ============================================================
+   MUSIC PLAYER
+   ============================================================ */
+.music-player { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); width:min(510px, calc(100vw - 72px)); z-index:30; border-radius:14px; padding:10px 12px; display:flex; align-items:center; gap:9px; transition:.25s ease; }
+.music-player.hidden { opacity:0; pointer-events:none; transform:translateX(-50%) translateY(20px); }
 
+.play-btn, .next-btn { width:auto; height:auto; min-width:22px; padding:0 2px; border:0; border-radius:0; color:#eaf8ff; background:transparent; cursor:pointer; flex:0 0 auto; display:grid; place-items:center; font-size:18px; line-height:1; text-shadow:0 0 16px rgba(53,232,255,.45); transition:color .2s ease, opacity .2s ease, transform .2s ease, text-shadow .2s ease; }
+.next-btn { min-width:24px; font-size:17px; color:#cbd7ee; }
+.play-btn:hover, .next-btn:hover { color:#fff; opacity:1; transform:translateY(-1px) scale(1.08); text-shadow:0 0 22px rgba(53,232,255,.65); }
+.player-art { width:42px; height:42px; border-radius:10px; background:linear-gradient(135deg, rgba(88,101,242,.95), rgba(53,232,255,.85)); position:relative; box-shadow:0 0 20px rgba(88,101,242,.22); flex:0 0 auto; }
+.player-art::after { content:"♪"; position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-size:22px; font-weight:800; }
+.track-meta { flex:1; min-width:0; }
+.track-meta strong, .track-meta span { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.track-meta strong { font-weight:500; letter-spacing:-.01em; }
+.track-time { display:flex; justify-content:space-between; gap:10px; margin-top:2px; color:var(--muted); font:500 11px "JetBrains Mono", monospace; }
+.track-meta span { color:var(--muted); font-size:12px; }
+.progress { height:5px; margin-top:6px; border-radius:99px; background:rgba(255,255,255,.12); overflow:hidden; }
+.progress span { display:block; width:0%; height:100%; background:linear-gradient(90deg, var(--discord), var(--pink)); border-radius:inherit; }
+.volume-control { position:absolute; right:-48px; top:50%; transform:translateY(-50%); display:flex; align-items:center; justify-content:flex-start; flex:0 0 auto; z-index:2; }
+.volume-toggle { width:38px; height:38px; border-radius:50%; border:1px solid rgba(255,255,255,.16); background:rgba(10,14,27,.72); color:#fff; display:grid; place-items:center; cursor:inherit; filter:grayscale(1); transition:.2s ease; box-shadow:0 14px 36px rgba(0,0,0,.32); backdrop-filter:blur(16px) saturate(140%); }
+.volume-toggle:hover, .volume-control.open .volume-toggle { background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.28); transform:translateY(-1px); }
+.volume-control input { position:absolute; left:46px; width:0; opacity:0; pointer-events:none; accent-color:var(--cyan); cursor:inherit; transition:width .22s ease, opacity .18s ease; }
+.volume-control.open input { width:96px; opacity:1; pointer-events:auto; }
+.visualizer { display:flex; gap:4px; align-items:end; height:30px; }
+.visualizer span { width:4px; height:11px; border-radius:4px; background:var(--cyan); animation:bars .8s ease-in-out infinite alternate; }
+.visualizer span:nth-child(2){ animation-delay:.15s } .visualizer span:nth-child(3){ animation-delay:.3s } .visualizer span:nth-child(4){ animation-delay:.45s }
+.paused .visualizer span { animation-play-state:paused; height:8px; }
 
-
+@keyframes bars { to { height:27px; } }
 
 /* ============================================================
    RESPONSIVE
