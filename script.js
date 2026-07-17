@@ -162,7 +162,10 @@ const cmdNewTab = document.getElementById('cmd-new-tab');
 const cmdLog = document.getElementById('cmd-log');
 const cmdForm = document.getElementById('cmd-form');
 const cmdInput = document.getElementById('cmd-input');
-
+const progressBar = document.getElementById('progress-bar');
+const volumeControl = document.getElementById('volume-control');
+const volumeToggle = document.getElementById('volume-toggle');
+const volumeSlider = document.getElementById('volume-slider');
 const presenceEls = {
   avatar: document.getElementById('avatar-image'),
   decoration: document.getElementById('avatar-decoration'),
@@ -678,45 +681,18 @@ const nextTrackButton = document.getElementById('next-track');
 const currentTimeEl = document.getElementById('current-time');
 const durationTimeEl = document.getElementById('duration-time');
 
-/* ---------- RADIO CHANNELS ---------- */
-const radioChannels = [
-  { title: 'Nightcore - Rise Up', src: './Audio/Nightcore-Rise-Up.mp3', freq: '87.5 FM', channel: 'CH.01' },
-  { title: 'Esoa (Ballad Version)', src: './Audio/Esoa-Ballad-version.mp3', freq: '91.2 FM', channel: 'CH.02' },
-  { title: 'My Music', src: './Audio/Music.mp3', freq: '103.7 FM', channel: 'CH.03' }
+const tracks = [
+  { title: 'Nightcore - Rise Up', src: './Audio/Nightcore-Rise-Up.mp3' },
+  { title: 'Esoa (Ballad Version)', src: './Audio/Esoa-Ballad-version.mp3' },
+  { title: 'My Music', src: './Audio/Music.mp3' }
 ];
-// Giữ tương thích với code cũ
-const tracks = radioChannels;
-
 let currentTrackIndex = 0;
 let playing = false;
 
-/* ---------- RADIO UI ELEMENTS ---------- */
-const radioChannelEl = document.getElementById('radio-channel');
-const radioFreqEl = document.getElementById('radio-freq');
-const radioDial = document.getElementById('radio-dial');
-const radioVolKnob = document.getElementById('radio-vol-knob');
-const radioLedBeat = document.getElementById('radio-led-beat');
-const volumeSlider = document.getElementById('volume-slider');
-const progressBarEl = document.getElementById('progress-bar');
-
-// Khởi tạo
 audio.volume = Number(volumeSlider.value) / 100;
 playToggle.textContent = '▶';
 player.classList.add('paused');
 
-/* ---------- DIAL ROTATION STATE ---------- */
-let tuneRotation = 0;   // Góc quay núm TUNE
-let volRotation = -120;  // Góc quay núm VOL (-120 → +120, map 0→100)
-
-// Cập nhật góc xoay ban đầu cho VOL dựa trên slider value
-volRotation = (Number(volumeSlider.value) / 100) * 240 - 120;
-
-function updateDialVisual(dial, rotation) {
-  dial.style.transform = `rotate(${rotation}deg)`;
-}
-updateDialVisual(radioVolKnob, volRotation);
-
-/* ---------- CORE FUNCTIONS ---------- */
 function formatTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
   const minutes = Math.floor(seconds / 60);
@@ -725,26 +701,20 @@ function formatTime(seconds) {
 }
 
 function renderTrackMeta() {
-  const track = radioChannels[currentTrackIndex];
+  const track = tracks[currentTrackIndex];
   trackTitle.textContent = track.title;
   currentTimeEl.textContent = formatTime(audio.currentTime);
   durationTimeEl.textContent = formatTime(audio.duration);
-  // Cập nhật radio info
-  if (radioChannelEl) radioChannelEl.textContent = track.channel;
-  if (radioFreqEl) radioFreqEl.textContent = track.freq;
 }
 
 function loadTrack(index) {
-  currentTrackIndex = (index + radioChannels.length) % radioChannels.length;
-  const track = radioChannels[currentTrackIndex];
+  currentTrackIndex = (index + tracks.length) % tracks.length;
+  const track = tracks[currentTrackIndex];
   audio.src = track.src;
-  if (progressBarEl) progressBarEl.style.width = '0%';
+  progressBar.style.width = '0%';
   currentTimeEl.textContent = '0:00';
   durationTimeEl.textContent = '0:00';
   renderTrackMeta();
-  // Xoay núm TUNE tương ứng
-  tuneRotation = (currentTrackIndex / radioChannels.length) * 270;
-  updateDialVisual(radioDial, tuneRotation);
 }
 
 async function playCurrentTrack() {
@@ -759,8 +729,6 @@ async function startMusic() {
   try {
     audio.volume = 0.15;
     volumeSlider.value = 15;
-    volRotation = (15 / 100) * 240 - 120;
-    updateDialVisual(radioVolKnob, volRotation);
     await playCurrentTrack();
   } catch (error) {
     console.warn('Autoplay blocked:', error);
@@ -775,7 +743,6 @@ function pauseMusic() {
   renderTrackMeta();
 }
 
-/* ---------- TRANSPORT CONTROLS ---------- */
 playToggle.addEventListener('click', async () => {
   try {
     if (playing) {
@@ -801,7 +768,6 @@ nextTrackButton.addEventListener('click', async () => {
   }
 });
 
-/* ---------- AUDIO EVENTS ---------- */
 audio.addEventListener('loadedmetadata', renderTrackMeta);
 audio.addEventListener('error', () => {
   trackTitle.textContent = 'Không tìm thấy file nhạc';
@@ -816,130 +782,40 @@ audio.addEventListener('ended', () => {
 });
 audio.addEventListener('timeupdate', () => {
   if (!audio.duration) return;
-  if (progressBarEl) progressBarEl.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
+  progressBar.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
   renderTrackMeta();
 });
 
-/* ---------- ROTATABLE DIAL — TUNE (đổi kênh) ---------- */
-(function initTuneDial() {
-  if (!radioDial) return;
-  let dragging = false;
-  let startAngle = 0;
+let volumeAutoCloseTimer;
 
-  function getAngle(e, rect) {
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const x = (e.touches ? e.touches[0].clientX : e.clientX) - cx;
-    const y = (e.touches ? e.touches[0].clientY : e.clientY) - cy;
-    return Math.atan2(y, x) * (180 / Math.PI);
-  }
+function scheduleVolumeAutoClose() {
+  clearTimeout(volumeAutoCloseTimer);
+  if (!volumeControl.classList.contains('open')) return;
+  volumeAutoCloseTimer = setTimeout(() => {
+    volumeControl.classList.remove('open');
+  }, 2000);
+}
 
-  function onStart(e) {
-    e.preventDefault();
-    dragging = true;
-    startAngle = getAngle(e, radioDial.getBoundingClientRect()) - tuneRotation;
+volumeToggle.addEventListener('click', (event) => {
+  event.stopPropagation();
+  volumeControl.classList.toggle('open');
+  if (volumeControl.classList.contains('open')) {
+    volumeSlider.focus();
+    scheduleVolumeAutoClose();
+  } else {
+    clearTimeout(volumeAutoCloseTimer);
   }
-  function onMove(e) {
-    if (!dragging) return;
-    const newRot = getAngle(e, radioDial.getBoundingClientRect()) - startAngle;
-    tuneRotation = newRot;
-    updateDialVisual(radioDial, tuneRotation);
-  }
-  function onEnd() {
-    if (!dragging) return;
-    dragging = false;
-    // Snap to nearest channel dựa trên góc xoay
-    const normalized = ((tuneRotation % 360) + 360) % 360;
-    const segmentSize = 360 / radioChannels.length;
-    const nearestIndex = Math.round(normalized / segmentSize) % radioChannels.length;
-    if (nearestIndex !== currentTrackIndex) {
-      const wasPlaying = playing;
-      loadTrack(nearestIndex);
-      if (wasPlaying) playCurrentTrack().catch(() => {});
-    }
-  }
+});
 
-  radioDial.addEventListener('mousedown', onStart);
-  radioDial.addEventListener('touchstart', onStart, { passive: false });
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('touchmove', onMove, { passive: false });
-  document.addEventListener('mouseup', onEnd);
-  document.addEventListener('touchend', onEnd);
-})();
+volumeControl.addEventListener('pointermove', scheduleVolumeAutoClose);
+volumeControl.addEventListener('pointerdown', scheduleVolumeAutoClose);
 
-/* ---------- ROTATABLE KNOB — VOL (chỉnh âm lượng) ---------- */
-(function initVolKnob() {
-  if (!radioVolKnob) return;
-  let dragging = false;
-  let startAngle = 0;
-
-  function getAngle(e, rect) {
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const x = (e.touches ? e.touches[0].clientX : e.clientX) - cx;
-    const y = (e.touches ? e.touches[0].clientY : e.clientY) - cy;
-    return Math.atan2(y, x) * (180 / Math.PI);
-  }
-
-  function onStart(e) {
-    e.preventDefault();
-    dragging = true;
-    startAngle = getAngle(e, radioVolKnob.getBoundingClientRect()) - volRotation;
-  }
-  function onMove(e) {
-    if (!dragging) return;
-    let newRot = getAngle(e, radioVolKnob.getBoundingClientRect()) - startAngle;
-    // Giới hạn trong khoảng -120 đến +120
-    newRot = Math.max(-120, Math.min(120, newRot));
-    volRotation = newRot;
-    updateDialVisual(radioVolKnob, volRotation);
-    // Map -120→+120 thành 0→100
-    const vol = Math.round(((volRotation + 120) / 240) * 100);
-    volumeSlider.value = vol;
-    audio.volume = vol / 100;
-  }
-  function onEnd() {
-    dragging = false;
-  }
-
-  radioVolKnob.addEventListener('mousedown', onStart);
-  radioVolKnob.addEventListener('touchstart', onStart, { passive: false });
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('touchmove', onMove, { passive: false });
-  document.addEventListener('mouseup', onEnd);
-  document.addEventListener('touchend', onEnd);
-})();
-
-/* ---------- LED BEAT SYNC ---------- */
-(function initBeatLed() {
-  if (!radioLedBeat) return;
-  let lastBeat = 0;
-  function beatPulse() {
-    if (!playing) {
-      requestAnimationFrame(beatPulse);
-      return;
-    }
-    const now = performance.now();
-    if (now - lastBeat > 400) { // ~150 BPM
-      radioLedBeat.style.opacity = '1';
-      radioLedBeat.style.boxShadow = '0 0 10px #ff6b6b, 0 0 20px rgba(255,107,107,0.4)';
-      setTimeout(() => {
-        radioLedBeat.style.opacity = '0.4';
-        radioLedBeat.style.boxShadow = '0 0 4px #ff6b6b';
-      }, 100);
-      lastBeat = now;
-    }
-    requestAnimationFrame(beatPulse);
-  }
-  beatPulse();
-})();
-
-// Volume slider fallback (ẩn nhưng vẫn hoạt động cho accessibility)
 volumeSlider.addEventListener('input', () => {
   const volume = Number(volumeSlider.value) / 100;
   audio.volume = volume;
-  volRotation = (volume * 240) - 120;
-  updateDialVisual(radioVolKnob, volRotation);
+  const icon = volume === 0 ? '🔇' : volume < 0.45 ? '🔉' : '🔊';
+  volumeToggle.textContent = icon;
+  scheduleVolumeAutoClose();
 });
 
 const colorTool = {
@@ -2081,7 +1957,6 @@ if (interactiveCard) {
     meowAudio.volume = 0.4;
 
     function wakeUpCat(e) {
-      if (document.body.classList.contains('zen-mode')) return;
       cat.classList.add('awake');
       resetCatSleepTimer();
       
@@ -2707,115 +2582,6 @@ if (interactiveCard) {
 })();
 
 /* ============================================================
-   ZEN MODE & RAIN AUDIO SYNTHESIS
-   ============================================================ */
-(function initZenMode() {
-  const zenBtn = document.getElementById('zen-toggle');
-  const overlay = document.getElementById('zen-overlay');
-  if (!zenBtn || !overlay) return;
-
-  let isZen = false;
-  let audioCtx = null;
-  let noiseNode = null;
-  let filterNode = null;
-  let gainNode = null;
-  let fireflyInterval = null;
-
-  function createRainSound() {
-    if (!audioCtx) {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContext) return; 
-      audioCtx = new AudioContext();
-    }
-    
-    const bufferSize = audioCtx.sampleRate * 2; 
-    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-    const output = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      output[i] = Math.random() * 2 - 1; 
-    }
-    
-    noiseNode = audioCtx.createBufferSource();
-    noiseNode.buffer = buffer;
-    noiseNode.loop = true;
-    
-    filterNode = audioCtx.createBiquadFilter();
-    filterNode.type = 'lowpass';
-    filterNode.frequency.value = 800; 
-    
-    gainNode = audioCtx.createGain();
-    gainNode.gain.value = 0;
-    
-    noiseNode.connect(filterNode);
-    filterNode.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    
-    noiseNode.start();
-    
-    // Fade in
-    gainNode.gain.setTargetAtTime(0.4, audioCtx.currentTime, 1);
-  }
-  
-  function stopRainSound() {
-    if (gainNode) {
-      gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 1);
-      setTimeout(() => {
-        if (noiseNode) {
-          noiseNode.stop();
-          noiseNode.disconnect();
-          noiseNode = null;
-        }
-      }, 2000);
-    }
-  }
-
-  function spawnFirefly() {
-    if (!isZen) return;
-    const f = document.createElement('div');
-    f.className = 'zen-firefly';
-    f.style.left = Math.random() * 100 + 'vw';
-    f.style.animationDuration = (6 + Math.random() * 4) + 's, ' + (2 + Math.random() * 2) + 's';
-    overlay.appendChild(f);
-    
-    setTimeout(() => {
-      if (f.parentNode) f.remove();
-    }, 12000);
-  }
-
-  zenBtn.addEventListener('click', () => {
-    isZen = !isZen;
-    document.body.classList.toggle('zen-mode', isZen);
-    zenBtn.classList.toggle('active', isZen);
-    
-    if (isZen) {
-      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-      createRainSound();
-      
-      fireflyInterval = setInterval(spawnFirefly, 400);
-      
-      // Sleep companions
-      document.querySelector('.css-chibi')?.classList.add('zen-sleep');
-      document.querySelector('.css-cat')?.classList.remove('awake');
-      document.querySelector('.css-cat')?.classList.add('zen-sleep');
-    } else {
-      stopRainSound();
-      clearInterval(fireflyInterval);
-      
-      // Wake companions
-      document.querySelector('.css-chibi')?.classList.remove('zen-sleep');
-      document.querySelector('.css-cat')?.classList.remove('zen-sleep');
-      
-      // Clear fireflies gracefully
-      const flies = overlay.querySelectorAll('.zen-firefly');
-      flies.forEach(f => {
-        f.style.opacity = '0';
-        setTimeout(() => f.remove(), 2000);
-      });
-    }
-  });
-})();
-
-/* ============================================================
    AI CHAT ASSISTANT (GEMINI)
    ============================================================ */
 (function initAIChat() {
@@ -2898,93 +2664,3 @@ if (interactiveCard) {
 
 
 
-/* ============================================================
-   KOI POND (CANVAS RIPPLES & FISH)
-   ============================================================ */
-(function initKoiPond() {
-  const canvas = document.getElementById('zen-pond');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  
-  let width, height;
-  function resize() {
-    width = canvas.width = canvas.offsetWidth;
-    height = canvas.height = canvas.offsetHeight;
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  const ripples = [];
-  const fishes = [
-    { x: 50, y: 50, vx: 0.5, vy: 0.2, color: 'rgba(255, 80, 50, 0.9)', size: 16, angle: 0 },
-    { x: 150, y: 80, vx: -0.4, vy: 0.3, color: 'rgba(255, 255, 255, 0.9)', size: 14, angle: 0 }
-  ];
-
-  const profileConsole = document.querySelector('.profile-console');
-  if (profileConsole) {
-    profileConsole.addEventListener('mousemove', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      if (y > -50 && y < height + 50 && x > -50 && x < width + 50) {
-        if (Math.random() < 0.1) {
-          ripples.push({ x, y, r: 0, alpha: 0.5 });
-        }
-      }
-    });
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, width, height);
-
-    // Draw ripples
-    for (let i = ripples.length - 1; i >= 0; i--) {
-      const r = ripples[i];
-      ctx.beginPath();
-      ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(255, 255, 255, ${r.alpha})`;
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      r.r += 0.5;
-      r.alpha -= 0.01;
-      if (r.alpha <= 0) ripples.splice(i, 1);
-    }
-
-    // Draw fishes
-    fishes.forEach(f => {
-      f.x += f.vx;
-      f.y += f.vy;
-      
-      // Bounce off walls
-      if (f.x < -20) f.x = width + 20;
-      if (f.x > width + 20) f.x = -20;
-      if (f.y < -20) f.y = height + 20;
-      if (f.y > height + 20) f.vy *= -1;
-      
-      // Wiggle angle
-      f.angle = Math.atan2(f.vy, f.vx) + Math.sin(Date.now() / 200) * 0.2;
-
-      ctx.save();
-      ctx.translate(f.x, f.y);
-      ctx.rotate(f.angle);
-      
-      // Body
-      ctx.beginPath();
-      ctx.ellipse(0, 0, f.size, f.size/2, 0, 0, Math.PI * 2);
-      ctx.fillStyle = f.color;
-      ctx.fill();
-      
-      // Tail
-      ctx.beginPath();
-      ctx.moveTo(-f.size * 0.8, 0);
-      ctx.lineTo(-f.size * 1.5, -f.size/2);
-      ctx.lineTo(-f.size * 1.5, f.size/2);
-      ctx.fill();
-
-      ctx.restore();
-    });
-
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
