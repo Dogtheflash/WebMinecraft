@@ -157,10 +157,6 @@ const enterButton = document.getElementById('enter-console-btn');
 const playToggle = document.getElementById('play-toggle');
 const player = document.getElementById('music-player');
 const audio = document.getElementById('audio-player');
-const progressBar = document.getElementById('progress-bar');
-const volumeControl = document.getElementById('volume-control');
-const volumeToggle = document.getElementById('volume-toggle');
-const volumeSlider = document.getElementById('volume-slider');
 const cmdTabs = document.getElementById('cmd-tabs');
 const cmdNewTab = document.getElementById('cmd-new-tab');
 const cmdLog = document.getElementById('cmd-log');
@@ -681,18 +677,46 @@ const trackTitle = document.getElementById('track-title');
 const nextTrackButton = document.getElementById('next-track');
 const currentTimeEl = document.getElementById('current-time');
 const durationTimeEl = document.getElementById('duration-time');
-const tracks = [
-  { title: 'Nightcore - Rise Up', src: './Audio/Nightcore-Rise-Up.mp3' },
-  { title: 'Esoa (Ballad Version)', src: './Audio/Esoa-Ballad-version.mp3' },
-  { title: 'My Music', src: './Audio/Music.mp3' }
+
+/* ---------- RADIO CHANNELS ---------- */
+const radioChannels = [
+  { title: 'Nightcore - Rise Up', src: './Audio/Nightcore-Rise-Up.mp3', freq: '87.5 FM', channel: 'CH.01' },
+  { title: 'Esoa (Ballad Version)', src: './Audio/Esoa-Ballad-version.mp3', freq: '91.2 FM', channel: 'CH.02' },
+  { title: 'My Music', src: './Audio/Music.mp3', freq: '103.7 FM', channel: 'CH.03' }
 ];
+// Giữ tương thích với code cũ
+const tracks = radioChannels;
+
 let currentTrackIndex = 0;
 let playing = false;
 
+/* ---------- RADIO UI ELEMENTS ---------- */
+const radioChannelEl = document.getElementById('radio-channel');
+const radioFreqEl = document.getElementById('radio-freq');
+const radioDial = document.getElementById('radio-dial');
+const radioVolKnob = document.getElementById('radio-vol-knob');
+const radioLedBeat = document.getElementById('radio-led-beat');
+const volumeSlider = document.getElementById('volume-slider');
+const progressBarEl = document.getElementById('progress-bar');
+
+// Khởi tạo
 audio.volume = Number(volumeSlider.value) / 100;
 playToggle.textContent = '▶';
 player.classList.add('paused');
 
+/* ---------- DIAL ROTATION STATE ---------- */
+let tuneRotation = 0;   // Góc quay núm TUNE
+let volRotation = -120;  // Góc quay núm VOL (-120 → +120, map 0→100)
+
+// Cập nhật góc xoay ban đầu cho VOL dựa trên slider value
+volRotation = (Number(volumeSlider.value) / 100) * 240 - 120;
+
+function updateDialVisual(dial, rotation) {
+  dial.style.transform = `rotate(${rotation}deg)`;
+}
+updateDialVisual(radioVolKnob, volRotation);
+
+/* ---------- CORE FUNCTIONS ---------- */
 function formatTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
   const minutes = Math.floor(seconds / 60);
@@ -701,20 +725,26 @@ function formatTime(seconds) {
 }
 
 function renderTrackMeta() {
-  const track = tracks[currentTrackIndex];
+  const track = radioChannels[currentTrackIndex];
   trackTitle.textContent = track.title;
   currentTimeEl.textContent = formatTime(audio.currentTime);
   durationTimeEl.textContent = formatTime(audio.duration);
+  // Cập nhật radio info
+  if (radioChannelEl) radioChannelEl.textContent = track.channel;
+  if (radioFreqEl) radioFreqEl.textContent = track.freq;
 }
 
 function loadTrack(index) {
-  currentTrackIndex = (index + tracks.length) % tracks.length;
-  const track = tracks[currentTrackIndex];
+  currentTrackIndex = (index + radioChannels.length) % radioChannels.length;
+  const track = radioChannels[currentTrackIndex];
   audio.src = track.src;
-  progressBar.style.width = '0%';
+  if (progressBarEl) progressBarEl.style.width = '0%';
   currentTimeEl.textContent = '0:00';
   durationTimeEl.textContent = '0:00';
   renderTrackMeta();
+  // Xoay núm TUNE tương ứng
+  tuneRotation = (currentTrackIndex / radioChannels.length) * 270;
+  updateDialVisual(radioDial, tuneRotation);
 }
 
 async function playCurrentTrack() {
@@ -729,6 +759,8 @@ async function startMusic() {
   try {
     audio.volume = 0.15;
     volumeSlider.value = 15;
+    volRotation = (15 / 100) * 240 - 120;
+    updateDialVisual(radioVolKnob, volRotation);
     await playCurrentTrack();
   } catch (error) {
     console.warn('Autoplay blocked:', error);
@@ -743,6 +775,7 @@ function pauseMusic() {
   renderTrackMeta();
 }
 
+/* ---------- TRANSPORT CONTROLS ---------- */
 playToggle.addEventListener('click', async () => {
   try {
     if (playing) {
@@ -768,6 +801,7 @@ nextTrackButton.addEventListener('click', async () => {
   }
 });
 
+/* ---------- AUDIO EVENTS ---------- */
 audio.addEventListener('loadedmetadata', renderTrackMeta);
 audio.addEventListener('error', () => {
   trackTitle.textContent = 'Không tìm thấy file nhạc';
@@ -782,40 +816,130 @@ audio.addEventListener('ended', () => {
 });
 audio.addEventListener('timeupdate', () => {
   if (!audio.duration) return;
-  progressBar.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
+  if (progressBarEl) progressBarEl.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
   renderTrackMeta();
 });
 
-let volumeAutoCloseTimer;
+/* ---------- ROTATABLE DIAL — TUNE (đổi kênh) ---------- */
+(function initTuneDial() {
+  if (!radioDial) return;
+  let dragging = false;
+  let startAngle = 0;
 
-function scheduleVolumeAutoClose() {
-  clearTimeout(volumeAutoCloseTimer);
-  if (!volumeControl.classList.contains('open')) return;
-  volumeAutoCloseTimer = setTimeout(() => {
-    volumeControl.classList.remove('open');
-  }, 2000);
-}
-
-volumeToggle.addEventListener('click', (event) => {
-  event.stopPropagation();
-  volumeControl.classList.toggle('open');
-  if (volumeControl.classList.contains('open')) {
-    volumeSlider.focus();
-    scheduleVolumeAutoClose();
-  } else {
-    clearTimeout(volumeAutoCloseTimer);
+  function getAngle(e, rect) {
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - cx;
+    const y = (e.touches ? e.touches[0].clientY : e.clientY) - cy;
+    return Math.atan2(y, x) * (180 / Math.PI);
   }
-});
 
-volumeControl.addEventListener('pointermove', scheduleVolumeAutoClose);
-volumeControl.addEventListener('pointerdown', scheduleVolumeAutoClose);
+  function onStart(e) {
+    e.preventDefault();
+    dragging = true;
+    startAngle = getAngle(e, radioDial.getBoundingClientRect()) - tuneRotation;
+  }
+  function onMove(e) {
+    if (!dragging) return;
+    const newRot = getAngle(e, radioDial.getBoundingClientRect()) - startAngle;
+    tuneRotation = newRot;
+    updateDialVisual(radioDial, tuneRotation);
+  }
+  function onEnd() {
+    if (!dragging) return;
+    dragging = false;
+    // Snap to nearest channel dựa trên góc xoay
+    const normalized = ((tuneRotation % 360) + 360) % 360;
+    const segmentSize = 360 / radioChannels.length;
+    const nearestIndex = Math.round(normalized / segmentSize) % radioChannels.length;
+    if (nearestIndex !== currentTrackIndex) {
+      const wasPlaying = playing;
+      loadTrack(nearestIndex);
+      if (wasPlaying) playCurrentTrack().catch(() => {});
+    }
+  }
 
+  radioDial.addEventListener('mousedown', onStart);
+  radioDial.addEventListener('touchstart', onStart, { passive: false });
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('mouseup', onEnd);
+  document.addEventListener('touchend', onEnd);
+})();
+
+/* ---------- ROTATABLE KNOB — VOL (chỉnh âm lượng) ---------- */
+(function initVolKnob() {
+  if (!radioVolKnob) return;
+  let dragging = false;
+  let startAngle = 0;
+
+  function getAngle(e, rect) {
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - cx;
+    const y = (e.touches ? e.touches[0].clientY : e.clientY) - cy;
+    return Math.atan2(y, x) * (180 / Math.PI);
+  }
+
+  function onStart(e) {
+    e.preventDefault();
+    dragging = true;
+    startAngle = getAngle(e, radioVolKnob.getBoundingClientRect()) - volRotation;
+  }
+  function onMove(e) {
+    if (!dragging) return;
+    let newRot = getAngle(e, radioVolKnob.getBoundingClientRect()) - startAngle;
+    // Giới hạn trong khoảng -120 đến +120
+    newRot = Math.max(-120, Math.min(120, newRot));
+    volRotation = newRot;
+    updateDialVisual(radioVolKnob, volRotation);
+    // Map -120→+120 thành 0→100
+    const vol = Math.round(((volRotation + 120) / 240) * 100);
+    volumeSlider.value = vol;
+    audio.volume = vol / 100;
+  }
+  function onEnd() {
+    dragging = false;
+  }
+
+  radioVolKnob.addEventListener('mousedown', onStart);
+  radioVolKnob.addEventListener('touchstart', onStart, { passive: false });
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('mouseup', onEnd);
+  document.addEventListener('touchend', onEnd);
+})();
+
+/* ---------- LED BEAT SYNC ---------- */
+(function initBeatLed() {
+  if (!radioLedBeat) return;
+  let lastBeat = 0;
+  function beatPulse() {
+    if (!playing) {
+      requestAnimationFrame(beatPulse);
+      return;
+    }
+    const now = performance.now();
+    if (now - lastBeat > 400) { // ~150 BPM
+      radioLedBeat.style.opacity = '1';
+      radioLedBeat.style.boxShadow = '0 0 10px #ff6b6b, 0 0 20px rgba(255,107,107,0.4)';
+      setTimeout(() => {
+        radioLedBeat.style.opacity = '0.4';
+        radioLedBeat.style.boxShadow = '0 0 4px #ff6b6b';
+      }, 100);
+      lastBeat = now;
+    }
+    requestAnimationFrame(beatPulse);
+  }
+  beatPulse();
+})();
+
+// Volume slider fallback (ẩn nhưng vẫn hoạt động cho accessibility)
 volumeSlider.addEventListener('input', () => {
   const volume = Number(volumeSlider.value) / 100;
   audio.volume = volume;
-  const icon = volume === 0 ? '🔇' : volume < 0.45 ? '🔉' : '🔊';
-  volumeToggle.textContent = icon;
-  scheduleVolumeAutoClose();
+  volRotation = (volume * 240) - 120;
+  updateDialVisual(radioVolKnob, volRotation);
 });
 
 const colorTool = {
