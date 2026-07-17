@@ -486,32 +486,465 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 #discord-link svg { transform:translateY(1px) scale(1.08); transform-origin:center; }
 #discord-link:hover svg { transform:translateY(1px) scale(1.18); }
 
-.music-player { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); width:min(510px, calc(100vw - 72px)); z-index:30; border-radius:14px; padding:10px 12px; display:flex; align-items:center; gap:9px; transition:.25s ease; }
-.music-player.hidden { opacity:0; pointer-events:none; transform:translateX(-50%) translateY(20px); }
+/* ============================================================
+   LO-FI RADIO STATION
+   ============================================================ */
+.lofi-radio {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  width: min(380px, calc(100vw - 40px));
+  z-index: 30;
+  border-radius: 18px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: .35s cubic-bezier(0.16, 1, 0.3, 1);
+  background: linear-gradient(145deg, rgba(20, 18, 30, 0.95), rgba(12, 10, 22, 0.98));
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  overflow: visible;
+}
+.lofi-radio.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(30px) scale(0.95);
+}
 
-.play-btn, .next-btn { width:auto; height:auto; min-width:22px; padding:0 2px; border:0; border-radius:0; color:#eaf8ff; background:transparent; cursor:pointer; flex:0 0 auto; display:grid; place-items:center; font-size:18px; line-height:1; text-shadow:0 0 16px rgba(53,232,255,.45); transition:color .2s ease, opacity .2s ease, transform .2s ease, text-shadow .2s ease; }
-.next-btn { min-width:24px; font-size:17px; color:#cbd7ee; }
-.play-btn:hover, .next-btn:hover { color:#fff; opacity:1; transform:translateY(-1px) scale(1.08); text-shadow:0 0 22px rgba(53,232,255,.65); }
-.player-art { width:42px; height:42px; border-radius:10px; background:linear-gradient(135deg, rgba(88,101,242,.95), rgba(53,232,255,.85)); position:relative; box-shadow:0 0 20px rgba(88,101,242,.22); flex:0 0 auto; }
-.player-art::after { content:"♪"; position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-size:22px; font-weight:800; }
-.track-meta { flex:1; min-width:0; }
-.track-meta strong, .track-meta span { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.track-meta strong { font-weight:500; letter-spacing:-.01em; }
-.track-time { display:flex; justify-content:space-between; gap:10px; margin-top:2px; color:var(--muted); font:500 11px "JetBrains Mono", monospace; }
-.track-meta span { color:var(--muted); font-size:12px; }
-.progress { height:5px; margin-top:6px; border-radius:99px; background:rgba(255,255,255,.12); overflow:hidden; }
-.progress span { display:block; width:0%; height:100%; background:linear-gradient(90deg, var(--discord), var(--pink)); border-radius:inherit; }
-.volume-control { position:relative; display:flex; align-items:center; background:rgba(255,255,255,0.06); border-radius:99px; padding:3px; width:30px; overflow:hidden; transition:width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease, border-color 0.3s ease; flex:0 0 auto; z-index:2; border:1px solid rgba(255,255,255,0.05); box-shadow:inset 0 2px 4px rgba(0,0,0,0.2); }
-.volume-control:hover, .volume-control.open { width:100px; background:rgba(255,255,255,0.1); border-color:rgba(53,232,255,0.3); }
-.volume-toggle { width:22px; height:22px; border-radius:50%; border:none; background:transparent; color:#cbd7ee; display:grid; place-items:center; cursor:pointer; font-size:12px; flex:0 0 auto; transition:0.2s ease; }
-.volume-toggle:hover { color:#fff; transform:scale(1.1); text-shadow:0 0 10px var(--cyan); }
-.volume-control input { width:100%; margin:0 6px 0 4px; opacity:0; pointer-events:none; -webkit-appearance:none; appearance:none; background:transparent; transition:opacity 0.2s ease; cursor:pointer; }
-.volume-control:hover input, .volume-control.open input { opacity:1; pointer-events:auto; transition-delay:0.1s; }
-.volume-control input::-webkit-slider-runnable-track { height:3px; background:rgba(255,255,255,0.2); border-radius:2px; }
-.volume-control input::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:10px; height:10px; border-radius:50%; background:#fff; margin-top:-3.5px; box-shadow:0 0 8px var(--cyan), 0 0 12px var(--cyan); cursor:grab; transition:transform 0.1s; }
-.volume-control input::-webkit-slider-thumb:active { cursor:grabbing; transform:scale(1.2); }
-.volume-control input::-moz-range-track { height:3px; background:rgba(255,255,255,0.2); border-radius:2px; }
-.volume-control input::-moz-range-thumb { width:10px; height:10px; border-radius:50%; background:#fff; border:none; box-shadow:0 0 8px var(--cyan), 0 0 12px var(--cyan); cursor:grab; }
+/* ---------- ANTENNA ---------- */
+.radio-antenna {
+  position: absolute;
+  top: -42px;
+  right: 36px;
+  width: 4px;
+  height: 42px;
+  z-index: 5;
+}
+.antenna-rod {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) rotate(-12deg);
+  transform-origin: bottom center;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(to top, #555, #999);
+  border-radius: 2px;
+  transition: transform 0.4s ease;
+}
+.lofi-radio:not(.paused) .antenna-rod {
+  animation: antennaVibe 2s ease-in-out infinite;
+}
+.antenna-tip {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-12deg);
+  width: 6px;
+  height: 6px;
+  background: var(--cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--cyan), 0 0 16px var(--cyan);
+  transition: opacity 0.3s;
+}
+.lofi-radio.paused .antenna-tip { opacity: 0.3; box-shadow: none; }
+
+/* Antenna Signal Waves */
+.antenna-signal {
+  position: absolute;
+  top: -2px;
+  right: -6px;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--cyan);
+  border-left: none;
+  border-bottom: none;
+  border-radius: 0 50% 0 0;
+  opacity: 0;
+}
+.lofi-radio:not(.paused) .antenna-signal {
+  animation: signalPulse 2s infinite;
+}
+.antenna-signal.s2 { width: 20px; height: 20px; top: -5px; right: -9px; animation-delay: 0.3s !important; }
+.antenna-signal.s3 { width: 26px; height: 26px; top: -8px; right: -12px; animation-delay: 0.6s !important; }
+
+@keyframes signalPulse {
+  0%, 100% { opacity: 0; }
+  30%, 60% { opacity: 0.6; }
+}
+@keyframes antennaVibe {
+  0%, 100% { transform: translateX(-50%) rotate(-12deg); }
+  25% { transform: translateX(-50%) rotate(-14deg); }
+  75% { transform: translateX(-50%) rotate(-10deg); }
+}
+
+/* ---------- RADIO BODY ---------- */
+.radio-body {
+  width: 100%;
+  padding: 16px 18px 14px;
+}
+
+/* ---------- TOP ROW ---------- */
+.radio-top-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+/* LED Indicators */
+.radio-leds {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+  justify-content: center;
+}
+.radio-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+.led-power {
+  background: #43b581;
+  box-shadow: 0 0 6px #43b581, 0 0 12px rgba(67, 181, 129, 0.4);
+}
+.lofi-radio.paused .led-power {
+  background: #555;
+  box-shadow: none;
+}
+.led-signal {
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan);
+  animation: ledBlink 1.5s infinite;
+}
+.lofi-radio.paused .led-signal {
+  background: #444;
+  box-shadow: none;
+  animation: none;
+}
+.led-beat {
+  background: #ff6b6b;
+  box-shadow: 0 0 6px #ff6b6b;
+}
+.lofi-radio.paused .led-beat {
+  background: #444;
+  box-shadow: none;
+}
+
+@keyframes ledBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ---------- LCD SCREEN ---------- */
+.radio-lcd {
+  flex: 1;
+  position: relative;
+  background: #0a1a12;
+  border: 1.5px solid rgba(0, 255, 140, 0.15);
+  border-radius: 8px;
+  padding: 10px 12px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.6),
+    0 0 12px rgba(0, 255, 140, 0.05);
+}
+.lcd-scanline {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px, transparent 2px,
+    rgba(0, 255, 140, 0.02) 2px, rgba(0, 255, 140, 0.02) 4px
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+.lcd-content {
+  position: relative;
+  z-index: 3;
+  font-family: 'JetBrains Mono', monospace;
+  color: #00ff8c;
+  text-shadow: 0 0 6px rgba(0, 255, 140, 0.5);
+}
+.lcd-channel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 2px;
+}
+.lcd-title {
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+/* Waveform Bars */
+.lcd-waveform {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 20px;
+  margin-bottom: 6px;
+}
+.lcd-waveform span {
+  flex: 1;
+  background: #00ff8c;
+  border-radius: 1px 1px 0 0;
+  min-height: 2px;
+  height: 2px;
+  transition: height 0.08s ease;
+  opacity: 0.7;
+}
+.lofi-radio:not(.paused) .lcd-waveform span {
+  animation: waveBar 1.2s ease-in-out infinite alternate;
+}
+.lcd-waveform span:nth-child(1) { animation-delay: 0s !important; }
+.lcd-waveform span:nth-child(2) { animation-delay: 0.08s !important; }
+.lcd-waveform span:nth-child(3) { animation-delay: 0.16s !important; }
+.lcd-waveform span:nth-child(4) { animation-delay: 0.24s !important; }
+.lcd-waveform span:nth-child(5) { animation-delay: 0.32s !important; }
+.lcd-waveform span:nth-child(6) { animation-delay: 0.06s !important; }
+.lcd-waveform span:nth-child(7) { animation-delay: 0.14s !important; }
+.lcd-waveform span:nth-child(8) { animation-delay: 0.22s !important; }
+.lcd-waveform span:nth-child(9) { animation-delay: 0.30s !important; }
+.lcd-waveform span:nth-child(10) { animation-delay: 0.38s !important; }
+.lcd-waveform span:nth-child(11) { animation-delay: 0.04s !important; }
+.lcd-waveform span:nth-child(12) { animation-delay: 0.12s !important; }
+.lcd-waveform span:nth-child(13) { animation-delay: 0.20s !important; }
+.lcd-waveform span:nth-child(14) { animation-delay: 0.28s !important; }
+.lcd-waveform span:nth-child(15) { animation-delay: 0.36s !important; }
+.lcd-waveform span:nth-child(16) { animation-delay: 0.02s !important; }
+.lcd-waveform span:nth-child(17) { animation-delay: 0.10s !important; }
+.lcd-waveform span:nth-child(18) { animation-delay: 0.18s !important; }
+.lcd-waveform span:nth-child(19) { animation-delay: 0.26s !important; }
+.lcd-waveform span:nth-child(20) { animation-delay: 0.34s !important; }
+
+@keyframes waveBar {
+  0% { height: 2px; }
+  50% { height: 18px; }
+  100% { height: 4px; }
+}
+
+.lcd-time-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+.lcd-freq {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 1;
+  letter-spacing: 0.05em;
+}
+.lcd-progress {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(0, 255, 140, 0.15);
+  overflow: hidden;
+}
+.lcd-progress span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: #00ff8c;
+  border-radius: inherit;
+  box-shadow: 0 0 6px rgba(0, 255, 140, 0.5);
+  transition: width 0.3s ease;
+}
+
+/* ---------- CONTROLS ROW ---------- */
+.radio-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 4px 4px;
+  gap: 12px;
+}
+
+/* Dial (shared between TUNE and VOL) */
+.radio-dial-wrap, .radio-vol-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+}
+.radio-dial, .radio-vol-knob {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #2a2740, #1a1730);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  cursor: grab;
+  position: relative;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  user-select: none;
+}
+.radio-dial:active, .radio-vol-knob:active {
+  cursor: grabbing;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 12px rgba(53, 232, 255, 0.2);
+}
+.dial-notch, .vol-knob-notch {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 10px;
+  background: var(--cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 4px var(--cyan);
+}
+.dial-label {
+  font: 700 8px 'JetBrains Mono', monospace;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* Transport Buttons */
+.radio-transport {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.radio-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(145deg, rgba(40, 35, 60, 0.8), rgba(25, 22, 40, 0.9));
+  color: #ddd;
+  font-size: 15px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+.radio-btn:hover {
+  border-color: var(--cyan);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 0 12px rgba(53, 232, 255, 0.15);
+  transform: scale(1.08);
+}
+.radio-btn:active {
+  transform: scale(0.95);
+}
+.radio-btn-play {
+  width: 48px;
+  height: 48px;
+  font-size: 18px;
+  background: linear-gradient(145deg, rgba(53, 232, 255, 0.15), rgba(88, 101, 242, 0.15));
+  border-color: rgba(53, 232, 255, 0.25);
+}
+
+/* Volume knob hidden slider */
+.radio-vol-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- SPEAKER GRILLE ---------- */
+.radio-speaker {
+  padding: 8px 18px 12px;
+}
+.speaker-grille {
+  height: 16px;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 0px,
+      rgba(255, 255, 255, 0.04) 2px,
+      transparent 2px,
+      transparent 5px
+    );
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Visualizer override */
+.radio-visualizer {
+  position: absolute;
+  bottom: 12px;
+  left: 18px;
+  right: 18px;
+  height: 16px;
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* ---------- THEME ADAPTATIONS ---------- */
+[data-theme="sakura"] .lcd-content { color: #ff8ecf; text-shadow: 0 0 6px rgba(255, 142, 207, 0.5); }
+[data-theme="sakura"] .radio-lcd { background: #1a0a14; border-color: rgba(255, 142, 207, 0.15); }
+[data-theme="sakura"] .lcd-progress span { background: #ff8ecf; box-shadow: 0 0 6px rgba(255, 142, 207, 0.5); }
+[data-theme="sakura"] .lcd-waveform span { background: #ff8ecf; }
+[data-theme="sakura"] .antenna-tip { background: #ff8ecf; box-shadow: 0 0 8px #ff8ecf; }
+[data-theme="sakura"] .antenna-signal { border-color: #ff8ecf; }
+[data-theme="sakura"] .led-signal { background: #ff8ecf; box-shadow: 0 0 6px #ff8ecf; }
+[data-theme="sakura"] .dial-notch, [data-theme="sakura"] .vol-knob-notch { background: #ff8ecf; box-shadow: 0 0 4px #ff8ecf; }
+
+[data-theme="ocean"] .lcd-content { color: #74b9ff; text-shadow: 0 0 6px rgba(116, 185, 255, 0.5); }
+[data-theme="ocean"] .radio-lcd { background: #0a0e1a; border-color: rgba(116, 185, 255, 0.15); }
+[data-theme="ocean"] .lcd-progress span { background: #74b9ff; box-shadow: 0 0 6px rgba(116, 185, 255, 0.5); }
+[data-theme="ocean"] .lcd-waveform span { background: #74b9ff; }
+[data-theme="ocean"] .antenna-tip { background: #74b9ff; box-shadow: 0 0 8px #74b9ff; }
+[data-theme="ocean"] .antenna-signal { border-color: #74b9ff; }
+[data-theme="ocean"] .led-signal { background: #74b9ff; box-shadow: 0 0 6px #74b9ff; }
+[data-theme="ocean"] .dial-notch, [data-theme="ocean"] .vol-knob-notch { background: #74b9ff; box-shadow: 0 0 4px #74b9ff; }
+
+[data-theme="fire"] .lcd-content { color: #ff9f43; text-shadow: 0 0 6px rgba(255, 159, 67, 0.5); }
+[data-theme="fire"] .radio-lcd { background: #1a0e08; border-color: rgba(255, 159, 67, 0.15); }
+[data-theme="fire"] .lcd-progress span { background: #ff9f43; box-shadow: 0 0 6px rgba(255, 159, 67, 0.5); }
+[data-theme="fire"] .lcd-waveform span { background: #ff9f43; }
+[data-theme="fire"] .antenna-tip { background: #ff9f43; box-shadow: 0 0 8px #ff9f43; }
+[data-theme="fire"] .antenna-signal { border-color: #ff9f43; }
+[data-theme="fire"] .led-signal { background: #ff9f43; box-shadow: 0 0 6px #ff9f43; }
+[data-theme="fire"] .dial-notch, [data-theme="fire"] .vol-knob-notch { background: #ff9f43; box-shadow: 0 0 4px #ff9f43; }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 420px) {
+  .lofi-radio {
+    width: calc(100vw - 24px);
+    bottom: 10px;
+  }
+  .radio-dial, .radio-vol-knob {
+    width: 36px;
+    height: 36px;
+  }
+  .radio-btn { width: 36px; height: 36px; font-size: 13px; }
+  .radio-btn-play { width: 42px; height: 42px; font-size: 16px; }
+  .lcd-title { font-size: 11px; }
+  .lcd-waveform { height: 14px; }
+}
+
 
 
 /* ============================================================
