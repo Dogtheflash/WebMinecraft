@@ -2353,3 +2353,183 @@ body.shaking {
 }
 .runner-game-over.show { opacity: 1; }
 .runner-game-over span { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+/* ============================================================
+   WEB OS STRUCTURE
+   ============================================================ */
+#desktop {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 10;
+  pointer-events: none; /* Let clicks pass through to background unless hitting a window */
+}
+#desktop > * {
+  pointer-events: auto;
+}
+
+.os-window {
+  position: absolute;
+  width: 480px;
+  max-width: 96vw;
+  max-height: 85vh;
+  background: var(--panel-strong, rgba(15, 20, 35, 0.85));
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--line, rgba(255,255,255,0.1));
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: opacity 0.3s, transform 0.3s;
+  /* Default positioning */
+  top: 10%;
+  left: 10%;
+}
+.os-window.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.95) translateY(20px);
+}
+.os-window.active {
+  z-index: 100 !important;
+  box-shadow: 0 15px 50px rgba(0,0,0,0.7), 0 0 15px rgba(53, 232, 255, 0.2);
+  border-color: var(--cyan, #35e8ff);
+}
+
+.os-titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 15px;
+  background: rgba(0,0,0,0.4);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  cursor: grab;
+  user-select: none;
+}
+.os-titlebar:active {
+  cursor: grabbing;
+}
+.os-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 1px;
+}
+.os-controls {
+  display: flex;
+  gap: 6px;
+}
+.os-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: transparent;
+  transition: 0.2s;
+}
+.os-btn:hover {
+  color: #fff;
+}
+.os-min { background: #ffbd2e; }
+.os-max { background: #27c93f; }
+.os-close { background: #ff5f56; }
+
+.os-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 15px;
+  position: relative;
+}
+.os-content::-webkit-scrollbar {
+  width: 6px;
+}
+.os-content::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 3px;
+}
+
+/* Specific Window Tweaks */
+#win-profile { top: 5vh; left: 10vw; width: 500px; height: 80vh; }
+#win-steam { top: 15vh; left: 25vw; width: 450px; }
+#win-color { top: 20vh; left: 40vw; width: 500px; }
+#win-music { top: 60vh; right: 5vw; left: auto; width: 340px; }
+
+#win-profile .os-content { padding: 0; }
+#win-profile article.profile-console { box-shadow: none; border: none; margin: 0; background: transparent; }
+#win-steam .color-page, #win-color .color-page { min-height: auto; padding-top: 10px; margin: 0; max-width: 100%; border: none; background: transparent; }
+
+/* TASKBAR */
+.os-taskbar {
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 15, 25, 0.65);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 1000;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  pointer-events: auto;
+}
+.tb-icon {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.tb-icon:hover { transform: scale(1.1); }
+.tb-apps {
+  display: flex;
+  gap: 10px;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  border-right: 1px solid rgba(255,255,255,0.1);
+  padding: 0 15px;
+}
+.tb-app {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  transition: 0.2s;
+}
+.tb-app:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-3px);
+}
+.tb-app.active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--cyan, #35e8ff);
+  box-shadow: 0 0 5px var(--cyan, #35e8ff);
+}
+.tb-tray {
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+}
