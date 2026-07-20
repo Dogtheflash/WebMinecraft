@@ -2437,14 +2437,14 @@ body.warping .screen {
    TAMAGOTCHI SLIME
    ============================================================ */
 .tamagotchi-container {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 60px;
-  z-index: 50;
+  z-index: 9999;
   pointer-events: none;
-  overflow: hidden;
+  overflow: visible;
 }
 .css-slime {
   position: absolute;
