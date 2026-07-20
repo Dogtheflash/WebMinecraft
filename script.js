@@ -2609,8 +2609,15 @@ if (interactiveCard) {
   // Random wander logic
   setInterval(() => {
     if (isSleeping || Math.abs(targetX - posX) > 10) return;
+    
+    // Giới hạn trong khung profile-console
+    const consoleEl = document.querySelector('.profile-console');
+    const rect = consoleEl ? consoleEl.getBoundingClientRect() : { left: 20, right: window.innerWidth - 20 };
+    const minX = rect.left + 20;
+    const maxX = rect.right - 60;
+
     if (Math.random() < 0.3) {
-      targetX = Math.max(20, Math.min(window.innerWidth - 60, posX + (Math.random() - 0.5) * 200));
+      targetX = Math.max(minX, Math.min(maxX, posX + (Math.random() - 0.5) * 200));
     }
   }, 2000);
 
@@ -2618,6 +2625,11 @@ if (interactiveCard) {
   function loop() {
     if (!isSleeping && Math.abs(targetX - posX) > 1) {
       posX += (targetX - posX) * 0.02 * slimeSpeed;
+      
+      // Wrapping logic (Nếu lỡ đi quá đà, sẽ vòng lại từ bên kia)
+      if (posX > window.innerWidth) posX = -40;
+      if (posX < -40) posX = window.innerWidth;
+      
       slime.style.left = posX + 'px';
     }
     requestAnimationFrame(loop);
@@ -2636,7 +2648,12 @@ if (interactiveCard) {
     food.style.top = (e.clientY - 6) + 'px';
     document.body.appendChild(food);
 
-    targetX = e.clientX - 20; // run to food
+    const consoleEl = document.querySelector('.profile-console');
+    const rect = consoleEl ? consoleEl.getBoundingClientRect() : { left: 20, right: window.innerWidth - 20 };
+    const minX = rect.left + 20;
+    const maxX = rect.right - 60;
+    
+    targetX = Math.max(minX, Math.min(maxX, e.clientX - 20)); // run to food but within bounds
     slimeSpeed = 3; // sprint
     
     setTimeout(() => {
