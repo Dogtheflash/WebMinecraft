@@ -2593,11 +2593,8 @@ if (interactiveCard) {
   
   if (!icon || !panel) return;
 
-  const part1 = 'AQ.Ab8RN6Ivt0jH6J6B';
-  const part2 = 'VA52_esEAKjBjsE7';
-  const part3 = 'XU0HXWTZzriXtxGamA';
-  const API_KEY = part1 + part2 + part3;
-  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+  const API_KEY = 'sk-O4RSxpRPqvzUKdUTphFn7Q';
+  const API_URL = 'https://api.openai.com/v1/chat/completions';
 
   icon.addEventListener('click', () => {
     panel.classList.toggle('hidden');
@@ -2631,11 +2628,16 @@ if (interactiveCard) {
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
-          contents: [{
-            parts: [{ text: `You are Chinatsu Kamado's AI Assistant. Be brief, cute, and helpful. User asks: ${text}` }]
-          }]
+          model: 'gpt-3.5-turbo',
+          messages: [
+            { role: 'system', content: "You are Chinatsu Kamado's AI Assistant. Be brief, cute, and helpful." },
+            { role: 'user', content: text }
+          ]
         })
       });
 
@@ -2646,7 +2648,7 @@ if (interactiveCard) {
       }
 
       const data = await response.json();
-      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Xin lỗi, mình đang bận chút xíu! (Không có phản hồi từ AI)";
+      const reply = data.choices?.[0]?.message?.content || "Xin lỗi, mình đang bận chút xíu! (Không có phản hồi từ AI)";
       addMessage(reply, 'ai');
       
     } catch (error) {
