@@ -2455,7 +2455,7 @@ body.warping .screen {
   background: var(--cyan, #35e8ff);
   border-radius: 40% 40% 10% 10% / 60% 60% 10% 10%;
   box-shadow: inset -5px -5px 10px rgba(0,0,0,0.2), 0 0 15px var(--cyan, #35e8ff);
-  transition: left 1s linear, background-color 0.5s;
+  transition: background-color 0.5s;
   pointer-events: auto;
   cursor: pointer;
   animation: slime-idle 2s infinite ease-in-out;
