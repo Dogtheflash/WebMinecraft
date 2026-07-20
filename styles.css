@@ -2353,3 +2353,189 @@ body.shaking {
 }
 .runner-game-over.show { opacity: 1; }
 .runner-game-over span { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+/* ============================================================
+   WARP SPEED UI
+   ============================================================ */
+.warp-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+}
+.warp-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+  transform: scale(1.1);
+}
+
+.warp-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+  background: #000;
+}
+.warp-canvas.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.warping .screen {
+  transition: transform 2s cubic-bezier(0.5, 0, 0.1, 1), opacity 2s;
+  transform-origin: center center;
+  transform: perspective(800px) rotateX(-20deg) scale(0.1) translateY(-200%);
+  opacity: 0;
+}
+
+.easter-egg {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 2s ease 1.5s;
+}
+.easter-egg.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.matrix-text {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 3rem;
+  color: #0f0;
+  text-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
+  margin-bottom: 30px;
+  letter-spacing: 5px;
+}
+#return-warp-btn {
+  border-color: #0f0;
+  color: #0f0;
+  box-shadow: inset 0 0 5px rgba(0,255,0,0.2);
+}
+#return-warp-btn:hover { background: rgba(0,255,0,0.1); box-shadow: 0 0 15px #0f0; }
+
+/* ============================================================
+   TAMAGOTCHI SLIME
+   ============================================================ */
+.tamagotchi-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  z-index: 50;
+  pointer-events: none;
+  overflow: hidden;
+}
+.css-slime {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 40px;
+  height: 30px;
+  background: var(--cyan, #35e8ff);
+  border-radius: 40% 40% 10% 10% / 60% 60% 10% 10%;
+  box-shadow: inset -5px -5px 10px rgba(0,0,0,0.2), 0 0 15px var(--cyan, #35e8ff);
+  transition: left 1s linear, background-color 0.5s;
+  pointer-events: auto;
+  cursor: pointer;
+  animation: slime-idle 2s infinite ease-in-out;
+}
+.slime-eyes {
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  width: 24px;
+  height: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+.slime-eyes::before, .slime-eyes::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  animation: blink 4s infinite;
+}
+.slime-mouth {
+  position: absolute;
+  bottom: 6px;
+  left: 17px;
+  width: 6px;
+  height: 4px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 50%;
+  transition: 0.3s;
+}
+.css-slime.eating .slime-mouth {
+  width: 10px;
+  height: 8px;
+  border-radius: 50%;
+  left: 15px;
+  bottom: 4px;
+  background: #ff5f56;
+}
+.css-slime.sleeping {
+  animation: none;
+  height: 20px;
+  width: 45px;
+  border-radius: 50% 50% 10% 10%;
+  filter: brightness(0.7);
+}
+.css-slime.sleeping .slime-eyes::before, .css-slime.sleeping .slime-eyes::after {
+  height: 2px; top: 2px; position: relative; animation: none;
+}
+.css-slime.sleeping::after {
+  content: 'Zzz';
+  position: absolute;
+  top: -15px;
+  right: -5px;
+  font-size: 12px;
+  color: #fff;
+  animation: float-up 2s infinite;
+}
+
+@keyframes slime-idle {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.9) scaleX(1.05); }
+}
+@keyframes float-up {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-15px); opacity: 0; }
+}
+
+.pet-food {
+  position: fixed;
+  width: 12px;
+  height: 12px;
+  background: #ffbd2e;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ffbd2e;
+  pointer-events: none;
+  z-index: 1000;
+  animation: drop-food 0.5s ease-in forwards;
+}
+@keyframes drop-food {
+  0% { transform: scale(1) translateY(-20px); opacity: 1; }
+  100% { transform: scale(0.5) translateY(20px); opacity: 0; }
+}
