@@ -78,6 +78,14 @@
     <source src="./data/background/chillnight.mp4" type="video/mp4">
   </video>
 
+  <!-- ========== HYPERSPACE WARP ELEMENTS ========== -->
+  <canvas id="warp-canvas" class="warp-canvas"></canvas>
+  <div id="easter-egg" class="easter-egg hidden">
+    <h1 class="matrix-text">Welcome to the Matrix</h1>
+    <button id="return-warp-btn" class="mini-btn">RETURN</button>
+  </div>
+  <!-- ============================================== -->
+
   <main id="app-root">
     <section id="terminal-screen" class="screen terminal-screen active" aria-label="Windows 11 command prompt intro" style="visibility:hidden;opacity:0;transition:opacity 0.6s ease;">
       <div class="cmd-window">
@@ -100,7 +108,7 @@
     <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
       <article class="profile-console glass-panel">
         <!-- ========== COMPANION MOVED TO HEADER ========== -->
-        <!-- ========== THEME SWITCHER ========== -->
+        <!-- ========== THEME SWITCHER & WARP ========== -->
         <div id="theme-switcher" class="theme-switcher">
           <div id="theme-menu" class="theme-menu hidden">
             <button class="theme-option active" data-theme="cyber" title="Dark Cyber">🌙</button>
@@ -109,8 +117,20 @@
             <button class="theme-option" data-theme="fire" title="Neon Fire">🔥</button>
           </div>
           <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi giao diện">🌙</button>
+          <button id="warp-btn" class="warp-btn" type="button" aria-label="Hyperspace Jump" title="Warp Speed!">🚀</button>
         </div>
         <!-- ========== END THEME SWITCHER ========== -->
+
+        <!-- ========== TAMAGOTCHI PET ========== -->
+        <div id="tamagotchi-container" class="tamagotchi-container" title="Click anywhere to feed me!">
+          <div id="css-slime" class="css-slime">
+            <div class="slime-eyes"></div>
+            <div class="slime-mouth"></div>
+            <div class="slime-sweat"></div>
+          </div>
+        </div>
+        <!-- ========== END TAMAGOTCHI ========== -->
+
         <div class="profile-banner">
           <!-- Parallax Layer 0: Base image -->
           <div class="plx-layer" data-depth="0.03">
