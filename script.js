@@ -2593,7 +2593,7 @@ if (interactiveCard) {
   
   if (!icon || !panel) return;
 
-  const API_KEY = 'sk-O4RSxpRPqvzUKdUTphFn7Q';
+  const API_KEY = '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';
   const API_URL = 'https://api.openai.com/v1/chat/completions';
 
   icon.addEventListener('click', () => {
