@@ -78,7 +78,7 @@
     <source src="./data/background/chillnight.mp4" type="video/mp4">
   </video>
 
-  <main id="desktop">
+  <main id="app-root">
     <section id="terminal-screen" class="screen terminal-screen active" aria-label="Windows 11 command prompt intro" style="visibility:hidden;opacity:0;transition:opacity 0.6s ease;">
       <div class="cmd-window">
         <div class="cmd-titlebar">
@@ -97,19 +97,8 @@
       </div>
     </section>
 
-    <!-- OS Window: Profile -->
-    <div id="win-profile" class="os-window active">
-      <div class="os-titlebar">
-        <span class="os-title">System Profile</span>
-        <div class="os-controls">
-          <button class="os-btn os-min" data-target="win-profile">—</button>
-          <button class="os-btn os-max" data-target="win-profile">□</button>
-          <button class="os-btn os-close" data-target="win-profile">×</button>
-        </div>
-      </div>
-      <div class="os-content">
-        <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
-          <article class="profile-console glass-panel">
+    <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
+      <article class="profile-console glass-panel">
         <!-- ========== COMPANION MOVED TO HEADER ========== -->
         <!-- ========== THEME SWITCHER ========== -->
         <div id="theme-switcher" class="theme-switcher">
@@ -339,26 +328,10 @@
           </div>
         </section>
         <!-- ========== END MINECRAFT SERVER PAGE ========== -->
-          </article>
-        </section>
-      </div> <!-- /.os-content -->
-    </div> <!-- /#win-profile -->
 
-    <!-- OS Window: Steam -->
-    <div id="win-steam" class="os-window hidden">
-      <div class="os-titlebar">
-        <span class="os-title">Steam Profile</span>
-        <div class="os-controls">
-          <button class="os-btn os-min" data-target="win-steam">—</button>
-          <button class="os-btn os-max" data-target="win-steam">□</button>
-          <button class="os-btn os-close" data-target="win-steam">×</button>
-        </div>
-      </div>
-      <div class="os-content">
         <!-- ========== STEAM PROFILE PAGE ========== -->
-        <section id="steam-page" class="color-page" aria-label="Steam Profile">
-          <div class="color-page-head" style="display:none;">
-            <!-- Hidden old back button -->
+        <section id="steam-page" class="color-page hidden" aria-label="Steam Profile">
+          <div class="color-page-head">
             <button id="steam-back" class="mini-btn" type="button">← Home</button>
             <div>
               <p class="eyebrow">STEAM PROFILE</p>
@@ -440,24 +413,10 @@
           </div>
         </section>
         <!-- ========== END STEAM PROFILE PAGE ========== -->
-      </div> <!-- /.os-content -->
-    </div> <!-- /#win-steam -->
 
-    <!-- OS Window: Color Tool -->
-    <div id="win-color" class="os-window hidden">
-      <div class="os-titlebar">
-        <span class="os-title">Unity Colorizer</span>
-        <div class="os-controls">
-          <button class="os-btn os-min" data-target="win-color">—</button>
-          <button class="os-btn os-max" data-target="win-color">□</button>
-          <button class="os-btn os-close" data-target="win-color">×</button>
-        </div>
-      </div>
-      <div class="os-content">
         <!-- ========== COLOR TOOL PAGE ========== -->
-        <section id="color-page" class="color-page" aria-label="Unity Rich Text Gradient Generator">
-          <div class="color-page-head" style="display:none;">
-            <!-- Hidden old back button -->
+        <section id="color-page" class="color-page hidden" aria-label="Unity Rich Text Gradient Generator">
+          <div class="color-page-head">
             <button id="color-back" class="mini-btn" type="button">← Home</button>
             <div>
               <p class="eyebrow">Unity tool</p>
@@ -507,56 +466,32 @@
           <button id="tc-copy" class="copy-btn" type="button">Copy Unity Rich Text</button>
         </section>
         <!-- ========== END COLOR TOOL PAGE ========== -->
-      </div> <!-- /.os-content -->
-    </div> <!-- /#win-color -->
 
-    <!-- OS Window: Music Player -->
-    <div id="win-music" class="os-window hidden">
-      <div class="os-titlebar">
-        <span class="os-title">Media Player</span>
-        <div class="os-controls">
-          <button class="os-btn os-min" data-target="win-music">—</button>
-          <button class="os-btn os-max" data-target="win-music">□</button>
-          <button class="os-btn os-close" data-target="win-music">×</button>
-        </div>
-      </div>
-      <div class="os-content" style="padding: 0; background: transparent; border: none; box-shadow: none;">
-        <!-- ========== MUSIC PLAYER ========== -->
-        <aside id="music-player" class="music-player glass-panel" aria-label="Trình phát nhạc">
-          <div class="player-art"></div>
-          <button id="play-toggle" class="play-btn" type="button" aria-label="Phát hoặc tạm dừng">▶</button>
-          <button id="next-track" class="next-btn" type="button" aria-label="Chuyển bài tiếp theo">⏭</button>
-          <div class="track-meta">
-            <strong id="track-title">Beautiful Piano Music</strong>
-            <div class="track-time"><span id="current-time">0:00</span><span id="duration-time">0:00</span></div>
-            <div class="progress"><span id="progress-bar"></span></div>
-          </div>
-          <div id="volume-control" class="volume-control" aria-label="Âm lượng nhạc">
-            <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Mở chỉnh âm lượng">🔊</button>
-            <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
-          </div>
-          <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-          <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
-        </aside>
-        <!-- ========== END MUSIC PLAYER ========== -->
-      </div> <!-- /.os-content -->
-    </div> <!-- /#win-music -->
 
-    <!-- OS Taskbar -->
-    <div id="os-taskbar" class="os-taskbar glass-panel">
-       <button class="tb-icon tb-start" title="Start">🪐</button>
-       <div class="tb-apps">
-          <button class="tb-app active" data-target="win-profile" title="System Profile">👤</button>
-          <button class="tb-app" data-target="win-steam" title="Steam">🎮</button>
-          <button class="tb-app" data-target="win-color" title="Unity Tool">🎨</button>
-          <button class="tb-app" data-target="win-music" title="Music Player">🎵</button>
-       </div>
-       <div class="tb-tray">
-          <div id="tb-clock">00:00</div>
-       </div>
-    </div>
+
+
+      </article>
+    </section>
   </main>
 
+  <!-- ========== MUSIC PLAYER ========== -->
+  <aside id="music-player" class="music-player glass-panel hidden" aria-label="Trình phát nhạc">
+    <div class="player-art"></div>
+    <button id="play-toggle" class="play-btn" type="button" aria-label="Phát hoặc tạm dừng">▶</button>
+    <button id="next-track" class="next-btn" type="button" aria-label="Chuyển bài tiếp theo">⏭</button>
+    <div class="track-meta">
+      <strong id="track-title">Beautiful Piano Music</strong>
+      <div class="track-time"><span id="current-time">0:00</span><span id="duration-time">0:00</span></div>
+      <div class="progress"><span id="progress-bar"></span></div>
+    </div>
+    <div id="volume-control" class="volume-control" aria-label="Âm lượng nhạc">
+      <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Mở chỉnh âm lượng">🔊</button>
+      <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
+    </div>
+    <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
+  </aside>
+  <!-- ========== END MUSIC PLAYER ========== -->
   <script src="script.js"></script>
 </body>
 </html>
