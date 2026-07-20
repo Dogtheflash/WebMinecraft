@@ -2579,8 +2579,4 @@ if (interactiveCard) {
   closeBtn.addEventListener('click', () => {
     stopGame();
   });
-
-
-
-
-
+})();
