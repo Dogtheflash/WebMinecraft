@@ -2580,3 +2580,187 @@ if (interactiveCard) {
     stopGame();
   });
 })();
+
+/* ============================================================
+   TAMAGOTCHI SLIME AI
+   ============================================================ */
+(function initTamagotchi() {
+  const slime = document.getElementById('css-slime');
+  if (!slime) return;
+  
+  let posX = window.innerWidth / 2;
+  let targetX = posX;
+  let isSleeping = false;
+  let slimeSpeed = 1;
+
+  // Watch for theme changes to make pet sleep
+  const observer = new MutationObserver(() => {
+    const isDarkTheme = document.body.classList.contains('theme-ocean') || document.body.classList.contains('theme-sakura');
+    if (isDarkTheme) {
+      isSleeping = true;
+      slime.classList.add('sleeping');
+    } else {
+      isSleeping = false;
+      slime.classList.remove('sleeping');
+    }
+  });
+  observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+  // Random wander logic
+  setInterval(() => {
+    if (isSleeping || Math.abs(targetX - posX) > 10) return;
+    if (Math.random() < 0.3) {
+      targetX = Math.max(20, Math.min(window.innerWidth - 60, posX + (Math.random() - 0.5) * 200));
+    }
+  }, 2000);
+
+  // Smooth follow targetX
+  function loop() {
+    if (!isSleeping && Math.abs(targetX - posX) > 1) {
+      posX += (targetX - posX) * 0.02 * slimeSpeed;
+      slime.style.left = posX + 'px';
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  // Feed mechanism
+  document.addEventListener('click', (e) => {
+    // Don't feed if clicking buttons or if sleeping
+    if (isSleeping || e.target.closest('button') || e.target.closest('a')) return;
+    
+    // Create food
+    const food = document.createElement('div');
+    food.className = 'pet-food';
+    food.style.left = (e.clientX - 6) + 'px';
+    food.style.top = (e.clientY - 6) + 'px';
+    document.body.appendChild(food);
+
+    targetX = e.clientX - 20; // run to food
+    slimeSpeed = 3; // sprint
+    
+    setTimeout(() => {
+      if(food.parentNode) food.remove();
+      slime.classList.add('eating');
+      setTimeout(() => { 
+        slime.classList.remove('eating'); 
+        slimeSpeed = 1;
+      }, 500);
+    }, 500);
+  });
+})();
+
+/* ============================================================
+   HYPERSPACE WARP
+   ============================================================ */
+(function initWarp() {
+  const warpBtn = document.getElementById('warp-btn');
+  const canvas = document.getElementById('warp-canvas');
+  const easterEgg = document.getElementById('easter-egg');
+  const returnBtn = document.getElementById('return-warp-btn');
+  if (!warpBtn || !canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  let numStars = 400;
+  let warpSpeed = 0;
+  let isWarping = false;
+  let rafId;
+
+  function initStars() {
+    stars = [];
+    for(let i=0; i<numStars; i++) {
+      stars.push({
+        x: Math.random() * canvas.width - canvas.width/2,
+        y: Math.random() * canvas.height - canvas.height/2,
+        z: Math.random() * canvas.width
+      });
+    }
+  }
+
+  function drawStars() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    for (let i = 0; i < stars.length; i++) {
+      let s = stars[i];
+      s.z -= warpSpeed;
+      if (s.z <= 0) {
+        s.z = canvas.width;
+        s.x = Math.random() * canvas.width - cx;
+        s.y = Math.random() * canvas.height - cy;
+      }
+
+      let x = cx + (s.x / s.z) * canvas.width;
+      let y = cy + (s.y / s.z) * canvas.width;
+      let r = Math.max(1, (1 - s.z / canvas.width) * 3);
+
+      ctx.beginPath();
+      ctx.fillStyle = '#fff';
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Streak effect for high speed
+      if (warpSpeed > 5) {
+        let prevZ = s.z + warpSpeed * 2;
+        let px = cx + (s.x / prevZ) * canvas.width;
+        let py = cy + (s.y / prevZ) * canvas.width;
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(255,255,255,${1 - s.z / canvas.width})`;
+        ctx.lineWidth = r;
+        ctx.moveTo(x, y);
+        ctx.lineTo(px, py);
+        ctx.stroke();
+      }
+    }
+    rafId = requestAnimationFrame(drawStars);
+  }
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    if(isWarping && !rafId) initStars();
+  }
+  window.addEventListener('resize', resize);
+
+  warpBtn.addEventListener('click', () => {
+    isWarping = true;
+    resize();
+    initStars();
+    canvas.classList.add('active');
+    document.body.classList.add('warping');
+    
+    // Accelerate
+    let acc = setInterval(() => {
+      warpSpeed += 1.5;
+      if (warpSpeed > 30) {
+        clearInterval(acc);
+        easterEgg.classList.remove('hidden');
+        setTimeout(() => easterEgg.classList.add('show'), 100);
+      }
+    }, 50);
+    drawStars();
+  });
+
+  returnBtn.addEventListener('click', () => {
+    // Decelerate
+    easterEgg.classList.remove('show');
+    setTimeout(() => easterEgg.classList.add('hidden'), 500);
+    
+    let dec = setInterval(() => {
+      warpSpeed -= 2;
+      if (warpSpeed <= 0) {
+        clearInterval(dec);
+        warpSpeed = 0;
+        isWarping = false;
+        canvas.classList.remove('active');
+        document.body.classList.remove('warping');
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    }, 50);
+  });
+})();
