@@ -19,23 +19,63 @@
 
 <body class="terminal-active">
 
-  <!-- ========== LOADING SCREEN (multi-template) ==========
-       Chọn mẫu loading muốn dùng ở đầu file script.js:
-       var LOADING_STYLE = 'cyber' | 'ring' | 'matrix' | 'glitch' | 'minimal';
-       Nội dung bên trong #loader-mount được JS tự sinh ra theo mẫu đã chọn.
-  ============================================================ -->
+  <!-- ========== CYBER LOADING SCREEN v2 (premium) ========== -->
   <div id="cyber-loading">
-    <div id="loader-mount"></div>
+    <div class="cl-grid-bg"></div>
+    <div class="cl-scanlines"></div>
+    <div class="cl-corner cl-tl"></div>
+    <div class="cl-corner cl-tr"></div>
+    <div class="cl-corner cl-bl"></div>
+    <div class="cl-corner cl-br"></div>
+    <div class="cl-card">
+      <div class="cl-top-bar"></div>
+      <div class="cl-eyebrow">System Boot Sequence</div>
+      <div class="cl-title-wrap">
+        <span class="cl-title" id="cl-title" data-t="INITIALIZING">Tú Xinh Trai!</span>
+      </div>
+      <div class="cl-status-row">
+        <div class="cl-dot"></div>
+        <div class="cl-status-txt" id="cl-status">Đang khởi động hệ thống...</div>
+        <div class="cl-pct" id="cl-pct">0%</div>
+      </div>
+      <div class="cl-track">
+        <div class="cl-fill" id="cl-fill"></div>
+        <div class="cl-head" id="cl-head"></div>
+      </div>
+      <div class="cl-hex"><span>0x0000</span><span>0xFFFF</span></div>
+      <div class="cl-subbars">
+        <div class="cl-sub">
+          <span class="cl-sub-lbl">Neural</span>
+          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs1" style="background:linear-gradient(90deg,#00b4ff,#00ffb4)"></div></div>
+          <span class="cl-sub-pct" id="cs1p">0%</span>
+        </div>
+        <div class="cl-sub">
+          <span class="cl-sub-lbl">Crypto</span>
+          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs2" style="background:linear-gradient(90deg,#ff006e,#ff9d00)"></div></div>
+          <span class="cl-sub-pct" id="cs2p">0%</span>
+        </div>
+        <div class="cl-sub">
+          <span class="cl-sub-lbl">Interface</span>
+          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs3" style="background:linear-gradient(90deg,#8000ff,#00ffb4)"></div></div>
+          <span class="cl-sub-pct" id="cs3p">0%</span>
+        </div>
+      </div>
+      <div class="cl-meta">
+        <span>v4.2.0-NEON</span>
+        <span id="cl-clock">00:00:00</span>
+        <span>CYB-OS</span>
+      </div>
+    </div>
     <div class="cl-fade-overlay" id="cl-fade"></div>
   </div>
-  <!-- ========== END LOADING SCREEN ========== -->
+  <!-- ========== END CYBER LOADING SCREEN ========== -->
 
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
   <div id="pointer-glow" class="pointer-glow" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
   <video id="bg-video" class="bg-video" autoplay muted loop playsinline aria-hidden="true">
-    <source src="./data/background/bg-test.mp4" type="video/mp4">
+    <source src="./data/background/chillnight.mp4" type="video/mp4">
   </video>
 
   <main id="app-root">
