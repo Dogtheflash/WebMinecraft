@@ -1,19 +1,17 @@
 /* ============================================================
-   CYBER LOADING SCREEN v2 — Premium Cyberpunk
-   Tốc độ: ~2 giây, tự vào luôn khi đạt 100%
+   LOADING SCREEN — nhiều mẫu, đổi mẫu bằng 1 dòng dưới đây
+   Các giá trị hợp lệ: 'cyber' | 'ring' | 'matrix' | 'glitch' | 'minimal'
    ============================================================ */
+var LOADING_STYLE = 'cyber';
+
 (function () {
   var overlay  = document.getElementById('cyber-loading');
-  var fill     = document.getElementById('cl-fill');
-  var head     = document.getElementById('cl-head');
-  var pctEl    = document.getElementById('cl-pct');
-  var statusEl = document.getElementById('cl-status');
-  var clockEl  = document.getElementById('cl-clock');
+  var mount    = document.getElementById('loader-mount');
   var fadeEl   = document.getElementById('cl-fade');
   var terminal = document.getElementById('terminal-screen');
 
-  /* Ẩn CMD ngay từ đầu */
   if (terminal) terminal.style.visibility = 'hidden';
+  if (!mount || !overlay) return;
 
   var msgs = [
     'Đang khởi động hệ thống...',
@@ -25,15 +23,211 @@
     'Tải môi trường ảo...',
     'Hoàn tất. Sẵn sàng!'
   ];
+  function msgFor(prog) {
+    return msgs[Math.min(Math.floor(prog / 12.5), msgs.length - 1)];
+  }
 
-  var prog = 0, s1 = 0, s2 = 0, s3 = 0, done = false;
+  /* ---------- Danh sách mẫu loading ---------- */
+  var TEMPLATES = {
 
-  /* Đồng hồ realtime */
-  setInterval(function () {
-    if (clockEl) clockEl.textContent = new Date().toTimeString().slice(0, 8);
-  }, 1000);
+    /* MẪU 1: Cyberpunk Terminal (bảng điều khiển, thanh phụ, giờ realtime) */
+    cyber: {
+      html:
+        '<div class="cl-grid-bg"></div>' +
+        '<div class="cl-scanlines"></div>' +
+        '<div class="cl-corner cl-tl"></div><div class="cl-corner cl-tr"></div>' +
+        '<div class="cl-corner cl-bl"></div><div class="cl-corner cl-br"></div>' +
+        '<div class="cl-card">' +
+          '<div class="cl-top-bar"></div>' +
+          '<div class="cl-eyebrow">System Boot Sequence</div>' +
+          '<div class="cl-title-wrap"><span class="cl-title" data-t="INITIALIZING">Tú Xinh Trai!</span></div>' +
+          '<div class="cl-status-row">' +
+            '<div class="cl-dot"></div>' +
+            '<div class="cl-status-txt" id="cl-status">Đang khởi động hệ thống...</div>' +
+            '<div class="cl-pct" id="cl-pct">0%</div>' +
+          '</div>' +
+          '<div class="cl-track"><div class="cl-fill" id="cl-fill"></div><div class="cl-head" id="cl-head"></div></div>' +
+          '<div class="cl-hex"><span>0x0000</span><span>0xFFFF</span></div>' +
+          '<div class="cl-subbars">' +
+            '<div class="cl-sub"><span class="cl-sub-lbl">Neural</span><div class="cl-sub-track"><div class="cl-sub-fill" id="cs1" style="background:linear-gradient(90deg,#00b4ff,#00ffb4)"></div></div><span class="cl-sub-pct" id="cs1p">0%</span></div>' +
+            '<div class="cl-sub"><span class="cl-sub-lbl">Crypto</span><div class="cl-sub-track"><div class="cl-sub-fill" id="cs2" style="background:linear-gradient(90deg,#ff006e,#ff9d00)"></div></div><span class="cl-sub-pct" id="cs2p">0%</span></div>' +
+            '<div class="cl-sub"><span class="cl-sub-lbl">Interface</span><div class="cl-sub-track"><div class="cl-sub-fill" id="cs3" style="background:linear-gradient(90deg,#8000ff,#00ffb4)"></div></div><span class="cl-sub-pct" id="cs3p">0%</span></div>' +
+          '</div>' +
+          '<div class="cl-meta"><span>v4.2.0-NEON</span><span id="cl-clock">00:00:00</span><span>CYB-OS</span></div>' +
+        '</div>',
+      init: function () {
+        var clockEl = document.getElementById('cl-clock');
+        var tick = setInterval(function () {
+          if (clockEl) clockEl.textContent = new Date().toTimeString().slice(0, 8);
+        }, 1000);
+        return { s1: 0, s2: 0, s3: 0, clockTimer: tick };
+      },
+      onTick: function (prog, state) {
+        state.s1 = Math.min(state.s1 + Math.random() * 6 + 3,   100);
+        state.s2 = Math.min(state.s2 + Math.random() * 5 + 2.5, 100);
+        state.s3 = Math.min(state.s3 + Math.random() * 6 + 2,   100);
+        var fill = document.getElementById('cl-fill');
+        var head = document.getElementById('cl-head');
+        var pctEl = document.getElementById('cl-pct');
+        var statusEl = document.getElementById('cl-status');
+        if (fill)  fill.style.width  = prog + '%';
+        if (head)  head.style.right  = (100 - prog) + '%';
+        if (pctEl) pctEl.textContent = Math.floor(prog) + '%';
+        if (statusEl) statusEl.textContent = msgFor(prog);
+        setBar('cs1', 'cs1p', state.s1);
+        setBar('cs2', 'cs2p', state.s2);
+        setBar('cs3', 'cs3p', state.s3);
+      },
+      onDone: function (state) {
+        var statusEl = document.getElementById('cl-status');
+        if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
+        if (state.clockTimer) clearInterval(state.clockTimer);
+      }
+    },
 
-  /* Progress bar — ~2 giây để hoàn thành */
+    /* MẪU 2: Vòng tròn neon phát sáng */
+    ring: {
+      html:
+        '<div class="loader-ring">' +
+          '<div class="lr-bg-grid"></div>' +
+          '<svg class="lr-svg" viewBox="0 0 200 200">' +
+            '<circle class="lr-track" cx="100" cy="100" r="88"></circle>' +
+            '<circle class="lr-bar" id="lr-bar" cx="100" cy="100" r="88"></circle>' +
+          '</svg>' +
+          '<div class="lr-center"><span class="lr-pct" id="lr-pct">0%</span><span class="lr-label">Loading</span></div>' +
+          '<div class="lr-status" id="lr-status">Đang khởi tạo hệ thống...</div>' +
+        '</div>',
+      init: function () { return {}; },
+      onTick: function (prog) {
+        var bar = document.getElementById('lr-bar');
+        var pctEl = document.getElementById('lr-pct');
+        var statusEl = document.getElementById('lr-status');
+        var circumference = 553;
+        if (bar) bar.style.strokeDashoffset = circumference * (1 - prog / 100);
+        if (pctEl) pctEl.textContent = Math.floor(prog) + '%';
+        if (statusEl) statusEl.textContent = msgFor(prog);
+      },
+      onDone: function () {
+        var statusEl = document.getElementById('lr-status');
+        if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
+      }
+    },
+
+    /* MẪU 3: Mưa ký tự Matrix */
+    matrix: {
+      html:
+        '<div class="loader-matrix">' +
+          '<canvas id="lm-canvas" class="lm-canvas"></canvas>' +
+          '<div class="lm-panel">' +
+            '<div class="lm-title">Entering The Matrix</div>' +
+            '<div class="lm-track"><div class="lm-fill" id="lm-fill"></div></div>' +
+            '<div class="lm-row"><span id="lm-status">Decrypting...</span><span id="lm-pct">0%</span></div>' +
+          '</div>' +
+        '</div>',
+      init: function () {
+        var canvas = document.getElementById('lm-canvas');
+        if (!canvas) return {};
+        var ctx = canvas.getContext('2d');
+        var chars = 'アイウエオカキクケコ0123456789ABCDEFｱｲｳｴｵ';
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resize();
+        var cols = Math.floor(canvas.width / 16);
+        var drops = new Array(cols).fill(1);
+        var raf;
+        function draw() {
+          ctx.fillStyle = 'rgba(0,0,0,0.08)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#00ff6a';
+          ctx.font = '14px monospace';
+          for (var i = 0; i < drops.length; i++) {
+            var text = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(text, i * 16, drops[i] * 16);
+            if (drops[i] * 16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+          }
+          raf = requestAnimationFrame(draw);
+        }
+        draw();
+        var onResize = function () { resize(); };
+        window.addEventListener('resize', onResize);
+        return { raf: raf, onResize: onResize };
+      },
+      onTick: function (prog) {
+        var fill = document.getElementById('lm-fill');
+        var pctEl = document.getElementById('lm-pct');
+        var statusEl = document.getElementById('lm-status');
+        if (fill) fill.style.width = prog + '%';
+        if (pctEl) pctEl.textContent = Math.floor(prog) + '%';
+        if (statusEl) statusEl.textContent = msgFor(prog);
+      },
+      onDone: function (state) {
+        var statusEl = document.getElementById('lm-status');
+        if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
+        if (state.onResize) window.removeEventListener('resize', state.onResize);
+        if (state.raf) cancelAnimationFrame(state.raf);
+      }
+    },
+
+    /* MẪU 4: Glitch / VHS */
+    glitch: {
+      html:
+        '<div class="loader-glitch">' +
+          '<div class="lg-noise"></div>' +
+          '<div class="lg-title" data-text="LOADING">LOADING<span id="lg-pct">0%</span></div>' +
+          '<div class="lg-bar"><div class="lg-fill" id="lg-fill"></div></div>' +
+          '<div class="lg-status" id="lg-status">booting system...</div>' +
+        '</div>',
+      init: function () { return {}; },
+      onTick: function (prog) {
+        var fill = document.getElementById('lg-fill');
+        var pctEl = document.getElementById('lg-pct');
+        var statusEl = document.getElementById('lg-status');
+        if (fill) fill.style.width = prog + '%';
+        if (pctEl) pctEl.textContent = ' ' + Math.floor(prog) + '%';
+        if (statusEl) statusEl.textContent = msgFor(prog);
+      },
+      onDone: function () {
+        var statusEl = document.getElementById('lg-status');
+        if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
+      }
+    },
+
+    /* MẪU 5: Tối giản, thanh lịch */
+    minimal: {
+      html:
+        '<div class="loader-minimal">' +
+          '<div class="lmn-logo">✦</div>' +
+          '<div class="lmn-bars"><span></span><span></span><span></span><span></span><span></span></div>' +
+          '<div class="lmn-track"><div class="lmn-fill" id="lmn-fill"></div></div>' +
+          '<div class="lmn-pct" id="lmn-pct">0%</div>' +
+        '</div>',
+      init: function () { overlay.classList.add('ls-minimal'); return {}; },
+      onTick: function (prog) {
+        var fill = document.getElementById('lmn-fill');
+        var pctEl = document.getElementById('lmn-pct');
+        if (fill) fill.style.width = prog + '%';
+        if (pctEl) pctEl.textContent = Math.floor(prog) + '%';
+      },
+      onDone: function () {
+        var pctEl = document.getElementById('lmn-pct');
+        if (pctEl) pctEl.textContent = '100%';
+      }
+    }
+  };
+
+  function setBar(id, pid, v) {
+    var el = document.getElementById(id);
+    var ep = document.getElementById(pid);
+    if (el) el.style.width  = Math.floor(v) + '%';
+    if (ep) ep.textContent  = Math.floor(v) + '%';
+  }
+
+  /* ---------- Chọn & khởi chạy mẫu ---------- */
+  var tpl = TEMPLATES[LOADING_STYLE] || TEMPLATES.cyber;
+  mount.innerHTML = tpl.html;
+  var state = tpl.init ? (tpl.init() || {}) : {};
+
+  var prog = 0, done = false;
   var iv = setInterval(function () {
     if (done) return;
 
@@ -41,34 +235,14 @@
             : prog < 80 ? (Math.random() * 3 + 2.5)
             : prog < 95 ? (Math.random() * 2 + 1)
             :              (Math.random() * 1.5 + 0.8);
-
     prog = Math.min(prog + inc, 100);
-    s1   = Math.min(s1 + Math.random() * 6 + 3,  100);
-    s2   = Math.min(s2 + Math.random() * 5 + 2.5, 100);
-    s3   = Math.min(s3 + Math.random() * 6 + 2,  100);
 
-    var p = Math.floor(prog);
-    if (fill)  fill.style.width  = prog + '%';
-    if (head)  head.style.right  = (100 - prog) + '%';
-    if (pctEl) pctEl.textContent = p + '%';
-
-    var si = Math.min(Math.floor(prog / 12.5), msgs.length - 1);
-    if (statusEl) statusEl.textContent = msgs[si];
-
-    function setBar(id, pid, v) {
-      var el = document.getElementById(id);
-      var ep = document.getElementById(pid);
-      if (el) el.style.width  = Math.floor(v) + '%';
-      if (ep) ep.textContent  = Math.floor(v) + '%';
-    }
-    setBar('cs1', 'cs1p', s1);
-    setBar('cs2', 'cs2p', s2);
-    setBar('cs3', 'cs3p', s3);
+    if (tpl.onTick) tpl.onTick(prog, state);
 
     if (prog >= 100) {
       clearInterval(iv);
       done = true;
-      if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
+      if (tpl.onDone) tpl.onDone(state);
 
       setTimeout(function () {
         if (fadeEl) fadeEl.classList.add('active');
@@ -96,7 +270,7 @@
   }, 30);
 })();
 /* ============================================================
-   END CYBER LOADING SCREEN
+   END LOADING SCREEN
    ============================================================ */
 
 /* ============================================================
