@@ -930,7 +930,7 @@ body.wide-page-active .mc-bot-avatar {
 }
 
 /* ============================================================
-   LOADING SCREEN — shared shell (dùng chung cho mọi mẫu)
+   CYBER LOADING SCREEN v2 — Premium Cyberpunk
    ============================================================ */
 #cyber-loading {
   position: fixed;
@@ -950,11 +950,7 @@ body.wide-page-active .mc-bot-avatar {
   visibility: hidden;
   pointer-events: none;
 }
-#loader-mount { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-/* ============================================================
-   MẪU 1 — "cyber" : Cyberpunk Terminal (mặc định gốc)
-   ============================================================ */
 #cyber-loading .cl-grid-bg {
   position: absolute; inset: 0; pointer-events: none;
   background-image:
@@ -1118,123 +1114,6 @@ body.wide-page-active .mc-bot-avatar {
   transition: opacity 0.9s ease;
 }
 #cyber-loading .cl-fade-overlay.active { opacity:1; pointer-events:all; }
-
-/* ============================================================
-   MẪU 2 — "ring" : Neon Circular Progress
-   ============================================================ */
-.loader-ring {
-  position: relative; z-index: 5; display: flex; flex-direction: column;
-  align-items: center; gap: 22px; width: min(360px, 90vw);
-}
-.loader-ring .lr-bg-grid {
-  position: absolute; inset: -60px; pointer-events: none; z-index: -1;
-  background-image: radial-gradient(circle at center, rgba(0,255,180,.08), transparent 70%);
-}
-.loader-ring .lr-svg { width: 220px; height: 220px; transform: rotate(-90deg); filter: drop-shadow(0 0 14px rgba(0,255,180,.45)); }
-.loader-ring .lr-track { fill: none; stroke: rgba(0,255,180,.1); stroke-width: 6; }
-.loader-ring .lr-bar {
-  fill: none; stroke: #00ffb4; stroke-width: 6; stroke-linecap: round;
-  stroke-dasharray: 553; stroke-dashoffset: 553;
-  transition: stroke-dashoffset .1s linear, stroke .3s ease;
-}
-.loader-ring .lr-center {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-}
-.loader-ring .lr-pct {
-  font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 2.4rem;
-  color: #00ffb4; text-shadow: 0 0 18px rgba(0,255,180,.7);
-}
-.loader-ring .lr-label {
-  font-size: 9px; letter-spacing: 4px; color: rgba(0,255,180,.4); text-transform: uppercase;
-}
-.loader-ring .lr-status {
-  font-size: 11px; letter-spacing: 1px; color: rgba(0,255,180,.6);
-  min-height: 16px; text-align: center;
-}
-@keyframes lrSpin { 0%{transform:rotate(-90deg)} 100%{transform:rotate(270deg)} }
-.loader-ring .lr-svg { animation: lrSpinPulse 4s ease-in-out infinite; }
-@keyframes lrSpinPulse { 0%,100%{filter:drop-shadow(0 0 10px rgba(0,255,180,.35))} 50%{filter:drop-shadow(0 0 22px rgba(0,255,180,.7))} }
-
-/* ============================================================
-   MẪU 3 — "matrix" : Matrix Rain
-   ============================================================ */
-.loader-matrix { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-.loader-matrix .lm-canvas { position: absolute; inset: 0; z-index: 0; background: #000; }
-.loader-matrix .lm-panel {
-  position: relative; z-index: 2; width: min(420px, 88vw);
-  padding: 30px 34px; background: rgba(0,10,4,.72);
-  border: 1px solid rgba(0,255,120,.25); backdrop-filter: blur(6px);
-  box-shadow: 0 0 40px rgba(0,255,120,.12);
-}
-.loader-matrix .lm-title {
-  text-align: center; font-size: 13px; letter-spacing: 4px; margin-bottom: 20px;
-  color: #00ff6a; text-shadow: 0 0 12px rgba(0,255,100,.8); text-transform: uppercase;
-}
-.loader-matrix .lm-track { height: 3px; background: rgba(0,255,100,.1); margin-bottom: 8px; }
-.loader-matrix .lm-fill { height: 100%; width: 0%; background: linear-gradient(90deg,#00ff6a,#7cff00); box-shadow: 0 0 8px #00ff6a; transition: width .07s linear; }
-.loader-matrix .lm-row { display: flex; justify-content: space-between; font-size: 11px; color: rgba(0,255,120,.6); letter-spacing: 1px; }
-.loader-matrix .lm-row span:last-child { color: #00ff6a; font-weight: 700; }
-
-/* ============================================================
-   MẪU 4 — "glitch" : Glitch / VHS
-   ============================================================ */
-.loader-glitch {
-  position: relative; z-index: 5; display: flex; flex-direction: column;
-  align-items: center; gap: 24px; width: min(420px, 90vw);
-}
-.loader-glitch .lg-noise {
-  position: absolute; inset: -100px; z-index: -1; opacity: .05; pointer-events: none;
-  background-image: repeating-radial-gradient(circle at 20% 30%, #fff 0, transparent 1px, transparent 3px);
-  animation: lgNoiseShift 0.4s steps(2) infinite;
-}
-@keyframes lgNoiseShift { 0%{transform:translate(0,0)} 50%{transform:translate(-3px,2px)} 100%{transform:translate(2px,-2px)} }
-.loader-glitch .lg-title {
-  position: relative; font-family: 'Outfit', sans-serif; font-weight: 900;
-  font-size: clamp(1.8rem, 6vw, 2.6rem); letter-spacing: 4px; color: #fff;
-  text-transform: uppercase; display: flex; align-items: baseline; gap: 12px;
-}
-.loader-glitch .lg-title::before,
-.loader-glitch .lg-title::after {
-  content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-}
-.loader-glitch .lg-title::before { color: #ff003c; clip-path: inset(0 0 55% 0); animation: lgGl1 2.6s infinite linear; }
-.loader-glitch .lg-title::after  { color: #00e5ff; clip-path: inset(55% 0 0 0); animation: lgGl2 2.6s infinite linear; }
-@keyframes lgGl1 { 0%,92%,100%{transform:translate(0,0)} 93%{transform:translate(-4px,-1px)} 95%{transform:translate(3px,1px)} 97%{transform:translate(-2px,0)} }
-@keyframes lgGl2 { 0%,92%,100%{transform:translate(0,0)} 93%{transform:translate(4px,1px)} 95%{transform:translate(-3px,-1px)} 97%{transform:translate(2px,0)} }
-.loader-glitch .lg-title #lg-pct { font-size: 1rem; color: #ff003c; letter-spacing: 1px; }
-.loader-glitch .lg-bar { width: 100%; height: 6px; background: rgba(255,255,255,.08); position: relative; overflow: hidden; }
-.loader-glitch .lg-fill { height: 100%; width: 0%; background: repeating-linear-gradient(45deg,#ff003c 0 10px,#00e5ff 10px 20px); transition: width .07s linear; }
-.loader-glitch .lg-status { font-size: 11px; letter-spacing: 2px; color: rgba(255,255,255,.55); text-transform: uppercase; }
-
-/* ============================================================
-   MẪU 5 — "minimal" : Clean Minimal
-   ============================================================ */
-#cyber-loading.ls-minimal { background: #0b0b10; }
-.loader-minimal {
-  position: relative; z-index: 5; display: flex; flex-direction: column;
-  align-items: center; gap: 26px; width: min(300px, 86vw);
-}
-.loader-minimal .lmn-logo {
-  font-size: 2rem; color: #fff; opacity: .9;
-  animation: lmnPulse 1.8s ease-in-out infinite;
-}
-@keyframes lmnPulse { 0%,100%{transform:scale(1);opacity:.6} 50%{transform:scale(1.15);opacity:1} }
-.loader-minimal .lmn-bars { display: flex; align-items: flex-end; gap: 5px; height: 28px; }
-.loader-minimal .lmn-bars span {
-  width: 4px; height: 100%; background: #fff; border-radius: 2px; opacity: .85;
-  animation: lmnWave 1s ease-in-out infinite;
-}
-.loader-minimal .lmn-bars span:nth-child(1){animation-delay:0s}
-.loader-minimal .lmn-bars span:nth-child(2){animation-delay:.12s}
-.loader-minimal .lmn-bars span:nth-child(3){animation-delay:.24s}
-.loader-minimal .lmn-bars span:nth-child(4){animation-delay:.36s}
-.loader-minimal .lmn-bars span:nth-child(5){animation-delay:.48s}
-@keyframes lmnWave { 0%,100%{transform:scaleY(.25)} 50%{transform:scaleY(1)} }
-.loader-minimal .lmn-track { width: 100%; height: 2px; background: rgba(255,255,255,.12); }
-.loader-minimal .lmn-fill { height: 100%; width: 0%; background: #fff; transition: width .07s linear; }
-.loader-minimal .lmn-pct { font-size: 12px; letter-spacing: 2px; color: rgba(255,255,255,.55); }
-
     /* ============================================================
        ANIME CLOCK — INLINE SYNC-PILL STYLE
        ============================================================ */
