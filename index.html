@@ -77,7 +77,12 @@
   
   <!-- ========== YOUTUBE BACKGROUND ========== -->
   <div id="bg-video" class="bg-video">
-    <div id="bg-yt-player">https://www.youtube.com/watch?v=zvIS6EIkXx8&list=RDzvIS6EIkXx8&start_radio=1</div>
+    <iframe id="bg-yt-player" 
+            src="https://www.youtube.com/embed/zvIS6EIkXx8?autoplay=1&mute=1&loop=1&playlist=zvIS6EIkXx8&controls=0&showinfo=0&rel=0&modestbranding=1&disablekb=1" 
+            frameborder="0" 
+            allow="autoplay; encrypted-media" 
+            allowfullscreen>
+    </iframe>
   </div>
   <!-- ======================================== -->
 
@@ -502,15 +507,11 @@
       <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Mở chỉnh âm lượng">🔊</button>
       <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
     </div>
-    <!-- Nút bật/tắt tiếng nền YouTube -->
-    <button id="bg-mute-btn" class="volume-toggle" type="button" aria-label="Bật/Tắt tiếng nền" style="margin-left: 5px;" title="Âm thanh nền">🔕</button>
-    
     <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
     <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
   </aside>
   <!-- ========== END MUSIC PLAYER ========== -->
   
-  <script src="https://www.youtube.com/iframe_api"></script>
   <script src="script.js"></script>
 </body>
 </html>
