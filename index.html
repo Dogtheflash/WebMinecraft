@@ -74,9 +74,12 @@
   <div class="ambient ambient-two"></div>
   <div id="pointer-glow" class="pointer-glow" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
-  <video id="bg-video" class="bg-video" autoplay muted loop playsinline aria-hidden="true">
-    <source src="./data/background/chillnight.mp4" type="video/mp4">
-  </video>
+  
+  <!-- ========== YOUTUBE BACKGROUND ========== -->
+  <div id="bg-video" class="bg-video">
+    <div id="bg-yt-player"></div>
+  </div>
+  <!-- ======================================== -->
 
   <!-- ========== HYPERSPACE WARP ELEMENTS ========== -->
   <canvas id="warp-canvas" class="warp-canvas"></canvas>
@@ -499,10 +502,15 @@
       <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Mở chỉnh âm lượng">🔊</button>
       <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
     </div>
+    <!-- Nút bật/tắt tiếng nền YouTube -->
+    <button id="bg-mute-btn" class="volume-toggle" type="button" aria-label="Bật/Tắt tiếng nền" style="margin-left: 5px;" title="Âm thanh nền">🔕</button>
+    
     <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
     <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
   </aside>
   <!-- ========== END MUSIC PLAYER ========== -->
+  
+  <script src="https://www.youtube.com/iframe_api"></script>
   <script src="script.js"></script>
 </body>
 </html>
