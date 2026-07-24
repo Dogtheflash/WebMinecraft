@@ -2698,3 +2698,56 @@ if (interactiveCard) {
   });
 })();
 
+/* ============================================================
+   YOUTUBE LOFI BACKGROUND TOGGLE WITH SOUND
+   ============================================================ */
+(function initYtBgToggle() {
+  const toggleBtn = document.getElementById('yt-bg-toggle');
+  const mp4Video = document.getElementById('bg-video');
+  const ytContainer = document.getElementById('bg-yt-container');
+  const ytIframe = document.getElementById('bg-yt-player');
+  if (!toggleBtn || !mp4Video || !ytContainer || !ytIframe) return;
+
+  let isYtMode = false;
+
+  function postYtCommand(func, args) {
+    if (ytIframe && ytIframe.contentWindow) {
+      ytIframe.contentWindow.postMessage(JSON.stringify({
+        event: 'command',
+        func: func,
+        args: args || []
+      }), '*');
+    }
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    isYtMode = !isYtMode;
+
+    if (isYtMode) {
+      // Bật chế độ YouTube (Kèm âm thanh)
+      mp4Video.pause();
+      mp4Video.classList.add('hidden');
+      ytContainer.classList.remove('hidden');
+
+      toggleBtn.style.background = 'rgba(53, 232, 255, 0.2)';
+      toggleBtn.style.borderColor = '#35e8ff';
+      toggleBtn.style.boxShadow = '0 0 10px #35e8ff';
+
+      // Phát video YouTube + mở tiếng + âm lượng 50
+      postYtCommand('playVideo');
+      postYtCommand('unMute');
+      postYtCommand('setVolume', [50]);
+    } else {
+      // Tắt chế độ YouTube, quay về nền MP4 mặc định
+      postYtCommand('pauseVideo');
+      ytContainer.classList.add('hidden');
+      mp4Video.classList.remove('hidden');
+      mp4Video.play();
+
+      toggleBtn.style.background = '';
+      toggleBtn.style.borderColor = '';
+      toggleBtn.style.boxShadow = '';
+    }
+  });
+})();
+
