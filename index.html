@@ -76,16 +76,17 @@
   <div class="scanlines" aria-hidden="true"></div>
   
   <!-- ========== BACKGROUND VIDEOS ========== -->
-<video id="bg-video" class="bg-video" autoplay muted loop playsinline aria-hidden="true" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -1; pointer-events: none;">
-  <source src="./data/background/chillnight.mp4" type="video/mp4">
-</video>
+  <video id="bg-video" class="bg-video" autoplay muted loop playsinline aria-hidden="true" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -1; pointer-events: none;">
+    <source src="./data/background/chillnight.mp4" type="video/mp4">
+  </video>
 
-  <div id="bg-yt-container" class="bg-video hidden">
+  <div id="bg-yt-container" class="bg-video hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; overflow: hidden;">
     <iframe id="bg-yt-player" 
             src="https://www.youtube.com/embed/zvIS6EIkXx8?enablejsapi=1&autoplay=0&mute=0&loop=1&playlist=zvIS6EIkXx8&controls=0&showinfo=0&rel=0&modestbranding=1&disablekb=1" 
             frameborder="0" 
             allow="autoplay; encrypted-media" 
-            allowfullscreen>
+            allowfullscreen
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; pointer-events: none;">
     </iframe>
   </div>
   <!-- ======================================== -->
@@ -130,6 +131,7 @@
           </div>
           <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi giao diện">🌙</button>
           <button id="yt-bg-toggle" class="warp-btn" type="button" aria-label="Chuyển sang Nền YouTube Lofi (kèm tiếng)" title="Bật/Tắt Nền YouTube (kèm tiếng)">🎬</button>
+          <button id="yt-restart-btn" class="warp-btn hidden" type="button" aria-label="Quay lại từ đầu video YouTube" title="Quay lại từ đầu video YouTube">🔄</button>
           <button id="warp-btn" class="warp-btn" type="button" aria-label="Hyperspace Jump" title="Warp Speed!">🚀</button>
         </div>
         <!-- ========== END THEME SWITCHER ========== -->
