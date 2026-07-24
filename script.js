@@ -2703,6 +2703,7 @@ if (interactiveCard) {
    ============================================================ */
 (function initYtBgToggle() {
   const toggleBtn = document.getElementById('yt-bg-toggle');
+  const restartBtn = document.getElementById('yt-restart-btn');
   const mp4Video = document.getElementById('bg-video');
   const ytContainer = document.getElementById('bg-yt-container');
   const ytIframe = document.getElementById('bg-yt-player');
@@ -2728,6 +2729,7 @@ if (interactiveCard) {
       mp4Video.pause();
       mp4Video.classList.add('hidden');
       ytContainer.classList.remove('hidden');
+      if (restartBtn) restartBtn.classList.remove('hidden');
 
       toggleBtn.style.background = 'rgba(53, 232, 255, 0.2)';
       toggleBtn.style.borderColor = '#35e8ff';
@@ -2741,6 +2743,7 @@ if (interactiveCard) {
       // Tắt chế độ YouTube, quay về nền MP4 mặc định
       postYtCommand('pauseVideo');
       ytContainer.classList.add('hidden');
+      if (restartBtn) restartBtn.classList.add('hidden');
       mp4Video.classList.remove('hidden');
       mp4Video.play();
 
@@ -2749,5 +2752,20 @@ if (interactiveCard) {
       toggleBtn.style.boxShadow = '';
     }
   });
+
+  if (restartBtn) {
+    restartBtn.addEventListener('click', () => {
+      postYtCommand('seekTo', [0, true]);
+      postYtCommand('playVideo');
+      postYtCommand('unMute');
+      
+      // Hiệu ứng nhấp nháy nút 🔄 khi bấm
+      restartBtn.style.transform = 'scale(1.2) rotate(-360deg)';
+      restartBtn.style.transition = 'transform 0.5s ease';
+      setTimeout(() => {
+        restartBtn.style.transform = '';
+      }, 500);
+    });
+  }
 })();
 
