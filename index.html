@@ -75,10 +75,14 @@
   <div id="pointer-glow" class="pointer-glow" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
   
-  <!-- ========== YOUTUBE BACKGROUND ========== -->
-  <div id="bg-video" class="bg-video">
+  <!-- ========== BACKGROUND VIDEOS ========== -->
+  <video id="bg-video" class="bg-video" autoplay muted loop playsinline aria-hidden="true">
+    <source src="./data/background/chillnight.mp4" type="video/mp4">
+  </video>
+
+  <div id="bg-yt-container" class="bg-video hidden">
     <iframe id="bg-yt-player" 
-            src="https://www.youtube.com/embed/zvIS6EIkXx8?autoplay=1&mute=1&loop=1&playlist=zvIS6EIkXx8&controls=0&showinfo=0&rel=0&modestbranding=1&disablekb=1" 
+            src="https://www.youtube.com/embed/zvIS6EIkXx8?enablejsapi=1&autoplay=0&mute=0&loop=1&playlist=zvIS6EIkXx8&controls=0&showinfo=0&rel=0&modestbranding=1&disablekb=1" 
             frameborder="0" 
             allow="autoplay; encrypted-media" 
             allowfullscreen>
@@ -125,6 +129,7 @@
             <button class="theme-option" data-theme="fire" title="Neon Fire">🔥</button>
           </div>
           <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi giao diện">🌙</button>
+          <button id="yt-bg-toggle" class="warp-btn" type="button" aria-label="Chuyển sang Nền YouTube Lofi (kèm tiếng)" title="Bật/Tắt Nền YouTube (kèm tiếng)">🎬</button>
           <button id="warp-btn" class="warp-btn" type="button" aria-label="Hyperspace Jump" title="Warp Speed!">🚀</button>
         </div>
         <!-- ========== END THEME SWITCHER ========== -->
