@@ -150,112 +150,51 @@
       transform: translate(-50%, -50%);
       font-size: 18px;
       pointer-events: none;
-      filter: drop-shadow(0 0 6px rgba(255, 180, 216, 0.8));
+      filter: drop-shadow(0 0 8px rgba(255, 100, 160, 0.9));
       transition: left 0.1s linear;
     }
-    .sk-meta {
-      display: flex;
-      justify-content: space-between;
+    .sk-pct-heart {
+      display: inline-flex;
       align-items: center;
-      font-size: 12px;
-      color: #e0b8d2;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    .sk-status {
+      gap: 4px;
+      color: #ff85b8;
+      font-weight: 800;
       font-size: 13px;
-      color: #ffd4e8;
-      font-weight: 600;
-      min-height: 20px;
+      text-shadow: 0 0 10px rgba(255, 115, 175, 0.6);
+      animation: skHeartBeat 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes skHeartBeat {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.12); color: #ff529a; }
     }
 
-    .sk-petal {
+    /* Hiệu ứng Trái tim rơi rơi lúc đếm */
+    .sk-falling-heart {
       position: absolute;
-      top: -20px;
-      background: radial-gradient(circle, #ffcce3 30%, #ff8dbb 90%);
-      border-radius: 0 70% 0 70%;
-      opacity: 0.8;
+      top: -30px;
+      font-size: var(--h-size, 18px);
       pointer-events: none;
-      animation: skPetalFall linear infinite;
-    }
-    .sk-petal.back {
-      filter: blur(1.5px);
-      opacity: 0.45;
-    }
-    .sk-petal.mark-petal {
       z-index: 15;
-      animation: skMarkPetalFall 3.3s ease-out forwards;
+      filter: drop-shadow(0 0 8px rgba(255, 100, 160, 0.8));
+      animation: skHeartFall 3.5s linear forwards;
     }
 
-    @keyframes skPetalFall {
+    @keyframes skHeartFall {
       0% {
-        transform: translateY(-20px) rotate(0deg) translateX(0);
+        transform: translateY(-20px) scale(0.5) rotate(0deg);
         opacity: 0;
       }
-      10% {
-        opacity: 0.85;
-      }
-      90% {
-        opacity: 0.7;
-      }
-      100% {
-        transform: translateY(105vh) rotate(540deg) translateX(var(--sway, 40px));
-        opacity: 0;
-      }
-    }
-
-    @keyframes skMarkPetalFall {
-      0% {
-        transform: translateY(0) rotate(0deg) scale(1);
+      15% {
         opacity: 1;
+        transform: translateY(8vh) scale(1.1) rotate(10deg);
+      }
+      85% {
+        opacity: 0.95;
       }
       100% {
-        transform: translateY(180px) rotate(360deg) translateX(var(--sway, 25px)) scale(0.3);
+        transform: translateY(105vh) scale(0.4) rotate(var(--h-rot, 45deg)) translateX(var(--h-sway, 30px));
         opacity: 0;
       }
-    }
-
-    .sk-firefly {
-      position: absolute;
-      background: #fff8d6;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #ffe575, 0 0 20px #ffd242;
-      pointer-events: none;
-      opacity: 0;
-      animation: skFirefly ease-in-out infinite;
-    }
-
-    @keyframes skFirefly {
-      0%, 100% { opacity: 0; transform: translate(0, 0); }
-      30%, 70% { opacity: 0.9; }
-      50% { transform: translate(var(--fx, 20px), var(--fy, -30px)); }
-    }
-
-    @keyframes skPulse {
-      0% { transform: scale(1) rotate(0deg); }
-      100% { transform: scale(1.12) rotate(12deg); }
-    }
-
-    @keyframes skSparkle {
-      0%, 100% { opacity: 0; transform: scale(0.5); }
-      50% { opacity: 1; transform: scale(1.3); }
-    }
-
-    .sk-fade-overlay {
-      position: absolute;
-      inset: 0;
-      background: #140b17;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.95s ease;
-      z-index: 100;
-    }
-    .sk-fade-overlay.active {
-      opacity: 1;
-    }
-
-    .cl-hidden {
-      display: none !important;
     }
   </style>
 </head>
@@ -304,22 +243,22 @@
           <span class="sk-sparkle sp2">✧</span>
           <span class="sk-sparkle sp3">✦</span>
           <span class="sk-sparkle sp4">✧</span>
-          <div class="sk-mark">🌸</div>
+          <div class="sk-mark">💖</div>
         </div>
 
-        <h1 class="sk-title">Đang trải cánh hoa<span id="sk-dots"></span></h1>
+        <h1 class="sk-title">Đang kết nối trái tim<span id="sk-dots"></span></h1>
         <p class="sk-sub">Chuẩn bị không gian hồ sơ</p>
 
         <div class="sk-track">
           <div class="sk-track-clip"><div class="sk-fill" id="sk-fill"></div></div>
-          <div class="sk-rider" id="sk-rider">🌸</div>
+          <div class="sk-rider" id="sk-rider">💖</div>
         </div>
         <div class="sk-meta">
           <span id="sk-phase">Gió xuân thổi nhẹ...</span>
-          <span id="sk-pct">0%</span>
+          <span id="sk-pct" class="sk-pct-heart">💖 0%</span>
         </div>
 
-        <div class="sk-status" id="sk-status">Đang gom cánh hoa rơi...</div>
+        <div class="sk-status" id="sk-status">Đang gom trái tim...</div>
       </div>
     </div>
     <div class="sk-fade-overlay" id="sk-fade"></div>
