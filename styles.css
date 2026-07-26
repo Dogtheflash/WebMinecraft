@@ -3207,3 +3207,241 @@ body.reduce-motion .scanlines,
 body.reduce-motion .cursor-trail-particle { display: none !important; }
 body.reduce-motion .plx-layer,
 body.reduce-motion .profile-console { transform: none !important; }
+
+
+/* ════════════════════════════════════════════════════════════
+   ██  REFINEMENT LAYER v2 — theo phản hồi thực tế trên điện thoại
+   1. Mượt hơn + bỏ sóng nhạc
+   2. Khung nhỏ lại trên điện thoại, nút đổi theme bấm được
+   3. Chuyển trang kiểu iOS
+   4. Chữ to hơn
+   ════════════════════════════════════════════════════════════ */
+
+/* ────────────────────────────────────────────────────────────
+   1a. BỎ SÓNG NHẠC
+   ──────────────────────────────────────────────────────────── */
+.audio-visualizer.viz-silent { display: none !important; }
+.visualizer { display: none !important; }   /* 4 vạch nhảy cạnh trình phát */
+
+/* ────────────────────────────────────────────────────────────
+   1b. HIỆU NĂNG — chế độ nhẹ
+   Thủ phạm chính của lag: backdrop-filter phủ lên video đang chạy.
+   Trình duyệt phải làm mờ lại toàn bộ vùng đó MỖI KHUNG HÌNH.
+   ──────────────────────────────────────────────────────────── */
+.low-perf .glass-panel,
+.low-perf .profile-console,
+.low-perf .cmd-window,
+.low-perf .theme-toggle-btn,
+.low-perf .theme-menu,
+.low-perf .warp-btn,
+.low-perf .volume-toggle,
+.low-perf .music-player {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+/* Bù lại độ đục để card không bị trong suốt lộ video */
+.low-perf .profile-console,
+.low-perf .music-player { background: rgb(10 12 22 / .93); }
+@supports (background: color-mix(in srgb, red 50%, blue)) {
+  .low-perf .profile-console,
+  .low-perf .music-player { background: color-mix(in srgb, var(--panel) 100%, #000 30%); }
+}
+.low-perf .cmd-window { background: rgb(8 8 12 / .92); }
+
+/* Các lớp phủ toàn màn hình dùng mix-blend-mode: tốn nhất, bỏ hết */
+.low-perf .grain,
+.low-perf .scanlines,
+.low-perf .pointer-glow,
+.low-perf .ambient,
+.low-perf .page-ripple,
+.low-perf .hover-ripple { display: none !important; }
+
+/* Không nghiêng 3D, không đổ bóng động */
+.low-perf .profile-console,
+.low-perf .color-page { transform: none !important; }
+.low-perf .profile-console::after,
+.low-perf .color-page::after { display: none; }
+
+/* will-change đặt tràn lan làm trình duyệt cấp phát layer thừa → tốn RAM */
+.low-perf .profile-console,
+.low-perf .color-page,
+.low-perf .plx-layer,
+.low-perf .grain,
+.low-perf .presence-card,
+.low-perf .activity-card,
+.low-perf .about-card { will-change: auto !important; }
+
+/* Viền gradient chạy quanh panel: giữ, nhưng mỏng lại cho nhẹ mắt */
+.profile-console::before { padding: 2px; }
+.low-perf .profile-console::before { padding: 1.5px; opacity: .78; }
+
+/* ────────────────────────────────────────────────────────────
+   2. KHUNG NHỎ LẠI + NÚT ĐỔI THEME BẤM ĐƯỢC TRÊN ĐIỆN THOẠI
+   ──────────────────────────────────────────────────────────── */
+@media (max-width: 620px) {
+  /* Chừa lề hai bên thay vì dán sát mép màn hình */
+  .screen { padding: 14px 14px 112px; }
+  .profile-console { width: min(420px, calc(100vw - 28px)); border-radius: 18px; }
+  .profile-banner { height: 104px; }
+  .profile-header { margin-top: -36px; padding: 0 14px 12px; }
+  .avatar-wrap { width: 84px; height: 84px; }
+
+  .presence-card, .activity-card, .about-card { margin-left: 14px; margin-right: 14px; padding: 13px; }
+  .meta-grid { margin-left: 14px; margin-right: 14px; }
+  .social-row { padding-left: 14px; padding-right: 14px; }
+  .profile-footer { padding-left: 14px; padding-right: 14px; }
+  .music-player { width: min(420px, calc(100vw - 28px)); left: 50%; }
+  .volume-control { right: 8px; }
+
+  /* Nút điều khiển xếp DỌC sát mép phải, luôn nằm trên cùng và đủ to để bấm */
+  .theme-switcher {
+    top: 8px;
+    right: 8px;
+    z-index: 60;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .theme-toggle-btn, .warp-btn {
+    width: 38px; height: 38px;
+    font-size: 17px;
+    /* Nền đặc hơn để không chìm vào ảnh bìa tối */
+    background: rgb(0 0 0 / .72);
+    border: 1px solid rgb(255 255 255 / .38);
+    box-shadow: 0 3px 14px rgb(0 0 0 / .6);
+  }
+  .theme-toggle-btn:active, .warp-btn:active { transform: scale(.92); }
+
+  /* Bảng chọn theme mở thành hàng dọc, không tràn ra ngoài khung */
+  .theme-menu {
+    flex-direction: column;
+    padding: 7px 6px;
+    border-radius: 22px;
+    background: rgb(0 0 0 / .8);
+    border-color: rgb(255 255 255 / .28);
+  }
+  .theme-option, .theme-option-auto { width: 34px; height: 34px; font-size: 16px; }
+  .theme-sep { width: 18px; height: 1px; margin: 2px 0; }
+  @keyframes themeMenuIn {
+    from { opacity: 0; transform: translateY(-8px) scale(.9); }
+    to   { opacity: 1; transform: none; }
+  }
+}
+
+@media (max-width: 420px) {
+  /* Ghi đè `width: 100%` của bản gốc — đây là lý do khung dán sát mép */
+  .profile-console { width: calc(100vw - 24px); }
+  .music-player { width: calc(100vw - 24px); }
+  .screen { padding: 12px 12px 108px; }
+}
+
+/* Trang con (Steam / Minecraft): đừng đổi chiều rộng trên điện thoại.
+   Animate `width` là animate layout → khựng chắc chắn. */
+@media (max-width: 900px) {
+  body.wide-page-active .profile-console {
+    width: min(420px, calc(100vw - 28px)) !important;
+    transition: none !important;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────
+   3. CHUYỂN TRANG KIỂU iOS
+   Nguyên tắc: CHỈ dùng transform + opacity. Bản cũ animate
+   clip-path + filter: blur() — cả hai đều bắt trình duyệt vẽ lại
+   từng khung, đó chính là chỗ bị khựng.
+   ──────────────────────────────────────────────────────────── */
+:root { --ios-ease: cubic-bezier(.32, .72, 0, 1); --ios-dur: .42s; }
+
+.color-page {
+  transform: none;
+  transform-origin: center;
+  animation: iosPushIn var(--ios-dur) var(--ios-ease) both;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+.color-page.leaving {
+  animation: iosPushOut .28s var(--ios-ease) both;
+}
+@keyframes iosPushIn {
+  from { opacity: 0; transform: translate3d(26%, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes iosPushOut {
+  from { opacity: 1; transform: translate3d(0, 0, 0); }
+  to   { opacity: 0; transform: translate3d(22%, 0, 0); }
+}
+
+/* Panel nền lùi lại một chút như UINavigationController */
+.profile-console.slide-to-color { animation: iosHostBack .42s var(--ios-ease) both; }
+.profile-console.slide-to-home  { animation: iosHostFwd  .42s var(--ios-ease) both; }
+@keyframes iosHostBack {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  55%  { transform: translate3d(-2%, 0, 0) scale(.986); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes iosHostFwd {
+  from { transform: translate3d(-3%, 0, 0) scale(.984); }
+  to   { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+/* Nút back: phản hồi ngay khi chạm, không chờ animation */
+.mini-btn { min-height: 40px; padding: 10px 14px; }
+.mini-btn:active { transform: scale(.94); }
+
+/* Bỏ các keyframe cũ có blur/clip-path để không còn ai gọi tới */
+@keyframes pageDriftOut { 0%, 100% { transform: none; opacity: 1; } }
+@keyframes pageDriftIn  { 0%, 100% { transform: none; opacity: 1; } }
+@keyframes colorPageWipeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes colorPageWipeOut { from { opacity: 1; } to { opacity: 0; } }
+
+/* Card trong trang con: hiện thẳng, bỏ stagger cho đỡ nặng lúc chuyển */
+.color-page:not(.hidden) .mc-stat-card,
+.color-page:not(.hidden) .mc-feature-card { animation: none !important; opacity: 1 !important; }
+
+/* ────────────────────────────────────────────────────────────
+   4. CHỮ TO HƠN
+   Một hệ số duy nhất — chỉnh --fs-boost là cả trang đổi theo.
+   ──────────────────────────────────────────────────────────── */
+:root { --fs-boost: 1.12; }
+
+h1 { font-size: clamp(27px, 5.6vw, 35px); }
+.color-page-head h2 { font-size: 26px; }
+
+.presence-card h2, .activity-card h2, .about-card h2 { font-size: 16.5px; }
+.presence-card p, .activity-card p, .about-card p { font-size: 15.5px; line-height: 1.62; }
+#custom-status-line { font-size: 15.5px; }
+.username { font-size: 14.5px; }
+
+.meta-grid span   { font-size: 13px; }
+.meta-grid strong { font-size: 14.5px; }
+
+.tags span { font-size: 13.5px; padding: 7px 13px; }
+.profile-footer, .profile-footer a { font-size: 14px; }
+.social-row svg { width: 20px; height: 20px; }
+.social-row a { width: 42px; height: 42px; }
+
+.eyebrow, .mc-stat-label, .steam-platform-tag, .mc-bot-tag { font-size: 11px; }
+.mc-stat-value { font-size: 17px; }
+.mc-feature-title { font-size: 15.5px; }
+.mc-feature-desc  { font-size: 13.5px; }
+.mc-bot-name, .steam-display-name { font-size: 19px; }
+.field-block { font-size: 13px; }
+.field-block textarea, .field-block select { font-size: 14px; }
+.track-meta strong { font-size: 15px; }
+.track-time { font-size: 12px; }
+.clock-inline-date, .clock-inline-phase { font-size: 12.5px; }
+
+/* Điện thoại: ghi đè hẳn `font-size: 13px` của khối 420px bản gốc */
+@media (max-width: 620px) {
+  h1 { font-size: 26px; }
+  .username, .presence-card p, .activity-card p, .about-card p { font-size: 15px; }
+  #custom-status-line { font-size: 15px; }
+  .presence-card h2, .activity-card h2, .about-card h2 { font-size: 16px; }
+  .meta-grid strong { font-size: 14px; }
+  .tags span { font-size: 13px; }
+  .profile-footer a { font-size: 13.5px; }
+}
+@media (max-width: 420px) {
+  h1 { font-size: 25px; }
+  .username, .presence-card p, .activity-card p, .about-card p { font-size: 14.5px; }
+}
