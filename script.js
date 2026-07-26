@@ -1,3 +1,19 @@
+/* ════════════════════════════════════════════════════════════
+   CHẾ ĐỘ NHẸ — bật trên điện thoại / máy yếu / màn cảm ứng.
+   Các hiệu ứng ăn GPU sẽ tự tắt thay vì làm rớt khung hình.
+   ════════════════════════════════════════════════════════════ */
+window.__LOW_PERF = (function () {
+  try {
+    var touch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    var small = window.matchMedia('(max-width: 900px)').matches;
+    var weak  = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+    var slow  = (navigator.connection && navigator.connection.saveData) === true;
+    var rm    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    return touch || small || weak || slow || rm;
+  } catch (e) { return false; }
+})();
+if (window.__LOW_PERF) document.documentElement.classList.add('low-perf');
+
 /* ============================================================
    SAKURA LOADING SCREEN
    Tốc độ: ~2 giây, tự vào luôn khi đạt 100%
@@ -1052,7 +1068,7 @@ function showInnerPage(page, afterShow, wide = false) {
   setTimeout(() => {
     colorTool.profile.classList.remove('slide-to-color');
     resetCardPointer();
-  }, 760);
+  }, 440);
 }
 
 function hideInnerPage(page) {
@@ -1070,7 +1086,7 @@ function hideInnerPage(page) {
     if (activeInnerPage === page) activeInnerPage = null;
     player.classList.remove('hidden');
     resetCardPointer();
-  }, 560);
+  }, 300);
 }
 
 function showColorPage() {
@@ -1441,12 +1457,14 @@ const CARD_RIPPLE_INTERVAL = 920;
 const PAGE_RIPPLE_INTERVAL = 1250;
 
 function updateGlobalPointer(event) {
+  if (window.__LOW_PERF) return;
   document.body.style.setProperty('--pointer-x', `${event.clientX}px`);
   document.body.style.setProperty('--pointer-y', `${event.clientY}px`);
   document.body.classList.add('pointer-active');
 }
 
 function spawnPageRipple(event) {
+  if (window.__LOW_PERF) return;
   if (document.body.classList.contains('terminal-active')) return;
   const now = Date.now();
   if (event.type === 'pointermove' && now - pageRippleCooldown < PAGE_RIPPLE_INTERVAL) return;
@@ -1466,6 +1484,7 @@ function getTiltTarget() {
 }
 
 function updateCardPointer(event) {
+  if (window.__LOW_PERF) return;
   const target = getTiltTarget();
   if (!target) return;
   if (activeTiltTarget && activeTiltTarget !== target) resetCardPointer();
@@ -1494,6 +1513,7 @@ function resetCardPointer() {
 }
 
 function spawnCardRipple(event) {
+  if (window.__LOW_PERF) return;
   const target = getTiltTarget();
   if (!target) return;
   const now = Date.now();
@@ -1751,6 +1771,7 @@ if (interactiveCard) {
    PARALLAX BANNER — Mouse-driven layer movement
    ============================================================ */
 (function () {
+  if (window.__LOW_PERF) return;
   var card = document.querySelector('.profile-console');
   var layers = document.querySelectorAll('.plx-layer');
   if (!card || !layers.length) return;
@@ -1807,6 +1828,8 @@ if (interactiveCard) {
   var bufferLength = 0;
   var rafId = null;
   var connected = false;
+  var lastBassPush = 0;
+  var lastBassValue = -1;
 
   /* Lazily create AudioContext on first user-triggered play
      (browsers block AudioContext creation before user gesture) */
@@ -1852,21 +1875,35 @@ if (interactiveCard) {
     rafId = requestAnimationFrame(draw);
     analyser.getByteFrequencyData(dataArray);
 
-    var rect = canvas.getBoundingClientRect();
-    var W = rect.width;
-    var H = rect.height;
-    ctx.clearRect(0, 0, W, H);
-    
-    // --- GLOBAL AUDIO REACTIVITY ---
-    // Calculate average bass/low frequencies (first 8 bins)
-    var bassSum = 0;
-    for (var j = 0; j < 8; j++) {
-      bassSum += dataArray[j];
+    var silent = canvas.classList.contains('viz-silent');
+    var W = 0, H = 0;
+    if (!silent) {
+      var rect = canvas.getBoundingClientRect();
+      W = rect.width;
+      H = rect.height;
+      ctx.clearRect(0, 0, W, H);
     }
-    var bassAvg = bassSum / 8;
-    // Normalize (0 to 1) and set CSS variable on body
-    document.body.style.setProperty('--audio-bass', bassAvg / 255);
+
+    // --- GLOBAL AUDIO REACTIVITY ---
+    // Trung bình dải trầm (8 bin đầu). Ghi biến CSS vào body làm cả trang
+    // phải tính lại style, nên chỉ cập nhật ~20 lần/giây và làm tròn 2 số
+    // — mắt không phân biệt được, nhưng nhẹ hơn hẳn so với 60 lần/giây.
+    var nowMs = performance.now();
+    if (nowMs - lastBassPush > 50) {
+      lastBassPush = nowMs;
+      var bassSum = 0;
+      for (var j = 0; j < 8; j++) bassSum += dataArray[j];
+      var bass = Math.round((bassSum / 8 / 255) * 100) / 100;
+      if (bass !== lastBassValue) {
+        lastBassValue = bass;
+        document.body.style.setProperty('--audio-bass', bass);
+      }
+    }
     // --------------------------------
+
+    /* Sóng nhạc đã tắt: chỉ đo bass để vòng avatar đập theo nhạc,
+       bỏ toàn bộ phần vẽ (đây là thứ tốn GPU nhất khi phát nhạc). */
+    if (silent) return;
 
     var colors = getColors();
 
@@ -2198,6 +2235,7 @@ if (interactiveCard) {
    HOLOGRAPHIC 3D TILT CARDS
    ============================================================ */
 (function initTiltCards() {
+  if (window.__LOW_PERF) return;
   const tiltCards = document.querySelectorAll('.presence-card, .activity-card, .about-card');
   
   tiltCards.forEach(card => {
@@ -2238,6 +2276,7 @@ if (interactiveCard) {
    INTERACTIVE CURSOR TRAILS
    ============================================================ */
 (function initCursorTrails() {
+  if (window.__LOW_PERF) return;
   return; // Disabled by user request
   let lastTime = 0;
   
@@ -2281,6 +2320,7 @@ if (interactiveCard) {
    SHATTERED GLASS EASTER EGG
    ============================================================ */
 (function initShatteredGlass() {
+  if (window.__LOW_PERF) return;
   let avatarClickCount = 0;
   let avatarClickTimer = null;
   const avatarWrap = document.querySelector('.avatar-wrap');
@@ -3083,6 +3123,10 @@ if (interactiveCard) {
   const canVT = typeof document.startViewTransition === 'function';
 
   function withTransition(fn) {
+    /* Tắt hẳn: View Transition chồng lên animation CSS gây khựng.
+       Chuyển cảnh giờ do CSS lo, chỉ dùng transform + opacity. */
+    fn(); return;
+    /* eslint-disable-next-line no-unreachable */
     if (!canVT || reduceMotion.matches) { fn(); return; }
     document.body.classList.add('vt-active');
     const vt = document.startViewTransition(() => { fn(); });
@@ -3144,3 +3188,14 @@ if (interactiveCard) {
 /* ════════════════════════════════════════════════════════════
    ██  END REFINEMENT LAYER
    ════════════════════════════════════════════════════════════ */
+
+
+/* ── Dừng video nền khi người dùng chuyển tab: đỡ tốn pin và GPU ── */
+(function pauseBgVideoWhenHidden() {
+  var v = document.getElementById('bg-video');
+  if (!v) return;
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) v.pause();
+    else v.play().catch(function () {});
+  });
+})();
