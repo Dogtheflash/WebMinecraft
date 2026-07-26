@@ -1,37 +1,78 @@
 /* ============================================================
-   CYBER LOADING SCREEN v2 — Premium Cyberpunk
+   SAKURA LOADING SCREEN
    Tốc độ: ~2 giây, tự vào luôn khi đạt 100%
    ============================================================ */
 (function () {
   var overlay  = document.getElementById('cyber-loading');
-  var fill     = document.getElementById('cl-fill');
-  var head     = document.getElementById('cl-head');
-  var pctEl    = document.getElementById('cl-pct');
-  var statusEl = document.getElementById('cl-status');
-  var clockEl  = document.getElementById('cl-clock');
-  var fadeEl   = document.getElementById('cl-fade');
+  var stage    = document.getElementById('sk-stage');
+  var fill     = document.getElementById('sk-fill');
+  var pctEl    = document.getElementById('sk-pct');
+  var statusEl = document.getElementById('sk-status');
+  var phaseEl  = document.getElementById('sk-phase');
+  var fadeEl   = document.getElementById('sk-fade');
+  var markWrap = overlay ? overlay.querySelector('.sk-mark-wrap') : null;
   var terminal = document.getElementById('terminal-screen');
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* Ẩn CMD ngay từ đầu */
   if (terminal) terminal.style.visibility = 'hidden';
 
   var msgs = [
-    'Đang khởi động hệ thống...',
-    'Nạp giao thức bảo mật...',
-    'Kết nối neural interface...',
-    'Giải mã ma trận dữ liệu...',
-    'Đồng bộ cyberspace...',
-    'Xác thực danh tính...',
-    'Tải môi trường ảo...',
-    'Hoàn tất. Sẵn sàng!'
+    'Đang gom cánh hoa rơi...',
+    'Pha trà đợi nắng lên...',
+    'Dệt màu hoàng hôn...',
+    'Thắp đèn lồng nhỏ...',
+    'Mọi thứ đã sẵn sàng.'
+  ];
+  var phases = [
+    'Gió xuân thổi nhẹ...',
+    'Hoa bắt đầu rơi...',
+    'Ánh sáng dịu dần...',
+    'Gần đến giờ hẹn...',
+    'Hoàn tất.'
   ];
 
-  var prog = 0, s1 = 0, s2 = 0, s3 = 0, done = false;
+  /* Cánh hoa rơi nền — 2 lớp độ sâu (chỉ chạy nếu không giảm chuyển động) */
+  function makePetal(depth) {
+    if (!stage) return;
+    var p = document.createElement('div');
+    p.className = 'sk-petal ' + depth;
+    var s = depth === 'back' ? (5 + Math.random() * 5) : (8 + Math.random() * 8);
+    p.style.width  = s + 'px';
+    p.style.height = s + 'px';
+    p.style.left   = (Math.random() * 100) + '%';
+    p.style.setProperty('--sway', (Math.random() * 80 - 40) + 'px');
+    p.style.animationDuration = depth === 'back' ? (9 + Math.random() * 7) + 's' : (6 + Math.random() * 6) + 's';
+    p.style.animationDelay   = (Math.random() * 6) + 's';
+    stage.appendChild(p);
+  }
 
-  /* Đồng hồ realtime */
-  setInterval(function () {
-    if (clockEl) clockEl.textContent = new Date().toTimeString().slice(0, 8);
-  }, 1000);
+  /* Cánh hoa rơi cục bộ, phát ra từ biểu tượng 🌸 */
+  function spawnMarkPetal() {
+    if (!overlay || !markWrap) return;
+    var rect = markWrap.getBoundingClientRect();
+    var p = document.createElement('div');
+    p.className = 'sk-petal front mark-petal';
+    var s = 6 + Math.random() * 6;
+    p.style.width  = s + 'px';
+    p.style.height = s + 'px';
+    p.style.position = 'absolute';
+    p.style.left = (rect.left + rect.width / 2 + (Math.random() * 30 - 15)) + 'px';
+    p.style.top  = (rect.top + rect.height / 2) + 'px';
+    p.style.setProperty('--sway', (Math.random() * 50 - 25) + 'px');
+    overlay.appendChild(p);
+    setTimeout(function () { p.remove(); }, 3300);
+  }
+
+  var markPetalIv = null;
+  if (!reduceMotion) {
+    for (var i = 0; i < 18; i++) makePetal('back');
+    for (var j = 0; j < 26; j++) makePetal('front');
+    markPetalIv = setInterval(spawnMarkPetal, 550);
+  }
+
+  var prog = 0, done = false;
 
   /* Progress bar — ~2 giây để hoàn thành */
   var iv = setInterval(function () {
@@ -43,37 +84,26 @@
             :              (Math.random() * 1.5 + 0.8);
 
     prog = Math.min(prog + inc, 100);
-    s1   = Math.min(s1 + Math.random() * 6 + 3,  100);
-    s2   = Math.min(s2 + Math.random() * 5 + 2.5, 100);
-    s3   = Math.min(s3 + Math.random() * 6 + 2,  100);
 
     var p = Math.floor(prog);
     if (fill)  fill.style.width  = prog + '%';
-    if (head)  head.style.right  = (100 - prog) + '%';
     if (pctEl) pctEl.textContent = p + '%';
 
-    var si = Math.min(Math.floor(prog / 12.5), msgs.length - 1);
+    var si = Math.min(msgs.length - 1, Math.floor(prog / 21));
     if (statusEl) statusEl.textContent = msgs[si];
-
-    function setBar(id, pid, v) {
-      var el = document.getElementById(id);
-      var ep = document.getElementById(pid);
-      if (el) el.style.width  = Math.floor(v) + '%';
-      if (ep) ep.textContent  = Math.floor(v) + '%';
-    }
-    setBar('cs1', 'cs1p', s1);
-    setBar('cs2', 'cs2p', s2);
-    setBar('cs3', 'cs3p', s3);
+    if (phaseEl)  phaseEl.textContent  = phases[si];
 
     if (prog >= 100) {
       clearInterval(iv);
       done = true;
-      if (statusEl) statusEl.textContent = 'Hoàn tất. Sẵn sàng!';
+      if (statusEl) statusEl.textContent = msgs[msgs.length - 1];
+      if (phaseEl)  phaseEl.textContent  = phases[phases.length - 1];
 
       setTimeout(function () {
         if (fadeEl) fadeEl.classList.add('active');
 
         setTimeout(function () {
+          if (markPetalIv) clearInterval(markPetalIv);
           if (overlay) overlay.classList.add('cl-hidden');
 
           if (terminal) {
@@ -96,7 +126,7 @@
   }, 30);
 })();
 /* ============================================================
-   END CYBER LOADING SCREEN
+   END SAKURA LOADING SCREEN
    ============================================================ */
 
 /* ============================================================
@@ -2768,4 +2798,3 @@ if (interactiveCard) {
     });
   }
 })();
-
