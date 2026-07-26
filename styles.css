@@ -2479,3 +2479,255 @@ body.warping .screen {
   box-shadow: inset 0 0 5px rgba(0,255,0,0.2);
 }
 #return-warp-btn:hover { background: rgba(0,255,0,0.1); box-shadow: 0 0 15px #0f0; }
+
+/* ============================================================
+   SAKURA LOADING SCREEN STYLES
+   ============================================================ */
+#cyber-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #140b17;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  color: #fff;
+}
+
+.sk-stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 30%, #2a142c 0%, #140b17 70%);
+}
+
+.sk-moon {
+  position: absolute;
+  top: 12%;
+  right: 18%;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fffbf2 0%, #ffe3f0 60%, transparent 85%);
+  box-shadow: 0 0 60px rgba(255, 214, 232, 0.4), 0 0 100px rgba(255, 180, 210, 0.2);
+  pointer-events: none;
+}
+
+.sk-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 40%, rgba(10, 4, 12, 0.6) 100%);
+  pointer-events: none;
+}
+
+.sk-branch {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.85;
+}
+.sk-branch.tl { top: -20px; left: -20px; width: 280px; }
+.sk-branch.br { bottom: -20px; right: -20px; width: 320px; transform: scaleX(-1); }
+
+.sk-card {
+  position: relative;
+  z-index: 10;
+  width: min(420px, 88vw);
+  padding: 36px 32px;
+  background: rgba(26, 14, 28, 0.68);
+  border: 1px solid rgba(255, 180, 216, 0.22);
+  border-radius: 24px;
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  text-align: center;
+}
+
+.sk-eyebrow {
+  color: #ff9dc4;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.sk-mark-wrap {
+  position: relative;
+  display: inline-block;
+  margin: 8px 0 16px;
+}
+.sk-mark {
+  font-size: 42px;
+  display: inline-block;
+  animation: skPulse 2.5s ease-in-out infinite alternate;
+}
+.sk-sparkle {
+  position: absolute;
+  color: #ffe0ef;
+  font-size: 14px;
+  opacity: 0;
+  animation: skSparkle 3s ease-in-out infinite;
+}
+.sk-sparkle.sp1 { top: -4px; left: -14px; animation-delay: 0s; }
+.sk-sparkle.sp2 { top: 6px; right: -16px; animation-delay: 0.7s; }
+.sk-sparkle.sp3 { bottom: -2px; left: -10px; animation-delay: 1.4s; }
+.sk-sparkle.sp4 { bottom: 8px; right: -12px; animation-delay: 2.1s; }
+
+.sk-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+.sk-sub {
+  color: #cca3bd;
+  font-size: 13px;
+  margin: 0 0 24px;
+}
+
+.sk-track {
+  position: relative;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+  margin-bottom: 14px;
+}
+.sk-track-clip {
+  height: 100%;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.sk-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff7ab8 0%, #ffb8da 70%, #ffffff 100%);
+  box-shadow: 0 0 12px rgba(255, 122, 184, 0.8);
+  border-radius: 99px;
+  transition: width 0.1s linear;
+}
+.sk-rider {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(255, 180, 216, 0.8));
+  transition: left 0.1s linear;
+}
+
+.sk-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #e0b8d2;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.sk-status {
+  font-size: 13px;
+  color: #ffd4e8;
+  font-weight: 600;
+  min-height: 20px;
+}
+
+/* Petals animation */
+.sk-petal {
+  position: absolute;
+  top: -20px;
+  background: radial-gradient(circle, #ffcce3 30%, #ff8dbb 90%);
+  border-radius: 0 70% 0 70%;
+  opacity: 0.8;
+  pointer-events: none;
+  animation: skPetalFall linear infinite;
+}
+.sk-petal.back {
+  filter: blur(1.5px);
+  opacity: 0.45;
+}
+.sk-petal.mark-petal {
+  z-index: 15;
+  animation: skMarkPetalFall 3.3s ease-out forwards;
+}
+
+@keyframes skPetalFall {
+  0% {
+    transform: translateY(-20px) rotate(0deg) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(105vh) rotate(540deg) translateX(var(--sway, 40px));
+    opacity: 0;
+  }
+}
+
+@keyframes skMarkPetalFall {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(180px) rotate(360deg) translateX(var(--sway, 25px)) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* Fireflies */
+.sk-firefly {
+  position: absolute;
+  background: #fff8d6;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ffe575, 0 0 20px #ffd242;
+  pointer-events: none;
+  opacity: 0;
+  animation: skFirefly ease-in-out infinite;
+}
+
+@keyframes skFirefly {
+  0%, 100% { opacity: 0; transform: translate(0, 0); }
+  30%, 70% { opacity: 0.9; }
+  50% { transform: translate(var(--fx, 20px), var(--fy, -30px)); }
+}
+
+@keyframes skPulse {
+  0% { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1.12) rotate(12deg); }
+}
+
+@keyframes skSparkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+.sk-fade-overlay {
+  position: absolute;
+  inset: 0;
+  background: #140b17;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.95s ease;
+  z-index: 100;
+}
+.sk-fade-overlay.active {
+  opacity: 1;
+}
+
+.cl-hidden {
+  display: none !important;
+}
