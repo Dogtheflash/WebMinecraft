@@ -2731,3 +2731,77 @@ body.warping .screen {
 .cl-hidden {
   display: none !important;
 }
+
+.sk-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0 0 10px;
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, #ffffff 0%, #ffcce3 50%, #ff85b8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 12px rgba(255, 122, 184, 0.7));
+  animation: titleBounceGlow 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes titleBounceGlow {
+  0% {
+    transform: translateY(0) scale(1);
+    filter: drop-shadow(0 0 8px rgba(255, 122, 184, 0.6)) drop-shadow(0 0 16px rgba(255, 79, 216, 0.3));
+  }
+  50% {
+    transform: translateY(-8px) scale(1.05);
+    filter: drop-shadow(0 0 18px rgba(255, 122, 184, 1)) drop-shadow(0 0 32px rgba(255, 79, 216, 0.8));
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    filter: drop-shadow(0 0 8px rgba(255, 122, 184, 0.6)) drop-shadow(0 0 16px rgba(255, 79, 216, 0.3));
+  }
+}
+
+/* iOS Messenger Typing Bubble Animation */
+.ios-msg-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  margin-left: 10px;
+  background: rgba(255, 122, 184, 0.22);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 18px;
+  border-bottom-left-radius: 4px;
+  border: 1px solid rgba(255, 180, 216, 0.4);
+  box-shadow: 0 0 15px rgba(255, 122, 184, 0.5), inset 0 1px 0 rgba(255,255,255,0.4);
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+}
+.ios-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px #ffffff;
+  animation: iosDotBounce 1.4s ease-in-out infinite;
+}
+.ios-dot.d1 { animation-delay: 0s; }
+.ios-dot.d2 { animation-delay: 0.2s; }
+.ios-dot.d3 { animation-delay: 0.4s; }
+
+@keyframes iosDotBounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-7px) scale(1.2);
+    opacity: 1;
+    background: #ffffff;
+    box-shadow: 0 0 12px #ffffff;
+  }
+}
