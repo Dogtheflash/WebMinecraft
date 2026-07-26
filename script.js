@@ -10,6 +10,7 @@
   var statusEl = document.getElementById('sk-status');
   var phaseEl  = document.getElementById('sk-phase');
   var fadeEl   = document.getElementById('sk-fade');
+  var rider    = document.getElementById('sk-rider');
   var markWrap = overlay ? overlay.querySelector('.sk-mark-wrap') : null;
   var terminal = document.getElementById('terminal-screen');
 
@@ -65,10 +66,30 @@
     setTimeout(function () { p.remove(); }, 3300);
   }
 
+  /* Đom đóm / hạt sáng lập lờ trong không khí */
+  function makeFirefly() {
+    if (!stage) return;
+    var f = document.createElement('div');
+    f.className = 'sk-firefly';
+    var s = 2 + Math.random() * 2.5;
+    f.style.width  = s + 'px';
+    f.style.height = s + 'px';
+    f.style.left = (Math.random() * 100) + '%';
+    f.style.top  = (30 + Math.random() * 60) + '%';
+    f.style.setProperty('--fx',  (Math.random() * 40 - 20) + 'px');
+    f.style.setProperty('--fy',  (Math.random() * -40 - 10) + 'px');
+    f.style.setProperty('--fx2', (Math.random() * 40 - 20) + 'px');
+    f.style.setProperty('--fy2', (Math.random() * -50 - 20) + 'px');
+    f.style.animationDuration = (5 + Math.random() * 5) + 's';
+    f.style.animationDelay = (Math.random() * 5) + 's';
+    stage.appendChild(f);
+  }
+
   var markPetalIv = null;
   if (!reduceMotion) {
     for (var i = 0; i < 18; i++) makePetal('back');
     for (var j = 0; j < 26; j++) makePetal('front');
+    for (var k = 0; k < 10; k++) makeFirefly();
     markPetalIv = setInterval(spawnMarkPetal, 550);
   }
 
@@ -88,6 +109,7 @@
     var p = Math.floor(prog);
     if (fill)  fill.style.width  = prog + '%';
     if (pctEl) pctEl.textContent = p + '%';
+    if (rider) rider.style.left  = prog + '%';
 
     var si = Math.min(msgs.length - 1, Math.floor(prog / 21));
     if (statusEl) statusEl.textContent = msgs[si];
