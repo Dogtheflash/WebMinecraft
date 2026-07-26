@@ -34,7 +34,7 @@
     'Hoàn tất.'
   ];
 
-  /* Cánh hoa rơi nền — 2 lớp độ sâu (chỉ chạy nếu không giảm chuyển động) */
+  /* Cánh hoa rơi nền — 2 lớp độ sâu */
   function makePetal(depth) {
     if (!stage) return;
     var p = document.createElement('div');
@@ -44,8 +44,9 @@
     p.style.height = s + 'px';
     p.style.left   = (Math.random() * 100) + '%';
     p.style.setProperty('--sway', (Math.random() * 80 - 40) + 'px');
-    p.style.animationDuration = depth === 'back' ? (9 + Math.random() * 7) + 's' : (6 + Math.random() * 6) + 's';
-    p.style.animationDelay   = (Math.random() * 6) + 's';
+    p.style.animationDuration = depth === 'back' ? (7 + Math.random() * 5) + 's' : (4 + Math.random() * 4) + 's';
+    // Dùng delay âm (-) để cánh hoa RƠI NGAY LẬP TỨC trên PC mà không bị chờ
+    p.style.animationDelay   = '-' + (Math.random() * 6) + 's';
     stage.appendChild(p);
   }
 
@@ -80,17 +81,18 @@
     f.style.setProperty('--fy',  (Math.random() * -40 - 10) + 'px');
     f.style.setProperty('--fx2', (Math.random() * 40 - 20) + 'px');
     f.style.setProperty('--fy2', (Math.random() * -50 - 20) + 'px');
-    f.style.animationDuration = (5 + Math.random() * 5) + 's';
-    f.style.animationDelay = (Math.random() * 5) + 's';
+    f.style.animationDuration = (4 + Math.random() * 4) + 's';
+    f.style.animationDelay = '-' + (Math.random() * 5) + 's';
     stage.appendChild(f);
   }
 
   var markPetalIv = null;
   if (!reduceMotion) {
-    for (var i = 0; i < 18; i++) makePetal('back');
-    for (var j = 0; j < 26; j++) makePetal('front');
-    for (var k = 0; k < 10; k++) makeFirefly();
-    markPetalIv = setInterval(spawnMarkPetal, 550);
+    for (var i = 0; i < 24; i++) makePetal('back');
+    for (var j = 0; j < 36; j++) makePetal('front');
+    for (var k = 0; k < 14; k++) makeFirefly();
+    for (var m = 0; m < 5; m++) spawnMarkPetal();
+    markPetalIv = setInterval(spawnMarkPetal, 250);
   }
 
   var prog = 0, done = false;
