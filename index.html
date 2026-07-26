@@ -19,56 +19,64 @@
 
 <body class="terminal-active">
 
-  <!-- ========== CYBER LOADING SCREEN v2 (premium) ========== -->
+  <!-- ========== SAKURA LOADING SCREEN ========== -->
   <div id="cyber-loading">
-    <div class="cl-grid-bg"></div>
-    <div class="cl-scanlines"></div>
-    <div class="cl-corner cl-tl"></div>
-    <div class="cl-corner cl-tr"></div>
-    <div class="cl-corner cl-bl"></div>
-    <div class="cl-corner cl-br"></div>
-    <div class="cl-card">
-      <div class="cl-top-bar"></div>
-      <div class="cl-eyebrow">System Boot Sequence</div>
-      <div class="cl-title-wrap">
-        <span class="cl-title" id="cl-title" data-t="INITIALIZING">Tú Xinh Trai!</span>
+    <div class="sk-stage" id="sk-stage">
+      <div class="sk-moon"></div>
+      <div class="sk-hills"></div>
+
+      <div class="sk-branch tl">
+        <svg viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M0,10 C50,20 70,60 110,75 C150,90 170,60 210,80" fill="none" stroke="#3d2430" stroke-width="6" stroke-linecap="round"/>
+          <path d="M40,30 C60,45 65,65 90,72" fill="none" stroke="#3d2430" stroke-width="4" stroke-linecap="round"/>
+          <path d="M120,78 C140,95 150,110 145,135" fill="none" stroke="#3d2430" stroke-width="4" stroke-linecap="round"/>
+          <g class="sk-blossom" fill="#ffbcd9">
+            <circle cx="95" cy="70" r="7"/><circle cx="108" cy="62" r="6"/><circle cx="88" cy="58" r="5.5"/>
+            <circle cx="145" cy="132" r="6.5"/><circle cx="155" cy="140" r="5"/>
+            <circle cx="205" cy="78" r="7"/><circle cx="215" cy="70" r="5.5"/><circle cx="200" cy="90" r="5"/>
+            <circle cx="35" cy="24" r="5"/><circle cx="45" cy="34" r="6"/>
+          </g>
+        </svg>
       </div>
-      <div class="cl-status-row">
-        <div class="cl-dot"></div>
-        <div class="cl-status-txt" id="cl-status">Đang khởi động hệ thống...</div>
-        <div class="cl-pct" id="cl-pct">0%</div>
+
+      <div class="sk-branch br">
+        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M0,20 C60,30 90,70 140,85 C190,100 210,70 260,95" fill="none" stroke="#3d2430" stroke-width="7" stroke-linecap="round"/>
+          <path d="M130,88 C150,110 155,130 175,145" fill="none" stroke="#3d2430" stroke-width="5" stroke-linecap="round"/>
+          <g class="sk-blossom" fill="#ff9dc4">
+            <circle cx="120" cy="80" r="8"/><circle cx="135" cy="70" r="6.5"/><circle cx="110" cy="65" r="6"/>
+            <circle cx="175" cy="142" r="7"/><circle cx="188" cy="150" r="5.5"/>
+            <circle cx="250" cy="92" r="8"/><circle cx="262" cy="82" r="6"/><circle cx="240" cy="102" r="5.5"/>
+          </g>
+        </svg>
       </div>
-      <div class="cl-track">
-        <div class="cl-fill" id="cl-fill"></div>
-        <div class="cl-head" id="cl-head"></div>
-      </div>
-      <div class="cl-hex"><span>0x0000</span><span>0xFFFF</span></div>
-      <div class="cl-subbars">
-        <div class="cl-sub">
-          <span class="cl-sub-lbl">Neural</span>
-          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs1" style="background:linear-gradient(90deg,#00b4ff,#00ffb4)"></div></div>
-          <span class="cl-sub-pct" id="cs1p">0%</span>
+
+      <div class="sk-card">
+        <div class="sk-eyebrow">Season Boot</div>
+
+        <div class="sk-mark-wrap">
+          <span class="sk-sparkle sp1">✦</span>
+          <span class="sk-sparkle sp2">✧</span>
+          <span class="sk-sparkle sp3">✦</span>
+          <span class="sk-sparkle sp4">✧</span>
+          <div class="sk-mark">🌸</div>
         </div>
-        <div class="cl-sub">
-          <span class="cl-sub-lbl">Crypto</span>
-          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs2" style="background:linear-gradient(90deg,#ff006e,#ff9d00)"></div></div>
-          <span class="cl-sub-pct" id="cs2p">0%</span>
+
+        <h1 class="sk-title">Đang trải cánh hoa<span id="sk-dots"></span></h1>
+        <p class="sk-sub">Chuẩn bị không gian hồ sơ</p>
+
+        <div class="sk-track"><div class="sk-fill" id="sk-fill"></div></div>
+        <div class="sk-meta">
+          <span id="sk-phase">Gió xuân thổi nhẹ...</span>
+          <span id="sk-pct">0%</span>
         </div>
-        <div class="cl-sub">
-          <span class="cl-sub-lbl">Interface</span>
-          <div class="cl-sub-track"><div class="cl-sub-fill" id="cs3" style="background:linear-gradient(90deg,#8000ff,#00ffb4)"></div></div>
-          <span class="cl-sub-pct" id="cs3p">0%</span>
-        </div>
-      </div>
-      <div class="cl-meta">
-        <span>v4.2.0-NEON</span>
-        <span id="cl-clock">00:00:00</span>
-        <span>CYB-OS</span>
+
+        <div class="sk-status" id="sk-status">Đang gom cánh hoa rơi...</div>
       </div>
     </div>
-    <div class="cl-fade-overlay" id="cl-fade"></div>
+    <div class="sk-fade-overlay" id="sk-fade"></div>
   </div>
-  <!-- ========== END CYBER LOADING SCREEN ========== -->
+  <!-- ========== END SAKURA LOADING SCREEN ========== -->
 
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
