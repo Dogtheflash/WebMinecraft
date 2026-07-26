@@ -111,129 +111,49 @@
     .sk-sparkle.sp4 { bottom: 8px; right: -12px; animation-delay: 2.1s; }
 
     .sk-title {
-      font-size: 22px;
-      font-weight: 700;
-      margin: 0 0 6px;
-      color: #ffffff;
-      letter-spacing: -0.02em;
-    }
-    .sk-sub {
-      color: #cca3bd;
-      font-size: 13px;
-      margin: 0 0 24px;
-    }
-
-    .sk-track {
-      position: relative;
-      height: 8px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 99px;
-      margin-bottom: 14px;
-    }
-    .sk-track-clip {
-      height: 100%;
-      border-radius: 99px;
-      overflow: hidden;
-    }
-    .sk-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #ff7ab8 0%, #ffb8da 70%, #ffffff 100%);
-      box-shadow: 0 0 12px rgba(255, 122, 184, 0.8);
-      border-radius: 99px;
-      transition: width 0.1s linear;
-    }
-    .sk-rider {
-      position: absolute;
-      top: 50%;
-      left: 0%;
-      transform: translate(-50%, -50%);
-      font-size: 18px;
-      pointer-events: none;
-      filter: drop-shadow(0 0 8px rgba(255, 100, 160, 0.9));
-      transition: left 0.1s linear;
-    }
-    .sk-pct-heart {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0 0 10px;
+      letter-spacing: -0.01em;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      color: #ff85b8;
-      font-weight: 800;
-      font-size: 13px;
-      text-shadow: 0 0 10px rgba(255, 115, 175, 0.6);
-      animation: skHeartBeat 1.2s ease-in-out infinite alternate;
-    }
-    @keyframes skHeartBeat {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.12); color: #ff529a; }
+      justify-content: center;
+      background: linear-gradient(90deg, #ffffff 0%, #ffcce3 50%, #ff85b8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 12px rgba(255, 122, 184, 0.7));
+      animation: titleBounceGlow 1.6s ease-in-out infinite alternate;
     }
 
-    /* Hiệu ứng Trái tim rơi rơi lúc đếm */
-    .sk-falling-heart {
-      position: absolute;
-      top: -30px;
-      font-size: var(--h-size, 18px);
-      pointer-events: none;
-      z-index: 15;
-      filter: drop-shadow(0 0 8px rgba(255, 100, 160, 0.8));
-      animation: skHeartFall 3.5s linear forwards;
-    }
-
-    @keyframes skHeartFall {
+    @keyframes titleBounceGlow {
       0% {
-        transform: translateY(-20px) scale(0.5) rotate(0deg);
-        opacity: 0;
+        transform: translateY(0) scale(1);
+        filter: drop-shadow(0 0 8px rgba(255, 122, 184, 0.6)) drop-shadow(0 0 16px rgba(255, 79, 216, 0.3));
       }
-      15% {
-        opacity: 1;
-        transform: translateY(8vh) scale(1.1) rotate(10deg);
-      }
-      85% {
-        opacity: 0.95;
+      50% {
+        transform: translateY(-8px) scale(1.05);
+        filter: drop-shadow(0 0 18px rgba(255, 122, 184, 1)) drop-shadow(0 0 32px rgba(255, 79, 216, 0.8));
       }
       100% {
-        transform: translateY(105vh) scale(0.4) rotate(var(--h-rot, 45deg)) translateX(var(--h-sway, 30px));
-        opacity: 0;
+        transform: translateY(0) scale(1);
+        filter: drop-shadow(0 0 8px rgba(255, 122, 184, 0.6)) drop-shadow(0 0 16px rgba(255, 79, 216, 0.3));
       }
     }
-    @keyframes skPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.12); }
-    }
 
-    @keyframes skSparkle {
-      0%, 100% { opacity: 0; transform: scale(0.5); }
-      50% { opacity: 1; transform: scale(1.3); }
-    }
-
-    .sk-fade-overlay {
-      position: absolute;
-      inset: 0;
-      background: #140b17;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.95s ease;
-      z-index: 100;
-    }
-    .sk-fade-overlay.active {
-      opacity: 1;
-    }
-
-    .cl-hidden {
-      display: none !important;
-    }
     .ios-msg-bubble {
       display: inline-flex;
       align-items: center;
       gap: 5px;
       padding: 6px 12px;
-      margin-left: 8px;
-      background: rgba(255, 255, 255, 0.18);
+      margin-left: 10px;
+      background: rgba(255, 122, 184, 0.22);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-radius: 18px;
       border-bottom-left-radius: 4px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.3);
+      border: 1px solid rgba(255, 180, 216, 0.4);
+      box-shadow: 0 0 15px rgba(255, 122, 184, 0.5), inset 0 1px 0 rgba(255,255,255,0.4);
       vertical-align: middle;
       position: relative;
       top: -2px;
@@ -242,8 +162,8 @@
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: #ff7ab8;
-      box-shadow: 0 0 8px rgba(255, 122, 184, 0.8);
+      background: #ffffff;
+      box-shadow: 0 0 8px #ffffff;
       animation: iosDotBounce 1.4s ease-in-out infinite;
     }
     .ios-dot.d1 { animation-delay: 0s; }
@@ -256,10 +176,10 @@
         opacity: 0.4;
       }
       30% {
-        transform: translateY(-7px) scale(1.18);
+        transform: translateY(-7px) scale(1.2);
         opacity: 1;
         background: #ffffff;
-        box-shadow: 0 0 10px #ffffff;
+        box-shadow: 0 0 12px #ffffff;
       }
     }
   </style>
