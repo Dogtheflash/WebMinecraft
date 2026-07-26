@@ -196,6 +196,72 @@
         opacity: 0;
       }
     }
+    @keyframes skPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
+
+    @keyframes skSparkle {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      50% { opacity: 1; transform: scale(1.3); }
+    }
+
+    .sk-fade-overlay {
+      position: absolute;
+      inset: 0;
+      background: #140b17;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.95s ease;
+      z-index: 100;
+    }
+    .sk-fade-overlay.active {
+      opacity: 1;
+    }
+
+    .cl-hidden {
+      display: none !important;
+    }
+    .ios-msg-bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      margin-left: 8px;
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 18px;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.3);
+      vertical-align: middle;
+      position: relative;
+      top: -2px;
+    }
+    .ios-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ff7ab8;
+      box-shadow: 0 0 8px rgba(255, 122, 184, 0.8);
+      animation: iosDotBounce 1.4s ease-in-out infinite;
+    }
+    .ios-dot.d1 { animation-delay: 0s; }
+    .ios-dot.d2 { animation-delay: 0.2s; }
+    .ios-dot.d3 { animation-delay: 0.4s; }
+
+    @keyframes iosDotBounce {
+      0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.4;
+      }
+      30% {
+        transform: translateY(-7px) scale(1.18);
+        opacity: 1;
+        background: #ffffff;
+        box-shadow: 0 0 10px #ffffff;
+      }
+    }
   </style>
 </head>
 
@@ -243,22 +309,22 @@
           <span class="sk-sparkle sp2">✧</span>
           <span class="sk-sparkle sp3">✦</span>
           <span class="sk-sparkle sp4">✧</span>
-          <div class="sk-mark">💖</div>
+          <div class="sk-mark">🌸</div>
         </div>
 
-        <h1 class="sk-title">Đang kết nối trái tim<span id="sk-dots"></span></h1>
+        <h1 class="sk-title">Tú Xinh Trai<div class="ios-msg-bubble"><span class="ios-dot d1"></span><span class="ios-dot d2"></span><span class="ios-dot d3"></span></div></h1>
         <p class="sk-sub">Chuẩn bị không gian hồ sơ</p>
 
         <div class="sk-track">
           <div class="sk-track-clip"><div class="sk-fill" id="sk-fill"></div></div>
-          <div class="sk-rider" id="sk-rider">💖</div>
+          <div class="sk-rider" id="sk-rider">🌸</div>
         </div>
         <div class="sk-meta">
           <span id="sk-phase">Gió xuân thổi nhẹ...</span>
-          <span id="sk-pct" class="sk-pct-heart">💖 0%</span>
+          <span id="sk-pct">0%</span>
         </div>
 
-        <div class="sk-status" id="sk-status">Đang gom trái tim...</div>
+        <div class="sk-status" id="sk-status">Đang gom cánh hoa rơi...</div>
       </div>
     </div>
     <div class="sk-fade-overlay" id="sk-fade"></div>
