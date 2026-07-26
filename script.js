@@ -2,169 +2,162 @@
    SAKURA LOADING SCREEN
    Tốc độ: ~2 giây, tự vào luôn khi đạt 100%
    ============================================================ */
-(function () {
-  var overlay  = document.getElementById('cyber-loading');
-  var stage    = document.getElementById('sk-stage');
-  var fill     = document.getElementById('sk-fill');
-  var pctEl    = document.getElementById('sk-pct');
-  var statusEl = document.getElementById('sk-status');
-  var phaseEl  = document.getElementById('sk-phase');
-  var fadeEl   = document.getElementById('sk-fade');
-  var rider    = document.getElementById('sk-rider');
-  var markWrap = overlay ? overlay.querySelector('.sk-mark-wrap') : null;
-  var terminal = document.getElementById('terminal-screen');
+(function initSakuraLoading() {
+  function run() {
+    var overlay  = document.getElementById('cyber-loading');
+    var stage    = document.getElementById('sk-stage');
+    var fill     = document.getElementById('sk-fill');
+    var pctEl    = document.getElementById('sk-pct');
+    var statusEl = document.getElementById('sk-status');
+    var phaseEl  = document.getElementById('sk-phase');
+    var fadeEl   = document.getElementById('sk-fade');
+    var rider    = document.getElementById('sk-rider');
+    var markWrap = overlay ? overlay.querySelector('.sk-mark-wrap') : null;
+    var terminal = document.getElementById('terminal-screen');
 
-  var reduceMotion = false;
+    var reduceMotion = false;
 
-  /* Ẩn CMD ngay từ đầu */
-  if (terminal) terminal.style.visibility = 'hidden';
+    /* Ẩn CMD ngay từ đầu */
+    if (terminal) terminal.style.visibility = 'hidden';
 
-  var msgs = [
-    'Đang gom cánh hoa rơi...',
-    'Pha trà đợi nắng lên...',
-    'Dệt màu hoàng hôn...',
-    'Thắp đèn lồng nhỏ...',
-    'Mọi thứ đã sẵn sàng.'
-  ];
-  var phases = [
-    'Gió xuân thổi nhẹ...',
-    'Hoa bắt đầu rơi...',
-    'Ánh sáng dịu dần...',
-    'Gần đến giờ hẹn...',
-    'Hoàn tất.'
-  ];
+    var msgs = [
+      'Đang gom cánh hoa rơi...',
+      'Pha trà đợi nắng lên...',
+      'Dệt màu hoàng hôn...',
+      'Thắp đèn lồng nhỏ...',
+      'Mọi thứ đã sẵn sàng.'
+    ];
+    var phases = [
+      'Gió xuân thổi nhẹ...',
+      'Hoa bắt đầu rơi...',
+      'Ánh sáng dịu dần...',
+      'Gần đến giờ hẹn...',
+      'Hoàn tất.'
+    ];
 
-  /* Cánh hoa rơi nền — 2 lớp độ sâu */
-  function makePetal(depth) {
-    if (!stage) return;
-    var p = document.createElement('div');
-    p.className = 'sk-petal ' + depth;
-    var s = depth === 'back' ? (5 + Math.random() * 5) : (8 + Math.random() * 8);
-    p.style.width  = s + 'px';
-    p.style.height = s + 'px';
-    p.style.left   = (Math.random() * 100) + '%';
-    p.style.setProperty('--sway', (Math.random() * 80 - 40) + 'px');
-    p.style.animationDuration = depth === 'back' ? (7 + Math.random() * 5) + 's' : (4 + Math.random() * 4) + 's';
-    // Dùng delay âm (-) để cánh hoa RƠI NGAY LẬP TỨC trên PC mà không bị chờ
-    p.style.animationDelay   = '-' + (Math.random() * 6) + 's';
-    stage.appendChild(p);
-  }
+    /* Cánh hoa rơi nền — 2 lớp độ sâu */
+    function makePetal(depth) {
+      if (!stage) return;
+      var p = document.createElement('div');
+      p.className = 'sk-petal ' + depth;
+      var s = depth === 'back' ? (5 + Math.random() * 5) : (8 + Math.random() * 8);
+      p.style.width  = s + 'px';
+      p.style.height = s + 'px';
+      p.style.left   = (Math.random() * 100) + '%';
+      p.style.setProperty('--sway', (Math.random() * 80 - 40) + 'px');
+      p.style.animationDuration = depth === 'back' ? (7 + Math.random() * 5) + 's' : (4 + Math.random() * 4) + 's';
+      // Dùng delay âm (-) để cánh hoa RƠI NGAY LẬP TỨC trên PC mà không bị chờ
+      p.style.animationDelay   = '-' + (Math.random() * 6) + 's';
+      stage.appendChild(p);
+    }
 
-  /* Cánh hoa rơi cục bộ, phát ra từ biểu tượng 🌸 */
-  function spawnMarkPetal() {
-    if (!overlay || !markWrap) return;
-    var rect = markWrap.getBoundingClientRect();
-    var p = document.createElement('div');
-    p.className = 'sk-petal front mark-petal';
-    var s = 6 + Math.random() * 6;
-    p.style.width  = s + 'px';
-    p.style.height = s + 'px';
-    p.style.position = 'absolute';
-    p.style.left = (rect.left + rect.width / 2 + (Math.random() * 30 - 15)) + 'px';
-    p.style.top  = (rect.top + rect.height / 2) + 'px';
-    p.style.setProperty('--sway', (Math.random() * 50 - 25) + 'px');
-    overlay.appendChild(p);
-    setTimeout(function () { p.remove(); }, 3300);
-  }
+    /* Cánh hoa rơi cục bộ, phát ra từ biểu tượng 🌸 */
+    function spawnMarkPetal() {
+      if (!overlay || !markWrap) return;
+      var rect = markWrap.getBoundingClientRect();
+      var p = document.createElement('div');
+      p.className = 'sk-petal front mark-petal';
+      var s = 6 + Math.random() * 6;
+      p.style.width  = s + 'px';
+      p.style.height = s + 'px';
+      p.style.position = 'absolute';
+      p.style.left = (rect.left + rect.width / 2 + (Math.random() * 30 - 15)) + 'px';
+      p.style.top  = (rect.top + rect.height / 2) + 'px';
+      p.style.setProperty('--sway', (Math.random() * 50 - 25) + 'px');
+      overlay.appendChild(p);
+      setTimeout(function () { p.remove(); }, 3300);
+    }
 
-  /* Đom đóm / hạt sáng lập lờ trong không khí */
-  function makeFirefly() {
-    if (!stage) return;
-    var f = document.createElement('div');
-    f.className = 'sk-firefly';
-    var s = 2 + Math.random() * 2.5;
-    f.style.width  = s + 'px';
-    f.style.height = s + 'px';
-    f.style.left = (Math.random() * 100) + '%';
-    f.style.top  = (30 + Math.random() * 60) + '%';
-    f.style.setProperty('--fx',  (Math.random() * 40 - 20) + 'px');
-    f.style.setProperty('--fy',  (Math.random() * -40 - 10) + 'px');
-    f.style.setProperty('--fx2', (Math.random() * 40 - 20) + 'px');
-    f.style.setProperty('--fy2', (Math.random() * -50 - 20) + 'px');
-    f.style.animationDuration = (4 + Math.random() * 4) + 's';
-    f.style.animationDelay = '-' + (Math.random() * 5) + 's';
-    stage.appendChild(f);
-  /* Cánh hoa rơi cục bộ, phát ra từ biểu tượng 🌸 */
-  function spawnMarkPetal() {
-    if (!overlay || !markWrap) return;
-    var rect = markWrap.getBoundingClientRect();
-    var p = document.createElement('div');
-    p.className = 'sk-petal front mark-petal';
-    var s = 6 + Math.random() * 6;
-    p.style.width  = s + 'px';
-    p.style.height = s + 'px';
-    p.style.position = 'absolute';
-    p.style.left = (rect.left + rect.width / 2 + (Math.random() * 30 - 15)) + 'px';
-    p.style.top  = (rect.top + rect.height / 2) + 'px';
-    p.style.setProperty('--sway', (Math.random() * 50 - 25) + 'px');
-    overlay.appendChild(p);
-    setTimeout(function () { p.remove(); }, 3300);
-  }
+    /* Đom đóm / hạt sáng lập lờ trong không khí */
+    function makeFirefly() {
+      if (!stage) return;
+      var f = document.createElement('div');
+      f.className = 'sk-firefly';
+      var s = 2 + Math.random() * 2.5;
+      f.style.width  = s + 'px';
+      f.style.height = s + 'px';
+      f.style.left = (Math.random() * 100) + '%';
+      f.style.top  = (30 + Math.random() * 60) + '%';
+      f.style.setProperty('--fx',  (Math.random() * 40 - 20) + 'px');
+      f.style.setProperty('--fy',  (Math.random() * -40 - 10) + 'px');
+      f.style.setProperty('--fx2', (Math.random() * 40 - 20) + 'px');
+      f.style.setProperty('--fy2', (Math.random() * -50 - 20) + 'px');
+      f.style.animationDuration = (4 + Math.random() * 4) + 's';
+      f.style.animationDelay = '-' + (Math.random() * 5) + 's';
+      stage.appendChild(f);
+    }
 
-  var markPetalIv = null;
-  if (!reduceMotion) {
-    for (var i = 0; i < 24; i++) makePetal('back');
-    for (var j = 0; j < 36; j++) makePetal('front');
-    for (var k = 0; k < 14; k++) makeFirefly();
-    for (var m = 0; m < 5; m++) spawnMarkPetal();
-    markPetalIv = setInterval(spawnMarkPetal, 250);
-  }
+    var markPetalIv = null;
+    if (!reduceMotion) {
+      for (var i = 0; i < 24; i++) makePetal('back');
+      for (var j = 0; j < 36; j++) makePetal('front');
+      for (var k = 0; k < 14; k++) makeFirefly();
+      for (var m = 0; m < 5; m++) spawnMarkPetal();
+      markPetalIv = setInterval(spawnMarkPetal, 250);
+    }
 
-  var prog = 0, done = false;
+    var prog = 0, done = false;
 
-  /* Progress bar — 5 giây nạp mượt mà */
-  var iv = setInterval(function () {
-    if (done) return;
+    /* Progress bar — 5 giây nạp mượt mà */
+    var iv = setInterval(function () {
+      if (done) return;
 
-    var inc = prog < 40 ? (Math.random() * 1.2 + 0.8)
-            : prog < 75 ? (Math.random() * 0.8 + 0.5)
-            : prog < 95 ? (Math.random() * 0.5 + 0.3)
-            :             (Math.random() * 0.3 + 0.15);
+      var inc = prog < 40 ? (Math.random() * 1.2 + 0.8)
+              : prog < 75 ? (Math.random() * 0.8 + 0.5)
+              : prog < 95 ? (Math.random() * 0.5 + 0.3)
+              :             (Math.random() * 0.3 + 0.15);
 
-    prog = Math.min(prog + inc, 100);
+      prog = Math.min(prog + inc, 100);
 
-    var p = Math.floor(prog);
-    if (fill)  fill.style.width  = prog + '%';
-    if (pctEl) pctEl.textContent = p + '%';
-    if (rider) rider.style.left  = prog + '%';
+      var p = Math.floor(prog);
+      if (fill)  fill.style.width  = prog + '%';
+      if (pctEl) pctEl.textContent = p + '%';
+      if (rider) rider.style.left  = prog + '%';
 
-    var si = Math.min(msgs.length - 1, Math.floor(prog / 21));
-    if (statusEl) statusEl.textContent = msgs[si];
-    if (phaseEl)  phaseEl.textContent  = phases[si];
+      var si = Math.min(msgs.length - 1, Math.floor(prog / 21));
+      if (statusEl) statusEl.textContent = msgs[si];
+      if (phaseEl)  phaseEl.textContent  = phases[si];
 
-    if (prog >= 100) {
-      clearInterval(iv);
-      done = true;
-      if (pctEl) pctEl.textContent = '100%';
-      if (statusEl) statusEl.textContent = msgs[msgs.length - 1];
-      if (phaseEl)  phaseEl.textContent  = phases[phases.length - 1];
-
-      setTimeout(function () {
-        if (fadeEl) fadeEl.classList.add('active');
+      if (prog >= 100) {
+        clearInterval(iv);
+        done = true;
+        if (pctEl) pctEl.textContent = '100%';
+        if (statusEl) statusEl.textContent = msgs[msgs.length - 1];
+        if (phaseEl)  phaseEl.textContent  = phases[phases.length - 1];
 
         setTimeout(function () {
-          if (markPetalIv) clearInterval(markPetalIv);
-          if (overlay) overlay.classList.add('cl-hidden');
+          if (fadeEl) fadeEl.classList.add('active');
 
-          /* Trở lại màn hình CMD mặc định sau khi Loading xong */
-          if (terminal) {
-            terminal.style.visibility = 'visible';
-            terminal.style.opacity    = '0';
-            terminal.style.transition = 'opacity 0.6s ease';
-            requestAnimationFrame(function () {
+          setTimeout(function () {
+            if (markPetalIv) clearInterval(markPetalIv);
+            if (overlay) overlay.classList.add('cl-hidden');
+
+            /* Trở lại màn hình CMD mặc định sau khi Loading xong */
+            if (terminal) {
+              terminal.style.visibility = 'visible';
+              terminal.style.opacity    = '0';
+              terminal.style.transition = 'opacity 0.6s ease';
               requestAnimationFrame(function () {
-                terminal.style.opacity = '1';
+                requestAnimationFrame(function () {
+                  terminal.style.opacity = '1';
 
-                if (typeof window.initCmd === 'function') {
-                  window.initCmd();
-                }
+                  if (typeof window.initCmd === 'function') {
+                    window.initCmd();
+                  }
+                });
               });
-            });
-          }
-        }, 950);
-      }, 400);
-    }
-  }, 50);
+            }
+          }, 950);
+        }, 400);
+      }
+    }, 50);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
 })();
 /* ============================================================
    END SAKURA LOADING SCREEN
