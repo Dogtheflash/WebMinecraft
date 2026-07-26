@@ -146,17 +146,21 @@
           if (markPetalIv) clearInterval(markPetalIv);
           if (overlay) overlay.classList.add('cl-hidden');
 
-          /* Chuyển thẳng vào trang Profile chính */
-          var prof = document.getElementById('profile-screen');
-          var term = document.getElementById('terminal-screen');
-          var musPlayer = document.getElementById('music-player');
+          /* Trở lại màn hình CMD mặc định sau khi Loading xong */
+          if (terminal) {
+            terminal.style.visibility = 'visible';
+            terminal.style.opacity    = '0';
+            terminal.style.transition = 'opacity 0.6s ease';
+            requestAnimationFrame(function () {
+              requestAnimationFrame(function () {
+                terminal.style.opacity = '1';
 
-          if (term) term.classList.remove('active');
-          if (prof) {
-            prof.classList.add('active');
-            document.body.classList.remove('terminal-active');
+                if (typeof window.initCmd === 'function') {
+                  window.initCmd();
+                }
+              });
+            });
           }
-          if (musPlayer) musPlayer.classList.remove('hidden');
         }, 950);
       }, 400);
     }
