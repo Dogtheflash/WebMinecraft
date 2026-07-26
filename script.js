@@ -84,6 +84,20 @@
     f.style.animationDuration = (4 + Math.random() * 4) + 's';
     f.style.animationDelay = '-' + (Math.random() * 5) + 's';
     stage.appendChild(f);
+  /* Hiệu ứng Trái tim rơi rơi lúc đếm */
+  function spawnFallingHeart() {
+    if (!stage) return;
+    var hearts = ['💖', '💕', '❤️', '💓', '💗', '💖'];
+    var h = document.createElement('div');
+    h.className = 'sk-falling-heart';
+    h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+    h.style.left = (Math.random() * 90 + 5) + '%';
+    h.style.setProperty('--h-size', (14 + Math.random() * 16) + 'px');
+    h.style.setProperty('--h-sway', (Math.random() * 70 - 35) + 'px');
+    h.style.setProperty('--h-rot', (Math.random() * 90 - 45) + 'deg');
+    h.style.animationDuration = (2.5 + Math.random() * 2) + 's';
+    stage.appendChild(h);
+    setTimeout(function () { h.remove(); }, 4500);
   }
 
   var markPetalIv = null;
@@ -96,8 +110,9 @@
   }
 
   var prog = 0, done = false;
+  var heartCounter = 0;
 
-  /* Progress bar — Đã chỉnh lên 5 giây để trải nghiệm trọn vẹn Sakura animation */
+  /* Progress bar — 5 giây với hiệu ứng đếm Trái tim & Trái tim rơi */
   var iv = setInterval(function () {
     if (done) return;
 
@@ -110,8 +125,14 @@
 
     var p = Math.floor(prog);
     if (fill)  fill.style.width  = prog + '%';
-    if (pctEl) pctEl.textContent = p + '%';
+    if (pctEl) pctEl.textContent = '💖 ' + p + '%';
     if (rider) rider.style.left  = prog + '%';
+
+    // Tạo trái tim rơi liên tục theo tiến trình đếm
+    heartCounter++;
+    if (heartCounter % 3 === 0) {
+      spawnFallingHeart();
+    }
 
     var si = Math.min(msgs.length - 1, Math.floor(prog / 21));
     if (statusEl) statusEl.textContent = msgs[si];
@@ -120,6 +141,7 @@
     if (prog >= 100) {
       clearInterval(iv);
       done = true;
+      if (pctEl) pctEl.textContent = '💖 100%';
       if (statusEl) statusEl.textContent = msgs[msgs.length - 1];
       if (phaseEl)  phaseEl.textContent  = phases[phases.length - 1];
 
