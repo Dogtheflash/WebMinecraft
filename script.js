@@ -84,12 +84,30 @@
     f.style.animationDuration = (4 + Math.random() * 4) + 's';
     f.style.animationDelay = '-' + (Math.random() * 5) + 's';
     stage.appendChild(f);
+  /* Cánh hoa rơi cục bộ, phát ra từ biểu tượng 🌸 */
+  function spawnMarkPetal() {
+    if (!overlay || !markWrap) return;
+    var rect = markWrap.getBoundingClientRect();
+    var p = document.createElement('div');
+    p.className = 'sk-petal front mark-petal';
+    var s = 6 + Math.random() * 6;
+    p.style.width  = s + 'px';
+    p.style.height = s + 'px';
+    p.style.position = 'absolute';
+    p.style.left = (rect.left + rect.width / 2 + (Math.random() * 30 - 15)) + 'px';
+    p.style.top  = (rect.top + rect.height / 2) + 'px';
+    p.style.setProperty('--sway', (Math.random() * 50 - 25) + 'px');
+    overlay.appendChild(p);
+    setTimeout(function () { p.remove(); }, 3300);
   }
 
+  var markPetalIv = null;
   if (!reduceMotion) {
     for (var i = 0; i < 24; i++) makePetal('back');
     for (var j = 0; j < 36; j++) makePetal('front');
     for (var k = 0; k < 14; k++) makeFirefly();
+    for (var m = 0; m < 5; m++) spawnMarkPetal();
+    markPetalIv = setInterval(spawnMarkPetal, 250);
   }
 
   var prog = 0, done = false;
@@ -128,20 +146,17 @@
           if (markPetalIv) clearInterval(markPetalIv);
           if (overlay) overlay.classList.add('cl-hidden');
 
-          if (terminal) {
-            terminal.style.visibility = 'visible';
-            terminal.style.opacity    = '0';
-            terminal.style.transition = 'opacity 0.6s ease';
-            requestAnimationFrame(function () {
-              requestAnimationFrame(function () {
-                terminal.style.opacity = '1';
+          /* Chuyển thẳng vào trang Profile chính */
+          var prof = document.getElementById('profile-screen');
+          var term = document.getElementById('terminal-screen');
+          var musPlayer = document.getElementById('music-player');
 
-                if (typeof window.initCmd === 'function') {
-                  window.initCmd();
-                }
-              });
-            });
+          if (term) term.classList.remove('active');
+          if (prof) {
+            prof.classList.add('active');
+            document.body.classList.remove('terminal-active');
           }
+          if (musPlayer) musPlayer.classList.remove('hidden');
         }, 950);
       }, 400);
     }
