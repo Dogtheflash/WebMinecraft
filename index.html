@@ -14,7 +14,12 @@
     href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="favicon.png" type="image/svg+xml">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="Chinatsu Kamado — profile" />
+  <meta property="og:description" content="Hồ sơ cá nhân: Discord realtime, Steam, server Minecraft và vài thứ để nghịch." />
+  <meta property="og:image" content="./data/background/banner.gif" />
+  <meta name="twitter:card" content="summary_large_image" />
   <style>
     /* ============================================================
        SAKURA LOADING SCREEN STYLES (EMBEDDED)
@@ -257,6 +262,7 @@
   <div class="ambient ambient-two"></div>
   <div id="pointer-glow" class="pointer-glow" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
   
   <!-- ========== BACKGROUND VIDEOS ========== -->
   <video id="bg-video" class="bg-video" autoplay muted loop playsinline aria-hidden="true" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -1; pointer-events: none;">
@@ -311,6 +317,8 @@
             <button class="theme-option" data-theme="sakura" title="Sakura Pink">🌸</button>
             <button class="theme-option" data-theme="ocean" title="Ocean Blue">🌊</button>
             <button class="theme-option" data-theme="fire" title="Neon Fire">🔥</button>
+            <span class="theme-sep" aria-hidden="true"></span>
+            <button id="theme-auto" class="theme-option-auto" type="button" title="Tự động đổi theo giờ Việt Nam">🕒</button>
           </div>
           <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi giao diện">🌙</button>
           <button id="yt-bg-toggle" class="warp-btn" type="button" aria-label="Chuyển sang Nền YouTube Lofi (kèm tiếng)" title="Bật/Tắt Nền YouTube (kèm tiếng)">🎬</button>
@@ -323,7 +331,7 @@
         <div class="profile-banner">
           <!-- Parallax Layer 0: Base image -->
           <div class="plx-layer" data-depth="0.03">
-            <img id="banner-image" src="./data/background/banner.gif" alt="Ảnh bìa hồ sơ" />
+            <img id="banner-image" src="./data/background/banner.gif" alt="Ảnh bìa hồ sơ" decoding="async" fetchpriority="high" />
           </div>
           <!-- Parallax Layer 1: Light sweep -->
           <div class="plx-layer plx-light" data-depth="0.06"></div>
@@ -339,7 +347,8 @@
         </div>
 
         <header class="profile-header">
-          <div class="avatar-wrap">
+          <div class="avatar-wrap" id="avatar-wrap">
+            <span class="avatar-ring" aria-hidden="true"></span>
             <img id="avatar-image" class="avatar-image" src="https://images-ext-1.discordapp.net/external/Pk9lpqQlm9eiN65fVc4VsGsRbedZwUbAsCBLXPHvHq8/%3Fsize%3D4096/https://cdn.discordapp.com/avatars/917263515209859102/cd121ea4baf2512e6e98f16f0f2a8d04.png?size=4096" alt="Ảnh đại diện Discord" />
             <div id="avatar-fallback" class="avatar-fallback">T</div>
             <img id="avatar-decoration" class="avatar-decoration" src="./data/decoration/anime-dang-yeu.png" alt="Trang trí avatar" />
@@ -401,6 +410,7 @@
 
         <section id="activity-card" class="activity-card hidden" aria-labelledby="activity-title">
           <div id="activity-icon" class="activity-icon">✦</div>
+          <img id="activity-art" class="activity-art hidden" alt="" decoding="async" />
           <div>
             <h2 id="activity-title">Hoạt động</h2>
             <p id="activity-name" class="handle">Không có hoạt động</p>
@@ -698,6 +708,7 @@
       <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
     </div>
     <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <canvas id="audio-visualizer" class="audio-visualizer player-visualizer" aria-hidden="true"></canvas>
     <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
   </aside>
   <!-- ========== END MUSIC PLAYER ========== -->
