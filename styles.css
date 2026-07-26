@@ -2706,8 +2706,8 @@ body.warping .screen {
 }
 
 @keyframes skPulse {
-  0% { transform: scale(1) rotate(0deg); }
-  100% { transform: scale(1.12) rotate(12deg); }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
 }
 
 @keyframes skSparkle {
@@ -2733,7 +2733,10 @@ body.warping .screen {
 }
 
 .sk-title {
+  font-size: 26px;
+  font-weight: 800;
   margin: 0 0 12px;
+  line-height: 1.2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2742,8 +2745,6 @@ body.warping .screen {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  animation: skTitleBounce 1.1s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate;
-  will-change: transform;
 }
 .sk-title-text {
   font-size: 26px;
@@ -2752,6 +2753,7 @@ body.warping .screen {
   background: linear-gradient(90deg, #ffffff 0%, #ffcce3 50%, #ff85b8 100%);
   -webkit-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: transparent;
   filter: drop-shadow(0 0 14px rgba(255, 122, 184, 0.9));
   display: inline-block;
