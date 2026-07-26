@@ -14,7 +14,7 @@
   var markWrap = overlay ? overlay.querySelector('.sk-mark-wrap') : null;
   var terminal = document.getElementById('terminal-screen');
 
-  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduceMotion = false;
 
   /* Ẩn CMD ngay từ đầu */
   if (terminal) terminal.style.visibility = 'hidden';
