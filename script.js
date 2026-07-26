@@ -86,13 +86,10 @@
     stage.appendChild(f);
   }
 
-  var markPetalIv = null;
   if (!reduceMotion) {
     for (var i = 0; i < 24; i++) makePetal('back');
     for (var j = 0; j < 36; j++) makePetal('front');
     for (var k = 0; k < 14; k++) makeFirefly();
-    for (var m = 0; m < 5; m++) spawnMarkPetal();
-    markPetalIv = setInterval(spawnMarkPetal, 250);
   }
 
   var prog = 0, done = false;
