@@ -708,7 +708,8 @@
       <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
     </div>
     <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-    <canvas id="audio-visualizer" class="audio-visualizer player-visualizer" aria-hidden="true"></canvas>
+    <!-- canvas vẫn cần để module audio chạy (vòng avatar đập theo nhạc), nhưng không vẽ sóng -->
+    <canvas id="audio-visualizer" class="audio-visualizer player-visualizer viz-silent" aria-hidden="true"></canvas>
     <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
   </aside>
   <!-- ========== END MUSIC PLAYER ========== -->
