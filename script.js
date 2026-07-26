@@ -97,14 +97,14 @@
 
   var prog = 0, done = false;
 
-  /* Progress bar — ~2 giây để hoàn thành */
+  /* Progress bar — Đã chỉnh lên 5 giây để trải nghiệm trọn vẹn Sakura animation */
   var iv = setInterval(function () {
     if (done) return;
 
-    var inc = prog < 50 ? (Math.random() * 5 + 4)
-            : prog < 80 ? (Math.random() * 3 + 2.5)
-            : prog < 95 ? (Math.random() * 2 + 1)
-            :              (Math.random() * 1.5 + 0.8);
+    var inc = prog < 40 ? (Math.random() * 1.2 + 0.8)
+            : prog < 75 ? (Math.random() * 0.8 + 0.5)
+            : prog < 95 ? (Math.random() * 0.5 + 0.3)
+            :             (Math.random() * 0.3 + 0.15);
 
     prog = Math.min(prog + inc, 100);
 
@@ -147,7 +147,7 @@
         }, 950);
       }, 400);
     }
-  }, 30);
+  }, 50);
 })();
 /* ============================================================
    END SAKURA LOADING SCREEN
