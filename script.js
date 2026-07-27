@@ -83,8 +83,8 @@ if (window.__LOW_PERF) document.documentElement.classList.add('low-perf');
 
   const STEP = 20;
   const BAR_COUNT = 12;
-  const LOGO_HOLD_MS = 5000;
-  const BASE_DURATION_S = 5.4;
+  const LOGO_HOLD_MS = 2200;
+  const BASE_DURATION_S = 4.8;
   const HANDOFF_HOLD_MS = 1250;
   const SPARKLE_MS = 1900;
   const SPEED_KEY = "aurora.boot.speed";
@@ -541,9 +541,8 @@ if (window.__LOW_PERF) document.documentElement.classList.add('low-perf');
       if (startTime === null) startTime = now;
       const elapsed = (now - startTime) / 1000;
       const t = Math.min(elapsed / duration, 1);
-      const eased = t === 1 ? 1 : 1 - Math.pow(2, -9 * t);
-      const stutter = Math.sin(t * 11) * 1.4 * (1 - t);
-      const progress = Math.max(0, Math.min(100, eased * 100 + stutter));
+      const eased = t === 1 ? 1 : (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+      const progress = Math.max(0, Math.min(100, eased * 100));
       const rounded = Math.round(progress);
       const phaseIdx = phaseIndexFor(progress);
 
