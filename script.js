@@ -1180,23 +1180,19 @@ function initCmdWindowControls() {
   const cmdWindow = document.querySelector('.cmd-window');
   if (!controls || controls.length < 3 || !cmdWindow) return;
 
-  /* Red dot: Close/minimize window */
-  controls[0].setAttribute('title', 'Đóng cửa sổ CMD');
+  /* Red dot: Enter main profile */
+  controls[0].setAttribute('title', 'Chuyển sang trang chính');
   controls[0].onclick = function () {
-    cmdWindow.classList.add('minimizing');
-    setTimeout(function () {
-      cmdWindow.classList.remove('minimizing');
-      showScreen(profileScreen);
-    }, 400);
+    showScreen(profileScreen);
   };
 
-  /* Yellow dot: Minimize window */
-  controls[1].setAttribute('title', 'Thu nhỏ cửa sổ CMD');
+  /* Yellow dot */
+  controls[1].setAttribute('title', 'Thu nhỏ');
   controls[1].onclick = function () {
-    cmdWindow.classList.toggle('minimizing');
+    showScreen(profileScreen);
   };
 
-  /* Green dot: Maximize window */
+  /* Green dot: Maximize / Restore window */
   controls[2].setAttribute('title', 'Phóng to / Khôi phục cửa sổ CMD');
   controls[2].onclick = function () {
     cmdWindow.classList.toggle('maximized');
