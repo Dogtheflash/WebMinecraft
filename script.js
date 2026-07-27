@@ -779,9 +779,8 @@ function handleBootComplete() {
   schedule(function () { hideFlash(); }, 700);
   schedule(function () { stage = 'hello'; showStage('hello'); }, 340);
   schedule(hapticSettle, CHIME_MS);
-  schedule(function () { stage = 'ready'; showStage('ready'); showSlider(); }, 4200);
 
-  /* Seamless transition into main CMD Terminal screen */
+  /* Transition directly into main CMD Terminal screen right after "hello" stage */
   schedule(function () {
     var appEl = document.getElementById('app');
     if (appEl) {
@@ -805,7 +804,7 @@ function handleBootComplete() {
         }
       }, 800);
     }
-  }, 4200);
+  }, 3200);
 }
 
 function showFlash() {
@@ -1147,9 +1146,16 @@ function renderCmd() {
 }
 
 function switchCmdTab(tabId) {
+  if (activeTabId === tabId) return;
   activeTabId = tabId;
+  const cmdBody = document.querySelector('.cmd-body');
+  if (cmdBody) {
+    cmdBody.classList.remove('tab-switching');
+    void cmdBody.offsetWidth;
+    cmdBody.classList.add('tab-switching');
+  }
   renderCmd();
-  cmdInput.focus();
+  if (cmdInput) cmdInput.focus();
 }
 
 function typeIntro() {
@@ -1169,9 +1175,38 @@ function typeIntro() {
   }, 18);
 }
 
+function initCmdWindowControls() {
+  const controls = document.querySelectorAll('.cmd-controls span');
+  const cmdWindow = document.querySelector('.cmd-window');
+  if (!controls || controls.length < 3 || !cmdWindow) return;
+
+  /* Red dot: Close/minimize window */
+  controls[0].setAttribute('title', 'Đóng cửa sổ CMD');
+  controls[0].onclick = function () {
+    cmdWindow.classList.add('minimizing');
+    setTimeout(function () {
+      cmdWindow.classList.remove('minimizing');
+      showScreen(profileScreen);
+    }, 400);
+  };
+
+  /* Yellow dot: Minimize window */
+  controls[1].setAttribute('title', 'Thu nhỏ cửa sổ CMD');
+  controls[1].onclick = function () {
+    cmdWindow.classList.toggle('minimizing');
+  };
+
+  /* Green dot: Maximize window */
+  controls[2].setAttribute('title', 'Phóng to / Khôi phục cửa sổ CMD');
+  controls[2].onclick = function () {
+    cmdWindow.classList.toggle('maximized');
+  };
+}
+
 window.initCmd = function () {
   renderCmd();
   typeIntro();
+  initCmdWindowControls();
 };
 
 function showScreen(screen) {
