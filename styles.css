@@ -152,36 +152,77 @@ body.wide-page-active .color-page {
 
 .cmd-titlebar { height: 38px; display: flex; align-items: center; justify-content: flex-start; background: transparent; border-bottom: 1px solid rgba(255,255,255,.08); user-select: none; position: relative; z-index: 2; padding: 0 12px; gap: 8px; }
 .cmd-tabs { display: flex; align-items: center; height: 100%; min-width: 0; flex:0 1 auto; overflow:hidden; }
-.cmd-tab { height: 100%; min-width:132px; max-width:210px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 0 12px; color: rgba(255,255,255,0.6); font: 500 13px "Segoe UI", system-ui, sans-serif; background: transparent; border:0; }
-.cmd-tab.active-tab { color:#fff; background:rgba(255,255,255,0.06); border-radius: 6px; height: 28px; margin: 5px 0; }
-.cmd-tab-title { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
-.cmd-tab-close { opacity:.55; font-size:14px; line-height:1; }
-.cmd-tab:hover .cmd-tab-close { opacity:1; }
-.cmd-plus { width: 34px; height:100%; text-align: center; color: #d0d0d0; font-size: 17px; flex:0 0 auto; border:0; background:transparent; cursor:inherit; }
-.cmd-controls {
-  margin-left: 0;
-  margin-right: 12px;
-  display: flex;
-  gap: 8px;
-  height: 100%;
-  align-items: center;
-}
+.cmd-tab { height: 100%; min-width:132px; max-width:210px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 0 12px; color: rgba(255,255,255,0.6); font: 500 13px "Segoe UI", system-ui, sans-serif; background: transparent; border:0; transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1); position: relative; }
+.cmd-tab:hover { color: #fff; background: rgba(255,255,255,0.04); transform: translateY(-1px); }
+.cmd-tab.active-tab { color:#fff; background:rgba(255,255,255,0.08); border-radius: 6px 6px 0 0; height: 28px; margin: 5px 0; box-shadow: inset 0 1px 0 rgba(255,255,255,0.12); }
+.cmd-tab.active-tab::after { content: ""; position: absolute; bottom: 0; left: 8px; right: 8px; height: 2px; background: linear-gradient(90deg, var(--cyan, #32d3ff), var(--pink, #f0399c)); border-radius: 2px; box-shadow: 0 0 8px var(--cyan, #32d3ff); animation: tabActiveGlow 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes tabActiveGlow { from { opacity: 0; transform: scaleX(0.4); } to { opacity: 1; transform: scaleX(1); } }
 
-.cmd-controls span {
-  width: 12px !important;
-  height: 12px !important;
-  border-radius: 50%;
-  display: inline-block;
-  cursor: pointer;
-  flex-shrink: 0;
-}
+.cmd-tab-title { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.cmd-tab-close { opacity:.55; font-size:14px; line-height:1; transition: transform 0.2s ease, color 0.2s ease, opacity 0.2s ease, background 0.2s ease; border-radius: 50%; width: 16px; height: 16px; display: grid; place-items: center; }
+.cmd-tab:hover .cmd-tab-close { opacity:1; }
+.cmd-tab-close:hover { transform: rotate(90deg) scale(1.2); color: #ff5f56; background: rgba(255,95,86,0.2); }
+
+.cmd-plus { width: 34px; height:28px; text-align: center; color: #d0d0d0; font-size: 17px; flex:0 0 auto; border:0; background:transparent; cursor:pointer; border-radius: 6px; transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, color 0.2s ease; display: grid; place-items: center; }
+.cmd-plus:hover { transform: rotate(90deg) scale(1.15); color: #fff; background: rgba(255,255,255,0.1); }
+.cmd-plus:active { transform: rotate(90deg) scale(0.9); }
+
+.cmd-controls { margin-left: 0; margin-right: 12px; display: flex; gap: 8px; height: 100%; align-items: center; }
+.cmd-controls span { width: 12px !important; height: 12px !important; border-radius: 50%; display: inline-block; cursor: pointer; flex-shrink: 0; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, filter 0.2s ease; }
+.cmd-controls span:hover { transform: scale(1.25); filter: brightness(1.25); box-shadow: 0 0 10px currentColor; }
+.cmd-controls span:active { transform: scale(0.9); }
 
 .cmd-controls span:nth-child(1) { background-color: #ff5f56 !important; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
 .cmd-controls span:nth-child(2) { background-color: #ffbd2e !important; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
 .cmd-controls span:nth-child(3) { background-color: #27c93f !important; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
 
-.cmd-controls span:hover { filter: brightness(0.8); }
+/* Windows 11 Window Animations & Tab switching */
+.cmd-window {
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), width 0.45s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease;
+}
+.terminal-screen.active .cmd-window {
+  animation: win11OpenWindow 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes win11OpenWindow {
+  0% { opacity: 0; transform: translateY(28px) scale(0.92); filter: blur(8px); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+.cmd-window.minimizing {
+  animation: win11MinimizeWindow 0.42s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+@keyframes win11MinimizeWindow {
+  0% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  100% { opacity: 0; transform: translateY(140px) scale(0.75); filter: blur(10px); }
+}
+
+.cmd-window.maximized {
+  width: min(980px, 98vw) !important;
+  max-height: calc(100dvh - 20px) !important;
+  box-shadow: 0 25px 70px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.2) !important;
+}
+
 .cmd-body { min-height: 380px; padding: 18px 20px 20px; color: #eaf8ff; font: 500 clamp(12px, 2vw, 15px) var(--font-mono); line-height: 1.48; position: relative; z-index: 2;}
+.cmd-body.tab-switching {
+  animation: win11TabSlide 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes win11TabSlide {
+  0% { opacity: 0; transform: translateX(18px) scale(0.98); filter: blur(4px); }
+  100% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0); }
+}
+
+.cmd-continue {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.cmd-continue:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgb(var(--accent-rgb, 99 102 241) / .45), 0 0 16px rgba(50,211,255,0.4);
+}
+.cmd-continue:active {
+  transform: translateY(0) scale(0.97);
+}
 .cmd-plus:hover { background:#2b2b2b; }
 .cmd-log { white-space:pre-wrap; min-height:270px; color:#f2f2f2; }
 .cmd-prompt-line { display:flex; align-items:center; gap:0; color:#f2f2f2; margin:0; }
