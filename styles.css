@@ -178,22 +178,7 @@ body.wide-page-active .color-page {
 
 /* Windows 11 Window Animations & Tab switching */
 .cmd-window {
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), width 0.45s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease;
-}
-.terminal-screen.active .cmd-window {
-  animation: win11OpenWindow 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-@keyframes win11OpenWindow {
-  0% { opacity: 0; transform: translateY(28px) scale(0.92); filter: blur(8px); }
-  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-}
-
-.cmd-window.minimizing {
-  animation: win11MinimizeWindow 0.42s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
-}
-@keyframes win11MinimizeWindow {
-  0% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-  100% { opacity: 0; transform: translateY(140px) scale(0.75); filter: blur(10px); }
+  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease;
 }
 
 .cmd-window.maximized {
