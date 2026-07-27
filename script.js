@@ -1180,16 +1180,16 @@ function initCmdWindowControls() {
   const cmdWindow = document.querySelector('.cmd-window');
   if (!controls || controls.length < 3 || !cmdWindow) return;
 
-  /* Red dot: Enter main profile */
-  controls[0].setAttribute('title', 'Chuyển sang trang chính');
-  controls[0].onclick = function () {
-    showScreen(profileScreen);
+  /* Red dot: Do nothing */
+  controls[0].removeAttribute('title');
+  controls[0].onclick = function (e) {
+    if (e) e.preventDefault();
   };
 
-  /* Yellow dot */
-  controls[1].setAttribute('title', 'Thu nhỏ');
-  controls[1].onclick = function () {
-    showScreen(profileScreen);
+  /* Yellow dot: Do nothing */
+  controls[1].removeAttribute('title');
+  controls[1].onclick = function (e) {
+    if (e) e.preventDefault();
   };
 
   /* Green dot: Maximize / Restore window */
