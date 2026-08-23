@@ -2311,14 +2311,28 @@ function updateCardPointer(event) {
   const rect = target.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
-  const px = x / rect.width;
-  const py = y / rect.height;
-  const tiltY = (px - 0.5) * 9;
-  const tiltX = (0.5 - py) * 9;
-  target.style.setProperty('--glow-x', `${px * 100}%`);
-  target.style.setProperty('--glow-y', `${py * 100}%`);
+  const px = Math.max(0, Math.min(1, x / rect.width));
+  const py = Math.max(0, Math.min(1, y / rect.height));
+  
+  // 3D Tilt calculation (max 15 degrees for dramatic 3D effect)
+  const tiltY = (px - 0.5) * 16;
+  const tiltX = (0.5 - py) * 16;
+  
+  // Holographic rainbow angle & glare spotlight position
+  const angle = Math.round(Math.atan2(py - 0.5, px - 0.5) * (180 / Math.PI) + 90);
+  const glareX = Math.round(px * 100);
+  const glareY = Math.round(py * 100);
+  
   target.style.setProperty('--tilt-x', `${tiltX.toFixed(2)}deg`);
   target.style.setProperty('--tilt-y', `${tiltY.toFixed(2)}deg`);
+  target.style.setProperty('--card-scale', '1.02');
+  target.style.setProperty('--holo-angle', `${angle}deg`);
+  target.style.setProperty('--holo-pos-x', `${(px * 100).toFixed(1)}%`);
+  target.style.setProperty('--holo-pos-y', `${(py * 100).toFixed(1)}%`);
+  target.style.setProperty('--holo-opacity', '0.75');
+  target.style.setProperty('--glare-x', `${glareX}%`);
+  target.style.setProperty('--glare-y', `${glareY}%`);
+  target.style.setProperty('--glare-opacity', '0.85');
   target.classList.add('interactive-hover');
 }
 
@@ -2328,7 +2342,35 @@ function resetCardPointer() {
   target.classList.remove('interactive-hover');
   target.style.setProperty('--tilt-x', '0deg');
   target.style.setProperty('--tilt-y', '0deg');
+  target.style.setProperty('--card-scale', '1');
+  target.style.setProperty('--holo-opacity', '0');
+  target.style.setProperty('--glare-opacity', '0');
   activeTiltTarget = null;
+}
+
+// Mobile Gyroscope 3D Holo Tilt
+if (window.DeviceOrientationEvent) {
+  window.addEventListener('deviceorientation', (e) => {
+    if (window.__LOW_PERF || !interactiveCard) return;
+    if (e.gamma === null || e.beta === null) return;
+    const gamma = Math.max(-35, Math.min(35, e.gamma));
+    const beta = Math.max(15, Math.min(75, e.beta)) - 45;
+    const tiltY = (gamma / 35) * 12;
+    const tiltX = -(beta / 30) * 12;
+    const angle = Math.round(Math.atan2(beta, gamma) * (180 / Math.PI) + 90);
+    const px = (gamma + 35) / 70;
+    const py = (beta + 30) / 60;
+    
+    interactiveCard.style.setProperty('--tilt-x', `${tiltX.toFixed(2)}deg`);
+    interactiveCard.style.setProperty('--tilt-y', `${tiltY.toFixed(2)}deg`);
+    interactiveCard.style.setProperty('--holo-angle', `${angle}deg`);
+    interactiveCard.style.setProperty('--holo-pos-x', `${(px * 100).toFixed(1)}%`);
+    interactiveCard.style.setProperty('--holo-pos-y', `${(py * 100).toFixed(1)}%`);
+    interactiveCard.style.setProperty('--holo-opacity', '0.65');
+    interactiveCard.style.setProperty('--glare-x', `${Math.round(px * 100)}%`);
+    interactiveCard.style.setProperty('--glare-y', `${Math.round(py * 100)}%`);
+    interactiveCard.style.setProperty('--glare-opacity', '0.7');
+  });
 }
 
 function spawnCardRipple(event) {
@@ -2563,6 +2605,8 @@ if (interactiveCard) {
   toggleBtn.addEventListener('click', function (e) {
     e.stopPropagation();
     menu.classList.toggle('hidden');
+    var wMenu = document.getElementById('weather-menu');
+    if (wMenu) wMenu.classList.add('hidden');
   });
 
   // Select theme
@@ -2585,6 +2629,327 @@ if (interactiveCard) {
 /* ============================================================
    END THEME SWITCHER
    ============================================================ */
+
+/* ============================================================
+   WEATHER PARTICLES ENGINE (Sakura, Snow, Cyber Rain, Stardust)
+   ============================================================ */
+(function initWeatherParticles() {
+  var canvas = document.getElementById('weather-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  var weatherToggle = document.getElementById('weather-toggle');
+  var weatherMenu = document.getElementById('weather-menu');
+  var weatherOptions = document.querySelectorAll('.weather-option');
+
+  var WEATHER_ICONS = {
+    sakura: '🌸',
+    snow: '❄️',
+    rain: '🌧️',
+    stars: '✨',
+    off: '🚫'
+  };
+
+  var WEATHER_TITLES = {
+    sakura: 'Thời tiết nền: Hoa Anh Đào',
+    snow: 'Thời tiết nền: Tuyết Rơi',
+    rain: 'Thời tiết nền: Mưa Cyber',
+    stars: 'Thời tiết nền: Bụi Sao Lấp Lánh',
+    off: 'Thời tiết nền: Đang Tắt'
+  };
+
+  var STORAGE_KEY = 'profile-weather';
+  var currentWeather = 'sakura';
+  var particles = [];
+  var animId = null;
+  var width = 0;
+  var height = 0;
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    initParticles();
+  }
+  window.addEventListener('resize', resize);
+
+  // Particle Generators
+  function createSakura() {
+    return {
+      x: Math.random() * width,
+      y: Math.random() * -height - 20,
+      size: 9 + Math.random() * 9,
+      speedY: 1.2 + Math.random() * 1.8,
+      speedX: -0.6 + Math.random() * 1.4,
+      angle: Math.random() * Math.PI * 2,
+      angularSpeed: (Math.random() - 0.5) * 0.035,
+      flip: Math.random() * Math.PI,
+      flipSpeed: 0.02 + Math.random() * 0.03,
+      opacity: 0.6 + Math.random() * 0.35,
+      color: ['#ffb7d5', '#ffa0c8', '#ffc5e0', '#ffe4f0'][Math.floor(Math.random() * 4)]
+    };
+  }
+
+  function createSnow() {
+    var depth = 0.3 + Math.random() * 0.7;
+    return {
+      x: Math.random() * width,
+      y: Math.random() * -height,
+      radius: (1.5 + Math.random() * 3.5) * depth,
+      speedY: (0.8 + Math.random() * 1.8) * depth,
+      speedX: (Math.random() - 0.5) * 0.8 * depth,
+      sway: Math.random() * Math.PI * 2,
+      swaySpeed: 0.02 + Math.random() * 0.02,
+      opacity: 0.4 + depth * 0.55
+    };
+  }
+
+  function createRain() {
+    return {
+      x: Math.random() * (width + 200),
+      y: Math.random() * -height,
+      len: 18 + Math.random() * 24,
+      speedY: 14 + Math.random() * 10,
+      speedX: -3.5 - Math.random() * 2,
+      opacity: 0.3 + Math.random() * 0.5,
+      color: Math.random() > 0.3 ? '#00f3ff' : '#ff7adf'
+    };
+  }
+
+  function createStar() {
+    return {
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: 1 + Math.random() * 3,
+      speedY: -0.3 - Math.random() * 0.5,
+      speedX: (Math.random() - 0.5) * 0.4,
+      pulse: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.03 + Math.random() * 0.05,
+      opacity: 0.2 + Math.random() * 0.8,
+      isSparkle: Math.random() > 0.65,
+      color: ['#ffffff', '#a5f3fc', '#fbcfe8', '#fef08a'][Math.floor(Math.random() * 4)]
+    };
+  }
+
+  function initParticles() {
+    particles = [];
+    if (currentWeather === 'off' || window.__LOW_PERF) return;
+
+    var count = 36;
+    if (currentWeather === 'sakura') count = window.innerWidth < 768 ? 26 : 42;
+    else if (currentWeather === 'snow') count = window.innerWidth < 768 ? 45 : 75;
+    else if (currentWeather === 'rain') count = window.innerWidth < 768 ? 55 : 95;
+    else if (currentWeather === 'stars') count = window.innerWidth < 768 ? 35 : 60;
+
+    for (var i = 0; i < count; i++) {
+      if (currentWeather === 'sakura') {
+        var p = createSakura();
+        p.y = Math.random() * height;
+        particles.push(p);
+      } else if (currentWeather === 'snow') {
+        var p2 = createSnow();
+        p2.y = Math.random() * height;
+        particles.push(p2);
+      } else if (currentWeather === 'rain') {
+        var p3 = createRain();
+        p3.y = Math.random() * height;
+        particles.push(p3);
+      } else if (currentWeather === 'stars') {
+        particles.push(createStar());
+      }
+    }
+  }
+
+  function drawSakuraPetal(ctx, x, y, size, angle, flip, color, opacity) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    ctx.scale(Math.cos(flip), 1);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = opacity;
+    ctx.shadowBlur = 4;
+    ctx.shadowColor = color;
+
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(-size / 2, -size / 2, -size / 2, size / 3, 0, size);
+    ctx.bezierCurveTo(size / 2, size / 3, size / 2, -size / 2, 0, 0);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawSparkle(ctx, x, y, size, color, opacity) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = opacity;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = color;
+
+    ctx.beginPath();
+    ctx.moveTo(0, -size * 2);
+    ctx.quadraticCurveTo(0, 0, size * 2, 0);
+    ctx.quadraticCurveTo(0, 0, 0, size * 2);
+    ctx.quadraticCurveTo(0, 0, -size * 2, 0);
+    ctx.quadraticCurveTo(0, 0, 0, -size * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function loop() {
+    if (currentWeather === 'off' || window.__LOW_PERF) {
+      ctx.clearRect(0, 0, width, height);
+      animId = null;
+      return;
+    }
+
+    ctx.clearRect(0, 0, width, height);
+
+    if (currentWeather === 'sakura') {
+      particles.forEach(function (p) {
+        p.y += p.speedY;
+        p.x += p.speedX + Math.sin(p.flip) * 0.8;
+        p.angle += p.angularSpeed;
+        p.flip += p.flipSpeed;
+
+        if (p.y > height + 20 || p.x < -40 || p.x > width + 40) {
+          p.y = -20;
+          p.x = Math.random() * width;
+        }
+        drawSakuraPetal(ctx, p.x, p.y, p.size, p.angle, p.flip, p.color, p.opacity);
+      });
+    } else if (currentWeather === 'snow') {
+      particles.forEach(function (p) {
+        p.y += p.speedY;
+        p.sway += p.swaySpeed;
+        p.x += p.speedX + Math.sin(p.sway) * 0.6;
+
+        if (p.y > height + 10) {
+          p.y = -10;
+          p.x = Math.random() * width;
+        }
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.globalAlpha = p.opacity;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = 'rgba(255,255,255,0.8)';
+        ctx.fill();
+        ctx.restore();
+      });
+    } else if (currentWeather === 'rain') {
+      particles.forEach(function (p) {
+        p.y += p.speedY;
+        p.x += p.speedX;
+
+        if (p.y > height + p.len) {
+          p.y = -p.len;
+          p.x = Math.random() * (width + 200);
+        }
+
+        ctx.save();
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = 1.6;
+        ctx.globalAlpha = p.opacity;
+        ctx.shadowBlur = 4;
+        ctx.shadowColor = p.color;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x + p.speedX * 1.5, p.y + p.len);
+        ctx.stroke();
+        ctx.restore();
+      });
+    } else if (currentWeather === 'stars') {
+      particles.forEach(function (p) {
+        p.y += p.speedY;
+        p.x += p.speedX;
+        p.pulse += p.pulseSpeed;
+        var currentOpacity = p.opacity * (0.5 + 0.5 * Math.sin(p.pulse));
+
+        if (p.y < -10) {
+          p.y = height + 10;
+          p.x = Math.random() * width;
+        }
+
+        if (p.isSparkle) {
+          drawSparkle(ctx, p.x, p.y, p.size, p.color, currentOpacity);
+        } else {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = currentOpacity;
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = p.color;
+          ctx.fill();
+          ctx.restore();
+        }
+      });
+    }
+
+    animId = requestAnimationFrame(loop);
+  }
+
+  function setWeather(mode) {
+    if (!WEATHER_ICONS[mode]) mode = 'sakura';
+    currentWeather = mode;
+    if (weatherToggle) {
+      weatherToggle.textContent = WEATHER_ICONS[mode] || '🌸';
+      weatherToggle.title = WEATHER_TITLES[mode] || 'Thời tiết nền';
+    }
+    weatherOptions.forEach(function (opt) {
+      opt.classList.toggle('active', opt.dataset.weather === mode);
+    });
+    try { localStorage.setItem(STORAGE_KEY, mode); } catch (e) {}
+    
+    initParticles();
+    if (currentWeather !== 'off' && !animId) {
+      animId = requestAnimationFrame(loop);
+    }
+  }
+
+  // Toggle dropdown
+  if (weatherToggle && weatherMenu) {
+    weatherToggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      weatherMenu.classList.toggle('hidden');
+      var themeMenu = document.getElementById('theme-menu');
+      if (themeMenu) themeMenu.classList.add('hidden');
+    });
+
+    weatherOptions.forEach(function (opt) {
+      opt.addEventListener('click', function () {
+        setWeather(opt.dataset.weather);
+        setTimeout(function () {
+          weatherMenu.classList.add('hidden');
+        }, 150);
+      });
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!weatherMenu.contains(e.target) && e.target !== weatherToggle) {
+        weatherMenu.classList.add('hidden');
+      }
+    });
+  }
+
+  // Pause loop when tab is hidden for battery efficiency
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      if (animId) { cancelAnimationFrame(animId); animId = null; }
+    } else {
+      if (currentWeather !== 'off' && !animId) animId = requestAnimationFrame(loop);
+    }
+  });
+
+  // Init
+  resize();
+  var savedWeather = 'sakura';
+  try { savedWeather = localStorage.getItem(STORAGE_KEY) || 'sakura'; } catch (e) {}
+  setWeather(savedWeather);
+})();
 
 /* ============================================================
    PARALLAX BANNER — Mouse-driven layer movement
