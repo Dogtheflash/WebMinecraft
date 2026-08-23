@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&family=Chakra+Petch:wght@400;500;600;700&family=Press+Start+2P&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="favicon.png" type="image/png">
@@ -264,6 +264,7 @@
             <button class="weather-option" data-weather="off" title="Tắt hiệu ứng">🚫</button>
           </div>
           <button id="weather-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi hiệu ứng thời tiết" title="Thời tiết nền: Hoa Anh Đào">🌸</button>
+          <button id="snake-game-toggle" class="warp-btn" type="button" aria-label="Chơi game Rắn Săn Mồi" title="Game Rắn Săn Mồi (SERPENTINE)">🐍</button>
 
           <button id="yt-bg-toggle" class="warp-btn" type="button" aria-label="Chuyển sang Nền YouTube Lofi (kèm tiếng)" title="Bật/Tắt Nền YouTube (kèm tiếng)">🎬</button>
           <button id="yt-restart-btn" class="warp-btn hidden" type="button" aria-label="Quay lại từ đầu video YouTube" title="Quay lại từ đầu video YouTube">🔄</button>
@@ -656,8 +657,22 @@
     <canvas id="audio-visualizer" class="audio-visualizer player-visualizer viz-silent" aria-hidden="true"></canvas>
     <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
   </aside>
-  <!-- ========== END MUSIC PLAYER ========== -->
-  
+  <!-- ========== SERPENTINE SNAKE ARCADE GAME MODAL ========== -->
+  <div id="snake-modal" class="snake-modal hidden" aria-label="Game Rắn Săn Mồi SERPENTINE">
+    <div id="snake-backdrop" class="snake-modal-backdrop"></div>
+    <div class="snake-modal-dialog">
+      <div class="snake-modal-topbar">
+        <div class="snake-topbar-brand">
+          <span class="snake-brand-icon">🐍</span>
+          <span class="snake-brand-text">SERPENTINE · Arcade Snake</span>
+        </div>
+        <button id="snake-close-btn" class="snake-modal-close" type="button" aria-label="Đóng game" title="Đóng game (Esc)">✕</button>
+      </div>
+      <div id="root" class="snake-app-wrapper"></div>
+    </div>
+  </div>
+  <!-- ========================================================== -->
+
   <script src="script.js"></script>
 </body>
 </html>
