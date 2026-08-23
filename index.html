@@ -209,6 +209,7 @@
 
   <!-- ========== HYPERSPACE WARP ELEMENTS ========== -->
   <canvas id="warp-canvas" class="warp-canvas"></canvas>
+  <canvas id="weather-canvas" class="weather-canvas" aria-hidden="true"></canvas>
   <div id="easter-egg" class="easter-egg hidden">
     <h1 class="matrix-text">Welcome to the Matrix</h1>
     <button id="return-warp-btn" class="mini-btn">RETURN</button>
@@ -236,8 +237,12 @@
 
     <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
       <article class="profile-console glass-panel">
+        <!-- Hologram 3D Foil & Glare Layers -->
+        <div class="holo-foil" aria-hidden="true"></div>
+        <div class="holo-glare" aria-hidden="true"></div>
+
         <!-- ========== COMPANION MOVED TO HEADER ========== -->
-        <!-- ========== THEME SWITCHER & WARP ========== -->
+        <!-- ========== THEME SWITCHER & WEATHER & WARP ========== -->
         <div id="theme-switcher" class="theme-switcher">
           <div id="theme-menu" class="theme-menu hidden">
             <button class="theme-option active" data-theme="cyber" title="Dark Cyber">🌙</button>
@@ -248,6 +253,18 @@
             <button id="theme-auto" class="theme-option-auto" type="button" title="Tự động đổi theo giờ Việt Nam">🕒</button>
           </div>
           <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi giao diện">🌙</button>
+
+          <!-- Weather Controller -->
+          <div id="weather-menu" class="weather-menu hidden">
+            <button class="weather-option active" data-weather="sakura" title="Hoa Anh Đào">🌸</button>
+            <button class="weather-option" data-weather="snow" title="Tuyết Rơi">❄️</button>
+            <button class="weather-option" data-weather="rain" title="Mưa Cyber">🌧️</button>
+            <button class="weather-option" data-weather="stars" title="Bụi Sao Lấp Lánh">✨</button>
+            <span class="theme-sep" aria-hidden="true"></span>
+            <button class="weather-option" data-weather="off" title="Tắt hiệu ứng">🚫</button>
+          </div>
+          <button id="weather-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi hiệu ứng thời tiết" title="Thời tiết nền: Hoa Anh Đào">🌸</button>
+
           <button id="yt-bg-toggle" class="warp-btn" type="button" aria-label="Chuyển sang Nền YouTube Lofi (kèm tiếng)" title="Bật/Tắt Nền YouTube (kèm tiếng)">🎬</button>
           <button id="yt-restart-btn" class="warp-btn hidden" type="button" aria-label="Quay lại từ đầu video YouTube" title="Quay lại từ đầu video YouTube">🔄</button>
           <button id="warp-btn" class="warp-btn" type="button" aria-label="Hyperspace Jump" title="Warp Speed!">🚀</button>
