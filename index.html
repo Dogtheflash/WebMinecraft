@@ -264,11 +264,11 @@
             <button class="weather-option" data-weather="off" title="Tắt hiệu ứng">🚫</button>
           </div>
           <button id="weather-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi hiệu ứng thời tiết" title="Thời tiết nền: Hoa Anh Đào">🌸</button>
-          <button id="snake-game-toggle" class="warp-btn" type="button" aria-label="Chơi game Rắn Săn Mồi" title="Game Rắn Săn Mồi (SERPENTINE)">🐍</button>
 
           <button id="yt-bg-toggle" class="warp-btn" type="button" aria-label="Chuyển sang Nền YouTube Lofi (kèm tiếng)" title="Bật/Tắt Nền YouTube (kèm tiếng)">🎬</button>
           <button id="yt-restart-btn" class="warp-btn hidden" type="button" aria-label="Quay lại từ đầu video YouTube" title="Quay lại từ đầu video YouTube">🔄</button>
           <button id="warp-btn" class="warp-btn" type="button" aria-label="Hyperspace Jump" title="Warp Speed!">🚀</button>
+          <button id="snake-game-btn" class="warp-btn" type="button" aria-label="Chơi game Rắn Săn Mồi" title="SERPENTINE — Arcade Snake">🐍</button>
         </div>
         <!-- ========== END THEME SWITCHER ========== -->
 
@@ -657,22 +657,168 @@
     <canvas id="audio-visualizer" class="audio-visualizer player-visualizer viz-silent" aria-hidden="true"></canvas>
     <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
   </aside>
-  <!-- ========== SERPENTINE SNAKE ARCADE GAME MODAL ========== -->
-  <div id="snake-modal" class="snake-modal hidden" aria-label="Game Rắn Săn Mồi SERPENTINE">
-    <div id="snake-backdrop" class="snake-modal-backdrop"></div>
-    <div class="snake-modal-dialog">
-      <div class="snake-modal-topbar">
-        <div class="snake-topbar-brand">
-          <span class="snake-brand-icon">🐍</span>
-          <span class="snake-brand-text">SERPENTINE · Arcade Snake</span>
+  <!-- ========== SERPENTINE — SNAKE GAME (fullscreen overlay) ========== -->
+<div id="snake-overlay" class="snake-overlay hidden" aria-modal="true" role="dialog" aria-label="SERPENTINE — Arcade Snake">
+  <div class="snake-shell">
+    <!-- header -->
+    <header class="snake-header">
+      <div class="snake-brand">
+        <svg viewBox="0 0 32 32" class="snake-logo" aria-hidden="true">
+          <rect width="32" height="32" rx="6" fill="#0c1d13" stroke="#2c4a37"/>
+          <path d="M25 9a5 5 0 0 0-5-4H10a4 4 0 0 0 0 8h12a4 4 0 0 1 0 8H8" stroke="#8ef05a" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+          <circle cx="25.4" cy="9" r="2.8" fill="#acf664"/>
+          <circle cx="26.1" cy="8.3" r="0.9" fill="#0d2818"/>
+        </svg>
+        <div>
+          <h1 class="snake-title">SERPENTINE</h1>
+          <p class="snake-subtitle">a tiny arcade serpent</p>
         </div>
-        <button id="snake-close-btn" class="snake-modal-close" type="button" aria-label="Đóng game" title="Đóng game (Esc)">✕</button>
       </div>
-      <div id="root" class="snake-app-wrapper"></div>
-    </div>
-  </div>
-  <!-- ========================================================== -->
+      <div class="snake-header-actions">
+        <button type="button" class="snake-icon-btn" id="snake-mute-btn" aria-label="Sound" title="Sound (M)">🔊</button>
+        <button type="button" class="snake-icon-btn" id="snake-pause-btn" aria-label="Pause / resume" title="Pause / resume (Space)">⏸</button>
+        <button type="button" class="snake-icon-btn" id="snake-restart-btn" aria-label="Restart" title="Restart (R)">⟲</button>
+        <button type="button" class="snake-icon-btn snake-close-btn" id="snake-close-btn" aria-label="Đóng game" title="Đóng (Esc)">✕</button>
+      </div>
+    </header>
 
-  <script src="script.js"></script>
+    <!-- main -->
+    <main class="snake-main">
+      <section class="snake-board-col">
+        <div class="snake-score-strip">
+          <div class="snake-score-cell">
+            <span class="snake-score-label">SCORE</span>
+            <span class="snake-score-value" id="snake-score">0</span>
+          </div>
+          <div class="snake-score-cell">
+            <span class="snake-score-label">🏆 BEST</span>
+            <span class="snake-score-value snake-score-muted" id="snake-best">0</span>
+          </div>
+          <div class="snake-score-cell">
+            <span class="snake-score-label">⚡ LENGTH</span>
+            <span class="snake-score-value snake-score-accent" id="snake-len">3</span>
+          </div>
+        </div>
+
+        <div class="snake-diff-picker" id="snake-diff-compact">
+          <button type="button" class="snake-diff-btn" data-diff="chill">Chill</button>
+          <button type="button" class="snake-diff-btn" data-diff="classic">Classic</button>
+          <button type="button" class="snake-diff-btn" data-diff="turbo">Turbo</button>
+        </div>
+
+        <div class="snake-board-frame" id="snake-board-wrap">
+          <canvas id="snake-canvas"></canvas>
+          <span class="snake-corner snake-corner-tl"></span>
+          <span class="snake-corner snake-corner-tr"></span>
+          <span class="snake-corner snake-corner-bl"></span>
+          <span class="snake-corner snake-corner-br"></span>
+          <span class="snake-mode-tag" id="snake-mode-tag">CLASSIC</span>
+
+          <div class="snake-overlay-layer hidden" id="snake-ov-idle">
+            <p class="snake-eyebrow">◢ CABINET No.1 ◣</p>
+            <h2 class="snake-retro-title">SERPENTINE</h2>
+            <p class="snake-tagline">eat · grow · survive</p>
+            <p class="snake-blink">TAP OR PRESS SPACE TO START</p>
+            <div class="snake-hint-row">
+              <span><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> steer</span>
+              <span><kbd>SPACE</kbd> pause</span>
+            </div>
+          </div>
+
+          <div class="snake-overlay-layer hidden" id="snake-ov-ready">
+            <p class="snake-eyebrow" id="snake-ready-mode">CLASSIC MODE</p>
+            <p class="snake-retro-title snake-pulse">READY?</p>
+          </div>
+
+          <div class="snake-overlay-layer hidden" id="snake-ov-paused">
+            <p class="snake-paused-title">PAUSED</p>
+            <p class="snake-tagline">the serpent naps</p>
+            <div class="snake-btn-row">
+              <button type="button" class="snake-btn snake-btn-primary" id="snake-resume-btn">▶ Resume</button>
+              <button type="button" class="snake-btn snake-btn-ghost" id="snake-restart-btn2">⟲ Restart</button>
+            </div>
+            <p class="snake-hint-small"><kbd>SPACE</kbd> to resume</p>
+          </div>
+
+          <div class="snake-overlay-layer hidden" id="snake-ov-over">
+            <p class="snake-over-title">GAME OVER</p>
+            <p class="snake-newbest hidden" id="snake-newbest">★ NEW BEST ★</p>
+            <p class="snake-tagline hidden" id="snake-bestline">best · 0</p>
+            <p class="snake-eyebrow">FINAL SCORE</p>
+            <p class="snake-retro-title" id="snake-final-score">0</p>
+            <button type="button" class="snake-btn snake-btn-primary" id="snake-again-btn">⟲ Play again</button>
+            <p class="snake-hint-small">or press <kbd>R</kbd></p>
+          </div>
+        </div>
+
+        <div class="snake-dpad" id="snake-dpad">
+          <div></div>
+          <button type="button" class="snake-dbtn" data-dir="up" aria-label="Up">▲</button>
+          <div></div>
+          <button type="button" class="snake-dbtn" data-dir="left" aria-label="Left">◀</button>
+          <button type="button" class="snake-dbtn snake-dbtn-primary" id="snake-dpad-primary" aria-label="Play/Pause">▶</button>
+          <button type="button" class="snake-dbtn" data-dir="right" aria-label="Right">▶</button>
+          <div></div>
+          <button type="button" class="snake-dbtn" data-dir="down" aria-label="Down">▼</button>
+          <div></div>
+        </div>
+        <p class="snake-hint-mobile">swipe the board or use the pad</p>
+
+        <div class="snake-hint-row snake-hint-desktop">
+          <span><kbd>↑↓←→</kbd>/<kbd>WASD</kbd> steer</span>
+          <span><kbd>SPACE</kbd> pause</span>
+          <span><kbd>R</kbd> restart</span>
+          <span><kbd>M</kbd> sound</span>
+          <span><kbd>1·2·3</kbd> speed</span>
+        </div>
+      </section>
+
+      <aside class="snake-side-col">
+        <section class="snake-panel">
+          <h3 class="snake-panel-title">⚡ SPEED</h3>
+          <div class="snake-diff-list" id="snake-diff-list">
+            <button type="button" class="snake-diff-row" data-diff="chill">
+              <span class="snake-diff-row-top"><span><b>1</b> CHILL</span><span class="snake-dots" data-dots="1"></span></span>
+              <span class="snake-diff-blurb">A lazy garden snake.</span>
+            </button>
+            <button type="button" class="snake-diff-row" data-diff="classic">
+              <span class="snake-diff-row-top"><span><b>2</b> CLASSIC</span><span class="snake-dots" data-dots="2"></span></span>
+              <span class="snake-diff-blurb">The arcade standard.</span>
+            </button>
+            <button type="button" class="snake-diff-row" data-diff="turbo">
+              <span class="snake-diff-row-top"><span><b>3</b> TURBO</span><span class="snake-dots" data-dots="3"></span></span>
+              <span class="snake-diff-blurb">A caffeinated viper.</span>
+            </button>
+          </div>
+          <p class="snake-locked-note hidden" id="snake-locked-note">Speed is locked mid-run — it switches on your next game.</p>
+        </section>
+
+        <section class="snake-panel">
+          <h3 class="snake-panel-title">🏆 HALL OF FAME</h3>
+          <ul class="snake-bests-list" id="snake-bests-list">
+            <li><span data-b="chill">CHILL</span><span data-v="chill">——</span></li>
+            <li><span data-b="classic">CLASSIC</span><span data-v="classic">——</span></li>
+            <li><span data-b="turbo">TURBO</span><span data-v="turbo">——</span></li>
+          </ul>
+          <p class="snake-locked-note">Saved locally, per speed.</p>
+        </section>
+
+        <section class="snake-panel">
+          <h3 class="snake-panel-title">FIELD NOTES</h3>
+          <ul class="snake-notes">
+            <li><span class="snake-dot snake-dot-red"></span>Apples are worth <b>10</b>. Every 5th apple summons a golden fruit.</li>
+            <li><span class="snake-dot snake-dot-gold"></span>Golden fruit is worth <b>50</b> — grab it before it blinks out.</li>
+            <li><span class="snake-dot snake-dot-green"></span>The serpent speeds up as it grows. Walls and your own tail are fatal.</li>
+          </ul>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="snake-footer">serpentine · canvas · no serpents were harmed</footer>
+  </div>
+</div>
+<!-- ====================================================================== -->
+
+<script src="script.js"></script>
 </body>
 </html>
