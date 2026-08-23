@@ -1,15 +1,10 @@
 /* ════════════════════════════════════════════════════════════
-   CHẾ ĐỘ NHẸ — bật trên điện thoại / máy yếu / màn cảm ứng.
+   CHẾ ĐỘ NHẸ — chỉ bật khi người dùng chọn prefers-reduced-motion
    Các hiệu ứng ăn GPU sẽ tự tắt thay vì làm rớt khung hình.
    ════════════════════════════════════════════════════════════ */
 window.__LOW_PERF = (function () {
   try {
-    var touch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
-    var small = window.matchMedia('(max-width: 900px)').matches;
-    var weak  = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
-    var slow  = (navigator.connection && navigator.connection.saveData) === true;
-    var rm    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    return touch || small || weak || slow || rm;
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   } catch (e) { return false; }
 })();
 if (window.__LOW_PERF) document.documentElement.classList.add('low-perf');
@@ -2307,10 +2302,8 @@ function getTiltTarget() {
 }
 
 function updateCardPointer(event) {
-  if (window.__LOW_PERF) return;
   const target = getTiltTarget();
   if (!target) return;
-  if (activeTiltTarget && activeTiltTarget !== target) resetCardPointer();
   activeTiltTarget = target;
   const rect = target.getBoundingClientRect();
   const x = event.clientX - rect.left;
@@ -2318,7 +2311,7 @@ function updateCardPointer(event) {
   const px = Math.max(0, Math.min(1, x / rect.width));
   const py = Math.max(0, Math.min(1, y / rect.height));
   
-  // 3D Tilt calculation (max 15 degrees for dramatic 3D effect)
+  // 3D Tilt calculation (max 16 degrees for distinct 3D depth)
   const tiltY = (px - 0.5) * 16;
   const tiltX = (0.5 - py) * 16;
   
@@ -2333,10 +2326,10 @@ function updateCardPointer(event) {
   target.style.setProperty('--holo-angle', `${angle}deg`);
   target.style.setProperty('--holo-pos-x', `${(px * 100).toFixed(1)}%`);
   target.style.setProperty('--holo-pos-y', `${(py * 100).toFixed(1)}%`);
-  target.style.setProperty('--holo-opacity', '0.75');
+  target.style.setProperty('--holo-opacity', '0.8');
   target.style.setProperty('--glare-x', `${glareX}%`);
   target.style.setProperty('--glare-y', `${glareY}%`);
-  target.style.setProperty('--glare-opacity', '0.85');
+  target.style.setProperty('--glare-opacity', '0.9');
   target.classList.add('interactive-hover');
 }
 
@@ -2355,30 +2348,31 @@ function resetCardPointer() {
 // Mobile Gyroscope 3D Holo Tilt
 if (window.DeviceOrientationEvent) {
   window.addEventListener('deviceorientation', (e) => {
-    if (window.__LOW_PERF || !interactiveCard) return;
+    if (!interactiveCard) return;
     if (e.gamma === null || e.beta === null) return;
     const gamma = Math.max(-35, Math.min(35, e.gamma));
     const beta = Math.max(15, Math.min(75, e.beta)) - 45;
-    const tiltY = (gamma / 35) * 12;
-    const tiltX = -(beta / 30) * 12;
+    const tiltY = (gamma / 35) * 14;
+    const tiltX = -(beta / 30) * 14;
     const angle = Math.round(Math.atan2(beta, gamma) * (180 / Math.PI) + 90);
     const px = (gamma + 35) / 70;
     const py = (beta + 30) / 60;
     
     interactiveCard.style.setProperty('--tilt-x', `${tiltX.toFixed(2)}deg`);
     interactiveCard.style.setProperty('--tilt-y', `${tiltY.toFixed(2)}deg`);
+    interactiveCard.style.setProperty('--card-scale', '1.01');
     interactiveCard.style.setProperty('--holo-angle', `${angle}deg`);
     interactiveCard.style.setProperty('--holo-pos-x', `${(px * 100).toFixed(1)}%`);
     interactiveCard.style.setProperty('--holo-pos-y', `${(py * 100).toFixed(1)}%`);
-    interactiveCard.style.setProperty('--holo-opacity', '0.65');
+    interactiveCard.style.setProperty('--holo-opacity', '0.75');
     interactiveCard.style.setProperty('--glare-x', `${Math.round(px * 100)}%`);
     interactiveCard.style.setProperty('--glare-y', `${Math.round(py * 100)}%`);
-    interactiveCard.style.setProperty('--glare-opacity', '0.7');
+    interactiveCard.style.setProperty('--glare-opacity', '0.8');
+    interactiveCard.classList.add('interactive-hover');
   });
 }
 
 function spawnCardRipple(event) {
-  if (window.__LOW_PERF) return;
   const target = getTiltTarget();
   if (!target) return;
   const now = Date.now();
@@ -2406,27 +2400,27 @@ if (pointerGlow) {
 }
 
 if (interactiveCard) {
-  document.addEventListener('pointermove', (event) => {
-    const target = getTiltTarget();
-    if (!target || !target.contains(event.target)) {
-      if (activeTiltTarget) resetCardPointer();
-      return;
-    }
+  interactiveCard.addEventListener('pointermove', updateCardPointer);
+  interactiveCard.addEventListener('pointerleave', resetCardPointer);
+  interactiveCard.addEventListener('pointerdown', (event) => {
     updateCardPointer(event);
     spawnCardRipple(event);
+  });
+
+  document.addEventListener('pointermove', (event) => {
+    const target = getTiltTarget();
+    if (!target) return;
+    if (target.contains(event.target)) {
+      updateCardPointer(event);
+      spawnCardRipple(event);
+    } else if (activeTiltTarget) {
+      resetCardPointer();
+    }
   });
   document.addEventListener('pointerdown', (event) => {
     const target = getTiltTarget();
     if (!target || !target.contains(event.target)) return;
     spawnCardRipple(event);
-  });
-  document.addEventListener('pointerover', (event) => {
-    const target = getTiltTarget();
-    if (target && target.contains(event.target)) activeTiltTarget = target;
-  });
-  document.addEventListener('pointerout', (event) => {
-    const target = activeTiltTarget;
-    if (target && !target.contains(event.relatedTarget)) resetCardPointer();
   });
 }
 
@@ -2737,13 +2731,13 @@ if (interactiveCard) {
 
   function initParticles() {
     particles = [];
-    if (currentWeather === 'off' || window.__LOW_PERF) return;
+    if (currentWeather === 'off') return;
 
     var count = 36;
-    if (currentWeather === 'sakura') count = window.innerWidth < 768 ? 26 : 42;
-    else if (currentWeather === 'snow') count = window.innerWidth < 768 ? 45 : 75;
-    else if (currentWeather === 'rain') count = window.innerWidth < 768 ? 55 : 95;
-    else if (currentWeather === 'stars') count = window.innerWidth < 768 ? 35 : 60;
+    if (currentWeather === 'sakura') count = window.innerWidth < 768 ? 30 : 48;
+    else if (currentWeather === 'snow') count = window.innerWidth < 768 ? 50 : 85;
+    else if (currentWeather === 'rain') count = window.innerWidth < 768 ? 65 : 110;
+    else if (currentWeather === 'stars') count = window.innerWidth < 768 ? 40 : 70;
 
     for (var i = 0; i < count; i++) {
       if (currentWeather === 'sakura') {
