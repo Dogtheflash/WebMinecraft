@@ -4423,3 +4423,80 @@ if (interactiveCard) {
     }
   });
 })();
+
+
+/* ════════════════════════════════════════════════════════════
+   ██  SCROLLSPY CONTROLLER — TỰ ĐỘNG THEO DÕI CUỘN LÊN / XUỐNG
+   ════════════════════════════════════════════════════════════ */
+(function initScrollspy() {
+  const spyDots = document.querySelectorAll('.spy-dot');
+  const scrollTopBtn = document.getElementById('scroll-top-btn');
+
+  // Smooth scroll on dot click (both UP and DOWN)
+  spyDots.forEach(dot => {
+    dot.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetSel = dot.getAttribute('data-target');
+      const targetEl = document.querySelector(targetSel);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  });
+
+  // Back to top button
+  if (scrollTopBtn) {
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // Scroll handler with throttle
+  let scrollTicking = false;
+  function updateScrollState() {
+    const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+
+    // Show/hide Back-to-top button
+    if (scrollTopBtn) {
+      if (scrollY > 160) {
+        scrollTopBtn.classList.remove('hidden');
+      } else {
+        scrollTopBtn.classList.add('hidden');
+      }
+    }
+
+    // Scrollspy active section detection
+    const sections = Array.from(spyDots).map(dot => {
+      const targetSel = dot.getAttribute('data-target');
+      return { dot, el: document.querySelector(targetSel) };
+    }).filter(item => item.el && !item.el.classList.contains('hidden'));
+
+    const viewportCenter = scrollY + (window.innerHeight / 2);
+    let activeItem = sections[0];
+
+    for (let i = 0; i < sections.length; i++) {
+      const rect = sections[i].el.getBoundingClientRect();
+      const elementTop = rect.top + scrollY;
+      if (elementTop <= viewportCenter) {
+        activeItem = sections[i];
+      }
+    }
+
+    spyDots.forEach(d => d.classList.remove('active'));
+    if (activeItem) {
+      activeItem.dot.classList.add('active');
+    }
+
+    scrollTicking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!scrollTicking) {
+      window.requestAnimationFrame(updateScrollState);
+      scrollTicking = true;
+    }
+  }, { passive: true });
+
+  // Initial call
+  updateScrollState();
+})();
