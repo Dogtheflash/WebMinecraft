@@ -272,6 +272,39 @@
         <!-- ========== END THEME SWITCHER ========== -->
 
 
+        
+        <!-- ========== PROFILE SCROLLSPY NAVIGATION ========== -->
+        <nav class="profile-scrollspy" id="profile-scrollspy" aria-label="Mục lục cuộn trang">
+          <a href="#sec-header" class="spy-dot active" data-target="#sec-header" aria-label="Đầu trang / Hồ sơ">
+            <span class="spy-tooltip">👤 Hồ sơ</span>
+          </a>
+          <a href="#sec-presence" class="spy-dot" data-target="#sec-presence" aria-label="Trạng thái">
+            <span class="spy-tooltip">🐱 Trạng thái</span>
+          </a>
+          <a href="#activity-card" class="spy-dot" data-target="#activity-card" aria-label="Hoạt động">
+            <span class="spy-tooltip">🎮 Hoạt động</span>
+          </a>
+          <a href="#sec-meta" class="spy-dot" data-target="#sec-meta" aria-label="Huy hiệu & Spotify">
+            <span class="spy-tooltip">✦ Huy hiệu</span>
+          </a>
+          <a href="#sec-about" class="spy-dot" data-target="#sec-about" aria-label="Giới thiệu">
+            <span class="spy-tooltip">📝 Giới thiệu</span>
+          </a>
+          <a href="#sec-social" class="spy-dot" data-target="#sec-social" aria-label="Liên kết mạng xã hội">
+            <span class="spy-tooltip">🌐 Mạng xã hội</span>
+          </a>
+          <a href="#sec-footer" class="spy-dot" data-target="#sec-footer" aria-label="Khám phá">
+            <span class="spy-tooltip">🔗 Khám phá</span>
+          </a>
+        </nav>
+
+        <!-- Nút cuộn nhanh lên đầu trang -->
+        <button id="scroll-top-btn" class="scroll-top-btn hidden" type="button" aria-label="Cuộn lên đầu trang" title="Cuộn lên đầu trang (Home / ↑)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 15l-6-6-6 6"/>
+          </svg>
+        </button>
+        <!-- ================================================= -->
         <div class="profile-banner">
           <!-- Parallax Layer 0: Base image -->
           <div class="plx-layer" data-depth="0.03">
@@ -290,7 +323,7 @@
           <div class="banner-glow"></div>
         </div>
 
-        <header class="profile-header">
+        <header class="profile-header" id="sec-header">
           <div class="avatar-wrap" id="avatar-wrap">
             <span class="avatar-ring" aria-hidden="true"></span>
             <img id="avatar-image" class="avatar-image" src="https://images-ext-1.discordapp.net/external/Pk9lpqQlm9eiN65fVc4VsGsRbedZwUbAsCBLXPHvHq8/%3Fsize%3D4096/https://cdn.discordapp.com/avatars/917263515209859102/cd121ea4baf2512e6e98f16f0f2a8d04.png?size=4096" alt="Ảnh đại diện Discord" />
@@ -306,7 +339,7 @@
           </div>
         </header>
 
-        <section class="presence-card" aria-labelledby="presence-title" style="position: relative;">
+        <section class="presence-card" id="sec-presence" aria-labelledby="presence-title" style="position: relative;">
           <!-- ========== INTERACTIVE COMPANION ========== -->
           <div class="css-chibi" aria-hidden="true">
             <div id="comp-chat" class="comp-chat">Bấm vào mình đi!</div>
@@ -363,7 +396,7 @@
           </div>
         </section>
 
-        <section class="meta-grid" aria-label="Thông tin realtime Discord">
+        <section class="meta-grid" id="sec-meta" aria-label="Thông tin realtime Discord">
           <div><span>Spotify</span><strong id="spotify-status">Chưa phát hiện</strong></div>
           <div>
             <span>Huy hiệu</span>
@@ -371,7 +404,7 @@
           </div>
         </section>
 
-        <section class="about-card">
+        <section class="about-card" id="sec-about">
           <h2>Giới thiệu</h2>
           <p>Một góc hồ sơ nhỏ gọn của Chinatsu Kamado, lấy cảm hứng nhẹ từ Discord nhưng vẫn giữ phong cách anime riêng: tối, gọn, mượt và có chiều sâu.</p>
           <div class="tags" aria-label="Thẻ hồ sơ">
@@ -383,7 +416,7 @@
         </section>
 
 
-        <nav class="social-row" aria-label="Liên kết mạng xã hội">
+        <nav class="social-row" id="sec-social" aria-label="Liên kết mạng xã hội">
           <a id="discord-link" href="https://discord.com/users/917263515209859102" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
             <svg viewBox="0 0 127.14 96.36" aria-hidden="true" class="discord-icon">
               <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.31,60,73.31,53s5-12.74,11.43-12.74S96.1,46,96,53,91.08,65.69,84.69,65.69Z" fill="currentColor"/>
@@ -402,7 +435,7 @@
           </a>
         </nav>
 
-        <footer class="profile-footer">
+        <footer class="profile-footer" id="sec-footer">
           <a id="page-one-link" href="#">Server Minecraft</a>
           <a id="page-two-link" href="#">
             <img src="https://cdn-icons-png.flaticon.com/512/3670/3670382.png" alt="Steam" class="steam-icon">
