@@ -2311,25 +2311,20 @@ function updateCardPointer(event) {
   const px = Math.max(0, Math.min(1, x / rect.width));
   const py = Math.max(0, Math.min(1, y / rect.height));
   
-  // 3D Tilt calculation (max 16 degrees for distinct 3D depth)
-  const tiltY = (px - 0.5) * 16;
-  const tiltX = (0.5 - py) * 16;
+  // 3D Tilt calculation (max 14 degrees for sleek glass 3D depth)
+  const tiltY = (px - 0.5) * 14;
+  const tiltX = (0.5 - py) * 14;
   
-  // Holographic rainbow angle & glare spotlight position
-  const angle = Math.round(Math.atan2(py - 0.5, px - 0.5) * (180 / Math.PI) + 90);
+  // Specular glare spotlight position
   const glareX = Math.round(px * 100);
   const glareY = Math.round(py * 100);
   
   target.style.setProperty('--tilt-x', `${tiltX.toFixed(2)}deg`);
   target.style.setProperty('--tilt-y', `${tiltY.toFixed(2)}deg`);
-  target.style.setProperty('--card-scale', '1.02');
-  target.style.setProperty('--holo-angle', `${angle}deg`);
-  target.style.setProperty('--holo-pos-x', `${(px * 100).toFixed(1)}%`);
-  target.style.setProperty('--holo-pos-y', `${(py * 100).toFixed(1)}%`);
-  target.style.setProperty('--holo-opacity', '0.8');
+  target.style.setProperty('--card-scale', '1.015');
   target.style.setProperty('--glare-x', `${glareX}%`);
   target.style.setProperty('--glare-y', `${glareY}%`);
-  target.style.setProperty('--glare-opacity', '0.9');
+  target.style.setProperty('--glare-opacity', '0.75');
   target.classList.add('interactive-hover');
 }
 
@@ -2340,34 +2335,28 @@ function resetCardPointer() {
   target.style.setProperty('--tilt-x', '0deg');
   target.style.setProperty('--tilt-y', '0deg');
   target.style.setProperty('--card-scale', '1');
-  target.style.setProperty('--holo-opacity', '0');
   target.style.setProperty('--glare-opacity', '0');
   activeTiltTarget = null;
 }
 
-// Mobile Gyroscope 3D Holo Tilt
+// Mobile Gyroscope 3D Tilt
 if (window.DeviceOrientationEvent) {
   window.addEventListener('deviceorientation', (e) => {
     if (!interactiveCard) return;
     if (e.gamma === null || e.beta === null) return;
     const gamma = Math.max(-35, Math.min(35, e.gamma));
     const beta = Math.max(15, Math.min(75, e.beta)) - 45;
-    const tiltY = (gamma / 35) * 14;
-    const tiltX = -(beta / 30) * 14;
-    const angle = Math.round(Math.atan2(beta, gamma) * (180 / Math.PI) + 90);
+    const tiltY = (gamma / 35) * 12;
+    const tiltX = -(beta / 30) * 12;
     const px = (gamma + 35) / 70;
     const py = (beta + 30) / 60;
     
     interactiveCard.style.setProperty('--tilt-x', `${tiltX.toFixed(2)}deg`);
     interactiveCard.style.setProperty('--tilt-y', `${tiltY.toFixed(2)}deg`);
     interactiveCard.style.setProperty('--card-scale', '1.01');
-    interactiveCard.style.setProperty('--holo-angle', `${angle}deg`);
-    interactiveCard.style.setProperty('--holo-pos-x', `${(px * 100).toFixed(1)}%`);
-    interactiveCard.style.setProperty('--holo-pos-y', `${(py * 100).toFixed(1)}%`);
-    interactiveCard.style.setProperty('--holo-opacity', '0.75');
     interactiveCard.style.setProperty('--glare-x', `${Math.round(px * 100)}%`);
     interactiveCard.style.setProperty('--glare-y', `${Math.round(py * 100)}%`);
-    interactiveCard.style.setProperty('--glare-opacity', '0.8');
+    interactiveCard.style.setProperty('--glare-opacity', '0.65');
     interactiveCard.classList.add('interactive-hover');
   });
 }
@@ -4383,618 +4372,42 @@ if (interactiveCard) {
 })();
 
 /* ════════════════════════════════════════════════════════════
-   ██  SERPENTINE — SNAKE GAME (vanilla JS port)
-   Dán toàn bộ khối này vào CUỐI file JS của bạn (sau mọi thứ khác).
-   Yêu cầu: đã dán xong HTML (nút #snake-game-btn + #snake-overlay)
-   và CSS tương ứng. Không đụng gì tới code cũ.
-   Logic gốc port 1:1 từ engine.ts / render.ts / audio.ts / useSnakeGame.ts
+   ██  THE MIDNIGHT ARCADE (11 GAMES) LAUNCHER CONTROLLER
    ════════════════════════════════════════════════════════════ */
-(function SerpentineGame() {
-  'use strict';
-
-  const btn = document.getElementById('snake-game-btn');
+(function initArcadeLauncher() {
   const overlay = document.getElementById('snake-overlay');
-  if (!btn || !overlay) return; // HTML chưa được dán — bỏ qua an toàn
+  const iframe = document.getElementById('arcade-iframe');
+  const openBtnNav = document.getElementById('snake-game-btn');
+  const openBtnFab = document.getElementById('snake-fab');
+  const closeBtn = document.getElementById('snake-close-btn');
 
-  /* ---------------- engine.ts ---------------- */
-  const COLS = 21, ROWS = 21, START_LEN = 3, GOLDEN_EVERY = 5, GOLDEN_LIFETIME = 6500;
-  const DIFFS = {
-    chill:   { label: 'Chill',   base: 150, min: 96, blurb: 'A lazy garden snake.', dots: 1 },
-    classic: { label: 'Classic', base: 105, min: 66, blurb: 'The arcade standard.', dots: 2 },
-    turbo:   { label: 'Turbo',   base: 72,  min: 46, blurb: 'A caffeinated viper.', dots: 3 },
-  };
-  const DIFF_ORDER = ['chill', 'classic', 'turbo'];
+  if (!overlay) return;
 
-  function intervalFor(d, eaten) {
-    const { base, min } = DIFFS[d];
-    return Math.max(min, Math.round(base * Math.pow(0.99, eaten)));
-  }
-  function isOccupied(cells, x, y) { return cells.some((c) => c.x === x && c.y === y); }
-  function randCell(blocked) {
-    const free = [];
-    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (!isOccupied(blocked, x, y)) free.push({ x, y });
-    if (!free.length) return { x: 0, y: 0 };
-    return free[Math.floor(Math.random() * free.length)];
-  }
-  function createState() {
-    const cy = Math.floor(ROWS / 2);
-    const snake = [{ x: 8, y: cy }, { x: 7, y: cy }, { x: 6, y: cy }];
-    return {
-      snake, prev: snake.map((c) => ({ ...c })), dir: { x: 1, y: 0 }, queue: [],
-      food: randCell(snake), golden: null, eaten: 0, acc: 0, last: 0,
-      lastEatAt: -99999, deathAt: 0, shake: 0, particles: [], floaters: [],
-    };
-  }
-  function stepGame(s, now) {
-    while (s.queue.length) {
-      const d = s.queue.shift();
-      const same = d.x === s.dir.x && d.y === s.dir.y;
-      const opposite = d.x === -s.dir.x && d.y === -s.dir.y;
-      if (!same && !opposite) { s.dir = d; break; }
-    }
-    const head = s.snake[0];
-    const nx = head.x + s.dir.x, ny = head.y + s.dir.y;
-    if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) return { died: true, ate: false, gold: false };
-    const ateFood = nx === s.food.x && ny === s.food.y;
-    const body = ateFood ? s.snake : s.snake.slice(0, -1);
-    if (body.some((c) => c.x === nx && c.y === ny)) return { died: true, ate: false, gold: false };
-
-    const prevSnake = s.snake.map((c) => ({ ...c }));
-    if (ateFood) prevSnake.push({ ...prevSnake[prevSnake.length - 1] });
-    const next = [{ x: nx, y: ny }, ...body];
-    s.prev = prevSnake; s.snake = next;
-
-    let gold = false;
-    if (ateFood) {
-      s.eaten += 1; s.lastEatAt = now; s.food = randCell(s.snake);
-      if (s.eaten % GOLDEN_EVERY === 0 && !s.golden) {
-        s.golden = { cell: randCell([...s.snake, s.food]), expires: now + GOLDEN_LIFETIME };
-      }
-    }
-    if (s.golden) {
-      if (nx === s.golden.cell.x && ny === s.golden.cell.y) { gold = true; s.lastEatAt = now; s.golden = null; }
-      else if (now >= s.golden.expires) s.golden = null;
-    }
-    return { died: false, ate: ateFood, gold };
-  }
-  function updateFx(s, dt) {
-    if (s.particles.length) {
-      const damp = Math.pow(0.985, dt / 16);
-      s.particles = s.particles.filter((p) => (p.life -= dt) > 0);
-      for (const p of s.particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= damp; p.vy *= damp; }
-    }
-    if (s.floaters.length) {
-      s.floaters = s.floaters.filter((f) => (f.life -= dt) > 0);
-      for (const f of s.floaters) f.y -= 0.0016 * dt;
-    }
-  }
-  function burst(s, at, colors, count) {
-    count = count || 14;
-    for (let i = 0; i < count; i++) {
-      const a = Math.random() * Math.PI * 2, sp = 0.003 + Math.random() * 0.009, life = 420 + Math.random() * 380;
-      s.particles.push({
-        x: at.x + 0.5, y: at.y + 0.5, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
-        life, maxLife: life, size: 0.06 + Math.random() * 0.09,
-        color: colors[Math.floor(Math.random() * colors.length)],
-      });
-    }
-  }
-
-  /* ---------------- render.ts ---------------- */
-  const HEAD_RGB = [172, 246, 100], TAIL_RGB = [21, 102, 68];
-  function mix(a, b, t) {
-    const r = Math.round(a[0] + (b[0] - a[0]) * t), g = Math.round(a[1] + (b[1] - a[1]) * t), bl = Math.round(a[2] + (b[2] - a[2]) * t);
-    return `rgb(${r},${g},${bl})`;
-  }
-  function strokeSerpent(ctx, pts, cell, opts) {
-    opts = opts || {};
-    const n = pts.length;
-    if (n < 2) return;
-    const alpha = opts.alpha != null ? opts.alpha : 1;
-    ctx.save(); ctx.globalAlpha = alpha; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-
-    ctx.beginPath(); ctx.moveTo(pts[n - 1].x, pts[n - 1].y);
-    for (let i = n - 2; i >= 0; i--) ctx.lineTo(pts[i].x, pts[i].y);
-    ctx.strokeStyle = 'rgba(4,20,12,0.95)'; ctx.lineWidth = cell * 0.8; ctx.stroke();
-
-    for (let i = n - 1; i > 0; i--) {
-      const f = 1 - i / (n - 1);
-      ctx.strokeStyle = mix(TAIL_RGB, HEAD_RGB, f);
-      ctx.lineWidth = cell * (0.42 + 0.26 * f);
-      ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[i - 1].x, pts[i - 1].y); ctx.stroke();
-    }
-
-    const hp = pts[0];
-    let dx = 1, dy = 0;
-    const ddx = hp.x - pts[1].x, ddy = hp.y - pts[1].y, dl = Math.hypot(ddx, ddy);
-    if (dl > 0.001) { dx = ddx / dl; dy = ddy / dl; }
-    const px = -dy, py = dx;
-
-    ctx.shadowColor = 'rgba(172,246,100,0.5)'; ctx.shadowBlur = cell * 0.55;
-    ctx.fillStyle = mix(TAIL_RGB, HEAD_RGB, 1);
-    ctx.beginPath(); ctx.arc(hp.x, hp.y, cell * 0.42, 0, Math.PI * 2); ctx.fill();
-    ctx.shadowBlur = 0;
-
-    if (opts.tongue) {
-      ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = Math.max(1.5, cell * 0.06);
-      const mx = hp.x + dx * cell * 0.4, my = hp.y + dy * cell * 0.4;
-      const tx = hp.x + dx * cell * 0.78, ty = hp.y + dy * cell * 0.78;
-      ctx.beginPath(); ctx.moveTo(mx, my); ctx.lineTo(tx, ty);
-      ctx.moveTo(tx, ty); ctx.lineTo(tx + (dx * 0.5 + px * 0.5) * cell * 0.14, ty + (dy * 0.5 + py * 0.5) * cell * 0.14);
-      ctx.moveTo(tx, ty); ctx.lineTo(tx + (dx * 0.5 - px * 0.5) * cell * 0.14, ty + (dy * 0.5 - py * 0.5) * cell * 0.14);
-      ctx.stroke();
-    }
-
-    const eo = cell * 0.165, ef = cell * 0.1;
-    for (const side of [1, -1]) {
-      const ex = hp.x + dx * ef + px * eo * side, ey = hp.y + dy * ef + py * eo * side;
-      ctx.fillStyle = '#f2fff0'; ctx.beginPath(); ctx.arc(ex, ey, cell * 0.105, 0, Math.PI * 2); ctx.fill();
-      if (opts.dead) {
-        ctx.strokeStyle = '#0d2818'; ctx.lineWidth = Math.max(1, cell * 0.045);
-        const r = cell * 0.07;
-        ctx.beginPath(); ctx.moveTo(ex - r, ey - r); ctx.lineTo(ex + r, ey + r);
-        ctx.moveTo(ex + r, ey - r); ctx.lineTo(ex - r, ey + r); ctx.stroke();
-      } else {
-        ctx.fillStyle = '#0d2818';
-        ctx.beginPath(); ctx.arc(ex + dx * cell * 0.038, ey + dy * cell * 0.038, cell * 0.055, 0, Math.PI * 2); ctx.fill();
-      }
-    }
-    ctx.restore();
-  }
-  function drawFruit(ctx, cx, cy, cell, now, golden, expiresIn) {
-    let alpha = 1;
-    if (golden && expiresIn !== undefined && expiresIn < 1600) alpha = Math.sin(now / 70) > 0 ? 1 : 0.28;
-    const pulse = 1 + 0.08 * Math.sin(now / (golden ? 200 : 300));
-    const r = cell * (golden ? 0.34 : 0.3) * pulse;
-
-    ctx.save(); ctx.globalAlpha = alpha;
-    ctx.shadowColor = golden ? 'rgba(255,200,87,0.85)' : 'rgba(255,93,93,0.7)';
-    ctx.shadowBlur = cell * 0.9;
-    const g = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.4, r * 0.15, cx, cy, r);
-    if (golden) { g.addColorStop(0, '#fff3c4'); g.addColorStop(0.55, '#ffd166'); g.addColorStop(1, '#e8912d'); }
-    else { g.addColorStop(0, '#ffb3ab'); g.addColorStop(0.5, '#ff6b6b'); g.addColorStop(1, '#c92f3f'); }
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
-
-    ctx.strokeStyle = '#7a4a21'; ctx.lineWidth = Math.max(1.5, cell * 0.06); ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(cx, cy - r); ctx.lineTo(cx + r * 0.15, cy - r - cell * 0.14); ctx.stroke();
-    ctx.fillStyle = golden ? '#ffe08a' : '#59c96a';
-    ctx.beginPath(); ctx.ellipse(cx + r * 0.48, cy - r - cell * 0.1, cell * 0.13, cell * 0.06, -0.6, 0, Math.PI * 2); ctx.fill();
-
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
-    ctx.beginPath(); ctx.arc(cx - r * 0.35, cy - r * 0.42, r * 0.16, 0, Math.PI * 2); ctx.fill();
-
-    if (golden) {
-      ctx.strokeStyle = 'rgba(255,224,138,0.85)'; ctx.lineWidth = Math.max(1, cell * 0.045);
-      const rot = now / 700;
-      for (let i = 0; i < 4; i++) {
-        const a = rot + (i * Math.PI) / 2;
-        ctx.beginPath();
-        ctx.moveTo(cx + Math.cos(a) * r * 1.4, cy + Math.sin(a) * r * 1.4);
-        ctx.lineTo(cx + Math.cos(a) * r * 1.8, cy + Math.sin(a) * r * 1.8);
-        ctx.stroke();
-      }
-    }
-    ctx.restore();
-  }
-  function renderGame(ctx, s, w, h, now, phase, t) {
-    if (w < 10 || h < 10) return;
-    const cell = w / COLS;
-
-    ctx.fillStyle = '#0a1a11'; ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = 'rgba(172,246,100,0.025)';
-    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if ((x + y) & 1) ctx.fillRect(x * cell, y * cell, cell, cell);
-    ctx.strokeStyle = 'rgba(172,246,100,0.07)'; ctx.lineWidth = 2; ctx.strokeRect(1, 1, w - 2, h - 2);
-
-    ctx.save();
-    if (s.shake > 0.3) { ctx.translate((Math.random() - 0.5) * s.shake, (Math.random() - 0.5) * s.shake); s.shake *= 0.86; }
-    else s.shake = 0;
-
-    if (phase === 'idle') {
-      const pts = []; const N = 26;
-      const headX = ((now * 0.05) % (w + cell * 10)) - cell * 5;
-      for (let k = 0; k < N; k++) {
-        const x = headX - k * cell * 0.72;
-        pts.push({ x, y: h * 0.52 + Math.sin(x * 0.02 + now * 0.0011) * h * 0.17 });
-      }
-      drawFruit(ctx, cell * (COLS - 4.5), cell * 4.5, cell, now, false);
-      drawFruit(ctx, cell * 4.5, cell * (ROWS - 4.5), cell, now, true);
-      strokeSerpent(ctx, pts, cell, { alpha: 0.8 });
-    } else {
-      drawFruit(ctx, (s.food.x + 0.5) * cell, (s.food.y + 0.5) * cell, cell, now, false);
-      if (s.golden) {
-        const gc = s.golden.cell;
-        drawFruit(ctx, (gc.x + 0.5) * cell, (gc.y + 0.5) * cell, cell, now, true, s.golden.expires - now);
-      }
-      const pts = s.snake.map((c, i) => {
-        const p = s.prev[i] || c;
-        return { x: (p.x + (c.x - p.x) * t + 0.5) * cell, y: (p.y + (c.y - p.y) * t + 0.5) * cell };
-      });
-      strokeSerpent(ctx, pts, cell, { dead: phase === 'over', tongue: now - s.lastEatAt < 260 });
-    }
-
-    if (s.particles.length) {
-      for (const p of s.particles) {
-        const a = Math.max(0, p.life / p.maxLife);
-        ctx.globalAlpha = a; ctx.fillStyle = p.color;
-        ctx.beginPath(); ctx.arc(p.x * cell, p.y * cell, Math.max(0.6, p.size * cell * a), 0, Math.PI * 2); ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-    }
-    if (s.floaters.length) {
-      ctx.textAlign = 'center'; ctx.font = `700 ${Math.round(cell * 0.62)}px "Chakra Petch", sans-serif`;
-      for (const f of s.floaters) {
-        ctx.globalAlpha = Math.max(0, Math.min(1, f.life / (f.maxLife * 0.55)));
-        ctx.fillStyle = f.color; ctx.fillText(f.txt, f.x * cell, f.y * cell);
-      }
-      ctx.globalAlpha = 1;
-    }
-    ctx.restore();
-
-    if (s.deathAt > 0) {
-      const dt = now - s.deathAt;
-      if (dt >= 0 && dt < 350) { ctx.fillStyle = `rgba(255,70,70,${0.26 * (1 - dt / 350)})`; ctx.fillRect(0, 0, w, h); }
-    }
-    const vg = ctx.createRadialGradient(w / 2, h / 2, w * 0.35, w / 2, h / 2, w * 0.78);
-    vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(3,10,6,0.5)');
-    ctx.fillStyle = vg; ctx.fillRect(0, 0, w, h);
-  }
-
-  /* ---------------- audio.ts ---------------- */
-  let ac = null, master = null, muted = false;
-  function initAudio() {
-    try {
-      if (!ac) {
-        const Ctor = window.AudioContext || window.webkitAudioContext;
-        if (!Ctor) return;
-        ac = new Ctor(); master = ac.createGain(); master.gain.value = muted ? 0 : 0.16; master.connect(ac.destination);
-      }
-      if (ac.state === 'suspended') ac.resume();
-    } catch (e) {}
-  }
-  function setAudioMuted(m) { muted = m; if (ac && master) master.gain.setTargetAtTime(m ? 0 : 0.16, ac.currentTime, 0.01); }
-  function tone(freq, dur, type, vol, delay, slideTo) {
-    delay = delay || 0;
-    if (!ac || !master || muted) return;
-    const t0 = ac.currentTime + delay;
-    const osc = ac.createOscillator(), g = ac.createGain();
-    osc.type = type; osc.frequency.setValueAtTime(freq, t0);
-    if (slideTo !== undefined) osc.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
-    g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    osc.connect(g); g.connect(master); osc.start(t0); osc.stop(t0 + dur + 0.03);
-  }
-  const sfx = {
-    eat() { tone(540, 0.08, 'square', 0.5); tone(810, 0.1, 'square', 0.32, 0.05); },
-    gold() { tone(660, 0.08, 'square', 0.42); tone(880, 0.08, 'square', 0.42, 0.07); tone(1320, 0.18, 'triangle', 0.5, 0.14); },
-    die() { tone(320, 0.5, 'sawtooth', 0.5, 0, 70); tone(160, 0.6, 'square', 0.28, 0.06, 48); },
-    pause() { tone(440, 0.07, 'triangle', 0.4); tone(330, 0.1, 'triangle', 0.32, 0.07); },
-    resume() { tone(330, 0.07, 'triangle', 0.4); tone(495, 0.1, 'triangle', 0.38, 0.07); },
-    start() { tone(392, 0.09, 'square', 0.38); tone(523, 0.09, 'square', 0.38, 0.09); tone(659, 0.16, 'square', 0.42, 0.18); },
-  };
-
-  /* ---------------- persistence ---------------- */
-  const BEST_KEY = 'serpent.bests.v1', DIFF_KEY = 'serpent.diff.v1', MUTE_KEY = 'serpent.mute.v1';
-  function loadBests() {
-    const fb = { chill: 0, classic: 0, turbo: 0 };
-    try {
-      const raw = localStorage.getItem(BEST_KEY); if (!raw) return fb;
-      const p = JSON.parse(raw);
-      return { chill: Number(p.chill) || 0, classic: Number(p.classic) || 0, turbo: Number(p.turbo) || 0 };
-    } catch (e) { return fb; }
-  }
-  function loadDifficulty() {
-    try { const d = localStorage.getItem(DIFF_KEY); if (d === 'chill' || d === 'classic' || d === 'turbo') return d; } catch (e) {}
-    return 'classic';
-  }
-  function loadMuted() { try { return localStorage.getItem(MUTE_KEY) === '1'; } catch (e) { return false; } }
-
-  /* ---------------- state / DOM wiring ---------------- */
-  const els = {
-    canvas: document.getElementById('snake-canvas'),
-    wrap: document.getElementById('snake-board-wrap'),
-    score: document.getElementById('snake-score'),
-    best: document.getElementById('snake-best'),
-    len: document.getElementById('snake-len'),
-    modeTag: document.getElementById('snake-mode-tag'),
-    ovIdle: document.getElementById('snake-ov-idle'),
-    ovReady: document.getElementById('snake-ov-ready'),
-    readyMode: document.getElementById('snake-ready-mode'),
-    ovPaused: document.getElementById('snake-ov-paused'),
-    ovOver: document.getElementById('snake-ov-over'),
-    newbest: document.getElementById('snake-newbest'),
-    bestline: document.getElementById('snake-bestline'),
-    finalScore: document.getElementById('snake-final-score'),
-    diffCompact: document.getElementById('snake-diff-compact'),
-    diffList: document.getElementById('snake-diff-list'),
-    lockedNote: document.getElementById('snake-locked-note'),
-    bestsList: document.getElementById('snake-bests-list'),
-    muteBtn: document.getElementById('snake-mute-btn'),
-    pauseBtn: document.getElementById('snake-pause-btn'),
-    restartBtn: document.getElementById('snake-restart-btn'),
-    restartBtn2: document.getElementById('snake-restart-btn2'),
-    closeBtn: document.getElementById('snake-close-btn'),
-    resumeBtn: document.getElementById('snake-resume-btn'),
-    againBtn: document.getElementById('snake-again-btn'),
-    dpad: document.getElementById('snake-dpad'),
-    dpadPrimary: document.getElementById('snake-dpad-primary'),
-  };
-  const ctx = els.canvas.getContext('2d');
-
-  let gs = createState();
-  let phase = 'idle';
-  let score = 0;
-  let len = START_LEN;
-  let isNewBest = false;
-  let difficulty = loadDifficulty();
-  let bests = loadBests();
-  let isMuted = loadMuted();
-  let readyTimer = 0;
-  let size = { w: 0, h: 0 };
-  let raf = 0;
-  let ro = null;
-
-  function clearReadyTimer() { if (readyTimer) { clearTimeout(readyTimer); readyTimer = 0; } }
-  function setPhase(p) { phase = p; renderUI(); }
-
-  function scheduleRun(ms) {
-    clearReadyTimer();
-    setPhase('ready');
-    readyTimer = setTimeout(() => { readyTimer = 0; if (phase === 'ready') setPhase('running'); }, ms);
-  }
-  function resetBoard() { gs = createState(); score = 0; len = START_LEN; isNewBest = false; }
-
-  function addScore(n, at, color) {
-    score += n;
-    els.score.textContent = String(score);
-    els.score.classList.remove('snake-pop'); void els.score.offsetWidth; els.score.classList.add('snake-pop');
-    gs.floaters.push({ x: at.x + 0.5, y: at.y + 0.2, txt: `+${n}`, life: 750, maxLife: 750, color });
-  }
-
-  function die() {
-    gs.deathAt = performance.now();
-    gs.shake = 15;
-    sfx.die();
-    if (score > bests[difficulty]) {
-      bests = { ...bests, [difficulty]: score };
-      isNewBest = true;
-      try { localStorage.setItem(BEST_KEY, JSON.stringify(bests)); } catch (e) {}
-    }
-    setPhase('over');
-  }
-
-  function start() {
-    initAudio();
-    clearReadyTimer();
-    resetBoard();
-    sfx.start();
-    els.len.textContent = String(len);
-    scheduleRun(750);
-  }
-  function pauseGame() { if (phase !== 'running') return; clearReadyTimer(); sfx.pause(); setPhase('paused'); }
-  function resumeGame() { if (phase !== 'paused') return; initAudio(); sfx.resume(); scheduleRun(500); }
-  function primary() {
-    if (phase === 'idle' || phase === 'over') start();
-    else if (phase === 'running') pauseGame();
-    else if (phase === 'paused') resumeGame();
-  }
-  function enqueue(d) {
-    const last = gs.queue.length ? gs.queue[gs.queue.length - 1] : gs.dir;
-    const opposite = d.x === -last.x && d.y === -last.y;
-    const same = d.x === last.x && d.y === last.y;
-    if (opposite || same) return;
-    if (gs.queue.length < 3) gs.queue.push(d);
-  }
-  function handleDir(d) {
-    if (phase === 'idle') { start(); enqueue(d); return; }
-    if (phase === 'running' || phase === 'ready') enqueue(d);
-  }
-  function changeDifficulty(d) {
-    if (phase === 'running' || phase === 'ready' || phase === 'paused') return;
-    difficulty = d;
-    try { localStorage.setItem(DIFF_KEY, d); } catch (e) {}
-    resetBoard();
-    renderUI();
-  }
-  function toggleMute() {
-    isMuted = !isMuted;
-    setAudioMuted(isMuted);
-    try { localStorage.setItem(MUTE_KEY, isMuted ? '1' : '0'); } catch (e) {}
-    renderUI();
-  }
-
-  /* ---------------- UI sync ---------------- */
-  function renderUI() {
-    els.modeTag.textContent = DIFFS[difficulty].label.toUpperCase();
-    els.best.textContent = String(bests[difficulty]);
-    els.muteBtn.textContent = isMuted ? '🔇' : '🔊';
-    els.pauseBtn.textContent = phase === 'running' ? '⏸' : '▶';
-    els.dpadPrimary.textContent = phase === 'running' ? '⏸' : '▶';
-
-    const locked = phase === 'running' || phase === 'ready' || phase === 'paused';
-    els.lockedNote.classList.toggle('hidden', !locked);
-
-    [els.diffCompact, els.diffList].forEach((wrap) => {
-      wrap.querySelectorAll('[data-diff]').forEach((elm) => {
-        elm.classList.toggle('active', elm.dataset.diff === difficulty);
-        elm.disabled = locked;
-      });
-    });
-    els.diffList.querySelectorAll('.snake-diff-row').forEach((row) => {
-      const dotsWrap = row.querySelector('.snake-dots');
-      const n = DIFFS[row.dataset.diff].dots;
-      dotsWrap.innerHTML = '';
-      for (let i = 1; i <= 3; i++) {
-        const dot = document.createElement('i');
-        const on = i <= n;
-        dot.style.background = on ? (row.dataset.diff === difficulty ? '#ffc857' : '#8ef05a') : '#1f3a26';
-        dotsWrap.appendChild(dot);
-      }
-    });
-
-    els.bestsList.querySelectorAll('li').forEach((li) => {
-      const key = li.querySelector('[data-v]').dataset.v;
-      const v = bests[key];
-      li.querySelector('[data-v]').textContent = v > 0 ? String(v) : '——';
-    });
-
-    els.ovIdle.classList.toggle('hidden', phase !== 'idle');
-    els.ovReady.classList.toggle('hidden', phase !== 'ready');
-    els.ovPaused.classList.toggle('hidden', phase !== 'paused');
-    els.ovOver.classList.toggle('hidden', phase !== 'over');
-
-    if (phase === 'ready') els.readyMode.textContent = DIFFS[difficulty].label.toUpperCase() + ' MODE';
-    if (phase === 'over') {
-      els.finalScore.textContent = String(score);
-      els.newbest.classList.toggle('hidden', !isNewBest);
-      els.bestline.classList.toggle('hidden', isNewBest);
-      els.bestline.textContent = `best on ${DIFFS[difficulty].label.toLowerCase()} · ${bests[difficulty]}`;
-    }
-  }
-
-  /* ---------------- main loop ---------------- */
-  function fit() {
-    const rect = els.wrap.getBoundingClientRect();
-    const s = Math.max(0, Math.floor(Math.min(rect.width, rect.height)));
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
-    els.canvas.width = Math.round(s * dpr);
-    els.canvas.height = Math.round(s * dpr);
-    els.canvas.style.width = s + 'px';
-    els.canvas.style.height = s + 'px';
-    size = { w: s, h: s };
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  function frame(now) {
-    const sLast = gs.last;
-    const dt = sLast ? Math.min(60, now - sLast) : 16;
-    gs.last = now;
-    updateFx(gs, dt);
-
-    if (phase === 'running') {
-      gs.acc += dt;
-      const iv = intervalFor(difficulty, gs.eaten);
-      let guard = 0;
-      while (gs.acc >= iv && guard++ < 4) {
-        gs.acc -= iv;
-        const res = stepGame(gs, now);
-        if (res.ate) {
-          addScore(10, gs.snake[0], '#ffc857');
-          len = gs.snake.length; els.len.textContent = String(len);
-          sfx.eat();
-          burst(gs, gs.snake[0], ['#ff6b6b', '#ffb3ab', '#ffe08a']);
-        }
-        if (res.gold) { addScore(50, gs.snake[0], '#ffe08a'); sfx.gold(); burst(gs, gs.snake[0], ['#ffd166', '#ffe08a', '#fff3c4'], 22); }
-        if (res.died) { die(); break; }
-      }
-    }
-
-    if (size.w > 0) {
-      const t = phase === 'running' ? Math.min(1, gs.acc / intervalFor(difficulty, gs.eaten)) : 1;
-      renderGame(ctx, gs, size.w, size.h, now, phase, t);
-    }
-    raf = requestAnimationFrame(frame);
-  }
-
-  const KEY_DIRS = {
-    arrowup: { x: 0, y: -1 }, w: { x: 0, y: -1 },
-    arrowdown: { x: 0, y: 1 }, s: { x: 0, y: 1 },
-    arrowleft: { x: -1, y: 0 }, a: { x: -1, y: 0 },
-    arrowright: { x: 1, y: 0 }, d: { x: 1, y: 0 },
-  };
-  function onKey(e) {
-    if (overlay.classList.contains('hidden')) return;
-    const name = e.key.toLowerCase();
-    if (KEY_DIRS[name]) { e.preventDefault(); handleDir(KEY_DIRS[name]); return; }
-    if (e.key === ' ') { e.preventDefault(); primary(); return; }
-    if (name === 'r') { start(); return; }
-    if (name === 'p' || e.key === 'Escape') {
-      if (e.key === 'Escape' && phase !== 'running' && phase !== 'paused') { closeGame(); return; }
-      if (phase === 'running') pauseGame(); else if (phase === 'paused') resumeGame(); else closeGame();
-      return;
-    }
-    if (name === 'm') { toggleMute(); return; }
-    if (name === '1') changeDifficulty('chill');
-    if (name === '2') changeDifficulty('classic');
-    if (name === '3') changeDifficulty('turbo');
-  }
-  function onVis() { if (document.hidden && phase === 'running') pauseGame(); }
-
-  let running = false;
-  function startLoop() {
-    if (running) return;
-    running = true;
-    setAudioMuted(isMuted);
-    fit();
-    ro = new ResizeObserver(fit);
-    ro.observe(els.wrap);
-    raf = requestAnimationFrame(frame);
-    window.addEventListener('keydown', onKey);
-    document.addEventListener('visibilitychange', onVis);
-  }
-  function stopLoop() {
-    running = false;
-    cancelAnimationFrame(raf);
-    clearReadyTimer();
-    window.removeEventListener('keydown', onKey);
-    document.removeEventListener('visibilitychange', onVis);
-    if (ro) { ro.disconnect(); ro = null; }
-  }
-
-  /* ---------------- touch swipe on board ---------------- */
-  let touchStart = null;
-  els.wrap.addEventListener('touchstart', (e) => {
-    const t = e.touches[0]; touchStart = { x: t.clientX, y: t.clientY };
-  }, { passive: true });
-  els.wrap.addEventListener('touchend', (e) => {
-    const st = touchStart; touchStart = null; if (!st) return;
-    const t = e.changedTouches[0];
-    const dx = t.clientX - st.x, dy = t.clientY - st.y;
-    const adx = Math.abs(dx), ady = Math.abs(dy);
-    if (Math.max(adx, ady) < 24) { if (phase === 'idle') start(); return; }
-    handleDir(adx > ady ? { x: Math.sign(dx), y: 0 } : { x: 0, y: Math.sign(dy) });
-  }, { passive: true });
-  els.wrap.addEventListener('click', () => { if (phase === 'idle') start(); });
-
-  /* ---------------- button wiring ---------------- */
-  els.muteBtn.addEventListener('click', toggleMute);
-  els.pauseBtn.addEventListener('click', primary);
-  els.restartBtn.addEventListener('click', start);
-  els.restartBtn2.addEventListener('click', start);
-  els.resumeBtn.addEventListener('click', resumeGame);
-  els.againBtn.addEventListener('click', start);
-  els.dpadPrimary.addEventListener('pointerdown', (e) => { e.preventDefault(); primary(); });
-  els.dpad.querySelectorAll('[data-dir]').forEach((b) => {
-    const map = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } };
-    b.addEventListener('pointerdown', (e) => { e.preventDefault(); handleDir(map[b.dataset.dir]); });
-  });
-  [els.diffCompact, els.diffList].forEach((wrap) => {
-    wrap.addEventListener('click', (e) => {
-      const t = e.target.closest('[data-diff]');
-      if (t) changeDifficulty(t.dataset.diff);
-    });
-  });
-
-  function openGame() {
+  function openArcade() {
     overlay.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    resetBoard();
-    phase = 'idle';
-    renderUI();
-    startLoop();
+    document.body.classList.add('arcade-active');
+    if (iframe && (!iframe.src || iframe.src === 'about:blank' || iframe.getAttribute('src') === '')) {
+      iframe.src = 'arcade.html';
+    }
   }
-  function closeGame() {
+
+  function closeArcade() {
     overlay.classList.add('hidden');
-    document.body.style.overflow = '';
-    stopLoop();
-    phase = 'idle';
+    document.body.classList.remove('arcade-active');
+    if (iframe) {
+      try {
+        iframe.contentWindow.postMessage({ type: 'PAUSE_ARCADE' }, '*');
+      } catch (e) {}
+    }
   }
 
-  window.openSnakeGame = openGame;
-  window.closeSnakeGame = closeGame;
+  if (openBtnNav) openBtnNav.addEventListener('click', openArcade);
+  if (openBtnFab) openBtnFab.addEventListener('click', openArcade);
+  if (closeBtn) closeBtn.addEventListener('click', closeArcade);
 
-  btn.addEventListener('click', openGame);
-  els.closeBtn.addEventListener('click', closeGame);
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeGame(); });
-
-  renderUI();
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !overlay.classList.contains('hidden')) {
+      closeArcade();
+    }
+  });
 })();
-
