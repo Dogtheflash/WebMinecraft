@@ -3909,7 +3909,7 @@ h1 { font-size: clamp(27px, 5.6vw, 35px); }
 }
 
 /* ════════════════════════════════════════════════════════════
-   ██  THE MIDNIGHT ARCADE — 11 GAMES CABINET & FLOATING LAUNCHER
+   ██  THE MIDNIGHT ARCADE — 11 GAMES FULLSCREEN OVERLAY
    ════════════════════════════════════════════════════════════ */
 .snake-overlay {
   position: fixed;
@@ -3927,63 +3927,6 @@ h1 { font-size: clamp(27px, 5.6vw, 35px); }
   visibility: hidden;
   pointer-events: none;
 }
-.arcade-top-bar {
-  position: absolute;
-  top: 10px;
-  right: 14px;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  pointer-events: auto;
-}
-.arcade-title-badge {
-  display: none;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: rgba(12, 29, 19, 0.85);
-  border: 1px solid #2c4a37;
-  border-radius: 999px;
-  font: 700 11px 'Chakra Petch', sans-serif;
-  color: #8ef05a;
-  letter-spacing: .08em;
-  backdrop-filter: blur(10px);
-}
-@media (min-width: 640px) {
-  .arcade-title-badge { display: flex; }
-}
-.arcade-badge-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #8ef05a;
-  box-shadow: 0 0 8px #8ef05a;
-  animation: snakeBlink 1.2s infinite;
-}
-.arcade-close-floating {
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: rgba(255, 60, 60, 0.22);
-  border: 1px solid rgba(255, 90, 90, 0.55);
-  color: #ffb3ab;
-  font: 700 12px 'Chakra Petch', sans-serif;
-  cursor: pointer;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: all .2s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-}
-.arcade-close-floating:hover {
-  background: rgba(255, 60, 60, 0.45);
-  border-color: #ff5f56;
-  color: #fff;
-  transform: translateY(-1px) scale(1.04);
-  box-shadow: 0 6px 20px rgba(255, 60, 60, 0.4);
-}
-.arcade-close-floating:active {
-  transform: translateY(0) scale(0.96);
-}
 .arcade-iframe {
   width: 100vw;
   height: 100dvh;
@@ -3992,4 +3935,3 @@ h1 { font-size: clamp(27px, 5.6vw, 35px); }
   display: block;
   background: #060f0a;
 }
-
