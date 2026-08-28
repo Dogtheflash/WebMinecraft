@@ -749,11 +749,26 @@ function renderName() {
 var stage = 'boot';
 var runKey = 0;
 var bootRaf = 0;
+var bootTimer = 0;
+var bootWatchdog = 0;
 var bootDone = false;
+var bootStarted = false;
+var bootRevealed = false;
 var timers = [];
 
 function schedule(fn, delay) { timers.push(setTimeout(fn, delay)); }
 function clearTimers() { timers.forEach(function (id) { clearTimeout(id); }); timers = []; }
+
+var nowMs = (window.performance && performance.now)
+  ? function () { return performance.now(); }
+  : function () { return Date.now(); };
+
+/* Tìm element theo id, có selector dự phòng nếu id bị đổi */
+function bootEl(id, fallback) {
+  var el = document.getElementById(id);
+  if (!el && fallback) el = document.querySelector(fallback);
+  return el;
+}
 
 function showStage(name) {
   var stages = ['boot', 'hello', 'ready'];
@@ -764,42 +779,7 @@ function showStage(name) {
 }
 
 function setBootEnergy(progress) {
-  particleState.energy = 0.25 + progress * 0.85;
-}
-
-function handleBootComplete() {
-  chimePlay();
-  hapticTap('heavy');
-  showFlash();
-  schedule(function () { hideFlash(); }, 700);
-  schedule(function () { stage = 'hello'; showStage('hello'); }, 340);
-  schedule(hapticSettle, CHIME_MS);
-
-  /* Transition directly into main CMD Terminal screen right after "hello" stage */
-  schedule(function () {
-    var appEl = document.getElementById('app');
-    if (appEl) {
-      appEl.style.transition = 'opacity 0.8s ease';
-      appEl.style.opacity = '0';
-      setTimeout(function () {
-        appEl.style.display = 'none';
-        var terminal = document.getElementById('terminal-screen');
-        if (terminal) {
-          terminal.style.visibility = 'visible';
-          terminal.style.opacity = '0';
-          terminal.style.transition = 'opacity 0.6s ease';
-          requestAnimationFrame(function () {
-            requestAnimationFrame(function () {
-              terminal.style.opacity = '1';
-              if (typeof window.initCmd === 'function') {
-                window.initCmd();
-              }
-            });
-          });
-        }
-      }, 800);
-    }
-  }, 3200);
+  try { particleState.energy = 0.25 + progress * 0.85; } catch (e) {}
 }
 
 function showFlash() {
@@ -816,66 +796,187 @@ function hideFlash() {
   if (shockwaveLayer) shockwaveLayer.innerHTML = '';
 }
 
-function showSlider() {
-  var el = document.getElementById('speed-slider');
-  if (el) el.style.display = 'flex';
+function showSlider() { var el = document.getElementById('speed-slider'); if (el) el.style.display = 'flex'; }
+function hideSlider() { var el = document.getElementById('speed-slider'); if (el) el.style.display = 'none'; }
+
+/* Mở màn hình terminal — gọi bao nhiêu lần cũng chỉ chạy một lần */
+function revealTerminal() {
+  if (bootRevealed) return;
+  bootRevealed = true;
+
+  var appEl = document.getElementById('app');
+  var terminal = document.getElementById('terminal-screen');
+
+  if (appEl) {
+    appEl.style.transition = 'opacity 0.8s ease';
+    appEl.style.opacity = '0';
+  }
+
+  setTimeout(function () {
+    if (appEl) appEl.style.display = 'none';
+    if (!terminal) return;
+    terminal.style.visibility = 'visible';
+    terminal.style.opacity = '0';
+    terminal.style.transition = 'opacity 0.6s ease';
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        terminal.style.opacity = '1';
+        try {
+          if (typeof window.initCmd === 'function') window.initCmd();
+        } catch (e) { console.error('[loader] initCmd lỗi:', e); }
+      });
+    });
+  }, appEl ? 800 : 0);
 }
 
-function hideSlider() {
-  var el = document.getElementById('speed-slider');
-  if (el) el.style.display = 'none';
+function handleBootComplete() {
+  try { chimePlay(); } catch (e) { console.error('[loader] chime lỗi:', e); }
+  try { hapticTap('heavy'); showFlash(); } catch (e) {}
+
+  schedule(hideFlash, 700);
+  schedule(function () { stage = 'hello'; showStage('hello'); }, 340);
+  schedule(function () { try { hapticSettle(); } catch (e) {} }, CHIME_MS);
+  schedule(revealTerminal, 3200);
 }
 
-function startBootProgress() {
+/* ============================================================
+   THANH TIẾN TRÌNH — bản đã sửa
+   • rAF + vòng dự phòng setInterval (phòng khi rAF bị treo)
+   • tra element mỗi lần vẽ tới khi tìm thấy (chống sai/đổi id)
+   • tiến trình chỉ tăng, không bao giờ tụt
+   • watchdog: quá hạn thì tự nhảy 100% và vào trang
+   ============================================================ */
+function startBootProgress(opts) {
+  opts = opts || {};
+  if (bootStarted && !opts.force) return;
+
+  bootStarted = true;
   bootDone = false;
-  var progress = 0;
-  var start = performance.now();
-  var duration = 4800;
-  var fillEl = document.getElementById('progress-fill');
-  var lineEl = document.getElementById('boot-line');
-  var pctEl = document.getElementById('boot-percent');
+  bootRevealed = false;
+
+  var duration = opts.duration || 4800;
+  var start = nowMs();
+  var shown = 0;
   var lastLineIndex = -1;
+  var lastTick = start;
+  var fillEl = null, pctEl = null, lineEl = null;
 
-  function tick(now) {
-    var t = Math.min((now - start) / duration, 1);
-    var eased;
-    if (t < 0.35) eased = t * 1.8;
-    else if (t < 0.55) eased = 0.63 + (t - 0.35) * 0.35;
-    else if (t < 0.8) eased = 0.7 + (t - 0.55) * 0.6;
-    else eased = 0.85 + (t - 0.8) * 0.75;
-    progress = Math.min(eased, 1);
+  cancelAnimationFrame(bootRaf);
+  clearInterval(bootTimer);
+  clearTimeout(bootWatchdog);
 
-    if (fillEl) fillEl.style.width = (progress * 100) + '%';
-    if (pctEl) pctEl.textContent = Math.round(progress * 100) + '%';
-    setBootEnergy(progress);
+  function ease(t) {
+    if (t < 0.35) return t * 1.8;
+    if (t < 0.55) return 0.63 + (t - 0.35) * 0.35;
+    if (t < 0.8)  return 0.70 + (t - 0.55) * 0.60;
+    return 0.85 + (t - 0.8) * 0.75;
+  }
 
-    var lineIndex = Math.min(BOOT_LINES.length - 1, Math.floor(progress * BOOT_LINES.length));
-    if (lineIndex !== lastLineIndex) {
-      lastLineIndex = lineIndex;
-      if (lineEl) {
-        lineEl.textContent = BOOT_LINES[lineIndex];
-        lineEl.classList.remove('line-swap');
-        void lineEl.offsetWidth;
-        lineEl.classList.add('line-swap');
-      }
+  function paint(p) {
+    if (!fillEl) fillEl = bootEl('progress-fill', '.progress-fill, [data-progress-fill]');
+    if (!pctEl)  pctEl  = bootEl('boot-percent', '.boot-percent, [data-boot-percent]');
+    if (!lineEl) lineEl = bootEl('boot-line', '.boot-line');
+
+    if (fillEl) {
+      fillEl.style.width = (p * 100).toFixed(2) + '%';
+      fillEl.style.setProperty('--p', p);      // cho CSS dùng scaleX nếu có
     }
+    if (pctEl) pctEl.textContent = Math.round(p * 100) + '%';
+    setBootEnergy(p);
 
-    if (t < 1) {
-      bootRaf = requestAnimationFrame(tick);
-    } else if (!bootDone) {
-      bootDone = true;
-      handleBootComplete();
+    var lineIndex = Math.min(BOOT_LINES.length - 1, Math.floor(p * BOOT_LINES.length));
+    if (lineIndex !== lastLineIndex && lineEl) {
+      lastLineIndex = lineIndex;
+      lineEl.textContent = BOOT_LINES[lineIndex];
+      lineEl.classList.remove('line-swap');
+      void lineEl.offsetWidth;
+      lineEl.classList.add('line-swap');
     }
   }
-  bootRaf = requestAnimationFrame(tick);
+
+  function finish() {
+    if (bootDone) return;
+    bootDone = true;
+    cancelAnimationFrame(bootRaf);
+    clearInterval(bootTimer);
+    clearTimeout(bootWatchdog);
+    paint(1);
+    try {
+      handleBootComplete();
+    } catch (e) {
+      console.error('[loader] handleBootComplete lỗi:', e);
+      revealTerminal();
+    }
+  }
+
+  function step(ts) {
+    lastTick = nowMs();
+    var t = Math.min(((typeof ts === 'number' ? ts : lastTick) - start) / duration, 1);
+    var p = Math.max(shown, Math.min(ease(t), 1));
+    shown = p;
+    paint(p);
+
+    if (t < 1) {
+      cancelAnimationFrame(bootRaf);
+      bootRaf = requestAnimationFrame(step);
+    } else {
+      finish();
+    }
+  }
+
+  paint(0);
+  bootRaf = requestAnimationFrame(step);
+
+  // Nếu rAF không chạy (tab ẩn, driver lỗi, throttle) thì tự kéo tay
+  bootTimer = setInterval(function () {
+    if (bootDone) { clearInterval(bootTimer); return; }
+    if (nowMs() - lastTick > 400) step();
+  }, 200);
+
+  // Chốt chặn cuối: quá hạn 4s vẫn chưa xong thì cho vào luôn
+  bootWatchdog = setTimeout(function () {
+    if (!bootDone) {
+      console.warn('[loader] watchdog kích hoạt — ép hoàn tất boot');
+      finish();
+    }
+  }, duration + 4000);
+
+  window.__skipBoot = finish;
+}
+
+/* Cho phép bỏ qua: bấm Esc / Enter / click nút Bỏ qua */
+function initBootSkip() {
+  document.addEventListener('keydown', function (e) {
+    if ((e.key === 'Escape' || e.key === 'Enter') && !bootDone && typeof window.__skipBoot === 'function') {
+      window.__skipBoot();
+    }
+  });
+
+  var host = document.getElementById('stage-boot') || document.getElementById('app');
+  if (!host || document.getElementById('boot-skip-btn')) return;
+
+  var btn = document.createElement('button');
+  btn.id = 'boot-skip-btn';
+  btn.type = 'button';
+  btn.textContent = 'Bỏ qua';
+  btn.style.cssText = 'position:fixed;right:18px;bottom:18px;z-index:100000;padding:8px 16px;' +
+    'border-radius:999px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.10);' +
+    'backdrop-filter:blur(8px);color:#fff;font:600 12px/1 system-ui,sans-serif;cursor:pointer;opacity:.75';
+  btn.addEventListener('click', function () {
+    if (typeof window.__skipBoot === 'function') window.__skipBoot();
+    btn.remove();
+  });
+  host.appendChild(btn);
 }
 
 function replay() {
-  hapticTap('medium');
+  try { hapticTap('medium'); } catch (e) {}
   clearTimers();
   hideFlash();
   hideSlider();
   cancelAnimationFrame(bootRaf);
+  clearInterval(bootTimer);
+  clearTimeout(bootWatchdog);
 
   var appEl = document.getElementById('app');
   if (appEl) {
@@ -886,14 +987,15 @@ function replay() {
   stage = 'boot';
   runKey++;
   showStage('boot');
-  renderName();
-  var bootEl = document.getElementById('stage-boot');
-  if (bootEl) {
-    bootEl.style.animation = 'none';
-    void bootEl.offsetWidth;
-    bootEl.style.animation = '';
+  try { renderName(); } catch (e) {}
+
+  var bootEls = document.getElementById('stage-boot');
+  if (bootEls) {
+    bootEls.style.animation = 'none';
+    void bootEls.offsetWidth;
+    bootEls.style.animation = '';
   }
-  startBootProgress();
+  startBootProgress({ force: true });
 }
 
 /* ===== Speed Slider ===== */
@@ -918,16 +1020,27 @@ function initSlider() {
 
 /* ===== Init iOS 26 Loading Screen ===== */
 (function runIOS26Loading() {
+  function safe(label, fn) {
+    try { fn(); } catch (e) { console.error('[loader] ' + label + ' lỗi:', e); }
+  }
+
   function init() {
-    applyAuroraVars();
-    unlockAudio();
-    initParallax();
-    renderName();
-    initParticles();
-    initVisualizer();
-    initRipples();
-    initClock();
-    initSlider();
+    safe('showStage', function () { showStage('boot'); });
+
+    // Chạy thanh tiến trình TRƯỚC mọi thứ khác.
+    // Từ giờ một hàm init nào đó lỗi cũng không làm kẹt 0% nữa.
+    safe('startBootProgress', startBootProgress);
+    safe('bootSkip', initBootSkip);
+
+    safe('applyAuroraVars', applyAuroraVars);
+    safe('unlockAudio', unlockAudio);
+    safe('initParallax', initParallax);
+    safe('renderName', renderName);
+    safe('initParticles', initParticles);
+    safe('initVisualizer', initVisualizer);
+    safe('initRipples', initRipples);
+    safe('initClock', initClock);
+    safe('initSlider', initSlider);
 
     var logoBtn = document.getElementById('logo-btn');
     if (logoBtn) logoBtn.addEventListener('click', function () { hapticTap('light'); });
@@ -947,8 +1060,6 @@ function initSlider() {
         if (textEl) textEl.textContent = 'Play startup chime';
       });
     }
-
-    startBootProgress();
   }
 
   if (document.readyState === 'loading') {
@@ -956,7 +1067,23 @@ function initSlider() {
   } else {
     init();
   }
+  // lưới an toàn cuối cùng nếu DOMContentLoaded bị lỡ
+  window.addEventListener('load', function () { if (!bootStarted) init(); });
 })();
+
+/* Gõ __bootDebug() trong Console để xem loader đang kẹt ở đâu */
+window.__bootDebug = function () {
+  console.table({
+    bootStarted: bootStarted,
+    bootDone: bootDone,
+    revealed: bootRevealed,
+    'có #progress-fill': !!document.getElementById('progress-fill'),
+    'có #boot-percent': !!document.getElementById('boot-percent'),
+    'có #boot-line': !!document.getElementById('boot-line'),
+    'có #terminal-screen': !!document.getElementById('terminal-screen'),
+    'có window.initCmd': typeof window.initCmd
+  });
+};
 /* ============================================================
    END SAKURA LOADING SCREEN
    ============================================================ */
