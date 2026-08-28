@@ -759,11 +759,6 @@ var timers = [];
 function schedule(fn, delay) { timers.push(setTimeout(fn, delay)); }
 function clearTimers() { timers.forEach(function (id) { clearTimeout(id); }); timers = []; }
 
-var nowMs = (window.performance && performance.now)
-  ? function () { return performance.now(); }
-  : function () { return Date.now(); };
-
-/* Tìm element theo id, có selector dự phòng nếu id bị đổi */
 function bootEl(id, fallback) {
   var el = document.getElementById(id);
   if (!el && fallback) el = document.querySelector(fallback);
@@ -779,7 +774,11 @@ function showStage(name) {
 }
 
 function setBootEnergy(progress) {
-  try { particleState.energy = 0.25 + progress * 0.85; } catch (e) {}
+  try {
+    if (typeof particleState !== 'undefined' && particleState) {
+      particleState.energy = 0.25 + progress * 0.85;
+    }
+  } catch (e) {}
 }
 
 function showFlash() {
@@ -808,7 +807,7 @@ function revealTerminal() {
   var terminal = document.getElementById('terminal-screen');
 
   if (appEl) {
-    appEl.style.transition = 'opacity 0.8s ease';
+    appEl.style.transition = 'opacity 0.6s ease';
     appEl.style.opacity = '0';
   }
 
@@ -816,35 +815,28 @@ function revealTerminal() {
     if (appEl) appEl.style.display = 'none';
     if (!terminal) return;
     terminal.style.visibility = 'visible';
-    terminal.style.opacity = '0';
-    terminal.style.transition = 'opacity 0.6s ease';
+    terminal.style.opacity = '1';
+    terminal.classList.add('active');
     requestAnimationFrame(function () {
-      requestAnimationFrame(function () {
-        terminal.style.opacity = '1';
-        try {
-          if (typeof window.initCmd === 'function') window.initCmd();
-        } catch (e) { console.error('[loader] initCmd lỗi:', e); }
-      });
+      try {
+        if (typeof window.initCmd === 'function') window.initCmd();
+      } catch (e) { console.error('[loader] initCmd lỗi:', e); }
     });
-  }, appEl ? 800 : 0);
+  }, appEl ? 600 : 0);
 }
 
 function handleBootComplete() {
-  try { chimePlay(); } catch (e) { console.error('[loader] chime lỗi:', e); }
+  try { chimePlay(); } catch (e) {}
   try { hapticTap('heavy'); showFlash(); } catch (e) {}
 
-  schedule(hideFlash, 700);
-  schedule(function () { stage = 'hello'; showStage('hello'); }, 340);
-  schedule(function () { try { hapticSettle(); } catch (e) {} }, CHIME_MS);
-  schedule(revealTerminal, 3200);
+  schedule(hideFlash, 600);
+  schedule(function () { stage = 'hello'; showStage('hello'); }, 300);
+  schedule(function () { try { hapticSettle(); } catch (e) {} }, 1200);
+  schedule(revealTerminal, 2400);
 }
 
 /* ============================================================
-   THANH TIẾN TRÌNH — bản đã sửa
-   • rAF + vòng dự phòng setInterval (phòng khi rAF bị treo)
-   • tra element mỗi lần vẽ tới khi tìm thấy (chống sai/đổi id)
-   • tiến trình chỉ tăng, không bao giờ tụt
-   • watchdog: quá hạn thì tự nhảy 100% và vào trang
+   THANH TIẾN TRÌNH — BẢN SỬA LỖI ĐỒNG BỘ CLOCK (CHỐNG KẸT 0%)
    ============================================================ */
 function startBootProgress(opts) {
   opts = opts || {};
@@ -854,11 +846,10 @@ function startBootProgress(opts) {
   bootDone = false;
   bootRevealed = false;
 
-  var duration = opts.duration || 4800;
-  var start = nowMs();
+  var duration = opts.duration || 3200;
+  var startTime = null;
   var shown = 0;
   var lastLineIndex = -1;
-  var lastTick = start;
   var fillEl = null, pctEl = null, lineEl = null;
 
   cancelAnimationFrame(bootRaf);
@@ -873,24 +864,29 @@ function startBootProgress(opts) {
   }
 
   function paint(p) {
-    if (!fillEl) fillEl = bootEl('progress-fill', '.progress-fill, [data-progress-fill]');
-    if (!pctEl)  pctEl  = bootEl('boot-percent', '.boot-percent, [data-boot-percent]');
+    if (!fillEl) fillEl = bootEl('progress-fill', '.progress-fill');
+    if (!pctEl)  pctEl  = bootEl('boot-percent', '.boot-percent');
     if (!lineEl) lineEl = bootEl('boot-line', '.boot-line');
 
+    var pct = Math.min(100, Math.max(0, Math.round(p * 100)));
+
     if (fillEl) {
-      fillEl.style.width = (p * 100).toFixed(2) + '%';
-      fillEl.style.setProperty('--p', p);      // cho CSS dùng scaleX nếu có
+      fillEl.style.width = pct + '%';
     }
-    if (pctEl) pctEl.textContent = Math.round(p * 100) + '%';
+    if (pctEl) {
+      pctEl.textContent = pct + '%';
+    }
     setBootEnergy(p);
 
-    var lineIndex = Math.min(BOOT_LINES.length - 1, Math.floor(p * BOOT_LINES.length));
-    if (lineIndex !== lastLineIndex && lineEl) {
-      lastLineIndex = lineIndex;
-      lineEl.textContent = BOOT_LINES[lineIndex];
-      lineEl.classList.remove('line-swap');
-      void lineEl.offsetWidth;
-      lineEl.classList.add('line-swap');
+    if (typeof BOOT_LINES !== 'undefined' && Array.isArray(BOOT_LINES) && BOOT_LINES.length > 0) {
+      var lineIndex = Math.min(BOOT_LINES.length - 1, Math.floor(p * BOOT_LINES.length));
+      if (lineIndex !== lastLineIndex && lineEl) {
+        lastLineIndex = lineIndex;
+        lineEl.textContent = BOOT_LINES[lineIndex];
+        lineEl.classList.remove('line-swap');
+        void lineEl.offsetWidth;
+        lineEl.classList.add('line-swap');
+      }
     }
   }
 
@@ -910,13 +906,17 @@ function startBootProgress(opts) {
   }
 
   function step(ts) {
-    lastTick = nowMs();
-    var t = Math.min(((typeof ts === 'number' ? ts : lastTick) - start) / duration, 1);
+    var currentTime = (typeof ts === 'number' && ts > 0) ? ts : (window.performance && performance.now ? performance.now() : Date.now());
+    if (startTime === null) {
+      startTime = currentTime;
+    }
+    var elapsed = currentTime - startTime;
+    var t = Math.min(Math.max(elapsed / duration, 0), 1);
     var p = Math.max(shown, Math.min(ease(t), 1));
     shown = p;
     paint(p);
 
-    if (t < 1) {
+    if (t < 1 && !bootDone) {
       cancelAnimationFrame(bootRaf);
       bootRaf = requestAnimationFrame(step);
     } else {
@@ -927,27 +927,28 @@ function startBootProgress(opts) {
   paint(0);
   bootRaf = requestAnimationFrame(step);
 
-  // Nếu rAF không chạy (tab ẩn, driver lỗi, throttle) thì tự kéo tay
+  // Vòng lặp setInterval dự phòng đảm bảo luôn tiến tới 100% dù rAF bị pause/throttle
   bootTimer = setInterval(function () {
     if (bootDone) { clearInterval(bootTimer); return; }
-    if (nowMs() - lastTick > 400) step();
-  }, 200);
+    var now = (window.performance && performance.now ? performance.now() : Date.now());
+    step(now);
+  }, 50);
 
-  // Chốt chặn cuối: quá hạn 4s vẫn chưa xong thì cho vào luôn
+  // Watchdog chốt chặn cuối: tối đa duration + 2000ms là bắt buộc hoàn tất
   bootWatchdog = setTimeout(function () {
     if (!bootDone) {
-      console.warn('[loader] watchdog kích hoạt — ép hoàn tất boot');
+      console.warn('[loader] Watchdog: Tự động hoàn tất boot');
       finish();
     }
-  }, duration + 4000);
+  }, duration + 2000);
 
   window.__skipBoot = finish;
 }
 
-/* Cho phép bỏ qua: bấm Esc / Enter / click nút Bỏ qua */
+/* Cho phép bỏ qua: bấm Esc / Enter / Space / Click */
 function initBootSkip() {
   document.addEventListener('keydown', function (e) {
-    if ((e.key === 'Escape' || e.key === 'Enter') && !bootDone && typeof window.__skipBoot === 'function') {
+    if ((e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') && !bootDone && typeof window.__skipBoot === 'function') {
       window.__skipBoot();
     }
   });
@@ -958,10 +959,11 @@ function initBootSkip() {
   var btn = document.createElement('button');
   btn.id = 'boot-skip-btn';
   btn.type = 'button';
-  btn.textContent = 'Bỏ qua';
-  btn.style.cssText = 'position:fixed;right:18px;bottom:18px;z-index:100000;padding:8px 16px;' +
-    'border-radius:999px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.10);' +
-    'backdrop-filter:blur(8px);color:#fff;font:600 12px/1 system-ui,sans-serif;cursor:pointer;opacity:.75';
+  btn.textContent = 'Bỏ qua ➔';
+  btn.style.cssText = 'position:fixed;right:20px;bottom:20px;z-index:100000;padding:8px 18px;' +
+    'border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.14);' +
+    'backdrop-filter:blur(10px);color:#fff;font:700 12px/1 system-ui,sans-serif;cursor:pointer;opacity:.85;' +
+    'transition:all .2s ease;box-shadow:0 4px 16px rgba(0,0,0,.3)';
   btn.addEventListener('click', function () {
     if (typeof window.__skipBoot === 'function') window.__skipBoot();
     btn.remove();
@@ -1027,8 +1029,7 @@ function initSlider() {
   function init() {
     safe('showStage', function () { showStage('boot'); });
 
-    // Chạy thanh tiến trình TRƯỚC mọi thứ khác.
-    // Từ giờ một hàm init nào đó lỗi cũng không làm kẹt 0% nữa.
+    // Khởi động thanh tiến trình ngay lập tức
     safe('startBootProgress', startBootProgress);
     safe('bootSkip', initBootSkip);
 
@@ -1067,11 +1068,10 @@ function initSlider() {
   } else {
     init();
   }
-  // lưới an toàn cuối cùng nếu DOMContentLoaded bị lỡ
   window.addEventListener('load', function () { if (!bootStarted) init(); });
 })();
 
-/* Gõ __bootDebug() trong Console để xem loader đang kẹt ở đâu */
+/* Gõ __bootDebug() trong Console để xem loader */
 window.__bootDebug = function () {
   console.table({
     bootStarted: bootStarted,
@@ -1091,34 +1091,48 @@ window.__bootDebug = function () {
 /* ============================================================
    UI SOUND EFFECTS (Web Audio API)
    ============================================================ */
-const uiAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let uiAudioCtx = null;
+function getUIAudioCtx() {
+  if (uiAudioCtx) return uiAudioCtx;
+  const Ctor = window.AudioContext || window.webkitAudioContext;
+  if (!Ctor) return null;
+  try {
+    uiAudioCtx = new Ctor();
+    return uiAudioCtx;
+  } catch (e) {
+    return null;
+  }
+}
+
 function playUISound(type) {
   try {
-    if (uiAudioCtx.state === 'suspended') uiAudioCtx.resume();
+    const ctx = getUIAudioCtx();
+    if (!ctx) return;
+    if (ctx.state === 'suspended') ctx.resume();
     
-    const osc = uiAudioCtx.createOscillator();
-    const gainNode = uiAudioCtx.createGain();
+    const osc = ctx.createOscillator();
+    const gainNode = ctx.createGain();
     osc.connect(gainNode);
-    gainNode.connect(uiAudioCtx.destination);
+    gainNode.connect(ctx.destination);
     
     if (type === 'theme') {
       // Light click/blip for theme change
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(800, uiAudioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1200, uiAudioCtx.currentTime + 0.05);
-      gainNode.gain.setValueAtTime(0.08, uiAudioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, uiAudioCtx.currentTime + 0.1);
-      osc.start(uiAudioCtx.currentTime);
-      osc.stop(uiAudioCtx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(800, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.05);
+      gainNode.gain.setValueAtTime(0.08, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.1);
     } else if (type === 'page') {
       // Futuristic swoosh/bloop for page transition
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(400, uiAudioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(50, uiAudioCtx.currentTime + 0.3);
-      gainNode.gain.setValueAtTime(0.12, uiAudioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, uiAudioCtx.currentTime + 0.3);
-      osc.start(uiAudioCtx.currentTime);
-      osc.stop(uiAudioCtx.currentTime + 0.3);
+      osc.frequency.setValueAtTime(400, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.3);
+      gainNode.gain.setValueAtTime(0.12, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.3);
     }
   } catch(e) {
     console.error("Audio playback failed", e);
