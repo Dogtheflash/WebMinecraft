@@ -2691,6 +2691,8 @@ if (interactiveCard) {
 
   if (!toggleBtn || !menu) return;
 
+  var THEME_WEATHER = { cyber: 'rain', sakura: 'sakura', ocean: 'snow', fire: 'stars' };
+
   function applyTheme(theme) {
     if (THEMES.indexOf(theme) === -1) theme = 'cyber';
     document.documentElement.setAttribute('data-theme', theme);
@@ -2699,6 +2701,11 @@ if (interactiveCard) {
       opt.classList.toggle('active', opt.dataset.theme === theme);
     });
     try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
+    
+    // Tự động đồng bộ hiệu ứng thời tiết theo Theme màu
+    if (typeof window.setProfileWeather === 'function' && THEME_WEATHER[theme]) {
+      window.setProfileWeather(THEME_WEATHER[theme]);
+    }
 
     // Xử lý đổi âm thanh nền
     if (AMBIENT_SOUNDS[theme]) {
@@ -3037,6 +3044,7 @@ if (interactiveCard) {
       animId = requestAnimationFrame(loop);
     }
   }
+  window.setProfileWeather = setWeather;
 
   // Toggle dropdown
   if (weatherToggle && weatherMenu) {
@@ -4597,3 +4605,172 @@ if (interactiveCard) {
 
   onScroll();
 })();
+
+
+/* ============================================================
+   SCROLL REVEAL — IntersectionObserver, stagger 80ms
+   ============================================================ */
+(function initReveal() {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target;
+      var parent = el.parentElement;
+      var siblings = parent ? Array.prototype.filter.call(parent.children, function (c) {
+        return c.classList && c.classList.contains('reveal');
+      }) : [el];
+      var idx = siblings.indexOf(el);
+      el.style.transitionDelay = (Math.max(0, idx) * 80) + 'ms';
+      el.classList.add('in');
+      io.unobserve(el);
+    });
+  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+})();
+
+/* ============================================================
+   COMMAND PALETTE — Ctrl/Cmd+K
+   ============================================================ */
+(function initCommandPalette() {
+  var mask = document.getElementById('cmdk-mask');
+  var input = document.getElementById('cmdk-input');
+  var list = document.getElementById('cmdk-list');
+  var openBtn = document.getElementById('cmdk-open');
+  if (!mask || !input || !list) return;
+
+  function click(el) { if (el) el.click(); }
+  function showScreen(id) {
+    var screens = document.querySelectorAll('.screen');
+    screens.forEach(function (s) { s.classList.remove('active'); });
+    var target = document.getElementById(id);
+    if (target) target.classList.add('active');
+  }
+  function openSteam()  { click(document.getElementById('page-two-link')); }
+  function openMC()     { click(document.getElementById('page-one-link')); }
+  function openColor()  { click(document.getElementById('mal-link')); }
+  function cycleTheme() {
+    click(document.getElementById('theme-toggle'));
+    setTimeout(function () {
+      var opts = document.querySelectorAll('.theme-option');
+      var active = Array.prototype.find.call(opts, function (o) { return o.classList.contains('active'); });
+      var idx = active ? Array.prototype.indexOf.call(opts, active) : -1;
+      var next = opts[(idx + 1 + opts.length) % opts.length];
+      if (next) click(next);
+    }, 60);
+  }
+  function toggleMusic() { click(document.getElementById('play-toggle')); }
+  function toggleWarp()  { click(document.getElementById('warp-btn')); }
+  function toggleArcade(){ click(document.getElementById('snake-game-btn')); }
+  function toggleYt()    { click(document.getElementById('yt-bg-toggle')); }
+  function scrollTop()    { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  function scrollBottom() { window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }); }
+  function gotoDiscord() {
+    var a = document.getElementById('discord-link');
+    if (a) window.open(a.href, '_blank', 'noopener');
+  }
+
+  var COMMANDS = [
+    { id: 'home',      title: 'Về trang chủ (Profile)',  sub: 'Cuộn lên đầu trang',            icon: '🏠', meta: 'go',     run: function () { showScreen('profile-screen'); scrollTop(); } },
+    { id: 'terminal',  title: 'Mở Terminal / CMD',       sub: 'Màn hình boot command prompt',   icon: '⌨️', meta: 'screen', run: function () { showScreen('terminal-screen'); } },
+    { id: 'steam',     title: 'Mở trang Steam',          sub: 'Profile Steam cá nhân',         icon: '🎮', meta: 'page',   run: openSteam },
+    { id: 'minecraft', title: 'Mở trang Minecraft',      sub: 'Server Skyblock / SMP',         icon: '⛏️', meta: 'page',   run: openMC },
+    { id: 'color',     title: 'Mở Text Color Generator', sub: 'Unity Rich Text gradient',      icon: '🎨', meta: 'page',   run: openColor },
+    { id: 'arcade',    title: 'Mở The Midnight Arcade',  sub: '11 mini-games',                 icon: '🕹️', meta: 'open',   run: toggleArcade },
+    { id: 'warp',      title: 'Bật Hyperspace Warp',     sub: 'Hiệu ứng warp tốc độ ánh sáng', icon: '🚀', meta: 'fx',     run: toggleWarp },
+    { id: 'ytbg',      title: 'Bật/Tắt nền YouTube Lofi',sub: 'Nền video kèm tiếng',           icon: '🎬', meta: 'fx',     run: toggleYt },
+    { id: 'music',     title: 'Phát / Tạm dừng nhạc',    sub: 'Trình phát nhạc nền',           icon: '🎵', meta: 'audio',  run: toggleMusic },
+    { id: 'theme',     title: 'Đổi theme tiếp theo',     sub: 'Cyber · Sakura · Ocean · Fire', icon: '🌙', meta: 'theme',  run: cycleTheme },
+    { id: 'discord',   title: 'Mở Discord cá nhân',      sub: 'Mở trong tab mới',              icon: '💬', meta: 'link',   run: gotoDiscord },
+    { id: 'top',       title: 'Cuộn lên đầu trang',      sub: 'Mượt tới top',                  icon: '⬆️', meta: 'scroll', run: scrollTop },
+    { id: 'bottom',    title: 'Cuộn xuống cuối trang',   sub: 'Mượt tới bottom',               icon: '⬇️', meta: 'scroll', run: scrollBottom }
+  ];
+
+  var activeIndex = 0;
+  var visible = COMMANDS.slice();
+
+  function render() {
+    var q = input.value.trim().toLowerCase();
+    visible = q
+      ? COMMANDS.filter(function (c) {
+          return (c.title + ' ' + c.sub + ' ' + c.id).toLowerCase().indexOf(q) !== -1;
+        })
+      : COMMANDS.slice();
+    if (activeIndex >= visible.length) activeIndex = 0;
+    list.innerHTML = '';
+    if (visible.length === 0) {
+      var empty = document.createElement('div');
+      empty.className = 'cmdk-empty';
+      empty.textContent = 'Không có lệnh nào khớp với "' + input.value + '"';
+      list.appendChild(empty);
+      return;
+    }
+    visible.forEach(function (c, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'cmdk-item' + (i === activeIndex ? ' is-active' : '');
+      b.setAttribute('role', 'option');
+      b.innerHTML =
+        '<span class="cmdk-icon" aria-hidden="true">' + c.icon + '</span>' +
+        '<span><div class="cmdk-title">' + c.title + '</div>' +
+        '<div class="cmdk-sub">' + c.sub + '</div></span>' +
+        '<span class="cmdk-meta">' + c.meta + '</span>';
+      b.addEventListener('click', function () { runCommand(c); });
+      b.addEventListener('mousemove', function () { activeIndex = i; updateActive(); });
+      list.appendChild(b);
+    });
+  }
+  function updateActive() {
+    var items = list.querySelectorAll('.cmdk-item');
+    items.forEach(function (el, i) { el.classList.toggle('is-active', i === activeIndex); });
+  }
+  function runCommand(c) { try { c.run(); } catch (e) {} close(); }
+  function open() {
+    if (!mask.classList.contains('open')) {
+      mask.hidden = false;
+      void mask.offsetWidth;
+      mask.classList.add('open');
+    }
+    input.value = '';
+    activeIndex = 0;
+    render();
+    setTimeout(function () { input.focus(); }, 30);
+  }
+  function close() {
+    if (!mask.classList.contains('open')) return;
+    mask.classList.remove('open');
+    setTimeout(function () { mask.hidden = true; }, 220);
+  }
+
+  if (openBtn) openBtn.addEventListener('click', open);
+  mask.addEventListener('click', function (e) { if (e.target === mask) close(); });
+  document.addEventListener('keydown', function (e) {
+    var isMod = e.metaKey || e.ctrlKey;
+    if (isMod && (e.key === 'k' || e.key === 'K')) {
+      e.preventDefault();
+      if (mask.classList.contains('open')) close(); else open();
+      return;
+    }
+    if (e.key === 'Escape' && mask.classList.contains('open')) {
+      e.preventDefault(); close(); return;
+    }
+    if (!mask.classList.contains('open')) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (visible.length) { activeIndex = (activeIndex + 1) % visible.length; updateActive(); }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (visible.length) { activeIndex = (activeIndex - 1 + visible.length) % visible.length; updateActive(); }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (visible[activeIndex]) runCommand(visible[activeIndex]);
+    }
+  });
+  input.addEventListener('input', function () { activeIndex = 0; render(); });
+
+  render();
+})();
+
