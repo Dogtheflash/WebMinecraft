@@ -3442,8 +3442,6 @@ body.color-page-active
   height: 20px;
 }
 
-@media (max-width: 768px) {
-
 /* ============================================================
    CYBER CITY LOADER — thay cho iOS 26 boot (toàn bộ dùng cl-)
    ============================================================ */
