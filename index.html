@@ -24,166 +24,165 @@
 
 <body class="terminal-active">
 
-  <!-- ===== Root: fixed pink Vapor wallpaper (iOS 26 Loading Screen) ===== -->
-  <div id="app" class="mood-vapor" style="position: fixed; inset: 0; z-index: 99999;">
-    <!-- Ambient depth background -->
-    <div id="bg-layer" class="bg-layer">
-      <div class="aurora aurora-1"></div>
-      <div class="aurora aurora-2"></div>
-      <div class="aurora aurora-3"></div>
-      <div class="aurora aurora-4"></div>
-      <div class="mesh-grid"></div>
-      <div class="vignette"></div>
-    </div>
+  <!-- ===== CYBER CITY LOADER (thay cho iOS 26 boot) ===== -->
+  <div id="cyber-loader">
+    <noscript><style>#cyber-loader{display:none!important}</style></noscript>
 
-    <!-- Particle field canvas -->
-    <canvas id="particles" class="particles-canvas"></canvas>
+    <div class="cl-aurora"><i></i><i></i><i></i><i></i></div>
 
-    <!-- Frosted glass depth layers -->
-    <div class="screen-glass"></div>
-    <div class="top-frost"></div>
-    <div class="noise"></div>
-    <div class="scanline"></div>
+    <div class="cl-stars-b"></div>
+    <div class="cl-stars-a"></div>
 
-    <!-- Shockwave rings (injected by JS on boot completion) -->
-    <div id="shockwaves" class="shockwave-layer"></div>
+    <div class="cl-beam cl-beam-1"></div>
+    <div class="cl-beam cl-beam-2"></div>
 
-    <!-- White flash (injected by JS) -->
-    <div id="flash-layer" class="flash-layer"></div>
+    <canvas id="cl-fx-sky"></canvas>
 
-    <!-- ===== BOOT stage ===== -->
-    <div id="stage-boot" class="stage-content stage-boot">
-      <button id="logo-btn" class="logo-enter" aria-label="Apple logo">
-        <div class="halo"></div>
-        <span class="pulse-ring"></span>
-        <span class="pulse-ring" style="animation-delay:1.3s"></span>
-        <span class="pulse-ring" style="animation-delay:2.6s"></span>
-        <div class="logo-breathe"></div>
-        <svg viewBox="0 0 384 512" class="logo-float" id="logo-svg">
-          <defs>
-            <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#ffffff" />
-              <stop offset="45%" stop-color="#e8e8ee" />
-              <stop offset="70%" stop-color="#b9bac4" />
-              <stop offset="100%" stop-color="#d9dae2" />
-            </linearGradient>
-            <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="white" stop-opacity="0" />
-              <stop offset="45%" stop-color="white" stop-opacity="0" />
-              <stop offset="50%" stop-color="white" stop-opacity="0.95" />
-              <stop offset="55%" stop-color="white" stop-opacity="0" />
-              <stop offset="100%" stop-color="white" stop-opacity="0" />
-              <animateTransform attributeName="gradientTransform" type="translate" from="-384 0" to="384 0" dur="2.6s" repeatCount="indefinite" />
-            </linearGradient>
-            <clipPath id="appleClip">
-              <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
-            </clipPath>
-          </defs>
-          <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="6" class="logo-trace" />
-          <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" fill="url(#chrome)" class="logo-fill" />
-          <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" fill="url(#shine)" class="logo-fill" />
-        </svg>
-      </button>
+    <!-- Tầng nhà xa -->
+    <svg class="cl-city-far" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
+      <g fill="#0c1129" opacity=".9">
+        <rect x="0" y="176" width="86" height="124"/><rect x="86" y="146" width="64" height="154"/>
+        <rect x="150" y="196" width="72" height="104"/><rect x="222" y="128" width="82" height="172"/>
+        <rect x="304" y="188" width="52" height="112"/><rect x="356" y="158" width="92" height="142"/>
+        <rect x="448" y="204" width="62" height="96"/><rect x="510" y="138" width="72" height="162"/>
+        <rect x="582" y="178" width="82" height="122"/><rect x="664" y="196" width="52" height="104"/>
+        <rect x="716" y="148" width="92" height="152"/><rect x="808" y="186" width="62" height="114"/>
+        <rect x="870" y="128" width="82" height="172"/><rect x="952" y="178" width="62" height="122"/>
+        <rect x="1014" y="158" width="72" height="142"/><rect x="1086" y="198" width="82" height="102"/>
+        <rect x="1168" y="136" width="62" height="164"/><rect x="1230" y="176" width="92" height="124"/>
+        <rect x="1322" y="156" width="62" height="144"/><rect x="1384" y="196" width="56" height="104"/>
+      </g>
+    </svg>
 
-      <!-- Signature name under the logo -->
-      <div class="name-mount" id="name-mount"></div>
+    <!-- Tầng nhà gần + cửa sổ neon + biển hiệu -->
+    <svg class="cl-city-near" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <pattern id="clwc" width="17" height="24" patternUnits="userSpaceOnUse">
+          <rect x="5" y="7" width="6" height="10" rx="1" fill="rgba(120,225,255,.9)"/>
+        </pattern>
+        <pattern id="clwp" width="19" height="26" patternUnits="userSpaceOnUse">
+          <rect x="6" y="8" width="6" height="10" rx="1" fill="rgba(255,120,225,.85)"/>
+        </pattern>
+        <pattern id="clwa" width="16" height="22" patternUnits="userSpaceOnUse">
+          <rect x="4" y="6" width="6" height="9" rx="1" fill="rgba(255,205,120,.8)"/>
+        </pattern>
+      </defs>
 
-      <!-- Progress bar -->
-      <div class="progress-enter progress-wrap">
-        <div class="progress-track">
-          <div id="progress-fill" class="progress-fill" style="width:0%">
-            <div class="progress-gradient"></div>
-            <div class="progress-cap"></div>
-          </div>
-          <div class="bar-sheen"></div>
+      <g id="clCityNearG">
+        <g fill="#060a1c">
+          <rect x="30" y="112" width="112" height="188"/><rect x="146" y="66" width="92" height="234"/>
+          <rect x="238" y="140" width="132" height="160"/><rect x="370" y="94" width="102" height="206"/>
+          <rect x="472" y="150" width="122" height="150"/><rect x="594" y="58" width="92" height="242"/>
+          <rect x="686" y="134" width="142" height="166"/><rect x="828" y="88" width="102" height="212"/>
+          <rect x="930" y="146" width="132" height="154"/><rect x="1062" y="74" width="92" height="226"/>
+          <rect x="1154" y="124" width="122" height="176"/><rect x="1276" y="98" width="134" height="202"/>
+        </g>
+
+        <rect x="38" y="122" width="96" height="120" fill="url(#clwc)" class="cl-winbreath"/>
+        <rect x="154" y="76" width="76" height="160" fill="url(#clwp)"/>
+        <rect x="246" y="150" width="116" height="100" fill="url(#clwa)" class="cl-winbreath wb2"/>
+        <rect x="378" y="104" width="86" height="130" fill="url(#clwc)"/>
+        <rect x="480" y="160" width="106" height="90" fill="url(#clwp)" class="cl-winbreath wb3"/>
+        <rect x="602" y="68" width="76" height="170" fill="url(#clwc)"/>
+        <rect x="694" y="144" width="126" height="110" fill="url(#clwa)"/>
+        <rect x="836" y="98" width="86" height="140" fill="url(#clwp)"/>
+        <rect x="938" y="156" width="116" height="94" fill="url(#clwc)" class="cl-winbreath wb2"/>
+        <rect x="1070" y="84" width="76" height="150" fill="url(#clwa)"/>
+        <rect x="1162" y="134" width="106" height="110" fill="url(#clwp)"/>
+        <rect x="1284" y="108" width="118" height="130" fill="url(#clwc)"/>
+
+        <g class="cl-flick1" fill="#bff7ff">
+          <rect x="60" y="140" width="8" height="10" rx="1"/><rect x="180" y="96" width="8" height="10" rx="1"/>
+          <rect x="620" y="90" width="8" height="10" rx="1"/><rect x="960" y="170" width="8" height="10" rx="1"/>
+        </g>
+        <g class="cl-flick2" fill="#ff9ee0">
+          <rect x="410" y="120" width="8" height="10" rx="1"/><rect x="860" y="112" width="8" height="10" rx="1"/>
+          <rect x="1310" y="124" width="8" height="10" rx="1"/>
+        </g>
+        <g class="cl-flick3" fill="#ffe9b0">
+          <rect x="270" y="166" width="8" height="10" rx="1"/><rect x="720" y="156" width="8" height="10" rx="1"/>
+          <rect x="1180" y="150" width="8" height="10" rx="1"/>
+        </g>
+
+        <line x1="192" y1="66" x2="192" y2="34" stroke="#0b1230" stroke-width="3"/>
+        <circle class="cl-beacon" cx="192" cy="32" r="3.2" fill="#ff5b6e"/>
+        <line x1="640" y1="58" x2="640" y2="20" stroke="#0b1230" stroke-width="3"/>
+        <circle class="cl-beacon b2" cx="640" cy="18" r="3.2" fill="#ff5b6e"/>
+
+        <rect class="cl-neon np1" x="606" y="70" width="66" height="5" rx="2.5" fill="currentColor" style="color:#ff4fd8"/>
+        <rect class="cl-neon np2" x="1078" y="84" width="58" height="5" rx="2.5" fill="currentColor" style="color:#35e8ff"/>
+        <rect class="cl-neon np3" x="166" y="76" width="50" height="4" rx="2" fill="currentColor" style="color:#7df3ff"/>
+
+        <g style="color:#ff9ee0">
+          <rect x="700" y="64" width="32" height="92" rx="5" fill="rgba(22,10,42,.6)" stroke="rgba(255,158,224,.4)" stroke-width="1"/>
+          <text x="716" y="98"  text-anchor="middle" font-size="26" font-weight="500"
+                class="cl-neon cl-signFlick" fill="currentColor" style="font-family:'Noto Serif JP',serif">千</text>
+          <text x="716" y="134" text-anchor="middle" font-size="26" font-weight="500"
+                class="cl-neon" fill="currentColor" style="font-family:'Noto Serif JP',serif">夏</text>
+        </g>
+
+        <g style="color:#7df3ff">
+          <rect x="1330" y="106" width="24" height="112" rx="4" fill="rgba(8,20,40,.55)" stroke="rgba(125,243,255,.3)" stroke-width="1"/>
+          <text x="1342" y="126" text-anchor="middle" font-size="15" class="cl-neon" fill="currentColor" style="font-family:'Noto Serif JP',serif">サ</text>
+          <text x="1342" y="147" text-anchor="middle" font-size="15" class="cl-neon" fill="currentColor" style="font-family:'Noto Serif JP',serif">イ</text>
+          <text x="1342" y="168" text-anchor="middle" font-size="15" class="cl-neon cl-signFlick" fill="currentColor" style="font-family:'Noto Serif JP',serif">バ</text>
+          <text x="1342" y="189" text-anchor="middle" font-size="15" class="cl-neon" fill="currentColor" style="font-family:'Noto Serif JP',serif">ー</text>
+        </g>
+
+        <g class="cl-holo-plate">
+          <rect x="392" y="44" width="62" height="66" rx="4" fill="rgba(53,232,255,.07)" stroke="rgba(53,232,255,.55)" stroke-width="1"/>
+          <rect x="400" y="54" width="34" height="3" rx="1.5" fill="rgba(140,240,255,.8)"/>
+          <rect x="400" y="63" width="46" height="3" rx="1.5" fill="rgba(140,240,255,.5)"/>
+          <rect x="400" y="72" width="24" height="3" rx="1.5" fill="rgba(140,240,255,.65)"/>
+          <rect x="400" y="84" width="10" height="6" fill="rgba(53,232,255,.85)"/>
+          <rect x="414" y="84" width="10" height="6" fill="rgba(53,232,255,.45)"/>
+          <rect x="428" y="84" width="10" height="6" fill="rgba(53,232,255,.2)"/>
+          <clipPath id="clHoloClip"><rect x="393" y="45" width="60" height="64" rx="4"/></clipPath>
+          <rect class="cl-holo-scan" x="392" y="44" width="62" height="7" fill="rgba(160,245,255,.28)" clip-path="url(#clHoloClip)"/>
+        </g>
+      </g>
+    </svg>
+
+    <div class="cl-street"></div>
+    <svg class="cl-city-reflect" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
+      <use href="#clCityNearG"></use>
+    </svg>
+
+    <div class="cl-haze"></div>
+
+    <div class="cl-steam cl-steam-1"></div>
+    <div class="cl-steam cl-steam-2"></div>
+    <div class="cl-steam cl-steam-3"></div>
+
+    <div class="cl-hover cl-hover-1"></div>
+    <div class="cl-hover cl-hover-2"></div>
+
+    <canvas id="cl-fx-rain"></canvas>
+
+    <div class="cl-road"></div>
+    <div class="cl-car cl-car-1"></div>
+    <div class="cl-car cl-car-2"></div>
+
+    <div class="cl-vignette"></div>
+
+    <div class="cl-stage">
+      <div class="cl-kanji">千夏</div>
+      <h1 class="cl-name" id="cl-name"></h1>
+      <div class="cl-sub">cyber city · night drive</div>
+
+      <div class="cl-bar">
+        <div class="cl-bar-label"><span>system boot</span><span class="lb-r">chinatsu.os</span></div>
+        <div class="cl-bar-track"><div class="cl-bar-fill" id="cl-fill"></div></div>
+        <div class="cl-bar-meta">
+          <span id="cl-line">bật lưới điện thành phố…</span>
+          <span id="cl-pct">0%</span>
         </div>
-        <div class="boot-line-row">
-          <p id="boot-line" class="line-swap">Preparing iOS 26…</p>
-        </div>
-        <p id="boot-percent" class="boot-percent">0%</p>
       </div>
-    </div>
 
-    <!-- ===== HELLO stage ===== -->
-    <div id="stage-hello" class="stage-content stage-hello" style="display:none">
-      <svg viewBox="0 0 520 200" class="hello-fade hello-svg" aria-label="hello">
-        <defs>
-          <linearGradient id="helloGrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#7dd3fc">
-              <animate attributeName="stop-color" values="#7dd3fc;#f9a8d4;#fcd34d;#7dd3fc" dur="6s" repeatCount="indefinite" />
-            </stop>
-            <stop offset="50%" stop-color="#c4b5fd">
-              <animate attributeName="stop-color" values="#c4b5fd;#fcd34d;#7dd3fc;#c4b5fd" dur="6s" repeatCount="indefinite" />
-            </stop>
-            <stop offset="100%" stop-color="#fcd34d">
-              <animate attributeName="stop-color" values="#fcd34d;#7dd3fc;#c4b5fd;#fcd34d" dur="6s" repeatCount="indefinite" />
-            </stop>
-          </linearGradient>
-          <filter id="helloGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="6" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-        <text x="50%" y="62%" text-anchor="middle" dominant-baseline="middle" class="hello-text" fill="none" stroke="url(#helloGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#helloGlow)">hello</text>
-      </svg>
-      <p class="hello-sub">H E L L O</p>
-    </div>
-
-    <!-- ===== Fixed chrome overlays ===== -->
-
-    <!-- Status bar -->
-    <div class="status-bar">
-      <div class="status-in status-clock">
-        <span id="clock-time" class="clock-time">--:--</span>
-        <span id="clock-seconds" class="clock-seconds">--</span>
-      </div>
-      <div class="status-in status-indicators">
-        <span class="signal-bars">
-          <span class="signal-bar" style="height:5px"></span>
-          <span class="signal-bar" style="height:8px"></span>
-          <span class="signal-bar" style="height:11px"></span>
-          <span class="signal-bar signal-bar-dim" style="height:14px"></span>
-        </span>
-        <svg viewBox="0 0 18 14" class="wifi-icon">
-          <path d="M9 12.4 6.7 9.9a3.3 3.3 0 0 1 4.6 0Z" fill="currentColor" />
-          <path d="M4.4 7.4a6.6 6.6 0 0 1 9.2 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-          <path d="M1.9 4.7a10.2 10.2 0 0 1 14.2 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-        </svg>
-        <span class="battery-shell">
-          <span class="battery-fill"></span>
-          <span class="battery-nub"></span>
-        </span>
-      </div>
-    </div>
-
-    <!-- Chime visualizer canvas -->
-    <canvas id="visualizer" class="visualizer-canvas"></canvas>
-
-    <!-- Ripple layer -->
-    <div id="ripple-layer" class="ripple-layer"></div>
-
-    <!-- Dynamic Island (static) -->
-    <div class="island-mount">
-      <span class="island-bloom"></span>
-      <div class="island island-pill">
-        <span class="island-specular"></span>
-        <span class="island-lens"></span>
-      </div>
-    </div>
-
-    <!-- Speed slider -->
-    <div class="speed-slider-mount">
-      <div id="speed-slider" class="picker-in speed-bar" style="display:none">
-        <svg class="icon-gauge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
-        <input type="range" id="speed-range" min="0.5" max="2" step="0.05" value="1" class="speed-range" aria-label="Particle speed" />
-        <span id="speed-readout" class="speed-readout">1.00x</span>
-      </div>
+      <div class="cl-hint" id="cl-hint">✦ Kết nối hoàn tất — <b>bấm để bước vào</b></div>
     </div>
   </div>
-  <!-- ============================================== -->
+  <!-- ================================================= -->
 
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
@@ -253,8 +252,7 @@
           </div>
           <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi giao diện">🌙</button>
 
-          <button id="cmdk-open" class="warp-btn" type="button" aria-label="Mở Command Palette (Ctrl+K)" title="Command Palette (Ctrl+K)">⌘K</button>
-          <button id="yt-bg-toggle" class="warp-btn" type="button" aria-label="Chuyển sang Nền YouTube Lofi (kèm tiếng)" title="Bật/Tắt Nền YouTube (kèm tiếng)">🎬</button>
+                    <button id="yt-bg-toggle" class="warp-btn" type="button" aria-label="Chuyển sang Nền YouTube Lofi (kèm tiếng)" title="Bật/Tắt Nền YouTube (kèm tiếng)">🎬</button>
           <button id="yt-restart-btn" class="warp-btn hidden" type="button" aria-label="Quay lại từ đầu video YouTube" title="Quay lại từ đầu video YouTube">🔄</button>
           <button id="warp-btn" class="warp-btn" type="button" aria-label="Hyperspace Jump" title="Warp Speed!">🚀</button>
           <button id="snake-game-btn" class="warp-btn" type="button" aria-label="The Midnight Arcade — 11 Mini-Games" title="The Midnight Arcade — 11 Trò Chơi">🕹️</button>
@@ -289,7 +287,7 @@
         </div>
 
         <header class="profile-header" id="sec-header">
-          <div class="avatar-wrap glow-border" id="avatar-wrap">
+          <div class="avatar-wrap" id="avatar-wrap">
             <span class="avatar-ring" aria-hidden="true"></span>
             <img id="avatar-image" class="avatar-image" src="https://images-ext-1.discordapp.net/external/Pk9lpqQlm9eiN65fVc4VsGsRbedZwUbAsCBLXPHvHq8/%3Fsize%3D4096/https://cdn.discordapp.com/avatars/917263515209859102/cd121ea4baf2512e6e98f16f0f2a8d04.png?size=4096" alt="Ảnh đại diện Discord" />
             <div id="avatar-fallback" class="avatar-fallback">T</div>
@@ -304,7 +302,7 @@
           </div>
         </header>
 
-        <section class="presence-card glass-2 glow-border reveal" id="sec-presence" aria-labelledby="presence-title" style="position: relative;">
+        <section class="presence-card glass-2 reveal" id="sec-presence" aria-labelledby="presence-title" style="position: relative;">
           <!-- ========== INTERACTIVE COMPANION ========== -->
           <div class="css-chibi" aria-hidden="true">
             <div id="comp-chat" class="comp-chat">Bấm vào mình đi!</div>
@@ -400,7 +398,7 @@
           </a>
         </nav>
 
-        <footer class="profile-footer glass-3 reveal" id="sec-footer">
+        <footer class="profile-footer reveal" id="sec-footer">
           <a id="page-one-link" href="#">Server Minecraft</a>
           <a id="page-two-link" href="#">
             <img src="https://cdn-icons-png.flaticon.com/512/3670/3670382.png" alt="Steam" class="steam-icon">
@@ -659,24 +657,6 @@
   <iframe id="arcade-iframe" class="arcade-iframe" title="Midnight Arcade" allow="autoplay; fullscreen"></iframe>
 </div>
 <!-- ====================================================================== -->
-
-<!-- ========== COMMAND PALETTE (Ctrl+K) ========== -->
-<div id="cmdk-mask" class="cmdk-mask" role="dialog" aria-modal="true" aria-label="Command Palette" hidden>
-  <div class="cmdk glass-3" role="combobox" aria-expanded="true" aria-haspopup="listbox">
-    <div class="cmdk-search">
-      <span aria-hidden="true">⌘</span>
-      <input id="cmdk-input" type="text" autocomplete="off" spellcheck="false"
-             placeholder="Tìm lệnh — gõ để lọc, ↑ ↓ để chọn, ↵ để chạy" />
-      <kbd>ESC</kbd>
-    </div>
-    <div id="cmdk-list" class="cmdk-list" role="listbox"></div>
-    <div class="cmdk-hint">
-      <span><kbd>↑</kbd> <kbd>↓</kbd> điều hướng</span>
-      <span><kbd>↵</kbd> chạy</span>
-    </div>
-  </div>
-</div>
-<!-- =============================================== -->
 
 <script src="script.js"></script>
 
