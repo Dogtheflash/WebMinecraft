@@ -31,6 +31,7 @@
   position: relative;
   isolation: isolate;
   border: 1px solid var(--glass-border);
+  border-radius: 18px;
   backdrop-filter: blur(var(--glass-blur)) saturate(140%);
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
   box-shadow: var(--shadow);
@@ -477,7 +478,7 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
   padding:14px;
   border:1px solid rgba(255,255,255,.09);
   background:rgba(255,255,255,.045);
-  border-radius:12px;
+  border-radius:18px;
   position: relative;
   transform: perspective(1000px) rotateX(var(--rotateX, 0deg)) rotateY(var(--rotateY, 0deg));
   transform-style: preserve-3d;
@@ -517,7 +518,7 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 .activity-icon { width:40px; height:40px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(135deg, var(--discord), var(--cyan)); box-shadow:0 0 22px rgb(var(--accent-rgb) / .24); flex:0 0 auto; }
 .activity-time { margin-top:5px !important; font:700 11px var(--font-mono); color:#c7d0ff !important; }
 .meta-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin:0 20px 11px; }
-.meta-grid div { min-width:0; padding:10px 11px; border:1px solid rgba(255,255,255,.08); border-radius:10px; background:rgba(255,255,255,.035); }
+.meta-grid div { min-width:0; padding:12px 14px; border:1px solid rgba(255,255,255,.08); border-radius:16px; background:rgba(255,255,255,.035); }
 .meta-grid span { display:block; margin-bottom:4px; color:var(--muted); font-size:12px; font-weight:600; text-transform:none; letter-spacing:0; }
 .meta-grid strong { display:block; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#eef4ff; font-size:13px; }
 .badge-list { display:flex !important; align-items:center; gap:5px; min-height:24px; overflow:visible !important; white-space:normal !important; flex-wrap:wrap; }
