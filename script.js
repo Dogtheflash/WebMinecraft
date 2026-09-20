@@ -3553,3 +3553,204 @@ if (interactiveCard) {
   }, { rootMargin: '0px 0px -10% 0px', threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
 })();
+
+
+/* ==========================================================================
+   DREAMFRAME BENTO & MARQUEE INTERACTIONS
+   ========================================================================== */
+/**
+ * DreamFrame Interactive Effects & Marquee Speed Handling
+ */
+document.addEventListener('DOMContentLoaded', () => {
+  // 3D Glass Tilt and Specular Light Following
+  const cards = document.querySelectorAll('.bento-card');
+
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      const rotateX = ((y - centerY) / centerY) * -4;
+      const rotateY = ((x - centerX) / centerX) * 4;
+
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
+    });
+  });
+
+  // Dynamic Audio Visualizer in Card 5
+  const eqCols = document.querySelectorAll('.eq-col');
+  if (eqCols.length > 0) {
+    setInterval(() => {
+      eqCols.forEach(col => {
+        const h = Math.floor(Math.random() * 70 + 25);
+        col.style.setProperty('--h1', `${h}%`);
+      });
+    }, 350);
+  }
+});
+
+
+/* ==========================================================================
+   CINEMATIC SCROLL-LINKED IMAGE SEQUENCE CONTROLLER
+   ========================================================================== */
+/**
+ * DreamFrame Interactive Effects, Bento Glare, and Cinematic Scroll-Linked Image Sequence
+ */
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Cinematic Scroll-Linked Image Sequence Controller
+  initHeroSequence();
+
+  // 2. 3D Glass Tilt and Specular Light Following on Bento Cards
+  const cards = document.querySelectorAll('.bento-card');
+
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      const rotateX = ((y - centerY) / centerY) * -4;
+      const rotateY = ((x - centerX) / centerX) * 4;
+
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
+    });
+  });
+
+  // 3. Dynamic Audio Visualizer in Card 5
+  const eqCols = document.querySelectorAll('.eq-col');
+  if (eqCols.length > 0) {
+    setInterval(() => {
+      eqCols.forEach(col => {
+        const h = Math.floor(Math.random() * 70 + 25);
+        col.style.setProperty('--h1', `${h}%`);
+      });
+    }, 350);
+  }
+});
+
+/**
+ * High-Performance Canvas Image Sequence Controller
+ * Smoothly scrubs through frames as the user scrolls down the hero section
+ */
+function initHeroSequence() {
+  const canvas = document.getElementById('df-hero-canvas') || document.getElementById('hero-scroll-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  const heroSection = document.getElementById('hero') || document.querySelector('.df-hero-section') || document.querySelector('.profile-console');
+  const TOTAL_FRAMES = 90;
+  const frames = [];
+  let loadedCount = 0;
+  let targetFrame = 0;
+  let currentFrame = 0;
+  let isTicking = false;
+
+  // Format frame URL: frames/frame_001.jpg ... frame_090.jpg
+  function getFramePath(index) {
+    const num = String(index + 1).padStart(3, '0');
+    return `frames/frame_${num}.jpg`;
+  }
+
+  // Preload all frames asynchronously
+  for (let i = 0; i < TOTAL_FRAMES; i++) {
+    const img = new Image();
+    img.src = getFramePath(i);
+    img.onload = () => {
+      loadedCount++;
+      if (i === 0 && currentFrame === 0) {
+        renderFrame(0);
+      }
+    };
+    frames.push(img);
+  }
+
+  // Render frame with aspect-ratio cover centered in canvas
+  function renderFrame(frameIdx) {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = canvas.getBoundingClientRect();
+    const w = rect.width || window.innerWidth;
+    const h = rect.height || 800;
+
+    const targetW = Math.floor(w * dpr);
+    const targetH = Math.floor(h * dpr);
+
+    if (canvas.width !== targetW || canvas.height !== targetH) {
+      canvas.width = targetW;
+      canvas.height = targetH;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    const roundedIdx = Math.max(0, Math.min(TOTAL_FRAMES - 1, Math.round(frameIdx)));
+    const img = frames[roundedIdx];
+
+    if (img && img.complete && img.naturalWidth > 0) {
+      const imgW = img.naturalWidth;
+      const imgH = img.naturalHeight;
+      const scale = Math.max(w / imgW, h / imgH);
+      const drawW = imgW * scale;
+      const drawH = imgH * scale;
+      const drawX = (w - drawW) / 2;
+      const drawY = (h - drawH) / 2;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    }
+  }
+
+  // Calculate scroll progress through hero
+  function updateScroll() {
+    if (!heroSection) return;
+    const heroHeight = heroSection.offsetHeight || 800;
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+    const maxScroll = Math.max(200, heroHeight * 0.95);
+    const progress = Math.max(0, Math.min(1, scrollY / maxScroll));
+
+    targetFrame = progress * (TOTAL_FRAMES - 1);
+
+    if (!isTicking) {
+      requestAnimationFrame(loop);
+      isTicking = true;
+    }
+  }
+
+  // Smooth lerp loop (interpolates between frames for silky playback)
+  function loop() {
+    const diff = targetFrame - currentFrame;
+    if (Math.abs(diff) > 0.04) {
+      currentFrame += diff * 0.18;
+      renderFrame(currentFrame);
+      requestAnimationFrame(loop);
+    } else {
+      currentFrame = targetFrame;
+      renderFrame(currentFrame);
+      isTicking = false;
+    }
+  }
+
+  window.addEventListener('scroll', updateScroll, { passive: true });
+  window.addEventListener('resize', () => {
+    updateScroll();
+    renderFrame(currentFrame);
+  });
+
+  // Initial render of first frame
+  updateScroll();
+  setTimeout(() => renderFrame(0), 60);
+  setTimeout(() => renderFrame(0), 300);
+}
