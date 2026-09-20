@@ -124,7 +124,7 @@ video.bg-video {
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: rgba(192, 132, 252, 0.4) rgba(6, 8, 18, 0.6); background: transparent; }
-html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar { width:0; height:0; display:none; }
+
 
 body {
   background-image: none !important;
@@ -5517,26 +5517,55 @@ body {
   }
 }
 
-
-
-
-
 /* ==========================================================================
-   GLOBAL SCROLL ENGINE FIX — ENSURE SMOOTH NATURAL FULL-PAGE SCROLLING
+   DEFINITIVE SCROLL & SCROLLBAR RESTORATION
    ========================================================================== */
 html {
   height: auto !important;
+  min-height: 100% !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
   scroll-behavior: smooth !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(192, 132, 252, 0.7) rgba(4, 6, 15, 0.8) !important;
+  background: #020308 !important;
+}
+
+/* Cosmic visible scrollbar */
+::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+  display: block !important;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(4, 6, 15, 0.85) !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(168, 85, 247, 0.7), rgba(244, 114, 182, 0.7)) !important;
+  border-radius: 999px !important;
+  border: 2px solid rgba(4, 6, 15, 0.85) !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(192, 132, 252, 0.95), rgba(244, 114, 182, 0.95)) !important;
 }
 
 body {
   height: auto !important;
   min-height: 100vh !important;
   overflow-x: hidden !important;
-  overflow-y: auto !important;
+  overflow-y: visible !important;
   position: relative !important;
+  background: transparent !important;
+}
+
+body.terminal-active {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  overflow: hidden !important;
 }
 
 #app-root {
@@ -5545,6 +5574,7 @@ body {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
+  overflow: visible !important;
 }
 
 .profile-screen {
@@ -5560,8 +5590,28 @@ body {
   padding: 30px 16px 140px !important;
   width: 100% !important;
   min-height: 100vh !important;
+  overflow: visible !important;
 }
 
+/* ==========================================================================
+   VIDEO BACKGROUND: CHILLNIGHT.MP4 FIXED & FULLSCREEN
+   ========================================================================== */
+#bg-video {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  object-fit: cover !important;
+  z-index: -2 !important;
+  pointer-events: none !important;
+  display: block !important;
+}
+
+#bg-yt-container.hidden {
+  display: none !important;
+}
 
 /* ==========================================================================
    COSMIC EXPERIENCE: SEAMLESS TRANSITION FROM HERO VIDEO TO DARK COSMIC SPACE
@@ -5571,13 +5621,12 @@ body {
   width: 100vw !important;
   margin-left: calc(-50vw + 50%) !important;
   margin-right: calc(-50vw + 50%) !important;
-  /* Cinematic top fade: reveals the video at the top, then dissolves into cosmic dark */
   background: linear-gradient(180deg, 
     transparent 0%, 
-    rgba(3, 5, 12, 0.35) 70px, 
-    rgba(3, 5, 12, 0.82) 160px, 
-    rgba(3, 5, 12, 0.98) 250px, 
-    #03050c 340px, 
+    rgba(3, 5, 12, 0.4) 80px, 
+    rgba(3, 5, 12, 0.88) 180px, 
+    rgba(3, 5, 12, 0.98) 280px, 
+    #03050c 360px, 
     #060714 100%
   ) !important;
   overflow: hidden;
@@ -5654,27 +5703,4 @@ body {
   background-size: 64px 64px;
   mask-image: radial-gradient(circle at 50% 30%, black 20%, transparent 85%);
   -webkit-mask-image: radial-gradient(circle at 50% 30%, black 20%, transparent 85%);
-}
-
-/* Ensure Video Background is pristine behind Hero */
-#bg-video, .bg-video {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  height: 100dvh !important;
-  object-fit: cover !important;
-  z-index: -2 !important;
-  pointer-events: none !important;
-  display: block !important;
-}
-
-/* Hero body transparency to let video shine through */
-body {
-  background: transparent !important;
-}
-
-html {
-  background: #020308 !important;
 }
