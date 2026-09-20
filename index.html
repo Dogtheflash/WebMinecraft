@@ -32,7 +32,7 @@
   </style>
 </head>
 
-<body class="terminal-active">
+<body>
 
   <!-- ===== CYBER CITY LOADER (thay cho iOS 26 boot) ===== -->
   <div id="cyber-loader">
@@ -222,16 +222,24 @@
 
     setTimeout(function () {
       if (loader.parentNode) loader.parentNode.removeChild(loader);
+      document.body.classList.remove('terminal-active');
 
+      // Directly activate profile screen with Hero + Marquee + Bento Grid
+      var profile = document.getElementById('profile-screen');
       var terminal = document.getElementById('terminal-screen');
-      if (!terminal) return;
-      terminal.style.visibility = 'visible';
-      terminal.style.opacity = '1';
-      terminal.classList.add('active');
+      if (terminal) terminal.classList.remove('active');
+      if (profile) {
+        profile.classList.add('active');
+        profile.style.visibility = 'visible';
+        profile.style.opacity = '1';
+      }
+      var player = document.getElementById('music-player');
+      if (player) player.classList.remove('hidden');
+
       requestAnimationFrame(function () {
         try {
           if (typeof window.initCmd === 'function') window.initCmd();
-        } catch (e) { console.error('[cyber-loader] initCmd lỗi:', e); }
+        } catch (e) {}
       });
     }, 620);
   }
@@ -546,6 +554,13 @@
     </section>
 
     <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
+
+      <!-- Cinematic Scroll-Linked Image Sequence Canvas Behind Hero -->
+      <div class="hero-sequence-bg" aria-hidden="true">
+        <canvas id="hero-scroll-canvas" class="hero-scroll-canvas"></canvas>
+        <div class="hero-sequence-overlay"></div>
+      </div>
+
       <article class="profile-console glass-panel">
         <!-- 3D Specular Glass Glare Layer -->
         <div class="holo-glare" aria-hidden="true"></div>
@@ -613,7 +628,7 @@
           </div>
         </header>
 
-        <section class="presence-card glass-2 reveal" id="sec-presence" aria-labelledby="presence-title" style="position: relative;">
+        <section class="presence-card glass-2" id="sec-presence" aria-labelledby="presence-title" style="position: relative;">
           <!-- ========== INTERACTIVE COMPANION ========== -->
           <div class="css-chibi" aria-hidden="true">
             <div id="comp-chat" class="comp-chat">Bấm vào mình đi!</div>
@@ -659,7 +674,7 @@
           </div>
         </section>
 
-        <section id="activity-card" class="activity-card glass-1 hidden reveal" aria-labelledby="activity-title">
+        <section id="activity-card" class="activity-card glass-1 hidden" aria-labelledby="activity-title">
           <div id="activity-icon" class="activity-icon">✦</div>
           <img id="activity-art" class="activity-art hidden" alt="" decoding="async" />
           <div>
@@ -670,7 +685,7 @@
           </div>
         </section>
 
-        <section class="meta-grid reveal" id="sec-meta" aria-label="Thông tin realtime Discord">
+        <section class="meta-grid" id="sec-meta" aria-label="Thông tin realtime Discord">
           <div class="glass-1"><span>Spotify</span><strong id="spotify-status">Chưa phát hiện</strong></div>
           <div class="glass-1">
             <span>Huy hiệu</span>
@@ -678,7 +693,7 @@
           </div>
         </section>
 
-        <section class="about-card glass-1 reveal" id="sec-about">
+        <section class="about-card glass-1" id="sec-about">
           <h2>Giới thiệu</h2>
           <p>Một góc hồ sơ nhỏ gọn của Chinatsu Kamado, lấy cảm hứng nhẹ từ Discord nhưng vẫn giữ phong cách anime riêng: tối, gọn, mượt và có chiều sâu.</p>
           <div class="tags" aria-label="Thẻ hồ sơ">
@@ -690,7 +705,7 @@
         </section>
 
 
-        <nav class="social-row reveal" id="sec-social" aria-label="Liên kết mạng xã hội">
+        <nav class="social-row" id="sec-social" aria-label="Liên kết mạng xã hội">
           <a id="discord-link" href="https://discord.com/users/917263515209859102" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
             <svg viewBox="0 0 127.14 96.36" aria-hidden="true" class="discord-icon">
               <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.31,60,73.31,53s5-12.74,11.43-12.74S96.1,46,96,53,91.08,65.69,84.69,65.69Z" fill="currentColor"/>
@@ -709,7 +724,7 @@
           </a>
         </nav>
 
-        <footer class="profile-footer reveal" id="sec-footer">
+        <footer class="profile-footer" id="sec-footer">
           <a id="page-one-link" href="#">Server Minecraft</a>
           <a id="page-two-link" href="#">
             <img src="https://cdn-icons-png.flaticon.com/512/3670/3670382.png" alt="Steam" class="steam-icon">
@@ -941,7 +956,545 @@
 
 
       </article>
-    </section>
+
+        <!-- ================================================================= -->
+<!-- SECTION 1: INFINITE LOGO CAROUSEL (Paste directly below Hero)    -->
+<!-- ================================================================= -->
+<section class="df-marquee-section" id="marquees" aria-label="Partner Studios Marquee">
+  <div class="df-marquee-header">
+    <div class="df-pill-label">
+      <span class="label-sparkle">✦</span>
+      <span>TRUSTED BY NEXT-GEN PRODUCTION STUDIOS &amp; DIRECTORS GLOBALLY</span>
+      <span class="label-sparkle">✦</span>
+    </div>
+  </div>
+
+  <div class="df-marquee-wrap">
+    <!-- Gradient Edge Masking Layer (Subtle fade on left and right) -->
+    <div class="df-marquee-mask" aria-hidden="true"></div>
+
+    <!-- ROW 1: Moves continuously RIGHT → LEFT -->
+    <div class="df-marquee-row marquee-row-top" data-direction="left">
+      <div class="df-marquee-track track-to-left">
+        <!-- Logo Item Group A -->
+        <div class="df-marquee-group">
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 160 40" fill="currentColor">
+              <circle cx="20" cy="20" r="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-dasharray="8 3"/>
+              <circle cx="20" cy="20" r="4" fill="currentColor"/>
+              <text x="42" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="15" letter-spacing="1">OPENAI</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 160 40" fill="currentColor">
+              <rect x="10" y="10" width="20" height="20" rx="6" fill="none" stroke="currentColor" stroke-width="2.5"/>
+              <path d="M16 24V16h5a3 3 0 0 1 0 6h-5m3 0l3 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              <text x="40" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="15" letter-spacing="1">RUNWAY</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 180 40" fill="currentColor">
+              <path d="M12 26c6 0 12-2 16-8-4 7-10 9-16 8m6-9c4-4 7-9 8-12-1 4-4 8-8 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <text x="42" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="14" letter-spacing="1">MIDJOURNEY</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 170 40" fill="currentColor">
+              <path d="M12 9l8-3 8 3v13l-8 7-8-7V9z" fill="none" stroke="currentColor" stroke-width="2.2"/>
+              <text x="16" y="23" font-family="'Syne', sans-serif" font-weight="800" font-size="11">E</text>
+              <text x="38" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="14" letter-spacing="1.5">EPIC GAMES</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 150 40" fill="currentColor">
+              <path d="M8 20c0-6.6 5.4-12 12-12s12 5.4 12 12c-4 0-7-2-9-5-1.5 2-4 3-7 3-3 0-5-2-6-4" stroke="currentColor" stroke-width="2" fill="none"/>
+              <text x="38" y="25" font-family="'Outfit', sans-serif" font-weight="800" font-size="15" letter-spacing="1">NVIDIA</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 150 40" fill="currentColor">
+              <polygon points="20 8 30 15 30 27 20 32 10 27 10 15" fill="none" stroke="currentColor" stroke-width="2.2"/>
+              <circle cx="20" cy="20" r="3" fill="currentColor"/>
+              <text x="40" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="15" letter-spacing="1">LUMA AI</text>
+            </svg>
+          </div>
+        </div>
+        <!-- Duplicated Logo Group A (for infinite seamless marquee) -->
+        <div class="df-marquee-group" aria-hidden="true">
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 160 40" fill="currentColor">
+              <circle cx="20" cy="20" r="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-dasharray="8 3"/>
+              <circle cx="20" cy="20" r="4" fill="currentColor"/>
+              <text x="42" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="15" letter-spacing="1">OPENAI</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 160 40" fill="currentColor">
+              <rect x="10" y="10" width="20" height="20" rx="6" fill="none" stroke="currentColor" stroke-width="2.5"/>
+              <path d="M16 24V16h5a3 3 0 0 1 0 6h-5m3 0l3 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              <text x="40" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="15" letter-spacing="1">RUNWAY</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 180 40" fill="currentColor">
+              <path d="M12 26c6 0 12-2 16-8-4 7-10 9-16 8m6-9c4-4 7-9 8-12-1 4-4 8-8 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <text x="42" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="14" letter-spacing="1">MIDJOURNEY</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 170 40" fill="currentColor">
+              <path d="M12 9l8-3 8 3v13l-8 7-8-7V9z" fill="none" stroke="currentColor" stroke-width="2.2"/>
+              <text x="16" y="23" font-family="'Syne', sans-serif" font-weight="800" font-size="11">E</text>
+              <text x="38" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="14" letter-spacing="1.5">EPIC GAMES</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 150 40" fill="currentColor">
+              <path d="M8 20c0-6.6 5.4-12 12-12s12 5.4 12 12c-4 0-7-2-9-5-1.5 2-4 3-7 3-3 0-5-2-6-4" stroke="currentColor" stroke-width="2" fill="none"/>
+              <text x="38" y="25" font-family="'Outfit', sans-serif" font-weight="800" font-size="15" letter-spacing="1">NVIDIA</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 150 40" fill="currentColor">
+              <polygon points="20 8 30 15 30 27 20 32 10 27 10 15" fill="none" stroke="currentColor" stroke-width="2.2"/>
+              <circle cx="20" cy="20" r="3" fill="currentColor"/>
+              <text x="40" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="15" letter-spacing="1">LUMA AI</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 2: Moves continuously LEFT → RIGHT -->
+    <div class="df-marquee-row marquee-row-bottom" data-direction="right">
+      <div class="df-marquee-track track-to-right">
+        <!-- Logo Item Group B -->
+        <div class="df-marquee-group">
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 170 40" fill="currentColor">
+              <rect x="12" y="10" width="4" height="20" rx="2" fill="currentColor"/>
+              <rect x="20" y="10" width="4" height="20" rx="2" fill="currentColor"/>
+              <text x="36" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="14" letter-spacing="1">ELEVENLABS</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 180 40" fill="currentColor">
+              <circle cx="18" cy="20" r="11" fill="none" stroke="currentColor" stroke-width="2.2"/>
+              <path d="M14 15v6a4 4 0 0 0 8 0v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <text x="38" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="14" letter-spacing="1">UNREAL ENGINE</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 150 40" fill="currentColor">
+              <circle cx="15" cy="14" r="4" fill="currentColor"/>
+              <circle cx="24" cy="14" r="4" fill="currentColor"/>
+              <circle cx="15" cy="22" r="4" fill="currentColor"/>
+              <circle cx="24" cy="22" r="4" fill="currentColor"/>
+              <circle cx="15" cy="29" r="4" fill="currentColor"/>
+              <text x="36" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="15" letter-spacing="1">FIGMA</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 180 40" fill="currentColor">
+              <path d="M12 28l6-16h4l6 16h-4l-1.5-4h-5L16 28h-4zm7-7h3l-1.5-5.5L19 21z" fill="currentColor"/>
+              <text x="38" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="14" letter-spacing="1">ADOBE FIREFLY</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 180 40" fill="currentColor">
+              <rect x="10" y="8" width="18" height="24" fill="none" stroke="currentColor" stroke-width="2"/>
+              <line x1="10" y1="16" x2="28" y2="16" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="10" y1="24" x2="28" y2="24" stroke="currentColor" stroke-width="1.5"/>
+              <text x="38" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="13" letter-spacing="1">SONY PICTURES</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 130 40" fill="currentColor">
+              <text x="12" y="28" font-family="'Syne', sans-serif" font-weight="800" font-size="22" letter-spacing="3">A24</text>
+              <text x="68" y="25" font-family="'Outfit', sans-serif" font-weight="600" font-size="11" letter-spacing="2">FILMS</text>
+            </svg>
+          </div>
+        </div>
+        <!-- Duplicated Logo Group B (for infinite seamless marquee) -->
+        <div class="df-marquee-group" aria-hidden="true">
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 170 40" fill="currentColor">
+              <rect x="12" y="10" width="4" height="20" rx="2" fill="currentColor"/>
+              <rect x="20" y="10" width="4" height="20" rx="2" fill="currentColor"/>
+              <text x="36" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="14" letter-spacing="1">ELEVENLABS</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 180 40" fill="currentColor">
+              <circle cx="18" cy="20" r="11" fill="none" stroke="currentColor" stroke-width="2.2"/>
+              <path d="M14 15v6a4 4 0 0 0 8 0v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <text x="38" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="14" letter-spacing="1">UNREAL ENGINE</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 150 40" fill="currentColor">
+              <circle cx="15" cy="14" r="4" fill="currentColor"/>
+              <circle cx="24" cy="14" r="4" fill="currentColor"/>
+              <circle cx="15" cy="22" r="4" fill="currentColor"/>
+              <circle cx="24" cy="22" r="4" fill="currentColor"/>
+              <circle cx="15" cy="29" r="4" fill="currentColor"/>
+              <text x="36" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="15" letter-spacing="1">FIGMA</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 180 40" fill="currentColor">
+              <path d="M12 28l6-16h4l6 16h-4l-1.5-4h-5L16 28h-4zm7-7h3l-1.5-5.5L19 21z" fill="currentColor"/>
+              <text x="38" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="14" letter-spacing="1">ADOBE FIREFLY</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 180 40" fill="currentColor">
+              <rect x="10" y="8" width="18" height="24" fill="none" stroke="currentColor" stroke-width="2"/>
+              <line x1="10" y1="16" x2="28" y2="16" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="10" y1="24" x2="28" y2="24" stroke="currentColor" stroke-width="1.5"/>
+              <text x="38" y="25" font-family="'Outfit', sans-serif" font-weight="700" font-size="13" letter-spacing="1">SONY PICTURES</text>
+            </svg>
+          </div>
+          <div class="df-brand-card">
+            <svg class="df-brand-svg" viewBox="0 0 130 40" fill="currentColor">
+              <text x="12" y="28" font-family="'Syne', sans-serif" font-weight="800" font-size="22" letter-spacing="3">A24</text>
+              <text x="68" y="25" font-family="'Outfit', sans-serif" font-weight="600" font-size="11" letter-spacing="2">FILMS</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================= -->
+<!-- SECTION 2: BENTO GRID (EXACT STRUCTURAL REFERENCE FROM POSTER)   -->
+<!-- ================================================================= -->
+<section class="df-bento-section" id="bento" aria-label="DreamFrame Core Architecture">
+  <div class="df-bento-header">
+    <div class="df-pill-label">
+      <span class="label-sparkle">✦</span>
+      <span>INTEGRATED SPATIAL ARCHITECTURE</span>
+    </div>
+    <h2 class="df-section-title">
+      Engineered for Pure Cinematic Authority.
+    </h2>
+    <p class="df-section-sub">
+      Every layer of DreamFrame is designed to work in real-time synergy—from generative lighting to multi-track frame synthesis.
+    </p>
+  </div>
+
+  <!-- The 7-Card Asymmetric Bento Grid (Exact layout from attached reference) -->
+  <div class="df-bento-grid">
+
+    <!-- ============================================================= -->
+    <!-- TOP ROW: CARD 1 (Wide ~64%) + CARD 2 (Square ~36%)            -->
+    <!-- ============================================================= -->
+    <div class="bento-row bento-row-top">
+      
+      <!-- CARD 1: TOP-LEFT HERO (Wide ~64% width, ~34% height) -->
+      <article class="bento-card card-1-top-left">
+        <div class="card-glow-aurora"></div>
+        <div class="card-glass-specular"></div>
+
+        <div class="card-1-content">
+          <div class="card-tag">
+            <span class="pulse-dot"></span>
+            <span>NEURAL FRAME SYNTHESIS</span>
+          </div>
+
+          <h3 class="card-1-title">
+            CINEMATIC<br/>
+            CAMERA<br/>
+            FLOW
+          </h3>
+
+          <p class="card-1-desc">
+            Generate coherent 8K camera sweeps with zero frame stutter, sub-pixel temporal consistency, and spatial depth awareness.
+          </p>
+
+          <div class="card-1-pills">
+            <span class="df-tag-pill">Diffusion DiT-XL</span>
+            <span class="df-tag-pill">60 FPS Native</span>
+            <span class="df-tag-pill highlight">✦ Low Latency</span>
+          </div>
+        </div>
+
+        <!-- Visual interactive preview inside Card 1 -->
+        <div class="card-1-visual">
+          <div class="c1-screen">
+            <div class="c1-screen-header">
+              <span class="c1-rec">● REC</span>
+              <span class="c1-res">8192 × 4320</span>
+              <span class="c1-fps">60.00 FPS</span>
+            </div>
+            <div class="c1-viewfinder">
+              <div class="c1-mesh-sphere"></div>
+              <div class="c1-crosshair"></div>
+              <div class="c1-stat-badge">CAMERA SWEEP_01 · DEPTH MAP LOCKED</div>
+            </div>
+            <div class="c1-waveform">
+              <div class="wave-bar" style="--h: 60%"></div>
+              <div class="wave-bar" style="--h: 85%"></div>
+              <div class="wave-bar" style="--h: 40%"></div>
+              <div class="wave-bar" style="--h: 95%"></div>
+              <div class="wave-bar" style="--h: 70%"></div>
+              <div class="wave-bar" style="--h: 50%"></div>
+              <div class="wave-bar" style="--h: 80%"></div>
+              <div class="wave-bar" style="--h: 30%"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 2: TOP-RIGHT METRIC / OPTICAL IRIS (Square ~36% width, ~34% height) -->
+      <article class="bento-card card-2-top-right">
+        <div class="card-glass-specular"></div>
+        
+        <div class="card-header-mini">
+          <span class="card-tag-mono">SYS // RESOLUTION</span>
+          <span class="card-badge-subtle">00</span>
+        </div>
+
+        <!-- Animated Optical Iris / Aperture Ring -->
+        <div class="c2-iris-wrap">
+          <div class="c2-iris-glow"></div>
+          <div class="c2-aperture">
+            <div class="aperture-blade b1"></div>
+            <div class="aperture-blade b2"></div>
+            <div class="aperture-blade b3"></div>
+            <div class="aperture-blade b4"></div>
+            <div class="aperture-blade b5"></div>
+            <div class="aperture-blade b6"></div>
+            <div class="c2-center-core">
+              <span class="core-num">8K</span>
+              <span class="core-unit">HDR10+</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer-mini">
+          <div class="c2-stat-label">Ultra-HD Dynamic Range</div>
+          <div class="c2-stat-sub">14.8 Stops Photometric Accuracy</div>
+        </div>
+      </article>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- BOTTOM SECTION: CARD 3 (Tall Left) + RIGHT COMPLEX (4, 5, 6, 7) -->
+    <!-- ============================================================= -->
+    <div class="bento-bottom-section">
+      
+      <!-- CARD 3: BOTTOM-LEFT TALL (Spans ~36% width x ~61% total height) -->
+      <article class="bento-card card-3-tall-left">
+        <div class="card-glow-aurora aurora-tall"></div>
+        <div class="card-glass-specular"></div>
+
+        <div class="c3-inner">
+          <div class="card-tag">
+            <span class="pulse-dot lavender"></span>
+            <span>TIMELINE STUDIO</span>
+          </div>
+
+          <h3 class="c3-title">
+            Spatial Depth &amp;<br/>
+            Multi-Layer Tracks
+          </h3>
+
+          <p class="c3-desc">
+            Stack character keyframes, neural volumetric fog, and lens aberrations with instant nondestructive timeline scrub.
+          </p>
+
+          <!-- Vertical Multi-Layer Stack Preview -->
+          <div class="c3-layer-stack">
+            <div class="c3-layer-item layer-fog">
+              <div class="layer-indicator"></div>
+              <div class="layer-meta">
+                <span class="layer-name">Volumetric Fog &amp; Bloom</span>
+                <span class="layer-val">100% Raytraced</span>
+              </div>
+              <div class="layer-toggle active"></div>
+            </div>
+
+            <div class="c3-layer-item layer-character">
+              <div class="layer-indicator pink"></div>
+              <div class="layer-meta">
+                <span class="layer-name">Neural Actor Keyframes</span>
+                <span class="layer-val">Sub-pixel Blend</span>
+              </div>
+              <div class="layer-toggle active"></div>
+            </div>
+
+            <div class="c3-layer-item layer-camera">
+              <div class="layer-indicator cyan"></div>
+              <div class="layer-meta">
+                <span class="layer-name">Spatial Spline Camera</span>
+                <span class="layer-val">Bezier Smooth</span>
+              </div>
+              <div class="layer-toggle active"></div>
+            </div>
+
+            <div class="c3-layer-item layer-lut">
+              <div class="layer-indicator gold"></div>
+              <div class="layer-meta">
+                <span class="layer-name">ACES Color LUT Matrix</span>
+                <span class="layer-val">Rec.2020 Target</span>
+              </div>
+              <div class="layer-toggle active"></div>
+            </div>
+          </div>
+
+          <!-- Bottom Interactive Scrubber -->
+          <div class="c3-scrubber">
+            <div class="scrubber-bar">
+              <div class="scrubber-fill"></div>
+              <div class="scrubber-head"></div>
+            </div>
+            <div class="scrubber-meta">
+              <span>FRAME 0142 / 0900</span>
+              <span class="scrubber-status">BUFFER REALTIME</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- RIGHT COMPLEX: CARD 4 (Wide Horizontal) on top, then CARDS 5, 6, 7 below -->
+      <div class="bento-right-complex">
+        
+        <!-- CARD 4: MID-RIGHT WIDE HORIZONTAL (~64% of right width, ~42% height) -->
+        <article class="bento-card card-4-mid-wide">
+          <div class="card-glass-specular"></div>
+
+          <div class="c4-grid-wrap">
+            <div class="c4-content">
+              <div class="card-tag">
+                <span class="pulse-dot"></span>
+                <span>NEURAL RELIGHTING &amp; SHADOWS</span>
+              </div>
+
+              <h3 class="c4-title">
+                Dynamic Global Illumination &amp; Physically Based Shaders
+              </h3>
+
+              <p class="c4-desc">
+                Re-orient cinematic key lights, colored gel reflections, and ambient environment maps in post-generation without re-rendering the shot.
+              </p>
+
+              <div class="c4-specs">
+                <div class="c4-spec-item">
+                  <span class="spec-label">DIFFUSION CONVERGENCE</span>
+                  <strong class="spec-val">0.08ms</strong>
+                </div>
+                <div class="c4-spec-item">
+                  <span class="spec-label">UNREAL 5.5 BRIDGE</span>
+                  <strong class="spec-val">Native Sync</strong>
+                </div>
+                <div class="c4-spec-item">
+                  <span class="spec-label">RAY ACCURACY</span>
+                  <strong class="spec-val">99.8%</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive Controls Graphic on Right of Card 4 -->
+            <div class="c4-sliders">
+              <div class="c4-slider-row">
+                <div class="c4-sl-label"><span>Key Light Intensity</span><b>92%</b></div>
+                <div class="c4-sl-track"><div class="c4-sl-fill" style="width: 92%"></div></div>
+              </div>
+              <div class="c4-slider-row">
+                <div class="c4-sl-label"><span>Atmospheric Haze</span><b>68%</b></div>
+                <div class="c4-sl-track"><div class="c4-sl-fill pink" style="width: 68%"></div></div>
+              </div>
+              <div class="c4-slider-row">
+                <div class="c4-sl-label"><span>Specular Anamorphic Bloom</span><b>84%</b></div>
+                <div class="c4-sl-track"><div class="c4-sl-fill cyan" style="width: 84%"></div></div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- BOTTOM-RIGHT SUBGRID: CARD 5 (Square ~57%) + RIGHT STACK (Cards 6 & 7 ~43%) -->
+        <div class="bento-bottom-right-subgrid">
+          
+          <!-- CARD 5: BOTTOM-MID SQUARE (Square ~36% width, ~54% height) -->
+          <article class="bento-card card-5-mid-square">
+            <div class="card-glass-specular"></div>
+
+            <div class="c5-inner">
+              <div class="card-header-mini">
+                <span class="card-tag-mono">AUDIO ENGINE // SYNC</span>
+                <span class="c5-badge-live">● BEAT-MATCHED</span>
+              </div>
+
+              <div class="c5-visual">
+                <div class="c5-equalizer">
+                  <span class="eq-col" style="--delay: 0.1s; --h1: 30%; --h2: 90%;"></span>
+                  <span class="eq-col" style="--delay: 0.3s; --h1: 70%; --h2: 40%;"></span>
+                  <span class="eq-col" style="--delay: 0.2s; --h1: 40%; --h2: 98%;"></span>
+                  <span class="eq-col" style="--delay: 0.5s; --h1: 85%; --h2: 60%;"></span>
+                  <span class="eq-col" style="--delay: 0.4s; --h1: 50%; --h2: 85%;"></span>
+                  <span class="eq-col" style="--delay: 0.25s; --h1: 95%; --h2: 45%;"></span>
+                  <span class="eq-col" style="--delay: 0.6s; --h1: 35%; --h2: 75%;"></span>
+                </div>
+                <div class="c5-sound-wave"></div>
+              </div>
+
+              <h4 class="c5-title">Harmonic Rhythm Sync</h4>
+              <p class="c5-desc">Audio transients procedurally trigger lens flashes, motion blur bursts, and beat cuts.</p>
+            </div>
+          </article>
+
+          <!-- RIGHT COLUMN MINI STACK: CARDS 6 & 7 (Stacked Vertically) -->
+          <div class="bento-right-mini-stack">
+            
+            <!-- CARD 6: BOTTOM-RIGHT TOP (Small Landscape ~26% width, ~26% height) -->
+            <article class="bento-card card-6-small-top">
+              <div class="card-glass-specular"></div>
+
+              <div class="c6-inner">
+                <div class="c6-top-row">
+                  <span class="c6-metric">140+</span>
+                  <div class="c6-network-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="2" y1="12" x2="22" y2="12"></line>
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div class="c6-label">AAA Studios &amp; Production Houses Onboarded</div>
+                <div class="c6-tags"><span>London</span><span>Tokyo</span><span>LA</span></div>
+              </div>
+            </article>
+
+            <!-- CARD 7: BOTTOM-RIGHT BOTTOM (Small Landscape ~26% width, ~26% height) -->
+            <article class="bento-card card-7-small-bottom">
+              <div class="card-glass-specular"></div>
+
+              <div class="c7-inner">
+                <div class="c7-meta">
+                  <span class="c7-status-dot"></span>
+                  <span class="c7-status-text">CLOUD CLUSTER ACTIVE</span>
+                </div>
+                <h4 class="c7-title">Custom LoRA Fine-Tuning</h4>
+                <a href="#apidocs" class="c7-btn-action">
+                  <span>Explore API Docs</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+                </a>
+              </div>
+            </article>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+    
   </main>
 
   <!-- ========== MUSIC PLAYER ========== -->
@@ -976,11 +1529,12 @@ setTimeout(function () {
   window.__clDone = true;
   var l = document.getElementById('cyber-loader');
   if (l && l.parentNode) l.parentNode.removeChild(l);
-  var t = document.getElementById('terminal-screen');
-  if (t) {
-    t.style.visibility = 'visible';
-    t.style.opacity = '1';
-    t.classList.add('active');
+  document.body.classList.remove('terminal-active');
+  var p = document.getElementById('profile-screen');
+  if (p) {
+    p.classList.add('active');
+    p.style.visibility = 'visible';
+    p.style.opacity = '1';
   }
   try { if (typeof window.initCmd === 'function') window.initCmd(); } catch (e) {}
 }, 12000);
