@@ -1613,7 +1613,7 @@ if (interactiveCard) {
 
   if (!toggleBtn || !menu) return;
 
-  var THEME_WEATHER = { cyber: 'rain', sakura: 'sakura', ocean: 'snow', fire: 'stars' };
+  var THEME_WEATHER = { cyber: 'off', sakura: 'off', ocean: 'snow', fire: 'stars' };
 
   function applyTheme(theme) {
     if (THEMES.indexOf(theme) === -1) theme = 'cyber';
@@ -1717,7 +1717,7 @@ if (interactiveCard) {
   };
 
   var STORAGE_KEY = 'profile-weather';
-  var currentWeather = 'sakura';
+  var currentWeather = 'off';
   var particles = [];
   var animId = null;
   var width = 0;
@@ -1790,7 +1790,7 @@ if (interactiveCard) {
 
   function initParticles() {
     particles = [];
-    if (currentWeather === 'off') return;
+    if (currentWeather === 'off' || currentWeather === 'sakura' || currentWeather === 'rain') return;
 
     var count = 36;
     if (currentWeather === 'sakura') count = window.innerWidth < 768 ? 30 : 48;
@@ -1854,7 +1854,7 @@ if (interactiveCard) {
   }
 
   function loop() {
-    if (currentWeather === 'off' || window.__LOW_PERF) {
+    if (currentWeather === 'off' || currentWeather === 'sakura' || currentWeather === 'rain' || window.__LOW_PERF) {
       ctx.clearRect(0, 0, width, height);
       animId = null;
       return;
@@ -1950,7 +1950,8 @@ if (interactiveCard) {
   }
 
   function setWeather(mode) {
-    if (!WEATHER_ICONS[mode]) mode = 'sakura';
+    if (mode === 'sakura' || mode === 'rain') mode = 'off';
+    if (!WEATHER_ICONS[mode]) mode = 'off';
     currentWeather = mode;
     if (weatherToggle) {
       weatherToggle.textContent = WEATHER_ICONS[mode] || '🌸';
@@ -2004,8 +2005,11 @@ if (interactiveCard) {
 
   // Init
   resize();
-  var savedWeather = 'sakura';
-  try { savedWeather = localStorage.getItem(STORAGE_KEY) || 'sakura'; } catch (e) {}
+  var savedWeather = 'off';
+  try {
+    savedWeather = localStorage.getItem(STORAGE_KEY) || 'off';
+    if (savedWeather === 'sakura' || savedWeather === 'rain') savedWeather = 'off';
+  } catch (e) {}
   setWeather(savedWeather);
 })();
 
@@ -3554,15 +3558,10 @@ if (interactiveCard) {
   document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
 })();
 
-
 /* ==========================================================================
-   DREAMFRAME BENTO & MARQUEE INTERACTIONS
+   BENTO INTERACTION: 3D CARD TILT & EQUALIZER
    ========================================================================== */
-/**
- * DreamFrame Interactive Effects & Marquee Speed Handling
- */
 document.addEventListener('DOMContentLoaded', () => {
-  // 3D Glass Tilt and Specular Light Following
   const cards = document.querySelectorAll('.bento-card');
 
   cards.forEach(card => {
@@ -3585,7 +3584,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Dynamic Audio Visualizer in Card 5
   const eqCols = document.querySelectorAll('.eq-col');
   if (eqCols.length > 0) {
     setInterval(() => {
@@ -3599,158 +3597,1345 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 /* ==========================================================================
-   CINEMATIC SCROLL-LINKED IMAGE SEQUENCE CONTROLLER
+   3D MODEL CREATOR SCRIPTS (three-viewer.js & app.js)
    ========================================================================== */
 /**
- * DreamFrame Interactive Effects, Bento Glare, and Cinematic Scroll-Linked Image Sequence
+ * 3D Model Creator - Real-time Interactive WebGL Engine
+ * Features:
+ * - Multi-Model GLTF/GLB Loader:
+ *   1. Apex Hypercar ('Model 3D/race car 3d model.glb')
+ *   2. The Eclipsed Root ('Model 3D/The Eclipsed Root.glb')
+ * - Automatic model centering, scaling & shadow setup
+ * - OrbitControls with full 360 degree user interaction & inertia damping
+ * - Smooth rotation animation effects (idle auto-turntable, gentle banking & floating hover)
+ * - Interactive shader modes: PBR Textured, Clay Sculpt, Wireframe Mesh, Normal Map
+ * - Dynamic lighting rigs (Studio, Cyberpunk, Ambient)
+ * - Native OBJ 3D model exporter
  */
-document.addEventListener('DOMContentLoaded', () => {
-  // 1. Cinematic Scroll-Linked Image Sequence Controller
-  initHeroSequence();
 
-  // 2. 3D Glass Tilt and Specular Light Following on Bento Cards
-  const cards = document.querySelectorAll('.bento-card');
+class ModelViewer3D {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        if (!this.container) return;
 
-  cards.forEach(card => {
-    card.addEventListener('mousemove', e => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      
-      const rotateX = ((y - centerY) / centerY) * -4;
-      const rotateY = ((x - centerX) / centerX) * 4;
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.controls = null;
+        this.modelGroup = null;
+        this.currentMode = 'pbr'; // 'pbr', 'clay', 'wireframe', 'normal'
+        this.currentLighting = 'cyber';
+        this.autoRotate = true;
+        this.rotationSpeed = 0.6; // radians per second
+        this.lights = {};
+        this.clock = new THREE.Clock();
+        this.isUserInteracting = false;
+        this.resumeRotateTimeout = null;
 
-      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px)`;
-    });
+        // Model Configurations
+        this.currentModelKey = 'racecar';
+        this.models = {
+            racecar: {
+                key: 'racecar',
+                name: 'Apex Hypercar',
+                primaryPath: 'Model 3D/race car 3d model.glb',
+                fallbackPath: 'models/race_car.glb',
+                targetSize: 3.3,
+                initialRotation: { x: 0, y: -0.65, z: 0 },
+                initialY: 0.05,
+                metalness: 0.6,
+                roughness: 0.35,
+                polyCount: 10108,
+                polyText: '10,108 Tris • GLTF 2.0',
+                defaultPrompt: 'Aerodynamic racing hypercar, obsidian carbon fiber, neon cyan accents, 8K PBR, production mesh'
+            },
+            eclipsedroot: {
+                key: 'eclipsedroot',
+                name: 'The Eclipsed Root',
+                primaryPath: 'Model 3D/The Eclipsed Root.glb',
+                fallbackPath: 'models/the_eclipsed_root.glb',
+                targetSize: 3.1,
+                initialRotation: { x: 0, y: 0.25, z: 0 },
+                initialY: -0.12,
+                metalness: 0.25,
+                roughness: 0.65,
+                polyCount: 57754,
+                polyText: '57,754 Tris • High-Poly GLTF',
+                defaultPrompt: 'Mythical ancient tree, twisted bioluminescent roots, ethereal cosmic glow, octane render, 8K PBR, 57.7K topology'
+            }
+        };
 
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
-    });
-  });
-
-  // 3. Dynamic Audio Visualizer in Card 5
-  const eqCols = document.querySelectorAll('.eq-col');
-  if (eqCols.length > 0) {
-    setInterval(() => {
-      eqCols.forEach(col => {
-        const h = Math.floor(Math.random() * 70 + 25);
-        col.style.setProperty('--h1', `${h}%`);
-      });
-    }, 350);
-  }
-});
-
-/**
- * High-Performance Canvas Image Sequence Controller
- * Smoothly scrubs through frames as the user scrolls down the hero section
- */
-function initHeroSequence() {
-  const canvas = document.getElementById('df-hero-canvas') || document.getElementById('hero-scroll-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-
-  const heroSection = document.getElementById('hero') || document.querySelector('.df-hero-section') || document.querySelector('.profile-console');
-  const TOTAL_FRAMES = 90;
-  const frames = [];
-  let loadedCount = 0;
-  let targetFrame = 0;
-  let currentFrame = 0;
-  let isTicking = false;
-
-  // Format frame URL: frames/frame_001.jpg ... frame_090.jpg
-  function getFramePath(index) {
-    const num = String(index + 1).padStart(3, '0');
-    return `frames/frame_${num}.jpg`;
-  }
-
-  // Preload all frames asynchronously
-  for (let i = 0; i < TOTAL_FRAMES; i++) {
-    const img = new Image();
-    img.src = getFramePath(i);
-    img.onload = () => {
-      loadedCount++;
-      if (i === 0 && currentFrame === 0) {
-        renderFrame(0);
-      }
-    };
-    frames.push(img);
-  }
-
-  // Render frame with aspect-ratio cover centered in canvas
-  function renderFrame(frameIdx) {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const rect = canvas.getBoundingClientRect();
-    const w = rect.width || window.innerWidth;
-    const h = rect.height || 800;
-
-    const targetW = Math.floor(w * dpr);
-    const targetH = Math.floor(h * dpr);
-
-    if (canvas.width !== targetW || canvas.height !== targetH) {
-      canvas.width = targetW;
-      canvas.height = targetH;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        this.init();
     }
 
-    const roundedIdx = Math.max(0, Math.min(TOTAL_FRAMES - 1, Math.round(frameIdx)));
-    const img = frames[roundedIdx];
+    init() {
+        // 1. Scene Setup
+        this.scene = new THREE.Scene();
 
-    if (img && img.complete && img.naturalWidth > 0) {
-      const imgW = img.naturalWidth;
-      const imgH = img.naturalHeight;
-      const scale = Math.max(w / imgW, h / imgH);
-      const drawW = imgW * scale;
-      const drawH = imgH * scale;
-      const drawX = (w - drawW) / 2;
-      const drawY = (h - drawH) / 2;
+        // 2. Camera Setup
+        const width = this.container.clientWidth || 800;
+        const height = this.container.clientHeight || 560;
+        const aspect = width / height;
+        this.camera = new THREE.PerspectiveCamera(40, aspect, 0.1, 1000);
+        this.camera.position.set(2.8, 1.4, 4.4);
 
-      ctx.clearRect(0, 0, w, h);
-      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+        // 3. Renderer Setup (Transparent background)
+        this.renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true,
+            powerPreference: 'high-performance'
+        });
+        this.renderer.setSize(width, height);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1.25;
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        this.container.innerHTML = '';
+        this.container.appendChild(this.renderer.domElement);
+
+        // 4. OrbitControls for rich interaction
+        if (typeof THREE.OrbitControls !== 'undefined') {
+            this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+            this.controls.enableDamping = true;
+            this.controls.dampingFactor = 0.05;
+            this.controls.minDistance = 1.8;
+            this.controls.maxDistance = 8.5;
+            this.controls.maxPolarAngle = Math.PI / 2 + 0.15;
+            this.controls.target.set(0, 0.0, 0);
+
+            this.controls.addEventListener('start', () => {
+                this.isUserInteracting = true;
+                if (this.resumeRotateTimeout) clearTimeout(this.resumeRotateTimeout);
+            });
+            this.controls.addEventListener('end', () => {
+                this.resumeRotateTimeout = setTimeout(() => {
+                    this.isUserInteracting = false;
+                }, 1800);
+            });
+        }
+
+        // 5. Lighting Setup
+        this.setupLighting();
+
+        // 6. Ground Shadow & Holographic Pedestal
+        this.setupGround();
+
+        // 7. Load Initial Model (racecar)
+        this.loadModel('racecar');
+
+        // 8. Event Listeners
+        window.addEventListener('resize', () => this.onResize());
+
+        // 9. Start Animation Loop
+        this.animate();
     }
-  }
 
-  // Calculate scroll progress through hero
-  function updateScroll() {
-    if (!heroSection) return;
-    const heroHeight = heroSection.offsetHeight || 800;
-    const scrollY = window.scrollY || window.pageYOffset || 0;
-    const maxScroll = Math.max(200, heroHeight * 0.95);
-    const progress = Math.max(0, Math.min(1, scrollY / maxScroll));
+    setupLighting() {
+        // Ambient Light
+        this.lights.ambient = new THREE.AmbientLight(0xdbeafe, 1.4);
+        this.scene.add(this.lights.ambient);
 
-    targetFrame = progress * (TOTAL_FRAMES - 1);
+        // Main Studio Key Light
+        this.lights.key = new THREE.DirectionalLight(0xffffff, 2.2);
+        this.lights.key.position.set(5, 7, 4);
+        this.lights.key.castShadow = true;
+        this.lights.key.shadow.mapSize.width = 1024;
+        this.lights.key.shadow.mapSize.height = 1024;
+        this.scene.add(this.lights.key);
 
-    if (!isTicking) {
-      requestAnimationFrame(loop);
-      isTicking = true;
+        // Neon Cyan Fill Light
+        this.lights.fillCyan = new THREE.PointLight(0x00f0ff, 3.8, 14);
+        this.lights.fillCyan.position.set(-4, 2.5, 3);
+        this.scene.add(this.lights.fillCyan);
+
+        // Electric Purple / Magenta Rim Light
+        this.lights.rimPurple = new THREE.PointLight(0xa855f7, 4.2, 16);
+        this.lights.rimPurple.position.set(3.5, 3.5, -4);
+        this.scene.add(this.lights.rimPurple);
+
+        // Front Accent Light
+        this.lights.frontAccent = new THREE.PointLight(0x38bdf8, 2.0, 10);
+        this.lights.frontAccent.position.set(0, 0.5, 4);
+        this.scene.add(this.lights.frontAccent);
     }
-  }
 
-  // Smooth lerp loop (interpolates between frames for silky playback)
-  function loop() {
-    const diff = targetFrame - currentFrame;
-    if (Math.abs(diff) > 0.04) {
-      currentFrame += diff * 0.18;
-      renderFrame(currentFrame);
-      requestAnimationFrame(loop);
-    } else {
-      currentFrame = targetFrame;
-      renderFrame(currentFrame);
-      isTicking = false;
+    setupGround() {
+        // Soft contact shadow circle
+        const shadowCanvas = document.createElement('canvas');
+        shadowCanvas.width = 256;
+        shadowCanvas.height = 256;
+        const ctx = shadowCanvas.getContext('2d');
+        const gradient = ctx.createRadialGradient(128, 128, 10, 128, 128, 120);
+        gradient.addColorStop(0, 'rgba(15, 23, 42, 0.45)');
+        gradient.addColorStop(0.5, 'rgba(15, 23, 42, 0.15)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 256, 256);
+
+        const shadowTexture = new THREE.CanvasTexture(shadowCanvas);
+        const shadowGeo = new THREE.PlaneGeometry(4.2, 3.2);
+        const shadowMat = new THREE.MeshBasicMaterial({
+            map: shadowTexture,
+            transparent: true,
+            depthWrite: false
+        });
+        const shadowMesh = new THREE.Mesh(shadowGeo, shadowMat);
+        shadowMesh.rotation.x = -Math.PI / 2;
+        shadowMesh.position.y = -0.72;
+        this.scene.add(shadowMesh);
+
+        // Glowing Cyan Pedestal Ring
+        const ringGeo = new THREE.RingGeometry(1.6, 1.66, 64);
+        const ringMat = new THREE.MeshBasicMaterial({
+            color: 0x00f0ff,
+            transparent: true,
+            opacity: 0.35,
+            side: THREE.DoubleSide
+        });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.rotation.x = -Math.PI / 2;
+        ringMesh.position.y = -0.71;
+        this.scene.add(ringMesh);
+
+        // Secondary subtle outer ring
+        const outerRingGeo = new THREE.RingGeometry(2.1, 2.14, 64);
+        const outerRingMat = new THREE.MeshBasicMaterial({
+            color: 0x8b5cf6,
+            transparent: true,
+            opacity: 0.22,
+            side: THREE.DoubleSide
+        });
+        const outerRingMesh = new THREE.Mesh(outerRingGeo, outerRingMat);
+        outerRingMesh.rotation.x = -Math.PI / 2;
+        outerRingMesh.position.y = -0.71;
+        this.scene.add(outerRingMesh);
     }
-  }
 
-  window.addEventListener('scroll', updateScroll, { passive: true });
-  window.addEventListener('resize', () => {
-    updateScroll();
-    renderFrame(currentFrame);
-  });
+    /**
+     * Load Model by Key ('racecar' or 'eclipsedroot')
+     */
+    loadModel(modelKey) {
+        const config = this.models[modelKey] || this.models.racecar;
+        this.currentModelKey = modelKey;
 
-  // Initial render of first frame
-  updateScroll();
-  setTimeout(() => renderFrame(0), 60);
-  setTimeout(() => renderFrame(0), 300);
+        const loader = new THREE.GLTFLoader();
+
+        const onLoadSuccess = (gltf) => {
+            if (this.modelGroup) {
+                this.scene.remove(this.modelGroup);
+                this.modelGroup.traverse((child) => {
+                    if (child.geometry) child.geometry.dispose();
+                });
+            }
+
+            const model = gltf.scene;
+            this.modelGroup = new THREE.Group();
+            this.modelGroup.add(model);
+
+            // Compute exact bounding box and center the model
+            const box = new THREE.Box3().setFromObject(model);
+            const center = new THREE.Vector3();
+            box.getCenter(center);
+            model.position.sub(center);
+
+            // Auto-scale to fill the focal space gracefully
+            const size = new THREE.Vector3();
+            box.getSize(size);
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const targetSize = config.targetSize || 3.2;
+            const scale = targetSize / maxDim;
+            this.modelGroup.scale.set(scale, scale, scale);
+
+            // Initial dynamic presentation angle
+            this.modelGroup.rotation.set(
+                config.initialRotation.x || 0,
+                config.initialRotation.y || 0,
+                config.initialRotation.z || 0
+            );
+            this.modelGroup.position.y = config.initialY || 0;
+
+            // Enhance materials for PBR reflections, shadows and shader caching
+            let polyCount = 0;
+            model.traverse((child) => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+
+                    if (child.geometry) {
+                        const count = child.geometry.index ? child.geometry.index.count / 3 : child.geometry.attributes.position.count / 3;
+                        polyCount += Math.round(count);
+                    }
+
+                    if (child.material) {
+                        child.userData.originalMat = child.material;
+                        child.userData.pbrMat = child.material.clone();
+
+                        if (child.material.isMeshStandardMaterial || child.material.isMeshPhysicalMaterial) {
+                            child.material.roughness = config.roughness ?? 0.45;
+                            child.material.metalness = config.metalness ?? 0.5;
+                            child.material.envMapIntensity = 1.4;
+                            child.material.needsUpdate = true;
+                        }
+
+                        // Create Clay material
+                        child.userData.clayMat = new THREE.MeshStandardMaterial({
+                            color: 0xe2e8f0,
+                            roughness: 0.85,
+                            metalness: 0.05
+                        });
+
+                        // Create Wireframe material
+                        child.userData.wireframeMat = new THREE.MeshBasicMaterial({
+                            color: 0x00f0ff,
+                            wireframe: true
+                        });
+
+                        // Create Normal Vector material
+                        child.userData.normalMat = new THREE.MeshNormalMaterial({
+                            wireframe: false
+                        });
+                    }
+                }
+            });
+
+            this.scene.add(this.modelGroup);
+
+            // Update UI Polycount display
+            const countText = polyCount > 0 ? `${polyCount.toLocaleString()} Tris` : config.polyText;
+            this.updatePolyDisplay(countText, config.name);
+
+            // Apply active shader mode
+            this.setRenderMode(this.currentMode);
+
+            // Smooth entrance pop animation
+            this.playEntranceAnimation();
+        };
+
+        const onProgress = (xhr) => {
+            if (xhr.lengthComputable) {
+                const percent = Math.round((xhr.loaded / xhr.total) * 100);
+                const polyEl = document.getElementById('hudPolyCount');
+                if (polyEl && percent < 100) {
+                    polyEl.textContent = `Loading ${config.name}: ${percent}%`;
+                }
+            }
+        };
+
+        const onError = (err) => {
+            console.warn(`Attempting fallback for ${config.name}...`, err);
+            loader.load(config.fallbackPath, onLoadSuccess, onProgress, (err2) => {
+                console.error(`Failed to load ${config.name} from both paths:`, err2);
+                this.updatePolyDisplay('Model Ready', config.name);
+            });
+        };
+
+        loader.load(config.primaryPath, onLoadSuccess, onProgress, onError);
+    }
+
+    playEntranceAnimation() {
+        if (!this.modelGroup) return;
+        const currentScale = this.modelGroup.scale.clone();
+        this.modelGroup.scale.multiplyScalar(0.2);
+
+        let progress = 0;
+        const animate = () => {
+            progress += 0.05;
+            const ease = Math.sin(Math.min(progress, Math.PI / 2));
+            this.modelGroup.scale.lerp(currentScale, ease);
+            if (progress < Math.PI / 2) {
+                requestAnimationFrame(animate);
+            }
+        };
+        animate();
+    }
+
+    /**
+     * Switch Shading Modes
+     */
+    setRenderMode(mode) {
+        this.currentMode = mode;
+        if (!this.modelGroup) return;
+
+        this.modelGroup.traverse((child) => {
+            if (!child.isMesh || !child.userData) return;
+
+            if (mode === 'pbr') {
+                child.material = child.userData.pbrMat || child.userData.originalMat;
+            } else if (mode === 'clay') {
+                child.material = child.userData.clayMat;
+            } else if (mode === 'wireframe') {
+                child.material = child.userData.wireframeMat;
+            } else if (mode === 'normal') {
+                child.material = child.userData.normalMat;
+            }
+        });
+    }
+
+    toggleLighting() {
+        const presets = ['cyber', 'studio', 'ambient'];
+        const nextIdx = (presets.indexOf(this.currentLighting) + 1) % presets.length;
+        this.currentLighting = presets[nextIdx];
+
+        if (this.currentLighting === 'cyber') {
+            this.lights.ambient.color.setHex(0xdbeafe);
+            this.lights.fillCyan.intensity = 3.8;
+            this.lights.rimPurple.intensity = 4.2;
+            this.lights.key.intensity = 2.2;
+        } else if (this.currentLighting === 'studio') {
+            this.lights.ambient.color.setHex(0xffffff);
+            this.lights.ambient.intensity = 2.0;
+            this.lights.fillCyan.intensity = 1.2;
+            this.lights.rimPurple.intensity = 1.2;
+            this.lights.key.intensity = 3.0;
+        } else if (this.currentLighting === 'ambient') {
+            this.lights.ambient.color.setHex(0x60a5fa);
+            this.lights.ambient.intensity = 2.4;
+            this.lights.fillCyan.intensity = 2.0;
+            this.lights.rimPurple.intensity = 2.0;
+            this.lights.key.intensity = 1.4;
+        }
+
+        return this.currentLighting;
+    }
+
+    toggleAutoRotate() {
+        this.autoRotate = !this.autoRotate;
+        return this.autoRotate;
+    }
+
+    resetCamera() {
+        const config = this.models[this.currentModelKey] || this.models.racecar;
+        if (this.controls) {
+            this.controls.reset();
+            this.camera.position.set(2.8, 1.4, 4.4);
+            this.controls.target.set(0, 0, 0);
+        }
+        if (this.modelGroup) {
+            this.modelGroup.rotation.set(
+                config.initialRotation.x || 0,
+                config.initialRotation.y || 0,
+                config.initialRotation.z || 0
+            );
+        }
+    }
+
+    updatePolyDisplay(count, meta) {
+        const polyEl = document.getElementById('hudPolyCount');
+        if (polyEl) polyEl.textContent = `${count} • ${meta}`;
+    }
+
+    exportOBJ() {
+        if (!this.modelGroup) return;
+        const config = this.models[this.currentModelKey] || this.models.racecar;
+
+        let objOutput = `# Nexus3D - AI 3D Model Export\n# Model: ${config.name}\n`;
+        let vertexOffset = 1;
+
+        this.modelGroup.traverse((child) => {
+            if (!child.isMesh || !child.geometry) return;
+
+            const geo = child.geometry.clone();
+            geo.applyMatrix4(child.matrixWorld);
+
+            const pos = geo.attributes.position;
+            if (!pos) return;
+
+            objOutput += `o Mesh_${child.id}\n`;
+
+            for (let i = 0; i < pos.count; i++) {
+                objOutput += `v ${pos.getX(i).toFixed(4)} ${pos.getY(i).toFixed(4)} ${pos.getZ(i).toFixed(4)}\n`;
+            }
+
+            if (geo.index) {
+                for (let i = 0; i < geo.index.count; i += 3) {
+                    const a = geo.index.getX(i) + vertexOffset;
+                    const b = geo.index.getX(i + 1) + vertexOffset;
+                    const c = geo.index.getX(i + 2) + vertexOffset;
+                    objOutput += `f ${a} ${b} ${c}\n`;
+                }
+                vertexOffset += pos.count;
+            } else {
+                for (let i = 0; i < pos.count; i += 3) {
+                    objOutput += `f ${i + vertexOffset} ${i + 1 + vertexOffset} ${i + 2 + vertexOffset}\n`;
+                }
+                vertexOffset += pos.count;
+            }
+        });
+
+        const blob = new Blob([objOutput], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const safeName = config.name.replace(/\s+/g, '_');
+        a.download = `Nexus3D_${safeName}.obj`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    onResize() {
+        if (!this.container || !this.renderer || !this.camera) return;
+        const width = this.container.clientWidth;
+        const height = this.container.clientHeight;
+
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(width, height);
+    }
+
+    animate() {
+        requestAnimationFrame(() => this.animate());
+
+        const delta = this.clock.getDelta();
+        const elapsedTime = this.clock.getElapsedTime();
+
+        // Smooth rotation animation effects
+        if (this.modelGroup) {
+            const config = this.models[this.currentModelKey] || this.models.racecar;
+
+            if (this.autoRotate && !this.isUserInteracting) {
+                this.modelGroup.rotation.y += this.rotationSpeed * delta;
+            }
+
+            // Gentle floating/hovering physics oscillation
+            const baseY = config.initialY || 0;
+            this.modelGroup.position.y = baseY + Math.sin(elapsedTime * 1.6) * 0.04;
+
+            // Subtle dynamic banking angle as it rotates
+            this.modelGroup.rotation.z = Math.sin(elapsedTime * 0.9) * 0.02;
+        }
+
+        if (this.controls) {
+            this.controls.update();
+        }
+
+        this.renderer.render(this.scene, this.camera);
+    }
 }
+
+// Attach globally
+window.ModelViewer3D = ModelViewer3D;
+
+
+/**
+ * 3D Model Creator Section - Main Application Controller
+ * Handles UI interactions, theme switching, prompt generation simulation,
+ * and controls synchronization with the Three.js WebGL engine.
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Initialize 3D WebGL Viewer
+    let viewer = null;
+    try {
+        viewer = new ModelViewer3D('three-canvas-container');
+    } catch (err) {
+        console.warn('Three.js viewer initialization notice:', err);
+    }
+
+    // 2. Render Mode Switcher (PBR, Clay, Wireframe, Normals)
+    const modeButtons = document.querySelectorAll('.mode-btn');
+    modeButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            modeButtons.forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            const mode = btn.getAttribute('data-mode');
+            if (viewer) viewer.setRenderMode(mode);
+        });
+    });
+
+    // 3. Model Switcher Buttons (Apex Hypercar & The Eclipsed Root)
+    const choiceButtons = document.querySelectorAll('.choice-pill-btn');
+    const promptInput = document.getElementById('promptInput');
+
+    choiceButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            if (btn.classList.contains('active')) return;
+            choiceButtons.forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            const modelKey = btn.getAttribute('data-model');
+
+            // Trigger Holographic scanline synthesis animation
+            triggerGenerationEffect(() => {
+                if (viewer) {
+                    viewer.loadModel(modelKey);
+                    const config = viewer.models[modelKey];
+                    if (promptInput && config && config.defaultPrompt) {
+                        promptInput.value = config.defaultPrompt;
+                    }
+                }
+            });
+        });
+    });
+
+    // 4. Floating Quick Toolbar Actions
+    const btnAutoRotate = document.getElementById('btnAutoRotate');
+    if (btnAutoRotate) {
+        btnAutoRotate.addEventListener('click', () => {
+            if (viewer) {
+                const isRotating = viewer.toggleAutoRotate();
+                btnAutoRotate.classList.toggle('active', isRotating);
+            }
+        });
+    }
+
+    const btnToggleLighting = document.getElementById('btnToggleLighting');
+    if (btnToggleLighting) {
+        btnToggleLighting.addEventListener('click', () => {
+            if (viewer) {
+                const currentEnv = viewer.toggleLighting();
+                btnToggleLighting.title = `Environment: ${currentEnv.toUpperCase()}`;
+            }
+        });
+    }
+
+    const btnResetCamera = document.getElementById('btnResetCamera');
+    if (btnResetCamera) {
+        btnResetCamera.addEventListener('click', () => {
+            if (viewer) viewer.resetCamera();
+        });
+    }
+
+    const btnDownloadModel = document.getElementById('btnDownloadModel');
+    if (btnDownloadModel) {
+        btnDownloadModel.addEventListener('click', () => {
+            if (viewer) viewer.exportOBJ();
+        });
+    }
+
+    // 5. AI Prompt HUD & Regeneration Simulation
+    const btnRegenerate = document.getElementById('btnRegenerate');
+    const scanlineOverlay = document.getElementById('scanlineOverlay');
+
+    function triggerGenerationEffect(callback) {
+        if (!scanlineOverlay) {
+            if (callback) callback();
+            return;
+        }
+
+        scanlineOverlay.classList.add('active');
+
+        setTimeout(() => {
+            if (callback) callback();
+            setTimeout(() => {
+                scanlineOverlay.classList.remove('active');
+            }, 300);
+        }, 1100);
+    }
+
+    if (btnRegenerate) {
+        btnRegenerate.addEventListener('click', () => {
+            triggerGenerationEffect(() => {
+                if (viewer) viewer.loadModel(viewer.currentModelKey);
+            });
+        });
+    }
+
+    if (promptInput) {
+        promptInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                triggerGenerationEffect(() => {
+                    if (viewer) viewer.loadModel(viewer.currentModelKey);
+                });
+            }
+        });
+    }
+
+    // 6. Theme Hue Switcher (Dark Holographic Glass vs Crystal Pure Light Glass)
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    if (themeToggleBtn) {
+        let isLightGlass = false;
+        themeToggleBtn.addEventListener('click', () => {
+            isLightGlass = !isLightGlass;
+            if (isLightGlass) {
+                document.documentElement.setAttribute('data-theme', 'light-glass');
+                themeToggleBtn.querySelector('.toggle-label').textContent = 'Light Glass';
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                themeToggleBtn.querySelector('.toggle-label').textContent = 'Dark Glass';
+            }
+        });
+    }
+
+    // 7. Hero Primary & Secondary Action Buttons
+    const primaryCtaBtn = document.getElementById('primaryCtaBtn');
+    if (primaryCtaBtn) {
+        primaryCtaBtn.addEventListener('click', () => {
+            if (promptInput) {
+                promptInput.focus();
+                promptInput.select();
+            }
+            // Flash prompt bar to guide user
+            const promptHud = document.querySelector('.viewport-prompt-hud');
+            if (promptHud) {
+                promptHud.style.transform = 'scale(1.03)';
+                setTimeout(() => {
+                    promptHud.style.transform = 'scale(1)';
+                }, 300);
+            }
+        });
+    }
+
+    const watchDemoBtn = document.getElementById('watchDemoBtn');
+    if (watchDemoBtn) {
+        watchDemoBtn.addEventListener('click', () => {
+            if (viewer) {
+                viewer.resetCamera();
+                // Sequence of quick shader showcases
+                const modes = ['wireframe', 'clay', 'normal', 'pbr'];
+                let idx = 0;
+                const interval = setInterval(() => {
+                    idx = (idx + 1) % modes.length;
+                    viewer.setRenderMode(modes[idx]);
+                    modeButtons.forEach((b) => {
+                        b.classList.toggle('active', b.getAttribute('data-mode') === modes[idx]);
+                    });
+                    if (idx === modes.length - 1) clearInterval(interval);
+                }, 800);
+            }
+        });
+    }
+});
+
+/* ================================================================
+   DREAMFRAME — Panel Interactivity
+   ================================================================ */
+(function () {
+    /* ── Ambience Knob ── */
+    const ambienceSlider = document.getElementById('ambienceSlider');
+    const ambienceArc    = document.getElementById('ambienceArc');
+    const ambienceLumen  = document.getElementById('ambienceLumen');
+    if (ambienceSlider && ambienceArc) {
+        const CIRC = 2 * Math.PI * 50; // circumference ≈ 314
+        function updateAmbience(v) {
+            const pct = v / 100;
+            const dash = pct * CIRC;
+            ambienceArc.setAttribute('stroke-dasharray', dash + ' ' + CIRC);
+            if (ambienceLumen) ambienceLumen.textContent = Math.round(v) + '%';
+            // Optionally dim the 3D canvas
+            const canvas = document.getElementById('three-canvas-container');
+            if (canvas) canvas.style.opacity = 0.2 + 0.8 * pct;
+        }
+        ambienceSlider.addEventListener('input', () => updateAmbience(+ambienceSlider.value));
+        updateAmbience(100);
+    }
+
+    /* ── Temperature Knob ── */
+    const tempSlider = document.getElementById('tempSlider');
+    const tempArc    = document.getElementById('tempArc');
+    const tempVal    = document.getElementById('tempVal');
+    if (tempSlider && tempArc) {
+        const CIRC = 2 * Math.PI * 50;
+        function updateTemp(v) {
+            const min = -20, max = 100;
+            const pct = (v - min) / (max - min);
+            const dash = pct * CIRC;
+            tempArc.setAttribute('stroke-dasharray', dash + ' ' + CIRC);
+            if (tempVal) tempVal.textContent = Math.round(v) + '°C';
+        }
+        tempSlider.addEventListener('input', () => updateTemp(+tempSlider.value));
+        updateTemp(32);
+    }
+
+    /* ── Generic mode-btn toggle (df-mode-btn) ── */
+    document.querySelectorAll('.df-mode-btns').forEach(group => {
+        group.querySelectorAll('.df-mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                group.querySelectorAll('.df-mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    });
+
+    /* ── Color swatches ── */
+    document.querySelectorAll('.df-color-swatches').forEach(row => {
+        row.querySelectorAll('.df-swatch').forEach(sw => {
+            sw.addEventListener('click', () => {
+                row.querySelectorAll('.df-swatch').forEach(s => s.classList.remove('active'));
+                sw.classList.add('active');
+                // Change knob stroke color
+                const panel = row.closest('.df-panel');
+                if (panel) {
+                    const arc = panel.querySelector('.df-knob-fill');
+                    if (arc) arc.style.stroke = sw.dataset.color || '#8b5cf6';
+                }
+            });
+        });
+    });
+
+    /* ── Right panel model list → sync with main model dock ── */
+    const modelTitles = {
+        racecar: { name: '360 HYPERCAR', desc: 'High-speed aerodynamic asset generated with neural diffusion. Featuring full 4K PBR textures, optimized quad topology, and realistic physics geometry.' },
+        eclipsedroot: { name: '360 ECLIPSED ROOT', desc: 'Otherworldly organic structure sculpted with AI mesh generation. 57.7K poly fantasy asset with multi-layered bark detail and root physics rigging.' }
+    };
+
+    document.querySelectorAll('.df-model-item:not(.df-model-locked)').forEach(item => {
+        item.addEventListener('click', () => {
+            // Highlight in right panel
+            document.querySelectorAll('.df-model-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+
+            const modelKey = item.dataset.model;
+
+            // Sync title bar
+            const nameEl = document.getElementById('dfModelName');
+            const descEl = document.getElementById('dfModelDesc');
+            const audioTitle = document.getElementById('dfAudioTitle');
+            if (modelKey && modelTitles[modelKey]) {
+                if (nameEl) nameEl.textContent = modelTitles[modelKey].name;
+                if (descEl) descEl.textContent = modelTitles[modelKey].desc;
+                if (audioTitle) audioTitle.textContent = item.querySelector('.df-model-item-name')?.textContent || '';
+            }
+
+            // Sync main model dock buttons
+            const dockBtn = document.querySelector('.choice-pill-btn[data-model="' + modelKey + '"]');
+            if (dockBtn) dockBtn.click();
+        });
+    });
+
+    /* Sync right panel when main dock is clicked */
+    document.querySelectorAll('.choice-pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const modelKey = btn.dataset.model;
+            document.querySelectorAll('.df-model-item').forEach(i => {
+                i.classList.toggle('active', i.dataset.model === modelKey);
+            });
+            const nameEl = document.getElementById('dfModelName');
+            const descEl = document.getElementById('dfModelDesc');
+            const audioTitle = document.getElementById('dfAudioTitle');
+            if (modelKey && modelTitles[modelKey]) {
+                if (nameEl) nameEl.textContent = modelTitles[modelKey].name;
+                if (descEl) descEl.textContent = modelTitles[modelKey].desc;
+                if (audioTitle) {
+                    const item = document.querySelector('.df-model-item[data-model="' + modelKey + '"]');
+                    audioTitle.textContent = item?.querySelector('.df-model-item-name')?.textContent || '';
+                }
+            }
+        });
+    });
+
+    /* ── Audio player play/pause visual ── */
+    const playBtn = document.querySelector('.df-aud-play');
+    let isPlaying = true;
+    if (playBtn) {
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            const icon = playBtn.querySelector('i');
+            if (icon) {
+                icon.className = isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+            }
+            // Pause/resume bar animations
+            document.querySelectorAll('.df-bar').forEach(bar => {
+                bar.style.animationPlayState = isPlaying ? 'running' : 'paused';
+            });
+        });
+    }
+
+    /* ── Lib tabs ── */
+    document.querySelectorAll('.df-lib-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.df-lib-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+    });
+})();
+
+/* ================================================================
+   BENTO GAME CARDS — NETFLIX-STYLE HOVER VIDEO PREVIEWS
+   ================================================================ */
+(function initBentoVideoPreviews() {
+    const gameCards = document.querySelectorAll('.bento-card[data-game]');
+    if (!gameCards.length) return;
+
+    gameCards.forEach(card => {
+        const video = card.querySelector('.bento-card-bg-video');
+        if (!video) return;
+
+        let playTimer = null;
+
+        // Ensure video is muted for native autoplay policy
+        video.muted = true;
+
+        card.addEventListener('mouseenter', () => {
+            // 120ms debounce like Netflix so fast mouse crossings don't start decoding
+            playTimer = setTimeout(() => {
+                card.classList.add('video-active');
+                video.muted = true;
+                
+                // If video is near end or paused, reset smoothly
+                if (video.ended || video.currentTime > 0.5) {
+                    video.currentTime = 0;
+                }
+                
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(err => {
+                        // Browser autoplay policy or abort handled cleanly
+                        console.debug('Video preview play deferred:', err);
+                    });
+                }
+            }, 120);
+        });
+
+        card.addEventListener('mouseleave', () => {
+            if (playTimer) {
+                clearTimeout(playTimer);
+                playTimer = null;
+            }
+
+            card.classList.remove('video-active');
+            
+            // Pause and reset video position
+            try {
+                video.pause();
+                video.currentTime = 0;
+            } catch (e) {
+                // Ignore if already paused
+            }
+        });
+    });
+
+    /* ── Red Dead Redemption Story Tab Switcher ── */
+    const rdrTabs = document.querySelectorAll('.rdr-tab-pill');
+    const panePart2 = document.getElementById('paneRdrPart2');
+    const panePart1 = document.getElementById('paneRdrPart1');
+
+    if (rdrTabs.length && panePart2 && panePart1) {
+        rdrTabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                rdrTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const targetTab = tab.getAttribute('data-rdr-tab');
+                if (targetTab === 'part1') {
+                    panePart2.classList.remove('active');
+                    panePart1.classList.add('active');
+                } else {
+                    panePart1.classList.remove('active');
+                    panePart2.classList.add('active');
+                }
+            });
+        });
+    }
+})();
+
+// ============================================================
+//   GAME SHOWCASE — 3D Title & Cards Opening Architecture v4
+// ============================================================
+(function () {
+  'use strict';
+
+  var GAMES = [
+    {
+      id: 0,
+      title: 'Cyberpunk<br>2077',
+      cardTitle: 'Cyberpunk 2077',
+      genre: 'Action RPG · Open World',
+      desc: 'Nhập vai V — một lính đánh thuê trong siêu đô thị tương lai Night City, nơi ranh giới giữa con người và máy móc dần tan biến.',
+      image: './data/games/cyberpunk_2077.png',
+      video: 'video/cyberpunk.mp4',
+      btnText: 'Xem trên Steam',
+      btnLink: 'https://store.steampowered.com/app/1091500',
+      btnColor: '#f9c742',
+      btnTextColor: '#000',
+      rating: '9.4 / 10'
+    },
+    {
+      id: 1,
+      title: 'Grand Theft<br>Auto V',
+      cardTitle: 'Grand Theft Auto V',
+      genre: 'Action · Open World',
+      desc: 'Trải nghiệm siêu phẩm GTA V và GTA Online — nay được nâng cấp cho thế hệ mới với đồ hoạ đỉnh cao, tốc độ tải nhanh hơn và âm thanh 3D.',
+      image: './data/games/gta_v_enhanced.png',
+      video: 'video/gtav.mp4',
+      btnText: 'Xem trên Steam',
+      btnLink: 'https://store.steampowered.com/app/271590',
+      btnColor: '#e52521',
+      btnTextColor: '#fff',
+      rating: '9.1 / 10'
+    },
+    {
+      id: 2,
+      title: 'Grand Theft<br>Auto <span style="color:#ff6b35;">VI</span>',
+      cardTitle: 'Grand Theft Auto VI',
+      genre: 'Action · Open World · 2025',
+      desc: 'Kỷ nguyên mới của Grand Theft Auto — thế giới mở rộng lớn nhất, chân thực nhất từ trước đến nay tại vùng đất Leonida.',
+      image: './data/games/gta6.jpg',
+      video: 'video/gtavi.mkv',
+      btnText: 'Rockstar Games',
+      btnLink: 'https://www.rockstargames.com/gta-vi',
+      btnColor: '#ff6b35',
+      btnTextColor: '#fff',
+      rating: 'Coming 2025'
+    },
+    {
+      id: 3,
+      title: 'Red Dead<br>Redemption',
+      cardTitle: 'Red Dead Redemption',
+      genre: 'Action Adventure · Western',
+      desc: 'Câu chuyện về Arthur Morgan và băng đảng Van der Linde — hành trình sinh tử ở miền Tây hoang dã cuối thời kỳ vàng son.',
+      image: './data/games/red_dead_redemption.png',
+      video: 'video/rdr2.mp4',
+      btnText: 'Xem trên Steam',
+      btnLink: 'https://store.steampowered.com/app/1174180',
+      btnColor: '#b8441b',
+      btnTextColor: '#fff',
+      rating: '9.7 / 10'
+    },
+    {
+      id: 4,
+      title: 'Stray',
+      cardTitle: 'Stray',
+      genre: 'Adventure · Indie · Puzzle',
+      desc: 'Hoá thân thành một chú mèo lạc lối trong thành phố tương lai âm u, tìm đường trở về qua những con hẻm tối tăm đầy bí ẩn.',
+      image: './data/games/stray.png',
+      video: 'video/stray.mp4',
+      btnText: 'Xem trên Steam',
+      btnLink: 'https://store.steampowered.com/app/1332010',
+      btnColor: '#4a9eff',
+      btnTextColor: '#fff',
+      rating: '8.8 / 10'
+    }
+  ];
+
+  function initGameShowcase() {
+    var showcase = document.getElementById('gameShowcase');
+    if (!showcase) return;
+
+    var bgSlides      = showcase.querySelectorAll('.gsc-bg-slide');
+    var infoBox       = document.getElementById('gscInfoContainer');
+    var deckContainer = document.getElementById('gscCardsDeck');
+    var counterCur    = document.getElementById('gscCounterCur');
+    var progressFill  = document.getElementById('gscProgressFill');
+    var prevBtn       = document.getElementById('gscPrevBtn');
+    var nextBtn       = document.getElementById('gscNextBtn');
+    var expCard       = document.getElementById('gscExpandingCard');
+    var expImg        = document.getElementById('gscExpImg');
+
+    var activeId = 0;
+    // Deck contains the other 4 games in order
+    var deckOrder = [1, 2, 3, 4];
+    var isAnimating = false;
+    var autoTimer = null;
+    var AUTO_DELAY = 6500;
+    var isUserHover = false;
+
+    function pad(n) {
+      return (n < 10 ? '0' : '') + n;
+    }
+
+    // Render left text block for given game
+    function renderLeftInfo(game, animate) {
+      if (!infoBox) return;
+
+      var html = '<div class="gsc-info-block active">' +
+        '<div class="gsc-tag-row">' +
+          '<span class="gsc-dot-accent" style="background:' + game.btnColor + ';box-shadow:0 0 10px ' + game.btnColor + ';"></span>' +
+          '<span class="gsc-genre">' + game.genre + '</span>' +
+        '</div>' +
+        '<h1 class="gsc-game-title">' + game.title + '</h1>' +
+        '<p class="gsc-game-desc">' + game.desc + '</p>' +
+        '<div class="gsc-btn-row">' +
+          '<a href="' + game.btnLink + '" target="_blank" class="gsc-play-btn" style="background:' + game.btnColor + ';color:' + game.btnTextColor + ';box-shadow:0 4px 18px ' + game.btnColor + '55;">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>' +
+            game.btnText +
+          '</a>' +
+          '<span class="gsc-score">' +
+            '<svg width="11" height="11" viewBox="0 0 24 24" fill="#f9c742"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>' +
+            game.rating +
+          '</span>' +
+        '</div>' +
+      '</div>';
+
+      if (animate) {
+        infoBox.style.opacity = '0';
+        infoBox.style.transform = 'translateY(16px)';
+        setTimeout(function () {
+          infoBox.innerHTML = html;
+          infoBox.style.transition = 'opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+          infoBox.style.opacity = '1';
+          infoBox.style.transform = 'translateY(0)';
+        }, 200);
+      } else {
+        infoBox.innerHTML = html;
+      }
+    }
+
+    // Render cards deck on the right (ONLY non-active games!)
+    function renderCardsDeck() {
+      if (!deckContainer) return;
+      deckContainer.innerHTML = '';
+
+      deckOrder.forEach(function (gId) {
+        var g = GAMES[gId];
+        var card = document.createElement('div');
+        card.className = 'gsc-deck-card';
+        card.dataset.gameId = g.id;
+
+        card.innerHTML =
+          '<img src="' + g.image + '" alt="' + g.cardTitle + '" class="gsc-deck-card-img" loading="lazy" />' +
+          '<div class="gsc-deck-card-overlay">' +
+            '<span class="gsc-deck-card-tag">' + g.genre.split('·')[0].trim() + '</span>' +
+            '<span class="gsc-deck-card-title">' + g.cardTitle + '</span>' +
+          '</div>';
+
+        card.addEventListener('click', function () {
+          if (isAnimating) return;
+          switchToGame(g.id, card);
+        });
+
+        deckContainer.appendChild(card);
+      });
+    }
+
+    // Update bottom counter & progress bar
+    function updateProgress(gameId) {
+      if (counterCur) counterCur.textContent = pad(gameId + 1);
+      if (progressFill) {
+        var pct = ((gameId + 1) / GAMES.length) * 100;
+        progressFill.style.width = pct + '%';
+      }
+    }
+
+    // Play video for active slide cleanly — eliminates avatar blur & handles RDR
+    function playSlideVideo(slide) {
+      if (!slide) return;
+      var video = slide.querySelector('.gsc-bg-video');
+      if (!video) return;
+
+      var markPlaying = function () {
+        slide.classList.add('video-playing');
+      };
+
+      if (!video.paused && video.currentTime > 0) {
+        markPlaying();
+      }
+
+      video.addEventListener('playing', markPlaying, { once: true });
+      video.addEventListener('timeupdate', function () {
+        if (video.currentTime > 0.05) {
+          markPlaying();
+        }
+      });
+
+      // Safe seek only if metadata ready
+      try {
+        if (video.readyState >= 1 && video.currentTime > 0) {
+          video.currentTime = 0;
+        }
+      } catch (e) {}
+
+      // Explicitly play with promise handling
+      try {
+        var playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.then(markPlaying).catch(function (err) {
+            console.warn('Video play warning:', err);
+          });
+        }
+      } catch (err) {
+        console.warn('Video play exception:', err);
+      }
+    }
+
+    // Stop and pause all inactive videos
+    function pauseInactiveVideos() {
+      bgSlides.forEach(function (slide) {
+        var id = parseInt(slide.dataset.gameId, 10);
+        if (id !== activeId) {
+          slide.classList.remove('active');
+          slide.classList.remove('video-playing');
+          var v = slide.querySelector('.gsc-bg-video');
+          if (v) {
+            try {
+              v.pause();
+              v.currentTime = 0;
+            } catch (e) {}
+          }
+        }
+      });
+    }
+
+    // Switch to target game with Cards Opening animation
+    function switchToGame(targetId, sourceCardEl) {
+      if (targetId === activeId || isAnimating) return;
+      isAnimating = true;
+
+      var targetGame = GAMES[targetId];
+      var oldActiveId = activeId;
+
+      // If card was clicked, perform expanding card opening transition
+      if (sourceCardEl && expCard && expImg) {
+        var rect = sourceCardEl.getBoundingClientRect();
+        expImg.src = targetGame.image;
+
+        // Position overlay directly over clicked card
+        expCard.style.display = 'block';
+        expCard.style.transition = 'none';
+        expCard.style.top = rect.top + 'px';
+        expCard.style.left = rect.left + 'px';
+        expCard.style.width = rect.width + 'px';
+        expCard.style.height = rect.height + 'px';
+        expCard.style.borderRadius = '20px';
+        expCard.style.opacity = '1';
+
+        // Force browser layout reflow
+        void expCard.offsetWidth;
+
+        // Animate expanding to fill entire screen
+        expCard.style.transition = 'all 0.52s cubic-bezier(0.2, 0.9, 0.25, 1)';
+        expCard.style.top = '0px';
+        expCard.style.left = '0px';
+        expCard.style.width = '100vw';
+        expCard.style.height = '100vh';
+        expCard.style.borderRadius = '0px';
+      }
+
+      // Activate new background slide
+      bgSlides.forEach(function (slide) {
+        var id = parseInt(slide.dataset.gameId, 10);
+        if (id === targetId) {
+          slide.classList.add('active');
+          playSlideVideo(slide);
+        }
+      });
+
+      // Update active ID
+      activeId = targetId;
+
+      // Update Deck: Remove clicked game, put previous game at the end
+      var newDeck = deckOrder.filter(function (id) { return id !== targetId; });
+      newDeck.push(oldActiveId);
+      deckOrder = newDeck;
+
+      // Update text and indicators
+      renderLeftInfo(targetGame, true);
+      updateProgress(activeId);
+
+      // Smoothly re-render deck cards
+      setTimeout(function () {
+        renderCardsDeck();
+      }, 150);
+
+      // Clean up expanding card layer after animation completes
+      setTimeout(function () {
+        pauseInactiveVideos();
+        if (expCard) {
+          expCard.style.transition = 'opacity 0.25s ease';
+          expCard.style.opacity = '0';
+          setTimeout(function () {
+            expCard.style.display = 'none';
+            isAnimating = false;
+          }, 260);
+        } else {
+          isAnimating = false;
+        }
+      }, 530);
+
+      restartAutoTimer();
+    }
+
+    function goNext() {
+      if (isAnimating || deckOrder.length === 0) return;
+      var nextId = deckOrder[0];
+      var firstCard = deckContainer ? deckContainer.querySelector('.gsc-deck-card') : null;
+      switchToGame(nextId, firstCard);
+    }
+
+    function goPrev() {
+      if (isAnimating) return;
+      var prevId = (activeId - 1 + GAMES.length) % GAMES.length;
+      switchToGame(prevId, null);
+    }
+
+    function restartAutoTimer() {
+      clearInterval(autoTimer);
+      if (!isUserHover) {
+        autoTimer = setInterval(function () {
+          goNext();
+        }, AUTO_DELAY);
+      }
+    }
+
+    // Button event listeners
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        goNext();
+      });
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        goPrev();
+      });
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function (e) {
+      var sec = document.getElementById('bento');
+      if (!sec) return;
+      var r = sec.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          goNext();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          goPrev();
+        }
+      }
+    });
+
+    // Touch swipe
+    var touchX = 0;
+    showcase.addEventListener('touchstart', function (e) {
+      touchX = e.changedTouches[0].clientX;
+    }, { passive: true });
+
+    showcase.addEventListener('touchend', function (e) {
+      var dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 50) {
+        if (dx < 0) goNext();
+        else goPrev();
+      }
+    }, { passive: true });
+
+    // Hover pause
+    showcase.addEventListener('mouseenter', function () {
+      isUserHover = true;
+      clearInterval(autoTimer);
+    });
+
+    showcase.addEventListener('mouseleave', function () {
+      isUserHover = false;
+      restartAutoTimer();
+    });
+
+    // INITIALIZE FIRST STATE
+    renderLeftInfo(GAMES[activeId], false);
+    renderCardsDeck();
+    updateProgress(activeId);
+
+    // Start video for first slide
+    var firstSlide = showcase.querySelector('.gsc-bg-slide[data-game-id="0"]');
+    if (firstSlide) {
+      firstSlide.classList.add('active');
+      playSlideVideo(firstSlide);
+    }
+
+    restartAutoTimer();
+    console.log('[GSC] Cards Opening v4 Initialized with 3D title &', GAMES.length, 'games.');
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGameShowcase);
+  } else {
+    initGameShowcase();
+  }
+})();
