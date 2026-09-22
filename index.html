@@ -30,6 +30,12 @@
       color: #eef4ff;
     }
   </style>
+  <!-- Font Awesome for 3D Model Creator -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <!-- Three.js, OrbitControls, GLTFLoader -->
+  <script src="three.min.js"></script>
+  <script src="OrbitControls.js"></script>
+  <script src="GLTFLoader.js"></script>
 </head>
 
 <body class="terminal-active">
@@ -223,18 +229,15 @@
     setTimeout(function () {
       if (loader.parentNode) loader.parentNode.removeChild(loader);
 
-      // Restore Windows 11 CMD Terminal Screen after loader finishes
       var terminal = document.getElementById('terminal-screen');
       if (!terminal) return;
-      document.body.classList.add('terminal-active');
       terminal.style.visibility = 'visible';
       terminal.style.opacity = '1';
       terminal.classList.add('active');
-
       requestAnimationFrame(function () {
         try {
           if (typeof window.initCmd === 'function') window.initCmd();
-        } catch (e) { console.error('[cyber-loader] initCmd error:', e); }
+        } catch (e) { console.error('[cyber-loader] initCmd lỗi:', e); }
       });
     }, 620);
   }
@@ -550,9 +553,6 @@
     </section>
 
     <section id="profile-screen" class="screen profile-screen" aria-label="Trang hồ sơ chính">
-
-      
-
       <article class="profile-console glass-panel">
         <!-- 3D Specular Glass Glare Layer -->
         <div class="holo-glare" aria-hidden="true"></div>
@@ -620,7 +620,7 @@
           </div>
         </header>
 
-        <section class="presence-card glass-2" id="sec-presence" aria-labelledby="presence-title" style="position: relative;">
+        <section class="presence-card glass-2 reveal" id="sec-presence" aria-labelledby="presence-title" style="position: relative;">
           <!-- ========== INTERACTIVE COMPANION ========== -->
           <div class="css-chibi" aria-hidden="true">
             <div id="comp-chat" class="comp-chat">Bấm vào mình đi!</div>
@@ -666,7 +666,7 @@
           </div>
         </section>
 
-        <section id="activity-card" class="activity-card glass-1 hidden" aria-labelledby="activity-title">
+        <section id="activity-card" class="activity-card glass-1 hidden reveal" aria-labelledby="activity-title">
           <div id="activity-icon" class="activity-icon">✦</div>
           <img id="activity-art" class="activity-art hidden" alt="" decoding="async" />
           <div>
@@ -677,7 +677,7 @@
           </div>
         </section>
 
-        <section class="meta-grid" id="sec-meta" aria-label="Thông tin realtime Discord">
+        <section class="meta-grid reveal" id="sec-meta" aria-label="Thông tin realtime Discord">
           <div class="glass-1"><span>Spotify</span><strong id="spotify-status">Chưa phát hiện</strong></div>
           <div class="glass-1">
             <span>Huy hiệu</span>
@@ -685,7 +685,7 @@
           </div>
         </section>
 
-        <section class="about-card glass-1" id="sec-about">
+        <section class="about-card glass-1 reveal" id="sec-about">
           <h2>Giới thiệu</h2>
           <p>Một góc hồ sơ nhỏ gọn của Chinatsu Kamado, lấy cảm hứng nhẹ từ Discord nhưng vẫn giữ phong cách anime riêng: tối, gọn, mượt và có chiều sâu.</p>
           <div class="tags" aria-label="Thẻ hồ sơ">
@@ -697,7 +697,7 @@
         </section>
 
 
-        <nav class="social-row" id="sec-social" aria-label="Liên kết mạng xã hội">
+        <nav class="social-row reveal" id="sec-social" aria-label="Liên kết mạng xã hội">
           <a id="discord-link" href="https://discord.com/users/917263515209859102" target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord">
             <svg viewBox="0 0 127.14 96.36" aria-hidden="true" class="discord-icon">
               <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.31,60,73.31,53s5-12.74,11.43-12.74S96.1,46,96,53,91.08,65.69,84.69,65.69Z" fill="currentColor"/>
@@ -716,7 +716,7 @@
           </a>
         </nav>
 
-        <footer class="profile-footer" id="sec-footer">
+        <footer class="profile-footer reveal" id="sec-footer">
           <a id="page-one-link" href="#">Server Minecraft</a>
           <a id="page-two-link" href="#">
             <img src="https://cdn-icons-png.flaticon.com/512/3670/3670382.png" alt="Steam" class="steam-icon">
@@ -949,10 +949,6 @@
 
       </article>
 
-        <!-- ================================================================= -->
-<!-- SECTION 1: INFINITE LOGO CAROUSEL (Paste directly below Hero)    -->
-<!-- ================================================================= -->
-
       <!-- ================================================================= -->
       <!-- COSMIC EXPERIENCE: DARK BACKGROUND STARTS HERE UPON SCROLLING DOWN -->
       <!-- ================================================================= -->
@@ -965,7 +961,8 @@
           <div class="df-cosmic-stars"></div>
           <div class="df-cosmic-grid"></div>
         </div>
-<section class="df-marquee-section" id="marquees" aria-label="Partner Studios Marquee">
+
+        <section class="df-marquee-section" id="marquees" aria-label="Partner Studios Marquee">
   <div class="df-marquee-header">
     <div class="df-pill-label">
       <span class="label-sparkle">✦</span>
@@ -975,10 +972,8 @@
   </div>
 
   <div class="df-marquee-wrap">
-    <!-- Gradient Edge Masking Layer (Subtle fade on left and right) -->
     <div class="df-marquee-mask" aria-hidden="true"></div>
 
-    <!-- ROW 1: Moves continuously RIGHT → LEFT -->
     <div class="df-marquee-row marquee-row-top" data-direction="left">
       <div class="df-marquee-track track-to-left">
         <div class="df-marquee-group">
@@ -1096,7 +1091,6 @@
       </div>
     </div>
 
-    <!-- ROW 2: Moves continuously LEFT → RIGHT -->
     <div class="df-marquee-row marquee-row-bottom" data-direction="right">
       <div class="df-marquee-track track-to-right">
         <div class="df-marquee-group">
@@ -1216,336 +1210,432 @@
   </div>
 </section>
 
-<!-- ================================================================= -->
-<!-- SECTION 2: BENTO GRID (EXACT STRUCTURAL REFERENCE FROM POSTER)   -->
-<!-- ================================================================= -->
-<section class="df-bento-section" id="bento" aria-label="DreamFrame Core Architecture">
-  <div class="df-bento-header">
-    <div class="df-pill-label">
-      <span class="label-sparkle">✦</span>
-      <span>INTEGRATED SPATIAL ARCHITECTURE</span>
-    </div>
-    <h2 class="df-section-title">
-      Engineered for Pure Cinematic Authority.
-    </h2>
-    <p class="df-section-sub">
-      Every layer of DreamFrame is designed to work in real-time synergy—from generative lighting to multi-track frame synthesis.
-    </p>
-  </div>
+                <section class="gsc-section" id="bento" aria-label="Game Showcase">
+  <div class="gsc-container" id="gameShowcase">
 
-  <!-- The 7-Card Asymmetric Bento Grid (Exact layout from attached reference) -->
-  <div class="df-bento-grid">
+    <!-- ─── BACKGROUND LAYERS (Video & Poster) ─── -->
+    <div class="gsc-backgrounds" id="gscBackgrounds">
 
-    <!-- ============================================================= -->
-    <!-- TOP ROW: CARD 1 (Wide ~64%) + CARD 2 (Square ~36%)            -->
-    <!-- ============================================================= -->
-    <div class="bento-row bento-row-top">
-      
-      <!-- CARD 1: TOP-LEFT HERO (Wide ~64% width, ~34% height) -->
-      <article class="bento-card card-1-top-left">
-        <div class="card-glow-aurora"></div>
-        <div class="card-glass-specular"></div>
+      <!-- Slide 0: Cyberpunk 2077 -->
+      <div class="gsc-bg-slide active" data-game-id="0">
+        <img src="./data/games/cyberpunk_2077.png" alt="Cyberpunk 2077" class="gsc-bg-img" />
+        <video class="gsc-bg-video" loop muted playsinline preload="auto" src="video/cyberpunk.mp4">
+          <source src="video/cyberpunk.mp4" type="video/mp4">
+          <source src="video/Cyberpunk%202077%20tr%C3%AAn%20Steam.mp4" type="video/mp4">
+        </video>
+      </div>
 
-        <div class="card-1-content">
-          <div class="card-tag">
-            <span class="pulse-dot"></span>
-            <span>NEURAL FRAME SYNTHESIS</span>
-          </div>
+      <!-- Slide 1: GTA V -->
+      <div class="gsc-bg-slide" data-game-id="1">
+        <img src="./data/games/gta_v_enhanced.png" alt="Grand Theft Auto V" class="gsc-bg-img" />
+        <video class="gsc-bg-video" loop muted playsinline preload="auto" src="video/gtav.mp4">
+          <source src="video/gtav.mp4" type="video/mp4">
+          <source src="video/Grand%20Theft%20Auto%20V%20Enhanced%20tr%C3%AAn%20Steam.mp4" type="video/mp4">
+        </video>
+      </div>
 
-          <h3 class="card-1-title">
-            CINEMATIC<br/>
-            CAMERA<br/>
-            FLOW
-          </h3>
+      <!-- Slide 2: GTA VI (Official Artwork) -->
+      <div class="gsc-bg-slide" data-game-id="2">
+        <img src="./data/games/gta6.jpg" alt="Grand Theft Auto VI" class="gsc-bg-img" />
+        <video class="gsc-bg-video" loop muted playsinline preload="auto" src="video/gtavi.mkv">
+          <source src="video/gtavi.mkv" type="video/x-matroska">
+          <source src="video/gtavi.mkv" type="video/mp4">
+          <source src="video/Grand%20Theft%20Auto%20VI%20Trailer%202.mkv" type="video/x-matroska">
+        </video>
+      </div>
 
-          <p class="card-1-desc">
-            Generate coherent 8K camera sweeps with zero frame stutter, sub-pixel temporal consistency, and spatial depth awareness.
-          </p>
+      <!-- Slide 3: Red Dead Redemption (Clean and fallback sources) -->
+      <div class="gsc-bg-slide" data-game-id="3">
+        <img src="./data/games/red_dead_redemption.png" alt="Red Dead Redemption" class="gsc-bg-img" />
+        <video class="gsc-bg-video" loop muted playsinline preload="auto" src="video/rdr2.mp4">
+          <source src="video/rdr2.mp4" type="video/mp4">
+          <source src="video/Red%20Dead%20Redemption%202%20tr%C3%AAn%20Steam.mp4" type="video/mp4">
+        </video>
+      </div>
 
-          <div class="card-1-pills">
-            <span class="df-tag-pill">Diffusion DiT-XL</span>
-            <span class="df-tag-pill">60 FPS Native</span>
-            <span class="df-tag-pill highlight">✦ Low Latency</span>
-          </div>
-        </div>
+      <!-- Slide 4: Stray -->
+      <div class="gsc-bg-slide" data-game-id="4">
+        <img src="./data/games/stray.png" alt="Stray" class="gsc-bg-img" />
+        <video class="gsc-bg-video" loop muted playsinline preload="auto" src="video/stray.mp4">
+          <source src="video/stray.mp4" type="video/mp4">
+          <source src="video/Stray%20tr%C3%AAn%20Steam.mp4" type="video/mp4">
+        </video>
+      </div>
 
-        <!-- Visual interactive preview inside Card 1 -->
-        <div class="card-1-visual">
-          <div class="c1-screen">
-            <div class="c1-screen-header">
-              <span class="c1-rec">● REC</span>
-              <span class="c1-res">8192 × 4320</span>
-              <span class="c1-fps">60.00 FPS</span>
-            </div>
-            <div class="c1-viewfinder">
-              <div class="c1-mesh-sphere"></div>
-              <div class="c1-crosshair"></div>
-              <div class="c1-stat-badge">CAMERA SWEEP_01 · DEPTH MAP LOCKED</div>
-            </div>
-            <div class="c1-waveform">
-              <div class="wave-bar" style="--h: 60%"></div>
-              <div class="wave-bar" style="--h: 85%"></div>
-              <div class="wave-bar" style="--h: 40%"></div>
-              <div class="wave-bar" style="--h: 95%"></div>
-              <div class="wave-bar" style="--h: 70%"></div>
-              <div class="wave-bar" style="--h: 50%"></div>
-              <div class="wave-bar" style="--h: 80%"></div>
-              <div class="wave-bar" style="--h: 30%"></div>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- CARD 2: TOP-RIGHT METRIC / OPTICAL IRIS (Square ~36% width, ~34% height) -->
-      <article class="bento-card card-2-top-right">
-        <div class="card-glass-specular"></div>
-        
-        <div class="card-header-mini">
-          <span class="card-tag-mono">SYS // RESOLUTION</span>
-          <span class="card-badge-subtle">00</span>
-        </div>
-
-        <!-- Animated Optical Iris / Aperture Ring -->
-        <div class="c2-iris-wrap">
-          <div class="c2-iris-glow"></div>
-          <div class="c2-aperture">
-            <div class="aperture-blade b1"></div>
-            <div class="aperture-blade b2"></div>
-            <div class="aperture-blade b3"></div>
-            <div class="aperture-blade b4"></div>
-            <div class="aperture-blade b5"></div>
-            <div class="aperture-blade b6"></div>
-            <div class="c2-center-core">
-              <span class="core-num">8K</span>
-              <span class="core-unit">HDR10+</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card-footer-mini">
-          <div class="c2-stat-label">Ultra-HD Dynamic Range</div>
-          <div class="c2-stat-sub">14.8 Stops Photometric Accuracy</div>
-        </div>
-      </article>
     </div>
 
-    <!-- ============================================================= -->
-    <!-- BOTTOM SECTION: CARD 3 (Tall Left) + RIGHT COMPLEX (4, 5, 6, 7) -->
-    <!-- ============================================================= -->
-    <div class="bento-bottom-section">
-      
-      <!-- CARD 3: BOTTOM-LEFT TALL (Spans ~36% width x ~61% total height) -->
-      <article class="bento-card card-3-tall-left">
-        <div class="card-glow-aurora aurora-tall"></div>
-        <div class="card-glass-specular"></div>
+    <!-- ─── OVERLAY (Clear right side, text-shadow left side) ─── -->
+    <div class="gsc-overlay"></div>
 
-        <div class="c3-inner">
-          <div class="card-tag">
-            <span class="pulse-dot lavender"></span>
-            <span>TIMELINE STUDIO</span>
-          </div>
+    <!-- ─── 3D TITLE IN THE TOP CENTER (Replaces old navbar text) ─── -->
+    <div class="gsc-3d-header">
+      <div class="gsc-3d-badge">
+        <span class="gsc-badge-star">✦</span>
+        <span>BỘ SƯU TẬP ĐỈNH CAO</span>
+        <span class="gsc-badge-star">✦</span>
+      </div>
+      <h2 class="gsc-3d-title" data-text="TRÒ CHƠI YÊU THÍCH">
+        TRÒ CHƠI YÊU THÍCH
+      </h2>
+      <div class="gsc-3d-line"></div>
+    </div>
 
-          <h3 class="c3-title">
-            Spatial Depth &amp;<br/>
-            Multi-Layer Tracks
-          </h3>
+    <!-- ─── MAIN BODY (LEFT TEXT + RIGHT CARDS) ─── -->
+    <div class="gsc-body">
 
-          <p class="c3-desc">
-            Stack character keyframes, neural volumetric fog, and lens aberrations with instant nondestructive timeline scrub.
-          </p>
-
-          <!-- Vertical Multi-Layer Stack Preview -->
-          <div class="c3-layer-stack">
-            <div class="c3-layer-item layer-fog">
-              <div class="layer-indicator"></div>
-              <div class="layer-meta">
-                <span class="layer-name">Volumetric Fog &amp; Bloom</span>
-                <span class="layer-val">100% Raytraced</span>
-              </div>
-              <div class="layer-toggle active"></div>
-            </div>
-
-            <div class="c3-layer-item layer-character">
-              <div class="layer-indicator pink"></div>
-              <div class="layer-meta">
-                <span class="layer-name">Neural Actor Keyframes</span>
-                <span class="layer-val">Sub-pixel Blend</span>
-              </div>
-              <div class="layer-toggle active"></div>
-            </div>
-
-            <div class="c3-layer-item layer-camera">
-              <div class="layer-indicator cyan"></div>
-              <div class="layer-meta">
-                <span class="layer-name">Spatial Spline Camera</span>
-                <span class="layer-val">Bezier Smooth</span>
-              </div>
-              <div class="layer-toggle active"></div>
-            </div>
-
-            <div class="c3-layer-item layer-lut">
-              <div class="layer-indicator gold"></div>
-              <div class="layer-meta">
-                <span class="layer-name">ACES Color LUT Matrix</span>
-                <span class="layer-val">Rec.2020 Target</span>
-              </div>
-              <div class="layer-toggle active"></div>
-            </div>
-          </div>
-
-          <!-- Bottom Interactive Scrubber -->
-          <div class="c3-scrubber">
-            <div class="scrubber-bar">
-              <div class="scrubber-fill"></div>
-              <div class="scrubber-head"></div>
-            </div>
-            <div class="scrubber-meta">
-              <span>FRAME 0142 / 0900</span>
-              <span class="scrubber-status">BUFFER REALTIME</span>
-            </div>
-          </div>
+      <!-- LEFT COLUMN -->
+      <div class="gsc-left">
+        <div class="gsc-info-container" id="gscInfoContainer">
+          <!-- Text dynamically synced by JS -->
         </div>
-      </article>
 
-      <!-- RIGHT COMPLEX: CARD 4 (Wide Horizontal) on top, then CARDS 5, 6, 7 below -->
-      <div class="bento-right-complex">
-        
-        <!-- CARD 4: MID-RIGHT WIDE HORIZONTAL (~64% of right width, ~42% height) -->
-        <article class="bento-card card-4-mid-wide">
-          <div class="card-glass-specular"></div>
-
-          <div class="c4-grid-wrap">
-            <div class="c4-content">
-              <div class="card-tag">
-                <span class="pulse-dot"></span>
-                <span>NEURAL RELIGHTING &amp; SHADOWS</span>
-              </div>
-
-              <h3 class="c4-title">
-                Dynamic Global Illumination &amp; Physically Based Shaders
-              </h3>
-
-              <p class="c4-desc">
-                Re-orient cinematic key lights, colored gel reflections, and ambient environment maps in post-generation without re-rendering the shot.
-              </p>
-
-              <div class="c4-specs">
-                <div class="c4-spec-item">
-                  <span class="spec-label">DIFFUSION CONVERGENCE</span>
-                  <strong class="spec-val">0.08ms</strong>
-                </div>
-                <div class="c4-spec-item">
-                  <span class="spec-label">UNREAL 5.5 BRIDGE</span>
-                  <strong class="spec-val">Native Sync</strong>
-                </div>
-                <div class="c4-spec-item">
-                  <span class="spec-label">RAY ACCURACY</span>
-                  <strong class="spec-val">99.8%</strong>
-                </div>
-              </div>
-            </div>
-
-            <!-- Interactive Controls Graphic on Right of Card 4 -->
-            <div class="c4-sliders">
-              <div class="c4-slider-row">
-                <div class="c4-sl-label"><span>Key Light Intensity</span><b>92%</b></div>
-                <div class="c4-sl-track"><div class="c4-sl-fill" style="width: 92%"></div></div>
-              </div>
-              <div class="c4-slider-row">
-                <div class="c4-sl-label"><span>Atmospheric Haze</span><b>68%</b></div>
-                <div class="c4-sl-track"><div class="c4-sl-fill pink" style="width: 68%"></div></div>
-              </div>
-              <div class="c4-slider-row">
-                <div class="c4-sl-label"><span>Specular Anamorphic Bloom</span><b>84%</b></div>
-                <div class="c4-sl-track"><div class="c4-sl-fill cyan" style="width: 84%"></div></div>
-              </div>
-            </div>
+        <!-- CONTROLS ROW (Arrows + Progress bar matching Cards Opening.mp4) -->
+        <div class="gsc-controls-row">
+          <div class="gsc-arrows">
+            <button class="gsc-arrow-btn gsc-prev-btn" id="gscPrevBtn" aria-label="Previous Game">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <button class="gsc-arrow-btn gsc-next-btn" id="gscNextBtn" aria-label="Next Game">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
           </div>
-        </article>
-
-        <!-- BOTTOM-RIGHT SUBGRID: CARD 5 (Square ~57%) + RIGHT STACK (Cards 6 & 7 ~43%) -->
-        <div class="bento-bottom-right-subgrid">
-          
-          <!-- CARD 5: BOTTOM-MID SQUARE (Square ~36% width, ~54% height) -->
-          <article class="bento-card card-5-mid-square">
-            <div class="card-glass-specular"></div>
-
-            <div class="c5-inner">
-              <div class="card-header-mini">
-                <span class="card-tag-mono">AUDIO ENGINE // SYNC</span>
-                <span class="c5-badge-live">● BEAT-MATCHED</span>
-              </div>
-
-              <div class="c5-visual">
-                <div class="c5-equalizer">
-                  <span class="eq-col" style="--delay: 0.1s; --h1: 30%; --h2: 90%;"></span>
-                  <span class="eq-col" style="--delay: 0.3s; --h1: 70%; --h2: 40%;"></span>
-                  <span class="eq-col" style="--delay: 0.2s; --h1: 40%; --h2: 98%;"></span>
-                  <span class="eq-col" style="--delay: 0.5s; --h1: 85%; --h2: 60%;"></span>
-                  <span class="eq-col" style="--delay: 0.4s; --h1: 50%; --h2: 85%;"></span>
-                  <span class="eq-col" style="--delay: 0.25s; --h1: 95%; --h2: 45%;"></span>
-                  <span class="eq-col" style="--delay: 0.6s; --h1: 35%; --h2: 75%;"></span>
-                </div>
-                <div class="c5-sound-wave"></div>
-              </div>
-
-              <h4 class="c5-title">Harmonic Rhythm Sync</h4>
-              <p class="c5-desc">Audio transients procedurally trigger lens flashes, motion blur bursts, and beat cuts.</p>
-            </div>
-          </article>
-
-          <!-- RIGHT COLUMN MINI STACK: CARDS 6 & 7 (Stacked Vertically) -->
-          <div class="bento-right-mini-stack">
-            
-            <!-- CARD 6: BOTTOM-RIGHT TOP (Small Landscape ~26% width, ~26% height) -->
-            <article class="bento-card card-6-small-top">
-              <div class="card-glass-specular"></div>
-
-              <div class="c6-inner">
-                <div class="c6-top-row">
-                  <span class="c6-metric">140+</span>
-                  <div class="c6-network-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="2" y1="12" x2="22" y2="12"></line>
-                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div class="c6-label">AAA Studios &amp; Production Houses Onboarded</div>
-                <div class="c6-tags"><span>London</span><span>Tokyo</span><span>LA</span></div>
-              </div>
-            </article>
-
-            <!-- CARD 7: BOTTOM-RIGHT BOTTOM (Small Landscape ~26% width, ~26% height) -->
-            <article class="bento-card card-7-small-bottom">
-              <div class="card-glass-specular"></div>
-
-              <div class="c7-inner">
-                <div class="c7-meta">
-                  <span class="c7-status-dot"></span>
-                  <span class="c7-status-text">CLOUD CLUSTER ACTIVE</span>
-                </div>
-                <h4 class="c7-title">Custom LoRA Fine-Tuning</h4>
-                <a href="#apidocs" class="c7-btn-action">
-                  <span>Explore API Docs</span>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
-                </a>
-              </div>
-            </article>
-
+          <!-- Progress bar -->
+          <div class="gsc-progress-track">
+            <div class="gsc-progress-fill" id="gscProgressFill"></div>
           </div>
         </div>
       </div>
 
+      <!-- RIGHT COLUMN: CARDS DECK (Shows other games, clicked card disappears!) -->
+      <div class="gsc-right">
+        <div class="gsc-cards-deck" id="gscCardsDeck">
+          <!-- Cards injected and animated by JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ─── BOTTOM-RIGHT SLIDE COUNTER ─── -->
+    <div class="gsc-counter-corner">
+      <span class="gsc-counter-current" id="gscCounterCur">01</span>
+      <span class="gsc-counter-total">/ 05</span>
+    </div>
+
+    <!-- ─── EXPANDING CARD LAYER (For Opening Animation) ─── -->
+    <div class="gsc-expanding-card" id="gscExpandingCard">
+      <img src="" alt="" class="gsc-exp-img" id="gscExpImg">
     </div>
 
   </div>
 </section>
-      </div>
-      <!-- ================== END COSMIC EXPERIENCE ================== -->
+
+        <!-- ========================================================================== -->
+        <!-- 3D MODEL CREATOR (Nexus3D with interactive GLB models)                    -->
+        <!-- Added at the end of 'Engineered for Pure Cinematic Authority'              -->
+        <!-- ========================================================================== -->
+<!-- ========================================================================== -->
+    <!-- SECTION 1: 3D MODEL CREATOR HERO (Nexus3D with interactive GLB race car) -->
+    <!-- ========================================================================== -->
+<!-- Section Container with Clean Light-Gray Background -->
+    <section class="creator-section" id="model-creator">
+        <!-- Ambient Decorative Elements (Corner waves, glowing glass orbs, tech dot grid) -->
+        <div class="ambient-backdrop">
+            <!-- Smooth Organic Gradient Waves (Bottom Corners as in reference) -->
+            <div class="wave-accent wave-bottom-left">
+                <svg viewBox="0 0 700 350" preserveAspectRatio="none">
+                    <path class="wave-layer-1" d="M0,180 C180,240 260,110 420,180 C540,240 600,280 700,210 L700,350 L0,350 Z" />
+                    <path class="wave-layer-2" d="M0,230 C140,170 310,270 480,210 C580,180 640,230 700,270 L700,350 L0,350 Z" />
+                    <path class="wave-layer-3" d="M0,270 C160,240 330,310 520,260 C620,230 670,290 700,310 L700,350 L0,350 Z" />
+                </svg>
+            </div>
+            <div class="wave-accent wave-bottom-right">
+                <svg viewBox="0 0 700 350" preserveAspectRatio="none">
+                    <path class="wave-layer-cyan" d="M0,240 C160,190 320,290 490,210 C590,160 650,220 700,260 L700,350 L0,350 Z" />
+                    <path class="wave-layer-purple" d="M0,280 C180,220 340,310 520,270 C610,250 670,290 700,310 L700,350 L0,350 Z" />
+                </svg>
+            </div>
+
+            <!-- Dot Matrix Tech Accent (Bottom Left) -->
+            <div class="dot-matrix-accent"></div>
+
+            <!-- Floating Translucent Glass Orbs -->
+            <div class="floating-orb orb-1"></div>
+            <div class="floating-orb orb-2"></div>
+            <div class="floating-orb orb-3"></div>
+        </div>
+
+                <!-- Section Inner Wrapper (Full-Width 3D Model Showcase) -->
+        <!-- ═══ DREAMFRAME 3-COLUMN LAYOUT ═══ -->
+        <div class="section-canvas dreamframe-layout">
+
+            <!-- ══ LEFT PANELS ══ -->
+            <div class="df-left-col">
+
+                <!-- Panel 1: Customizable Ambience -->
+                <div class="df-panel df-panel-ambience">
+                    <div class="df-panel-header">
+                        <span class="df-panel-title">Customizable Ambience</span>
+                        <span class="df-panel-badge">PBR LIGHT</span>
+                    </div>
+                    <div class="df-knob-wrap">
+                        <svg class="df-knob-svg" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="50" class="df-knob-track"/>
+                            <circle cx="60" cy="60" r="50" class="df-knob-fill" id="ambienceArc" stroke-dasharray="220 314" stroke-dashoffset="78"/>
+                            <circle cx="60" cy="60" r="36" class="df-knob-inner"/>
+                            <text x="60" y="55" class="df-knob-val" text-anchor="middle" id="ambienceLumen">100%</text>
+                            <text x="60" y="72" class="df-knob-unit" text-anchor="middle">LUMEN</text>
+                        </svg>
+                        <input type="range" class="df-knob-slider" id="ambienceSlider" min="0" max="100" value="100">
+                    </div>
+                    <div class="df-color-swatches">
+                        <span class="df-swatch df-swatch-white active" data-color="#ffffff" title="White"></span>
+                        <span class="df-swatch df-swatch-purple" data-color="#9b59b6" title="Purple"></span>
+                        <span class="df-swatch df-swatch-pink" data-color="#e91e8c" title="Pink"></span>
+                        <span class="df-swatch df-swatch-teal" data-color="#00bcd4" title="Teal"></span>
+                    </div>
+                    <div class="df-mode-btns">
+                        <button class="df-mode-btn active" id="ambDiffuse">Diffuse</button>
+                        <button class="df-mode-btn" id="ambRayTrace">Ray Trace</button>
+                        <button class="df-mode-btn" id="ambAmbience">Ambience</button>
+                    </div>
+                </div>
+
+                <!-- Panel 2: Set Temperature -->
+                <div class="df-panel df-panel-temp">
+                    <div class="df-panel-header">
+                        <span class="df-panel-title">Set Temperature</span>
+                        <span class="df-panel-badge">THERMAL V2</span>
+                    </div>
+                    <div class="df-knob-wrap">
+                        <svg class="df-knob-svg" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="50" class="df-knob-track"/>
+                            <circle cx="60" cy="60" r="50" class="df-knob-fill df-knob-fill-temp" id="tempArc" stroke-dasharray="158 314" stroke-dashoffset="78"/>
+                            <circle cx="60" cy="60" r="36" class="df-knob-inner"/>
+                            <text x="60" y="52" class="df-knob-val df-knob-val-temp" text-anchor="middle" id="tempVal">32°C</text>
+                            <text x="60" y="70" class="df-knob-unit" text-anchor="middle">SAMPLING</text>
+                        </svg>
+                        <input type="range" class="df-knob-slider" id="tempSlider" min="-20" max="100" value="32">
+                    </div>
+                    <div class="df-mode-btns df-temp-btns">
+                        <button class="df-mode-btn df-mode-btn-icon" id="tempCool"><i class="fa-solid fa-snowflake"></i><span>Cool</span></button>
+                        <button class="df-mode-btn df-mode-btn-icon active" id="tempWind"><i class="fa-solid fa-wind"></i><span>Wind</span></button>
+                        <button class="df-mode-btn df-mode-btn-icon" id="tempDenoise"><i class="fa-solid fa-sliders"></i><span>Denoise</span></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ CENTER STAGE ══ -->
+            <div class="df-center-col">
+
+                <!-- Top Meta Bar -->
+                <div class="df-top-bar">
+                    <div class="df-topbar-badge"><span class="df-dot-green"></span> GLB 3D RUNTIME</div>
+                    <div class="df-topbar-title">DREAMFRAME</div>
+                    <div class="df-topbar-badge"><i class="fa-solid fa-rotate"></i> 360° ORBIT</div>
+                </div>
+
+                <!-- 3D Viewport (ALL original controls kept inside) -->
+                <div class="viewport-3d-wrapper center-3d-stage">
+                    <!-- Three.js Canvas Container -->
+                    <div id="three-canvas-container" class="three-viewport"></div>
+
+                    <!-- Floating Top HUD Controls -->
+                    <div class="viewport-hud-top">
+                        <!-- Live Status Indicator -->
+                        <div class="hud-status-pill">
+                            <span class="pulse-dot"></span>
+                            <span class="hud-status-text">LIVE 3D MODEL</span>
+                            <span class="hud-divider">|</span>
+                            <span class="hud-meta" id="hudPolyCount">10,108 Tris • Apex Hypercar</span>
+                        </div>
+
+                        <!-- Render Mode Switcher -->
+                        <div class="render-mode-capsule">
+                            <button class="mode-btn active" data-mode="pbr" title="PBR Textured">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                <span>PBR</span>
+                            </button>
+                            <button class="mode-btn" data-mode="clay" title="Clay / Sculptor">
+                                <i class="fa-solid fa-monument"></i>
+                                <span>Clay</span>
+                            </button>
+                            <button class="mode-btn" data-mode="wireframe" title="Wireframe Mesh">
+                                <i class="fa-solid fa-draw-polygon"></i>
+                                <span>Wireframe</span>
+                            </button>
+                            <button class="mode-btn" data-mode="normal" title="Normal Vector Map">
+                                <i class="fa-solid fa-palette"></i>
+                                <span>Normals</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Model Choice Switcher (Apex Hypercar & The Eclipsed Root) -->
+                    <div class="model-choice-dock" id="modelChoiceDock">
+                        <span class="choice-dock-label"><i class="fa-solid fa-cubes"></i> 3D Models:</span>
+                        <button class="choice-pill-btn active" data-model="racecar" title="Load Apex Hypercar">
+                            <span class="choice-btn-icon"><i class="fa-solid fa-car-side"></i></span>
+                            <span class="choice-btn-info">
+                                <span class="choice-btn-title">Apex Hypercar</span>
+                                <span class="choice-btn-badge">10.1K Tris • Speed</span>
+                            </span>
+                        </button>
+                        <button class="choice-pill-btn" data-model="eclipsedroot" title="Load The Eclipsed Root">
+                            <span class="choice-btn-icon"><i class="fa-solid fa-tree"></i></span>
+                            <span class="choice-btn-info">
+                                <span class="choice-btn-title">The Eclipsed Root</span>
+                                <span class="choice-btn-badge new-badge">57.7K Tris • Fantasy</span>
+                            </span>
+                        </button>
+                    </div>
+
+                    <!-- Floating Right Quick Toolbar -->
+                    <div class="viewport-hud-tools">
+                        <button class="tool-btn active" id="btnAutoRotate" title="Toggle Auto-Turntable">
+                            <i class="fa-solid fa-rotate"></i>
+                            <span class="tool-tooltip">Auto Turntable</span>
+                        </button>
+                        <button class="tool-btn" id="btnToggleLighting" title="Toggle Lighting Environment">
+                            <i class="fa-solid fa-sun"></i>
+                            <span class="tool-tooltip">Environment</span>
+                        </button>
+                        <button class="tool-btn" id="btnResetCamera" title="Reset View">
+                            <i class="fa-solid fa-crosshairs"></i>
+                            <span class="tool-tooltip">Reset View</span>
+                        </button>
+                        <button class="tool-btn" id="btnDownloadModel" title="Export OBJ">
+                            <i class="fa-solid fa-cloud-arrow-down"></i>
+                            <span class="tool-tooltip">Export OBJ</span>
+                        </button>
+                    </div>
+
+                    <!-- AI Prompt Floating Tag Bar (Bottom of 3D Canvas) -->
+                    <div class="viewport-prompt-hud">
+                        <div class="prompt-icon">
+                            <i class="fa-solid fa-sparkles"></i>
+                        </div>
+                        <div class="prompt-input-wrapper">
+                            <span class="prompt-tag">AI Prompt</span>
+                            <input type="text" id="promptInput" class="prompt-input" value="Aerodynamic racing hypercar, obsidian carbon fiber, neon cyan accents, 8K PBR, production mesh" spellcheck="false">
+                        </div>
+                        <button class="btn-regenerate" id="btnRegenerate" title="Generate New Variation">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                            <span>Regenerate</span>
+                        </button>
+                    </div>
+
+                    <!-- Interaction Hint -->
+                    <div class="interaction-hint">
+                        <span><i class="fa-regular fa-hand-pointer"></i> Drag to rotate 360° • Scroll to zoom</span>
+                    </div>
+
+                    <!-- Generating Hologram Scanline Overlay -->
+                    <div class="scanline-overlay" id="scanlineOverlay">
+                        <div class="scan-laser"></div>
+                        <div class="scan-particles"></div>
+                        <div class="scan-badge">
+                            <div class="spinner-ring"></div>
+                            <span>Synthesizing Quad Mesh...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Title Area -->
+                <div class="df-model-title-bar">
+                    <div class="df-model-name" id="dfModelName">360 HYPERCAR</div>
+                    <div class="df-model-desc" id="dfModelDesc">High-speed aerodynamic asset generated with neural diffusion. Featuring full 4K PBR textures, optimized quad topology, and realistic physics geometry.</div>
+                </div>
+            </div>
+
+            <!-- ══ RIGHT PANEL ══ -->
+            <div class="df-right-col">
+
+                <!-- Search + Tabs -->
+                <div class="df-search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search 3D models..." class="df-search-input" id="dfSearchInput">
+                    <button class="df-search-settings"><i class="fa-solid fa-sliders"></i></button>
+                </div>
+
+                <div class="df-lib-tabs">
+                    <button class="df-lib-tab active"><i class="fa-solid fa-cube"></i> 3D Models</button>
+                    <button class="df-lib-tab"><i class="fa-solid fa-image"></i> Textures</button>
+                </div>
+
+                <!-- Model List -->
+                <div class="df-model-list">
+                    <div class="df-model-item active" data-model="racecar">
+                        <div class="df-model-thumb df-thumb-car"><i class="fa-solid fa-car-side"></i></div>
+                        <div class="df-model-info">
+                            <span class="df-model-item-name">Apex Hypercar</span>
+                            <span class="df-model-item-meta">10.1K Poly • PBR</span>
+                        </div>
+                        <div class="df-model-item-dot"></div>
+                    </div>
+                    <div class="df-model-item" data-model="eclipsedroot">
+                        <div class="df-model-thumb df-thumb-root"><i class="fa-solid fa-tree"></i></div>
+                        <div class="df-model-info">
+                            <span class="df-model-item-name">The Eclipsed Root</span>
+                            <span class="df-model-item-meta">57.7K Poly • Rigged</span>
+                        </div>
+                    </div>
+                    <div class="df-model-item df-model-locked">
+                        <div class="df-model-thumb df-thumb-drone"><i class="fa-solid fa-helicopter"></i></div>
+                        <div class="df-model-info">
+                            <span class="df-model-item-name">Aether Drone V4</span>
+                            <span class="df-model-item-meta">86K Poly • Solid</span>
+                        </div>
+                        <span class="df-lock-badge"><i class="fa-solid fa-lock"></i></span>
+                    </div>
+                    <div class="df-model-item df-model-locked">
+                        <div class="df-model-thumb df-thumb-visor"><i class="fa-solid fa-helmet-safety"></i></div>
+                        <div class="df-model-info">
+                            <span class="df-model-item-name">Cyber Visor X-1</span>
+                            <span class="df-model-item-meta">46K Poly • Glass</span>
+                        </div>
+                        <span class="df-lock-badge"><i class="fa-solid fa-lock"></i></span>
+                    </div>
+                </div>
+
+                <!-- Pagination Dots -->
+                <div class="df-pagination">
+                    <span class="df-page-dot active"></span>
+                    <span class="df-page-dot"></span>
+                    <span class="df-page-dot"></span>
+                    <span class="df-page-dot"></span>
+                </div>
+
+                <!-- Audio Player -->
+                <div class="df-audio-player">
+                    <div class="df-audio-title" id="dfAudioTitle">Apex Hypercar</div>
+                    <div class="df-audio-viz">
+                        <span class="df-bar"></span><span class="df-bar"></span><span class="df-bar"></span>
+                        <span class="df-bar"></span><span class="df-bar"></span><span class="df-bar"></span>
+                        <span class="df-bar"></span><span class="df-bar"></span><span class="df-bar"></span>
+                        <span class="df-bar"></span><span class="df-bar"></span><span class="df-bar"></span>
+                        <span class="df-bar"></span><span class="df-bar"></span><span class="df-bar"></span>
+                        <span class="df-bar"></span>
+                    </div>
+                    <div class="df-audio-controls">
+                        <button class="df-aud-btn"><i class="fa-solid fa-backward-step"></i></button>
+                        <button class="df-aud-btn"><i class="fa-solid fa-rotate-left"></i></button>
+                        <button class="df-aud-btn df-aud-play"><i class="fa-solid fa-pause"></i></button>
+                        <button class="df-aud-btn"><i class="fa-solid fa-rotate-right"></i></button>
+                        <button class="df-aud-btn"><i class="fa-solid fa-forward-step"></i></button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </section>
 
+    
+
+      </div>
+      <!-- ================== END COSMIC EXPERIENCE ================== -->
+
+
+    </section>
   </main>
 
   <!-- ========== MUSIC PLAYER ========== -->
@@ -1582,7 +1672,6 @@ setTimeout(function () {
   if (l && l.parentNode) l.parentNode.removeChild(l);
   var t = document.getElementById('terminal-screen');
   if (t) {
-    document.body.classList.add('terminal-active');
     t.style.visibility = 'visible';
     t.style.opacity = '1';
     t.classList.add('active');
