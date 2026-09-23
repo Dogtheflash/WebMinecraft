@@ -1408,7 +1408,9 @@
     <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
     <!-- canvas vẫn cần để module audio chạy (vòng avatar đập theo nhạc), nhưng không vẽ sóng -->
     <canvas id="audio-visualizer" class="audio-visualizer player-visualizer viz-silent" aria-hidden="true"></canvas>
-    <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="none"></audio>
+    <audio id="audio-player" preload="metadata">
+      <source src="Audio/Nightcore-Rise-Up.mp3" type="audio/mpeg" />
+    </audio>
   </aside>
   <!-- ========== THE MIDNIGHT ARCADE (11 GAMES) FULLSCREEN OVERLAY ========== -->
 <div id="snake-overlay" class="snake-overlay hidden" aria-modal="true" role="dialog" aria-label="The Midnight Arcade — 11 Games">

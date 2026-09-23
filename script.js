@@ -638,11 +638,14 @@ function rotateDecoration() {
 setInterval(rotateDecoration, 5000);
 
 function enterConsole() {
+  // Start the real music first while the click/keypress still owns a valid
+  // user activation. Mobile Safari and Chrome can reject playback if visual
+  // work happens before audio.play().
+  startMusic();
   if (typeof playUISound === 'function') {
     playUISound('page');
   }
   showScreen(profileScreen);
-  startMusic();
 }
 
 const trackTitle = document.getElementById('track-title');
@@ -650,10 +653,13 @@ const nextTrackButton = document.getElementById('next-track');
 const currentTimeEl = document.getElementById('current-time');
 const durationTimeEl = document.getElementById('duration-time');
 
+// Resolve every track against the actual page URL. This works on the custom
+// domain, GitHub Pages subfolders and local previews without fragile paths.
+const trackUrl = (fileName) => new URL(`Audio/${fileName}`, document.baseURI).href;
 const tracks = [
-  { title: 'Nightcore - Rise Up', src: './Audio/Nightcore-Rise-Up.mp3' },
-  { title: 'Esoa (Ballad Version)', src: './Audio/Esoa-Ballad-version.mp3' },
-  { title: 'My Music', src: './Audio/Music.mp3' }
+  { title: 'Nightcore - Rise Up', src: trackUrl('Nightcore-Rise-Up.mp3') },
+  { title: 'Esoa (Ballad Version)', src: trackUrl('Esoa-Ballad-version.mp3') },
+  { title: 'My Music', src: trackUrl('Music.mp3') }
 ];
 let currentTrackIndex = 0;
 let playing = false;
@@ -680,6 +686,7 @@ function loadTrack(index) {
   currentTrackIndex = (index + tracks.length) % tracks.length;
   const track = tracks[currentTrackIndex];
   audio.src = track.src;
+  audio.load();
   progressBar.style.width = '0%';
   currentTimeEl.textContent = '0:00';
   durationTimeEl.textContent = '0:00';
@@ -687,6 +694,7 @@ function loadTrack(index) {
 }
 
 async function playCurrentTrack() {
+  if (audio.networkState === HTMLMediaElement.NETWORK_EMPTY) audio.load();
   await audio.play();
   playing = true;
   playToggle.textContent = '❚❚';
@@ -698,9 +706,19 @@ async function startMusic() {
   try {
     audio.volume = 0.15;
     volumeSlider.value = 15;
+    if (!audio.paused) {
+      playing = true;
+      playToggle.textContent = '❚❚';
+      player.classList.remove('paused');
+      return;
+    }
     await playCurrentTrack();
   } catch (error) {
     console.warn('Autoplay blocked:', error);
+    playing = false;
+    playToggle.textContent = '▶';
+    player.classList.add('paused');
+    trackTitle.textContent = 'Chạm ▶ để phát nhạc';
   }
 }
 
@@ -738,8 +756,12 @@ nextTrackButton.addEventListener('click', async () => {
 });
 
 audio.addEventListener('loadedmetadata', renderTrackMeta);
+audio.addEventListener('canplay', renderTrackMeta);
 audio.addEventListener('error', () => {
-  trackTitle.textContent = 'Không tìm thấy file nhạc';
+  playing = false;
+  playToggle.textContent = '▶';
+  player.classList.add('paused');
+  trackTitle.textContent = 'Không tải được nhạc — chạm ▶ để thử lại';
 });
 audio.addEventListener('ended', () => {
   if (currentTrackIndex === 0) {

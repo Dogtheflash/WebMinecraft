@@ -5,7 +5,7 @@
 :is(.fav-worlds,.model-atelier) :focus-visible { outline:2px solid #d4ec9a; outline-offset:5px; }
 .fav-worlds { background:#111613; }
 .fav-worlds .fav-worlds-intro > div { display:block; }
-#model-creator .model-heading h2 { color:#222d24; }
+#model-creator .model-heading h2 { color:#f3f5ef; }
 .fav-worlds-intro { position:relative; min-height:480px; padding:100px 7%; background:radial-gradient(ellipse at 85% 20%,#314034 0,transparent 55%),#111613; grid-template-columns:1.3fr .7fr; gap:8%; }
 .fav-worlds-intro::before { inset:30px; border:1px solid #ffffff0c; background:none; mask-image:none; opacity:1; }
 .fav-worlds-intro::after { content:'✳'; position:absolute; right:8%; top:40px; color:#d4ec9a; font:120px/1 Arial,sans-serif; animation:collection-spin 40s linear infinite; }
@@ -46,40 +46,40 @@
 .scene-object { position:absolute; z-index:3; pointer-events:none; width:66px; height:66px; right:5%; top:105px; color:#d4ec9a; border:1px solid #d4ec9a60; border-radius:18px; display:grid; place-items:center; font-size:28px; background:#243123; box-shadow:0 12px 32px #0003; animation:collection-float 7s ease-in-out infinite; animation-play-state:paused; }
 .is-current .scene-object { animation-play-state:running; }
 .scene-object.second { top:auto; bottom:115px; right:48%; width:45px; height:45px; border-radius:50%; animation-delay:-3s; }
-.model-atelier { padding:95px 6% 70px; background:#e8e9df; color:#242d26; }
+.model-atelier { padding:95px 6% 70px; background:radial-gradient(circle at 50% 20%,#151b13 0,#080a08 38%,#030403 78%); color:#f3f5ef; }
 .model-heading { grid-template-columns:1.2fr .8fr; gap:22px 8%; margin-bottom:48px; }
-.model-kicker { color:#536c48; }
-.model-heading h2 { color:#222d24; margin:0; }
-.model-heading h2 em { color:#668554; }
-.model-heading p { color:#5f6b5f; font-size:15px; line-height:1.9; }
+.model-kicker { color:#b7d486; }
+.model-heading h2 { color:#f3f5ef; margin:0; }
+.model-heading h2 em { color:#c9e68f; }
+.model-heading p { color:#a6aea5; font-size:15px; line-height:1.9; }
 .model-grid,.model-orb { display:none; }
-.model-stage-shell { display:grid; grid-template-columns:minmax(0,1fr) 285px; background:#dfe2d5; border:1px solid #27342520; border-radius:24px; overflow:hidden; box-shadow:0 24px 65px #25332012; backdrop-filter:none; }
-.model-stage-topbar { grid-column:1/-1; background:#edf0e7; border-color:#25332020; color:#657260; padding:0 26px; font-size:10px; min-height:60px; }
-.model-live { color:#34422e; }.model-live i { background:#708c51; box-shadow:none; }
-.model-stage { min-height:570px; background:radial-gradient(ellipse at 50% 60%,#f9faf3 0,#d5ddca 55%,#cbd4bf); }
-.model-stage::before { width:70%; height:80px; bottom:12%; border:1px solid #53684940; border-radius:50%; background:transparent; box-shadow:none; }
+.model-stage-shell { display:grid; grid-template-columns:minmax(0,1fr) 285px; background:#080a08; border:1px solid #ffffff18; border-radius:24px; overflow:hidden; box-shadow:0 32px 90px #000b; backdrop-filter:none; }
+.model-stage-topbar { grid-column:1/-1; background:#0d100d; border-color:#ffffff14; color:#7f897d; padding:0 26px; font-size:10px; min-height:60px; }
+.model-live { color:#c1d99c; }.model-live i { background:#b8dc7e; box-shadow:0 0 14px #b8dc7e88; }
+.model-stage { min-height:570px; background:radial-gradient(ellipse at 50% 58%,#1f291d 0,#0b0e0b 42%,#030403 78%); }
+.model-stage::before { width:70%; height:80px; bottom:12%; border:1px solid #b8dc7e35; border-radius:50%; background:radial-gradient(ellipse,#b8dc7e10,transparent 68%); box-shadow:0 0 55px #9fc56b12; }
 .model-canvas { min-height:0; z-index:2; }
-.object-watermark { position:absolute; left:6%; top:8%; color:#60715333; font:700 clamp(35px,6vw,90px)/1.2 'Be Vietnam Pro',Arial,sans-serif; letter-spacing:-.06em; }
-.object-orbit { position:absolute; width:370px; height:370px; max-width:75%; max-height:75%; border:1px solid #435b3825; border-radius:50%; left:50%; top:48%; transform:translate(-50%,-50%); }
-.object-orbit::after { content:''; position:absolute; width:15px; height:15px; border-radius:50%; background:#729855; top:13%; right:13%; box-shadow:0 0 0 7px #72985515; }
-.model-boot { background:#dce4d6e8; color:#24331e; gap:16px; padding:24px; }
-.model-boot strong { font-size:20px; letter-spacing:-.02em; }.model-boot small { color:#53684d; font-size:13px; line-height:1.7; }
-.model-boot-ring { border-color:#57734630; border-top-color:#577346; }
-.model-boot button { background:#273e23; color:#edf4e4; padding:15px 22px; border-radius:50px; font-size:12px; letter-spacing:0; text-transform:none; }
-.model-stage-caption { color:#53674c; font-size:9px; bottom:24px; }
-.model-controls { display:flex; flex-direction:column; border:0; border-left:1px solid #25332020; background:#f1f2eb; }
-.model-control-group { border:0; border-bottom:1px solid #25332018; padding:25px 22px; gap:12px; }
-.model-control-label { font:600 10px/1.5 'Be Vietnam Pro',Arial,sans-serif; color:#6a7862; letter-spacing:.13em; }
-.model-atelier .choice-pill-btn { background:#e6e9de; border:1px solid transparent; border-radius:12px; min-height:70px; flex-basis:100%; color:#44573b; }
-.model-atelier .choice-pill-btn.is-active { background:#dbe8c4; border-color:#7f995a; color:#21351c; box-shadow:none; }
-.model-atelier .choice-pill-btn > span { color:#607b46; }.model-atelier .choice-pill-btn strong { font-size:13px; }.model-atelier .choice-pill-btn small { font-size:11px; color:#6b7b60; }
+.object-watermark { position:absolute; left:6%; top:8%; color:#c5e49314; font:700 clamp(35px,6vw,90px)/1.2 'Be Vietnam Pro',Arial,sans-serif; letter-spacing:-.06em; }
+.object-orbit { position:absolute; width:370px; height:370px; max-width:75%; max-height:75%; border:1px solid #b8dc7e1c; border-radius:50%; left:50%; top:48%; transform:translate(-50%,-50%); }
+.object-orbit::after { content:''; position:absolute; width:15px; height:15px; border-radius:50%; background:#b8dc7e; top:13%; right:13%; box-shadow:0 0 0 7px #b8dc7e14,0 0 24px #b8dc7e66; }
+.model-boot { background:#070907e8; color:#eef2e9; gap:16px; padding:24px; }
+.model-boot strong { font-size:20px; letter-spacing:-.02em; }.model-boot small { color:#9ca79a; font-size:13px; line-height:1.7; }
+.model-boot-ring { border-color:#b8dc7e2b; border-top-color:#b8dc7e; }
+.model-boot button { background:#c8e98f; color:#10150e; padding:15px 22px; border-radius:50px; font-size:12px; letter-spacing:0; text-transform:none; }
+.model-stage-caption { color:#7f897d; font-size:9px; bottom:24px; }
+.model-controls { display:flex; flex-direction:column; border:0; border-left:1px solid #ffffff14; background:#0c0f0c; }
+.model-control-group { border:0; border-bottom:1px solid #ffffff12; padding:25px 22px; gap:12px; }
+.model-control-label { font:600 10px/1.5 'Be Vietnam Pro',Arial,sans-serif; color:#7f897d; letter-spacing:.13em; }
+.model-atelier .choice-pill-btn { background:#141814; border:1px solid #ffffff0d; border-radius:12px; min-height:70px; flex-basis:100%; color:#aeb8ab; }
+.model-atelier .choice-pill-btn.is-active { background:#1d2819; border-color:#9cbe68; color:#edf5e3; box-shadow:inset 0 0 24px #a8d16d0b; }
+.model-atelier .choice-pill-btn > span { color:#b3d97a; }.model-atelier .choice-pill-btn strong { font-size:13px; }.model-atelier .choice-pill-btn small { font-size:11px; color:#747f71; }
 .model-segmented { grid-template-columns:1fr 1fr; gap:7px; }
-.model-atelier .mode-btn { border:1px solid #35482c22; background:#fff5; border-radius:8px; min-height:43px; color:#546448; font-size:10px; }
-.model-atelier .mode-btn.is-active { background:#30452a; color:#eff6e7; border-color:#30452a; }
+.model-atelier .mode-btn { border:1px solid #ffffff12; background:#141814; border-radius:8px; min-height:43px; color:#8f9a8c; font-size:10px; }
+.model-atelier .mode-btn.is-active { background:#c8e98f; color:#11170e; border-color:#c8e98f; }
 .model-action-group { display:flex; flex-direction:column; }.model-action-group .model-control-label { flex:auto; }
-.model-atelier .model-action { font-size:12px; min-height:43px; justify-content:flex-start; border:1px solid #35482c22; border-radius:8px; color:#53634a; background:#fff4; }
-.model-atelier .model-action.is-active { background:#e0eacb; border-color:#8a9f65; color:#30452a; }
-.model-note { color:#53634e; grid-template-columns:.4fr 1fr; }.model-note span { color:#30452a; font-size:11px; }.model-note p { font-size:13px; }
+.model-atelier .model-action { font-size:12px; min-height:43px; justify-content:flex-start; border:1px solid #ffffff12; border-radius:8px; color:#9da899; background:#141814; }
+.model-atelier .model-action.is-active { background:#1d2819; border-color:#8ead5d; color:#cbe69e; }
+.model-note { color:#929d8f; grid-template-columns:.4fr 1fr; }.model-note span { color:#c4df96; font-size:11px; }.model-note p { font-size:13px; }
 @keyframes collection-float { 0%,100% { transform:translateY(0) rotate(-8deg); } 50% { transform:translateY(-18px) rotate(8deg); } }
 @keyframes collection-spin { to { transform:rotate(360deg); } }
 @media(max-width:1000px) { .model-stage-shell { grid-template-columns:minmax(0,1fr) 245px; }.model-stage { min-height:540px; }.fav-chapter { gap:5%; padding-inline:5%; }.fav-copy h3 { font-size:40px; } }
