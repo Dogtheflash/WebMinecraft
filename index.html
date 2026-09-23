@@ -1207,109 +1207,122 @@
 </section>
 
 
-        <!-- ================== CINEMATIC FAVORITE GAMES ================== -->
-        <section class="fav-worlds" id="favorite-games" aria-labelledby="fav-worlds-title">
-          <header class="fav-worlds-intro">
-            <div>
-              <span class="fav-kicker">THE PLAY COLLECTION · VOL. 01</span>
-              <h2 id="fav-worlds-title">Một lần chơi.<br><em>Mãi còn nhớ.</em></h2>
-            </div>
-            <p>Mỗi trò chơi là một nhịp điệu, một ký ức và một thế giới riêng. Cuộn xuống để bước qua từng chương.</p>
-          </header>
+        <!-- ================== GAME EXPLORER DASHBOARD ================== -->
+        <section class="game-explorer" id="favorite-games" aria-labelledby="game-explorer-title">
+          <img class="game-explorer-backdrop" id="gameExplorerBackdrop" src="data/games/cyberpunk_2077.png" alt="" aria-hidden="true">
+          <div class="game-explorer-shade" aria-hidden="true"></div>
 
-          <nav class="fav-progress" aria-label="Đi tới trò chơi">
-            <span class="fav-progress-line" aria-hidden="true"><i id="favProgressBar"></i></span>
-            <button class="is-active" type="button" data-game-jump="game-cyberpunk" aria-label="Cyberpunk 2077"><span>01</span></button>
-            <button type="button" data-game-jump="game-gtav" aria-label="Grand Theft Auto V"><span>02</span></button>
-            <button type="button" data-game-jump="game-gtavi" aria-label="Grand Theft Auto VI"><span>03</span></button>
-            <button type="button" data-game-jump="game-rdr2" aria-label="Red Dead Redemption 2"><span>04</span></button>
-            <button type="button" data-game-jump="game-stray" aria-label="Stray"><span>05</span></button>
-          </nav>
+          <div class="game-dashboard">
+            <header class="game-dashboard-topbar">
+              <a class="game-explorer-brand" href="#favorite-games" aria-label="Game Explorer — về đầu bảng">
+                <span class="game-brand-mark" aria-hidden="true">GX</span>
+                <strong>Game Explorer</strong>
+              </a>
 
-          <article class="fav-chapter is-current" id="game-cyberpunk" data-game-scene style="--game-accent:#f3e633;--game-rgb:243,230,51;">
-            <div class="fav-media" aria-hidden="true">
-              <img src="./data/games/cyberpunk_2077.png" alt="" loading="lazy" decoding="async">
-              <video muted loop playsinline preload="none" poster="./data/games/cyberpunk_2077.png" data-video-src="video/web/cyberpunk.mp4"></video>
-            </div>
-            <div class="fav-shade"></div>
-            <div class="fav-copy">
-              <div class="fav-meta"><span>01 / 05</span><span>Action RPG · Open World</span></div>
-              <h3>Cyberpunk<br><em>2077</em></h3>
-              <p>Night City cuốn tôi vào một tương lai vừa rực rỡ vừa tàn nhẫn. Một thế giới có cá tính mạnh, âm nhạc xuất sắc và những câu chuyện khiến tôi muốn quay lại nhiều lần.</p>
-              <div class="fav-facts"><span>My score <strong>9.4</strong></span><span>Night City</span><span>Single-player</span></div>
-              <a class="fav-link" href="https://store.steampowered.com/app/1091500" target="_blank" rel="noopener noreferrer">Xem trên Steam <span>↗</span></a>
-            </div>
-            <span class="fav-ghost-title" aria-hidden="true">NIGHT CITY</span>
-            <button class="fav-next" type="button" data-next-game="game-gtav" aria-label="Đi tới Grand Theft Auto V"><span>SCROLL</span><i>↓</i></button>
-          </article>
+              <label class="game-search" for="gameSearch">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+                <input id="gameSearch" type="search" placeholder="Tìm trò chơi" autocomplete="off">
+              </label>
 
-          <article class="fav-chapter fav-chapter-right" id="game-gtav" data-game-scene style="--game-accent:#ff654f;--game-rgb:255,101,79;">
-            <div class="fav-media" aria-hidden="true">
-              <img src="./data/games/gta_v_enhanced.png" alt="" loading="lazy" decoding="async">
-              <video muted loop playsinline preload="none" poster="./data/games/gta_v_enhanced.png" data-video-src="video/web/gtav.mp4"></video>
-            </div>
-            <div class="fav-shade"></div>
-            <div class="fav-copy">
-              <div class="fav-meta"><span>02 / 05</span><span>Action · Open World</span></div>
-              <h3>Grand Theft<br><em>Auto V</em></h3>
-              <p>Los Santos vẫn là một sân chơi hỗn loạn hiếm có: ba nhân vật, vô số cách tiếp cận và cảm giác tự do gần như không giới hạn.</p>
-              <div class="fav-facts"><span>My score <strong>9.1</strong></span><span>Los Santos</span><span>Online</span></div>
-              <a class="fav-link" href="https://store.steampowered.com/app/271590" target="_blank" rel="noopener noreferrer">Xem trên Steam <span>↗</span></a>
-            </div>
-            <span class="fav-ghost-title" aria-hidden="true">LOS SANTOS</span>
-            <button class="fav-next" type="button" data-next-game="game-gtavi" aria-label="Đi tới Grand Theft Auto VI"><span>NEXT WORLD</span><i>↓</i></button>
-          </article>
+              <div class="game-top-actions">
+                <span class="game-world-count"><b>05</b> worlds</span>
+                <button type="button" data-explorer-step="-1" aria-label="Trò chơi trước">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
+                </button>
+                <button type="button" data-explorer-step="1" aria-label="Trò chơi tiếp theo">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
+                </button>
+                <img src="minevui-avatar.png" alt="Bộ sưu tập của Chinatsu Kamado" width="38" height="38">
+              </div>
+            </header>
 
-          <article class="fav-chapter" id="game-gtavi" data-game-scene style="--game-accent:#ff9a72;--game-rgb:255,154,114;">
-            <div class="fav-media" aria-hidden="true">
-              <img src="./data/games/gta6.jpg" alt="" loading="lazy" decoding="async">
-              <video muted loop playsinline preload="none" poster="./data/games/gta6.jpg" data-video-src="video/web/gtavi.mp4"></video>
-            </div>
-            <div class="fav-shade"></div>
-            <div class="fav-copy">
-              <div class="fav-meta"><span>03 / 05</span><span>Action · Open World</span></div>
-              <h3>Grand Theft<br><em>Auto VI</em></h3>
-              <p>Leonida mang màu nắng, biển và sự hỗn loạn rất riêng. Đây là trò chơi tôi mong chờ nhất cho thế hệ thế giới mở tiếp theo.</p>
-              <div class="fav-facts"><span>Status <strong>Wishlist</strong></span><span>Leonida</span><span>Rockstar Games</span></div>
-              <a class="fav-link" href="https://www.rockstargames.com/gta-vi" target="_blank" rel="noopener noreferrer">Trang chính thức <span>↗</span></a>
-            </div>
-            <span class="fav-ghost-title" aria-hidden="true">LEONIDA</span>
-            <button class="fav-next" type="button" data-next-game="game-rdr2" aria-label="Đi tới Red Dead Redemption 2"><span>KEEP GOING</span><i>↓</i></button>
-          </article>
+            <nav class="game-side-nav" aria-label="Công cụ Game Explorer">
+              <button class="is-active" type="button" data-explorer-action="home" aria-label="Về trò chơi đầu tiên" aria-pressed="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 11 8-7 8 7v9h-6v-6h-4v6H4z"></path></svg>
+              </button>
+              <button type="button" data-explorer-action="browse" aria-label="Tìm trong bộ sưu tập">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v15H6.5A2.5 2.5 0 0 1 4 16.5z"></path><path d="M8 4v15"></path></svg>
+              </button>
+              <button type="button" data-explorer-action="favorites" aria-label="Chỉ hiện trò chơi yêu thích" aria-pressed="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"></path></svg>
+              </button>
+              <button type="button" data-explorer-action="trailer" aria-label="Phát hoặc dừng video trò chơi">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="m10 9 5 3-5 3z"></path></svg>
+              </button>
+              <button type="button" data-explorer-action="model" aria-label="Đi tới phòng trưng bày 3D">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"></path><path d="m4 7.5 8 4.5 8-4.5M12 12v9"></path></svg>
+              </button>
+            </nav>
 
-          <article class="fav-chapter fav-chapter-right" id="game-rdr2" data-game-scene style="--game-accent:#e15d35;--game-rgb:225,93,53;">
-            <div class="fav-media" aria-hidden="true">
-              <img src="./data/games/red_dead_redemption.png" alt="" loading="lazy" decoding="async">
-              <video muted loop playsinline preload="none" poster="./data/games/red_dead_redemption.png" data-video-src="video/web/rdr2.mp4"></video>
-            </div>
-            <div class="fav-shade"></div>
-            <div class="fav-copy">
-              <div class="fav-meta"><span>04 / 05</span><span>Western · Adventure</span></div>
-              <h3>Red Dead<br><em>Redemption II</em></h3>
-              <p>Một miền Tây sống động đến mức từng chuyến cưỡi ngựa đều có câu chuyện riêng. Arthur Morgan là một trong những nhân vật tôi nhớ lâu nhất.</p>
-              <div class="fav-facts"><span>My score <strong>9.7</strong></span><span>1899</span><span>Story-rich</span></div>
-              <a class="fav-link" href="https://store.steampowered.com/app/1174180" target="_blank" rel="noopener noreferrer">Xem trên Steam <span>↗</span></a>
-            </div>
-            <span class="fav-ghost-title" aria-hidden="true">OUTLAWS</span>
-            <button class="fav-next" type="button" data-next-game="game-stray" aria-label="Đi tới Stray"><span>LAST CHAPTER</span><i>↓</i></button>
-          </article>
+            <article class="game-feature" aria-live="polite">
+              <img id="gameFeatureImage" src="data/games/cyberpunk_2077.png" alt="Cyberpunk 2077 — Night City" decoding="async">
+              <video id="gameFeatureVideo" muted loop playsinline preload="none" poster="data/games/cyberpunk_2077.png"></video>
+              <div class="game-feature-overlay" aria-hidden="true"></div>
 
-          <article class="fav-chapter" id="game-stray" data-game-scene style="--game-accent:#6dc7ff;--game-rgb:109,199,255;">
-            <div class="fav-media" aria-hidden="true">
-              <img src="./data/games/stray.png" alt="" loading="lazy" decoding="async">
-              <video muted loop playsinline preload="none" poster="./data/games/stray.png" data-video-src="video/web/stray.mp4"></video>
-            </div>
-            <div class="fav-shade"></div>
-            <div class="fav-copy">
-              <div class="fav-meta"><span>05 / 05</span><span>Adventure · Indie</span></div>
-              <h3>Stray</h3>
-              <p>Nhỏ bé giữa một thành phố máy móc, chú mèo khiến hành trình khám phá trở nên ấm áp và đầy tò mò. Ngắn gọn, đẹp và rất có hồn.</p>
-              <div class="fav-facts"><span>My score <strong>8.8</strong></span><span>Walled City 99</span><span>Atmospheric</span></div>
-              <a class="fav-link" href="https://store.steampowered.com/app/1332010" target="_blank" rel="noopener noreferrer">Xem trên Steam <span>↗</span></a>
-            </div>
-            <span class="fav-ghost-title" aria-hidden="true">HOME</span>
-            <button class="fav-next" type="button" data-next-game="model-creator" aria-label="Đi tới phòng trưng bày 3D"><span>ENTER 3D LAB</span><i>↓</i></button>
-          </article>
+              <div class="game-feature-copy">
+                <span class="game-feature-index" id="gameFeatureIndex">01 / 05 · ACTION RPG</span>
+                <h2 id="game-explorer-title">Cyberpunk 2077</h2>
+                <p class="game-feature-subtitle" id="gameFeatureSubtitle">Night City · 2077</p>
+                <p class="game-feature-description" id="gameFeatureDescription">Một tương lai rực rỡ, nguy hiểm và đầy cá tính. Night City luôn khiến tôi muốn quay lại để khám phá thêm một câu chuyện mới.</p>
+                <div class="game-feature-stats" aria-label="Thông tin trò chơi">
+                  <span><small>MY SCORE</small><strong id="gameFeatureScore">9.4</strong></span>
+                  <span><small>MODE</small><strong id="gameFeatureMode">Solo</strong></span>
+                  <span><small>STATUS</small><strong id="gameFeatureStatus">Played</strong></span>
+                </div>
+              </div>
+
+              <div class="game-feature-footer">
+                <div class="game-location">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+                  <span><strong id="gameFeatureLocation">Night City</strong><small id="gameFeatureStudio">CD Projekt Red</small></span>
+                </div>
+                <div class="game-feature-actions">
+                  <button type="button" id="gameFavoriteButton" aria-label="Thêm Cyberpunk 2077 vào yêu thích" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.7a5.5 5.5 0 0 0-7.8 0L12 5.8l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.4 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"></path></svg>
+                  </button>
+                  <button class="game-trailer-button" type="button" id="gameTrailerButton" aria-label="Phát video Cyberpunk 2077" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 9 6-9 6z"></path></svg>
+                    <span>Xem trailer</span>
+                  </button>
+                  <a id="gameStoreLink" href="https://store.steampowered.com/app/1091500" target="_blank" rel="noopener noreferrer" aria-label="Mở trang Cyberpunk 2077">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 16 16 8M9 8h7v7"></path></svg>
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <aside class="game-library" aria-labelledby="game-library-title">
+              <div class="game-library-heading">
+                <div><span>MY COLLECTION</span><h3 id="game-library-title">Must-play worlds</h3></div>
+                <button type="button" id="gameViewAll">Xem tất cả</button>
+              </div>
+
+              <div class="game-library-list" id="gameLibraryList">
+                <button class="game-library-item is-active" type="button" data-game-key="cyberpunk" data-search="cyberpunk 2077 action rpg night city cd projekt red" aria-current="true">
+                  <img src="data/games/cyberpunk_2077.png" alt="" loading="lazy" decoding="async">
+                  <span><strong>Cyberpunk 2077</strong><small>Action RPG · Night City</small><em>CD Projekt Red</em></span><i aria-hidden="true">01</i>
+                </button>
+                <button class="game-library-item" type="button" data-game-key="gtav" data-search="grand theft auto v action open world los santos rockstar games">
+                  <img src="data/games/gta_v_enhanced.png" alt="" loading="lazy" decoding="async">
+                  <span><strong>Grand Theft Auto V</strong><small>Action · Los Santos</small><em>Rockstar Games</em></span><i aria-hidden="true">02</i>
+                </button>
+                <button class="game-library-item" type="button" data-game-key="gtavi" data-search="grand theft auto vi action open world leonida rockstar games">
+                  <img src="data/games/gta6.jpg" alt="" loading="lazy" decoding="async">
+                  <span><strong>Grand Theft Auto VI</strong><small>Action · Leonida</small><em>Rockstar Games</em></span><i aria-hidden="true">03</i>
+                </button>
+                <button class="game-library-item" type="button" data-game-key="rdr2" data-search="red dead redemption 2 western adventure outlaws rockstar games">
+                  <img src="data/games/red_dead_redemption.png" alt="" loading="lazy" decoding="async">
+                  <span><strong>Red Dead Redemption II</strong><small>Western · 1899</small><em>Rockstar Games</em></span><i aria-hidden="true">04</i>
+                </button>
+                <button class="game-library-item" type="button" data-game-key="stray" data-search="stray adventure indie walled city blue twelve studio">
+                  <img src="data/games/stray.png" alt="" loading="lazy" decoding="async">
+                  <span><strong>Stray</strong><small>Adventure · Walled City 99</small><em>BlueTwelve Studio</em></span><i aria-hidden="true">05</i>
+                </button>
+              </div>
+              <p class="game-library-empty" id="gameLibraryEmpty" hidden>Không tìm thấy trò chơi phù hợp.</p>
+            </aside>
+          </div>
+          <p class="game-explorer-status" id="gameExplorerStatus" aria-live="polite"></p>
         </section>
 
         <!-- ================== INTERACTIVE 3D ATELIER ================== -->

@@ -4229,83 +4229,248 @@ window.ModelViewer3D = ModelViewer3D;
 (function initCinematicSections() {
   'use strict';
 
-  const scenes = Array.from(document.querySelectorAll('[data-game-scene]'));
-  const navButtons = Array.from(document.querySelectorAll('[data-game-jump]'));
-  const progressBar = document.getElementById('favProgressBar');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const saveData = Boolean(navigator.connection && navigator.connection.saveData);
-  const desktopVideo = window.matchMedia('(min-width: 901px)').matches && !reduceMotion && !saveData;
-  let activeScene = -1;
-
-  function loadAndPlayVideo(scene) {
-    if (!desktopVideo || !scene) return;
-    const video = scene.querySelector('video[data-video-src]');
-    if (!video) return;
-    if (!video.dataset.loaded) {
-      video.src = video.dataset.videoSrc;
-      video.dataset.loaded = 'true';
-      video.load();
+  const explorer = document.getElementById('favorite-games');
+  const games = [
+    {
+      key: 'cyberpunk', title: 'Cyberpunk 2077', subtitle: 'Night City · 2077', genre: 'Action RPG',
+      description: 'Một tương lai rực rỡ, nguy hiểm và đầy cá tính. Night City luôn khiến tôi muốn quay lại để khám phá thêm một câu chuyện mới.',
+      score: '9.4', mode: 'Solo', status: 'Played', location: 'Night City', studio: 'CD Projekt Red',
+      image: 'data/games/cyberpunk_2077.png', video: 'video/web/cyberpunk.mp4',
+      url: 'https://store.steampowered.com/app/1091500'
+    },
+    {
+      key: 'gtav', title: 'Grand Theft Auto V', subtitle: 'Los Santos · San Andreas', genre: 'Open World',
+      description: 'Los Santos là một sân chơi hỗn loạn hiếm có: ba nhân vật, vô số cách tiếp cận và cảm giác tự do gần như không giới hạn.',
+      score: '9.1', mode: 'Online', status: 'Played', location: 'Los Santos', studio: 'Rockstar Games',
+      image: 'data/games/gta_v_enhanced.png', video: 'video/web/gtav.mp4',
+      url: 'https://store.steampowered.com/app/271590'
+    },
+    {
+      key: 'gtavi', title: 'Grand Theft Auto VI', subtitle: 'Leonida · Vice City', genre: 'Open World',
+      description: 'Leonida mang màu nắng, biển và sự hỗn loạn rất riêng. Đây là thế giới mở tôi mong chờ nhất của thế hệ tiếp theo.',
+      score: '—', mode: 'Story', status: 'Wishlist', location: 'Leonida', studio: 'Rockstar Games',
+      image: 'data/games/gta6.jpg', video: 'video/web/gtavi.mp4',
+      url: 'https://www.rockstargames.com/gta-vi'
+    },
+    {
+      key: 'rdr2', title: 'Red Dead Redemption II', subtitle: 'American frontier · 1899', genre: 'Western',
+      description: 'Một miền Tây sống động đến mức từng chuyến cưỡi ngựa đều có câu chuyện riêng. Arthur Morgan là nhân vật tôi nhớ lâu nhất.',
+      score: '9.7', mode: 'Solo', status: 'Played', location: 'The Frontier', studio: 'Rockstar Games',
+      image: 'data/games/red_dead_redemption.png', video: 'video/web/rdr2.mp4',
+      url: 'https://store.steampowered.com/app/1174180'
+    },
+    {
+      key: 'stray', title: 'Stray', subtitle: 'Walled City 99 · The Outside', genre: 'Adventure',
+      description: 'Nhỏ bé giữa một thành phố máy móc, chú mèo khiến hành trình khám phá trở nên ấm áp, tò mò và đầy cảm xúc.',
+      score: '8.8', mode: 'Solo', status: 'Played', location: 'Walled City 99', studio: 'BlueTwelve Studio',
+      image: 'data/games/stray.png', video: 'video/web/stray.mp4',
+      url: 'https://store.steampowered.com/app/1332010'
     }
-    const showVideo = () => scene.classList.add('video-ready');
-    video.addEventListener('playing', showVideo, { once: true });
-    const promise = video.play();
-    if (promise) promise.catch(() => scene.classList.remove('video-ready'));
-  }
+  ];
 
-  function releaseVideo(scene) {
-    const video = scene && scene.querySelector('video[data-video-src]');
-    if (!video) return;
-    video.pause();
-    scene.classList.remove('video-ready');
-  }
+  if (explorer) {
+    const feature = explorer.querySelector('.game-feature');
+    const featureImage = document.getElementById('gameFeatureImage');
+    const featureVideo = document.getElementById('gameFeatureVideo');
+    const backdrop = document.getElementById('gameExplorerBackdrop');
+    const libraryItems = Array.from(explorer.querySelectorAll('[data-game-key]'));
+    const searchInput = document.getElementById('gameSearch');
+    const emptyState = document.getElementById('gameLibraryEmpty');
+    const viewAllButton = document.getElementById('gameViewAll');
+    const favoriteButton = document.getElementById('gameFavoriteButton');
+    const trailerButton = document.getElementById('gameTrailerButton');
+    const trailerAction = explorer.querySelector('[data-explorer-action="trailer"]');
+    const favoritesAction = explorer.querySelector('[data-explorer-action="favorites"]');
+    const homeAction = explorer.querySelector('[data-explorer-action="home"]');
+    const statusMessage = document.getElementById('gameExplorerStatus');
+    let activeIndex = 0;
+    let favoritesOnly = false;
+    let transitionTimer = 0;
+    let favorites = new Set();
 
-  function setActiveScene(index) {
-    if (index < 0 || index >= scenes.length) return;
-    activeScene = index;
-    scenes.forEach((scene, sceneIndex) => {
-      const current = sceneIndex === index;
-      scene.classList.toggle('is-current', current);
-      if (current) loadAndPlayVideo(scene);
-      else releaseVideo(scene);
-    });
-    navButtons.forEach((button, buttonIndex) => button.classList.toggle('is-active', buttonIndex === index));
-    if (progressBar) progressBar.style.transform = `scaleY(${(index + 1) / scenes.length})`;
-  }
+    try {
+      const saved = JSON.parse(localStorage.getItem('gameExplorerFavorites') || '[]');
+      if (Array.isArray(saved)) favorites = new Set(saved.filter((key) => games.some((game) => game.key === key)));
+    } catch (error) {
+      console.warn('Unable to restore game favorites:', error);
+    }
 
-  if (scenes.length) {
-    const sceneObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        entry.target.dataset.visibleRatio = entry.isIntersecting ? entry.intersectionRatio : 0;
-        if (!entry.isIntersecting) releaseVideo(entry.target);
+    function announce(message) {
+      if (statusMessage) statusMessage.textContent = message;
+    }
+
+    function setTrailerState(playing) {
+      feature.classList.toggle('is-video-playing', playing);
+      trailerButton.setAttribute('aria-pressed', String(playing));
+      trailerAction?.setAttribute('aria-pressed', String(playing));
+      const label = trailerButton.querySelector('span');
+      const path = trailerButton.querySelector('svg path');
+      if (label) label.textContent = playing ? 'Dừng trailer' : 'Xem trailer';
+      if (path) path.setAttribute('d', playing ? 'M8 7h3v10H8zm5 0h3v10h-3z' : 'm9 6 9 6-9 6z');
+    }
+
+    function stopTrailer(unload = false) {
+      featureVideo.pause();
+      setTrailerState(false);
+      if (unload) {
+        featureVideo.removeAttribute('src');
+        delete featureVideo.dataset.gameKey;
+        featureVideo.load();
+      }
+    }
+
+    async function toggleTrailer() {
+      const game = games[activeIndex];
+      if (!featureVideo.paused) {
+        stopTrailer(false);
+        announce(`Đã dừng video ${game.title}.`);
+        return;
+      }
+      if (featureVideo.dataset.gameKey !== game.key) {
+        featureVideo.src = game.video;
+        featureVideo.poster = game.image;
+        featureVideo.dataset.gameKey = game.key;
+        featureVideo.load();
+      }
+      try {
+        await featureVideo.play();
+        setTrailerState(true);
+        announce(`Đang phát video ${game.title}.`);
+      } catch (error) {
+        setTrailerState(false);
+        announce('Không thể phát video. Hãy thử lại sau.');
+        console.warn('Game trailer playback failed:', error);
+      }
+    }
+
+    function syncFavoriteButton() {
+      const game = games[activeIndex];
+      const selected = favorites.has(game.key);
+      favoriteButton.setAttribute('aria-pressed', String(selected));
+      favoriteButton.setAttribute('aria-label', `${selected ? 'Xóa' : 'Thêm'} ${game.title} ${selected ? 'khỏi' : 'vào'} yêu thích`);
+    }
+
+    function filterLibrary() {
+      const query = searchInput.value.trim().toLocaleLowerCase('vi');
+      let visibleCount = 0;
+      libraryItems.forEach((item) => {
+        const matchesText = !query || item.dataset.search.includes(query);
+        const matchesFavorite = !favoritesOnly || favorites.has(item.dataset.gameKey);
+        item.hidden = !(matchesText && matchesFavorite);
+        if (!item.hidden) visibleCount += 1;
       });
-      const visible = scenes.reduce((best, scene) => Number(scene.dataset.visibleRatio || 0) > Number(best?.dataset.visibleRatio || 0) ? scene : best, null);
-      if (visible && !document.hidden) setActiveScene(scenes.indexOf(visible));
-    }, { threshold: [0.35, 0.55, 0.72] });
+      emptyState.hidden = visibleCount !== 0;
+    }
 
-    scenes.forEach((scene) => sceneObserver.observe(scene));
-    scenes.forEach((scene, index) => {
-      ['✳', '◇'].forEach((symbol, objectIndex) => {
-        const object = document.createElement('span');
-        object.className = 'scene-object' + (objectIndex ? ' second' : '');
-        object.setAttribute('aria-hidden', 'true');
-        object.textContent = objectIndex ? String(index + 1).padStart(2, '0') : symbol;
-        scene.appendChild(object);
+    function selectGame(index, shouldAnnounce = true) {
+      if (index < 0 || index >= games.length) return;
+      stopTrailer(true);
+      activeIndex = index;
+      const game = games[index];
+      explorer.classList.add('is-changing');
+      window.clearTimeout(transitionTimer);
+
+      featureImage.src = game.image;
+      featureImage.alt = `${game.title} — ${game.location}`;
+      backdrop.src = game.image;
+      featureVideo.poster = game.image;
+      document.getElementById('gameFeatureIndex').textContent = `${String(index + 1).padStart(2, '0')} / ${String(games.length).padStart(2, '0')} · ${game.genre.toUpperCase()}`;
+      document.getElementById('game-explorer-title').textContent = game.title;
+      document.getElementById('gameFeatureSubtitle').textContent = game.subtitle;
+      document.getElementById('gameFeatureDescription').textContent = game.description;
+      document.getElementById('gameFeatureScore').textContent = game.score;
+      document.getElementById('gameFeatureMode').textContent = game.mode;
+      document.getElementById('gameFeatureStatus').textContent = game.status;
+      document.getElementById('gameFeatureLocation').textContent = game.location;
+      document.getElementById('gameFeatureStudio').textContent = game.studio;
+      const storeLink = document.getElementById('gameStoreLink');
+      storeLink.href = game.url;
+      storeLink.setAttribute('aria-label', `Mở trang ${game.title}`);
+      trailerButton.setAttribute('aria-label', `Phát video ${game.title}`);
+
+      libraryItems.forEach((item) => {
+        const active = item.dataset.gameKey === game.key;
+        item.classList.toggle('is-active', active);
+        if (active) item.setAttribute('aria-current', 'true');
+        else item.removeAttribute('aria-current');
       });
+      homeAction?.classList.toggle('is-active', index === 0);
+      homeAction?.setAttribute('aria-pressed', String(index === 0));
+      syncFavoriteButton();
+      transitionTimer = window.setTimeout(() => explorer.classList.remove('is-changing'), reduceMotion ? 0 : 180);
+      if (shouldAnnounce) announce(`Đã chọn ${game.title}.`);
+    }
+
+    libraryItems.forEach((item) => item.addEventListener('click', () => {
+      const index = games.findIndex((game) => game.key === item.dataset.gameKey);
+      selectGame(index);
+    }));
+
+    explorer.querySelectorAll('[data-explorer-step]').forEach((button) => button.addEventListener('click', () => {
+      const direction = Number(button.dataset.explorerStep);
+      selectGame((activeIndex + direction + games.length) % games.length);
+    }));
+
+    searchInput.addEventListener('input', filterLibrary);
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        searchInput.value = '';
+        filterLibrary();
+        searchInput.blur();
+      }
     });
-  }
 
-  function scrollToId(id) {
-    const target = document.getElementById(id);
-    if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
-  }
+    viewAllButton.addEventListener('click', () => {
+      searchInput.value = '';
+      favoritesOnly = false;
+      favoritesAction?.setAttribute('aria-pressed', 'false');
+      filterLibrary();
+      announce('Đang hiển thị toàn bộ bộ sưu tập.');
+    });
 
-  navButtons.forEach((button) => button.addEventListener('click', () => scrollToId(button.dataset.gameJump)));
-  document.querySelectorAll('[data-next-game]').forEach((button) => button.addEventListener('click', () => scrollToId(button.dataset.nextGame)));
-  window.addEventListener('pagehide', () => scenes.forEach(releaseVideo));
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) scenes.forEach(releaseVideo);
-    else if (activeScene >= 0 && Number(scenes[activeScene].dataset.visibleRatio) > 0) loadAndPlayVideo(scenes[activeScene]);
-  });
+    favoriteButton.addEventListener('click', () => {
+      const game = games[activeIndex];
+      if (favorites.has(game.key)) favorites.delete(game.key);
+      else favorites.add(game.key);
+      try { localStorage.setItem('gameExplorerFavorites', JSON.stringify(Array.from(favorites))); } catch (error) {}
+      syncFavoriteButton();
+      filterLibrary();
+      announce(`${game.title} ${favorites.has(game.key) ? 'đã được thêm vào' : 'đã được xóa khỏi'} yêu thích.`);
+    });
+
+    trailerButton.addEventListener('click', toggleTrailer);
+    explorer.querySelectorAll('[data-explorer-action]').forEach((button) => button.addEventListener('click', () => {
+      const action = button.dataset.explorerAction;
+      if (action === 'home') {
+        searchInput.value = '';
+        favoritesOnly = false;
+        favoritesAction?.setAttribute('aria-pressed', 'false');
+        filterLibrary();
+        selectGame(0);
+      } else if (action === 'browse') {
+        searchInput.focus();
+      } else if (action === 'favorites') {
+        favoritesOnly = !favoritesOnly;
+        button.setAttribute('aria-pressed', String(favoritesOnly));
+        filterLibrary();
+        announce(favoritesOnly ? 'Chỉ hiển thị trò chơi yêu thích.' : 'Đang hiển thị toàn bộ trò chơi.');
+      } else if (action === 'trailer') {
+        toggleTrailer();
+      } else if (action === 'model') {
+        document.getElementById('model-creator')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      }
+    }));
+
+    const explorerObserver = new IntersectionObserver((entries) => {
+      if (!entries[0].isIntersecting) stopTrailer(false);
+    }, { threshold:0.08 });
+    explorerObserver.observe(explorer);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stopTrailer(false); });
+    window.addEventListener('pagehide', () => stopTrailer(true));
+    selectGame(0, false);
+    filterLibrary();
+  }
 
   const modelSection = document.getElementById('model-creator');
   const stage = document.getElementById('modelStage');
