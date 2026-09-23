@@ -3688,8 +3688,8 @@ class ModelViewer3D {
         this.modelGroup = null;
         this.currentMode = 'pbr'; // 'pbr', 'clay', 'wireframe', 'normal'
         this.currentLighting = 'cyber';
-        this.autoRotate = true;
-        this.rotationSpeed = 0.6; // radians per second
+        this.autoRotate = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        this.rotationSpeed = 0.22;
         this.lights = {};
         this.clock = new THREE.Clock();
         this.isUserInteracting = false;
@@ -3852,7 +3852,7 @@ class ModelViewer3D {
         // Glowing Cyan Pedestal Ring
         const ringGeo = new THREE.RingGeometry(1.6, 1.66, 64);
         const ringMat = new THREE.MeshBasicMaterial({
-            color: 0x00f0ff,
+            color: 0x718957,
             transparent: true,
             opacity: 0.35,
             side: THREE.DoubleSide
@@ -3865,7 +3865,7 @@ class ModelViewer3D {
         // Secondary subtle outer ring
         const outerRingGeo = new THREE.RingGeometry(2.1, 2.14, 64);
         const outerRingMat = new THREE.MeshBasicMaterial({
-            color: 0x8b5cf6,
+            color: 0x92a477,
             transparent: true,
             opacity: 0.22,
             side: THREE.DoubleSide
@@ -3882,10 +3882,14 @@ class ModelViewer3D {
     loadModel(modelKey) {
         const config = this.models[modelKey] || this.models.racecar;
         this.currentModelKey = modelKey;
+        const requestId = this.loadRequestId = (this.loadRequestId || 0) + 1;
+        const stageEl = document.getElementById('modelStage');
+        stageEl?.classList.remove('is-loaded');
 
         const loader = new THREE.GLTFLoader();
 
         const onLoadSuccess = (gltf) => {
+            if (requestId !== this.loadRequestId) return;
             if (this.modelGroup) {
                 this.scene.remove(this.modelGroup);
                 this.modelGroup.traverse((child) => {
@@ -3933,7 +3937,7 @@ class ModelViewer3D {
 
                     if (child.material) {
                         child.userData.originalMat = child.material;
-                        child.userData.pbrMat = child.material.clone();
+                        child.userData.pbrMat = child.material;
 
                         if (child.material.isMeshStandardMaterial || child.material.isMeshPhysicalMaterial) {
                             child.material.roughness = config.roughness ?? 0.45;
@@ -3974,6 +3978,7 @@ class ModelViewer3D {
 
             // Smooth entrance pop animation
             this.playEntranceAnimation();
+            stageEl?.classList.add('is-loaded');
         };
 
         const onProgress = (xhr) => {
@@ -3987,6 +3992,9 @@ class ModelViewer3D {
         };
 
         const onError = (err) => {
+            if (requestId !== this.loadRequestId) return;
+            const bootEl = document.getElementById('modelBoot');
+            if (bootEl) bootEl.querySelector('small').textContent = 'Không tải được vật thể. Chọn lại mô hình để thử lại.';
             console.warn(`Failed to load ${config.name} from the primary path.`, err);
             if (!config.fallbackPath || config.fallbackPath === config.primaryPath) {
                 console.error(`Failed to load ${config.name}:`, err);
@@ -4004,11 +4012,14 @@ class ModelViewer3D {
 
     playEntranceAnimation() {
         if (!this.modelGroup) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const enteringModel = this.modelGroup;
         const currentScale = this.modelGroup.scale.clone();
         this.modelGroup.scale.multiplyScalar(0.2);
 
         let progress = 0;
         const animate = () => {
+            if (enteringModel !== this.modelGroup) return;
             progress += 0.05;
             const ease = Math.sin(Math.min(progress, Math.PI / 2));
             this.modelGroup.scale.lerp(currentScale, ease);
@@ -4174,10 +4185,10 @@ class ModelViewer3D {
 
             // Gentle floating/hovering physics oscillation
             const baseY = config.initialY || 0;
-            this.modelGroup.position.y = baseY + Math.sin(elapsedTime * 1.6) * 0.04;
+            this.modelGroup.position.y = baseY;
 
             // Subtle dynamic banking angle as it rotates
-            this.modelGroup.rotation.z = Math.sin(elapsedTime * 0.9) * 0.02;
+            this.modelGroup.rotation.z = 0;
         }
 
         if (this.controls) {
@@ -4227,7 +4238,7 @@ window.ModelViewer3D = ModelViewer3D;
   }
 
   function setActiveScene(index) {
-    if (index < 0 || index >= scenes.length || index === activeScene) return;
+    if (index < 0 || index >= scenes.length) return;
     activeScene = index;
     scenes.forEach((scene, sceneIndex) => {
       const current = sceneIndex === index;
@@ -4241,14 +4252,24 @@ window.ModelViewer3D = ModelViewer3D;
 
   if (scenes.length) {
     const sceneObserver = new IntersectionObserver((entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (visible) setActiveScene(scenes.indexOf(visible.target));
+      entries.forEach(entry => {
+        entry.target.dataset.visibleRatio = entry.isIntersecting ? entry.intersectionRatio : 0;
+        if (!entry.isIntersecting) releaseVideo(entry.target);
+      });
+      const visible = scenes.reduce((best, scene) => Number(scene.dataset.visibleRatio || 0) > Number(best?.dataset.visibleRatio || 0) ? scene : best, null);
+      if (visible && !document.hidden) setActiveScene(scenes.indexOf(visible));
     }, { threshold: [0.35, 0.55, 0.72] });
 
     scenes.forEach((scene) => sceneObserver.observe(scene));
-    setActiveScene(0);
+    scenes.forEach((scene, index) => {
+      ['✳', '◇'].forEach((symbol, objectIndex) => {
+        const object = document.createElement('span');
+        object.className = 'scene-object' + (objectIndex ? ' second' : '');
+        object.setAttribute('aria-hidden', 'true');
+        object.textContent = objectIndex ? String(index + 1).padStart(2, '0') : symbol;
+        scene.appendChild(object);
+      });
+    });
   }
 
   function scrollToId(id) {
@@ -4259,6 +4280,10 @@ window.ModelViewer3D = ModelViewer3D;
   navButtons.forEach((button) => button.addEventListener('click', () => scrollToId(button.dataset.gameJump)));
   document.querySelectorAll('[data-next-game]').forEach((button) => button.addEventListener('click', () => scrollToId(button.dataset.nextGame)));
   window.addEventListener('pagehide', () => scenes.forEach(releaseVideo));
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) scenes.forEach(releaseVideo);
+    else if (activeScene >= 0 && Number(scenes[activeScene].dataset.visibleRatio) > 0) loadAndPlayVideo(scenes[activeScene]);
+  });
 
   const modelSection = document.getElementById('model-creator');
   const stage = document.getElementById('modelStage');
@@ -4305,7 +4330,7 @@ window.ModelViewer3D = ModelViewer3D;
         script.dataset.ready = 'true';
         resolve();
       }, { once: true });
-      script.addEventListener('error', () => reject(new Error(`Không tải được ${src}`)), { once: true });
+      script.addEventListener('error', () => { script.remove(); reject(new Error(`Không tải được ${src}`)); }, { once: true });
       document.head.appendChild(script);
     });
   }
@@ -4322,7 +4347,7 @@ window.ModelViewer3D = ModelViewer3D;
     if (viewer) return Promise.resolve(viewer);
     if (viewerPromise) return viewerPromise;
     if (!supportsWebGL()) {
-      updateBoot('Thiết bị này không hỗ trợ WebGL. Ảnh tĩnh được giữ làm phương án thay thế.', true);
+      updateBoot('Trình duyệt này chưa hỗ trợ xem 3D. Bạn có thể thử bằng trình duyệt khác.', true);
       return Promise.resolve(null);
     }
 
@@ -4337,7 +4362,8 @@ window.ModelViewer3D = ModelViewer3D;
         viewer.isSectionVisible = true;
         if (viewer.renderer) viewer.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isCompact ? 1 : 1.5));
         if (viewer.controls) viewer.controls.enableZoom = false;
-        stage.classList.add('is-loaded');
+        viewer.toggleLighting();
+        document.getElementById('btnToggleLighting').textContent = '◐ Light: Studio';
         boot.classList.remove('is-loading');
         return viewer;
       })
@@ -4370,6 +4396,8 @@ window.ModelViewer3D = ModelViewer3D;
         item.setAttribute('aria-pressed', String(selected));
       });
       const key = button.dataset.model;
+      const watermark = modelSection.querySelector('.object-watermark');
+      if (watermark) watermark.textContent = key === 'racecar' ? 'FORM / 01' : 'FORM / 02';
       instance.loadModel(key);
       const copy = modelCopy[key];
       if (copy) {
