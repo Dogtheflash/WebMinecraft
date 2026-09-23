@@ -1175,6 +1175,34 @@ async function fetchSteamData() {
   return data;
 }
 
+function renderSteamPlaying(gameName, detail = '', state = '', elapsed = '') {
+  if (!steamPage.playing) return;
+
+  steamPage.playing.replaceChildren();
+
+  const title = document.createElement('strong');
+  title.style.color = '#fff';
+  title.textContent = `🎮 ${gameName || 'Unknown Game'}`;
+  steamPage.playing.appendChild(title);
+
+  const extra = [detail, state].filter(Boolean).join(' · ');
+  if (extra) {
+    steamPage.playing.appendChild(document.createElement('br'));
+    const detailEl = document.createElement('span');
+    detailEl.style.cssText = 'font-size:11px;color:var(--muted)';
+    detailEl.textContent = extra;
+    steamPage.playing.appendChild(detailEl);
+  }
+
+  if (elapsed) {
+    steamPage.playing.appendChild(document.createElement('br'));
+    const elapsedEl = document.createElement('span');
+    elapsedEl.style.cssText = 'font-size:11px;color:var(--cyan)';
+    elapsedEl.textContent = elapsed;
+    steamPage.playing.appendChild(elapsedEl);
+  }
+}
+
 function applySteamData(data) {
   if (steamPage.avatar && data.avatar)
     steamPage.avatar.src = data.avatar;
@@ -1207,8 +1235,7 @@ function applySteamData(data) {
 
   if (steamPage.playing) {
     if (isIngame) {
-      steamPage.playing.innerHTML =
-        `🎮 <strong style="color:#fff">${data.currentGame}</strong>`;
+      renderSteamPlaying(data.currentGame);
     } else {
       steamPage.playing.textContent = 'Không có game đang chạy';
     }
@@ -1254,10 +1281,7 @@ function applySteamLanyardFallback(data) {
   if (steamPage.statusLabel) steamPage.statusLabel.textContent = 'In-Game';
 
   if (steamPage.playing) {
-    steamPage.playing.innerHTML =
-      `🎮 <strong style="color:#fff">${gameName}</strong>` +
-      (gameDetail ? `<br><span style="font-size:11px;color:var(--muted)">${gameDetail}${gameState ? ' · ' + gameState : ''}</span>` : '') +
-      (elapsed    ? `<br><span style="font-size:11px;color:var(--cyan)">${elapsed}</span>` : '');
+    renderSteamPlaying(gameName, gameDetail, gameState, elapsed);
   }
 
   if (steamActivity?.assets?.large_image && steamPage.gameThumb) {
@@ -3603,8 +3627,8 @@ document.addEventListener('DOMContentLoaded', () => {
  * 3D Model Creator - Real-time Interactive WebGL Engine
  * Features:
  * - Multi-Model GLTF/GLB Loader:
- *   1. Apex Hypercar ('Model 3D/race car 3d model.glb')
- *   2. The Eclipsed Root ('Model 3D/The Eclipsed Root.glb')
+ *   1. Apex Hypercar ('models/race_car.glb')
+ *   2. The Eclipsed Root ('models/the_eclipsed_root.glb')
  * - Automatic model centering, scaling & shadow setup
  * - OrbitControls with full 360 degree user interaction & inertia damping
  * - Smooth rotation animation effects (idle auto-turntable, gentle banking & floating hover)
@@ -3638,8 +3662,8 @@ class ModelViewer3D {
             racecar: {
                 key: 'racecar',
                 name: 'Apex Hypercar',
-                primaryPath: 'Model 3D/race car 3d model.glb',
-                fallbackPath: 'models/race_car.glb',
+                primaryPath: 'models/race_car.glb',
+                fallbackPath: null,
                 targetSize: 3.3,
                 initialRotation: { x: 0, y: -0.65, z: 0 },
                 initialY: 0.05,
@@ -3652,8 +3676,8 @@ class ModelViewer3D {
             eclipsedroot: {
                 key: 'eclipsedroot',
                 name: 'The Eclipsed Root',
-                primaryPath: 'Model 3D/The Eclipsed Root.glb',
-                fallbackPath: 'models/the_eclipsed_root.glb',
+                primaryPath: 'models/the_eclipsed_root.glb',
+                fallbackPath: null,
                 targetSize: 3.1,
                 initialRotation: { x: 0, y: 0.25, z: 0 },
                 initialY: -0.12,
@@ -3924,10 +3948,15 @@ class ModelViewer3D {
         };
 
         const onError = (err) => {
-            console.warn(`Attempting fallback for ${config.name}...`, err);
+            console.warn(`Failed to load ${config.name} from the primary path.`, err);
+            if (!config.fallbackPath || config.fallbackPath === config.primaryPath) {
+                console.error(`Failed to load ${config.name}:`, err);
+                this.updatePolyDisplay('Model unavailable', config.name);
+                return;
+            }
             loader.load(config.fallbackPath, onLoadSuccess, onProgress, (err2) => {
                 console.error(`Failed to load ${config.name} from both paths:`, err2);
-                this.updatePolyDisplay('Model Ready', config.name);
+                this.updatePolyDisplay('Model unavailable', config.name);
             });
         };
 
@@ -4565,7 +4594,7 @@ document.addEventListener('DOMContentLoaded', () => {
       genre: 'Action · Open World · 2025',
       desc: 'Kỷ nguyên mới của Grand Theft Auto — thế giới mở rộng lớn nhất, chân thực nhất từ trước đến nay tại vùng đất Leonida.',
       image: './data/games/gta6.jpg',
-      video: 'video/gtavi.mkv',
+      video: 'video/gtavi.mp4',
       btnText: 'Rockstar Games',
       btnLink: 'https://www.rockstargames.com/gta-vi',
       btnColor: '#ff6b35',
@@ -4702,11 +4731,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    function ensureVideoSource(video) {
+      if (!video || video.dataset.loaded === 'true') return;
+      var src = video.dataset.videoSrc;
+      if (!src) return;
+      video.src = src;
+      video.dataset.loaded = 'true';
+      video.load();
+    }
+
     // Play video for active slide cleanly — eliminates avatar blur & handles fallbacks
     function playSlideVideo(slide) {
       if (!slide) return;
       var video = slide.querySelector('.gsc-bg-video');
       if (!video) return;
+
+      ensureVideoSource(video);
 
       var markPlaying = function () {
         slide.classList.add('video-playing');
