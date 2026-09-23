@@ -5,14 +5,14 @@
 window.__LOW_PERF = (function () {
   try {
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
-    const smallScreen = window.matchMedia('(max-width: 768px)').matches ||
-      window.matchMedia('(pointer: coarse)').matches;
-    const weakDevice = (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
-      (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+    const compactScreen = window.matchMedia('(max-width: 768px)').matches ||
+      (window.matchMedia('(pointer: coarse)').matches && window.matchMedia('(max-width: 1024px)').matches);
     const slowNetwork = conn.saveData === true || /(^|-)2g$/.test(conn.effectiveType || '');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const reducedData = window.matchMedia('(prefers-reduced-data: reduce)').matches;
-    return reducedMotion || reducedData || smallScreen || weakDevice || slowNetwork;
+    // Desktop vẫn phát video nền; chỉ chuyển sang chế độ nhẹ theo kích thước màn
+    // hình, tùy chọn tiết kiệm dữ liệu hoặc cài đặt giảm chuyển động của người dùng.
+    return reducedMotion || reducedData || compactScreen || slowNetwork;
   } catch (e) { return false; }
 })();
 if (window.__LOW_PERF) document.documentElement.classList.add('low-perf');
@@ -3744,15 +3744,15 @@ class ModelViewer3D {
 
         // 3. Renderer Setup (Transparent background)
         this.renderer = new THREE.WebGLRenderer({
-            antialias: true,
+            antialias: !window.__LOW_PERF,
             alpha: true,
             powerPreference: 'high-performance'
         });
         this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.__LOW_PERF ? 1 : 1.5));
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1.25;
-        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.enabled = !window.__LOW_PERF;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
         this.container.innerHTML = '';
@@ -4156,6 +4156,10 @@ class ModelViewer3D {
 
     animate() {
         requestAnimationFrame(() => this.animate());
+        if (document.hidden || this.isSectionVisible === false) {
+            this.clock.getDelta();
+            return;
+        }
 
         const delta = this.clock.getDelta();
         const elapsedTime = this.clock.getElapsedTime();
@@ -4186,908 +4190,224 @@ class ModelViewer3D {
 
 // Attach globally
 window.ModelViewer3D = ModelViewer3D;
-
-
-/**
- * 3D Model Creator Section - Main Application Controller
- * Handles UI interactions, theme switching, prompt generation simulation,
- * and controls synchronization with the Three.js WebGL engine.
- */
-
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize 3D WebGL Viewer only when the section is near the viewport.
-    let viewer = null;
-    let viewerLoadPromise = null;
-    const modelSection = document.getElementById('model-creator');
-    const initViewer = () => {
-        if (viewer) return Promise.resolve(viewer);
-        if (viewerLoadPromise) return viewerLoadPromise;
-
-        const loadScript = (src) => new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = src;
-            script.async = true;
-            script.onload = resolve;
-            script.onerror = () => reject(new Error(`Unable to load ${src}`));
-            document.head.appendChild(script);
-        });
-
-        viewerLoadPromise = loadScript('three.min.js')
-        .then(() => loadScript('OrbitControls.js'))
-        .then(() => loadScript('GLTFLoader.js'))
-        .then(() => {
-            try {
-                viewer = new ModelViewer3D('three-canvas-container');
-            } catch (err) {
-                console.warn('Three.js viewer initialization notice:', err);
-            }
-            return viewer;
-        }).catch((err) => {
-            console.warn('3D viewer resources were deferred or unavailable:', err);
-            return null;
-        });
-
-        return viewerLoadPromise;
-    };
-
-    if (modelSection && 'IntersectionObserver' in window) {
-        const viewerObserver = new IntersectionObserver((entries, observer) => {
-            if (!entries.some(entry => entry.isIntersecting)) return;
-            initViewer();
-            observer.disconnect();
-        }, { rootMargin: '100px 0px' });
-        viewerObserver.observe(modelSection);
-    } else if (!window.__LOW_PERF) {
-        window.setTimeout(initViewer, 1800);
-    }
-    modelSection?.addEventListener('pointerdown', initViewer, { once: true, passive: true });
-
-    // 2. Render Mode Switcher (PBR, Clay, Wireframe, Normals)
-    const modeButtons = document.querySelectorAll('.mode-btn');
-    modeButtons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-            modeButtons.forEach((b) => b.classList.remove('active'));
-            btn.classList.add('active');
-            const mode = btn.getAttribute('data-mode');
-            if (viewer) viewer.setRenderMode(mode);
-        });
-    });
-
-    // 3. Model Switcher Buttons (Apex Hypercar & The Eclipsed Root)
-    const choiceButtons = document.querySelectorAll('.choice-pill-btn');
-    const promptInput = document.getElementById('promptInput');
-
-    choiceButtons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-            if (btn.classList.contains('active')) return;
-            choiceButtons.forEach((b) => b.classList.remove('active'));
-            btn.classList.add('active');
-            const modelKey = btn.getAttribute('data-model');
-
-            // Trigger Holographic scanline synthesis animation
-            triggerGenerationEffect(() => {
-                if (viewer) {
-                    viewer.loadModel(modelKey);
-                    const config = viewer.models[modelKey];
-                    if (promptInput && config && config.defaultPrompt) {
-                        promptInput.value = config.defaultPrompt;
-                    }
-                }
-            });
-        });
-    });
-
-    // 4. Floating Quick Toolbar Actions
-    const btnAutoRotate = document.getElementById('btnAutoRotate');
-    if (btnAutoRotate) {
-        btnAutoRotate.addEventListener('click', () => {
-            if (viewer) {
-                const isRotating = viewer.toggleAutoRotate();
-                btnAutoRotate.classList.toggle('active', isRotating);
-            }
-        });
-    }
-
-    const btnToggleLighting = document.getElementById('btnToggleLighting');
-    if (btnToggleLighting) {
-        btnToggleLighting.addEventListener('click', () => {
-            if (viewer) {
-                const currentEnv = viewer.toggleLighting();
-                btnToggleLighting.title = `Environment: ${currentEnv.toUpperCase()}`;
-            }
-        });
-    }
-
-    const btnResetCamera = document.getElementById('btnResetCamera');
-    if (btnResetCamera) {
-        btnResetCamera.addEventListener('click', () => {
-            if (viewer) viewer.resetCamera();
-        });
-    }
-
-    const btnDownloadModel = document.getElementById('btnDownloadModel');
-    if (btnDownloadModel) {
-        btnDownloadModel.addEventListener('click', () => {
-            if (viewer) viewer.exportOBJ();
-        });
-    }
-
-    // 5. AI Prompt HUD & Regeneration Simulation
-    const btnRegenerate = document.getElementById('btnRegenerate');
-    const scanlineOverlay = document.getElementById('scanlineOverlay');
-
-    function triggerGenerationEffect(callback) {
-        if (!scanlineOverlay) {
-            if (callback) callback();
-            return;
-        }
-
-        scanlineOverlay.classList.add('active');
-
-        setTimeout(() => {
-            if (callback) callback();
-            setTimeout(() => {
-                scanlineOverlay.classList.remove('active');
-            }, 300);
-        }, 1100);
-    }
-
-    if (btnRegenerate) {
-        btnRegenerate.addEventListener('click', () => {
-            triggerGenerationEffect(() => {
-                if (viewer) viewer.loadModel(viewer.currentModelKey);
-            });
-        });
-    }
-
-    if (promptInput) {
-        promptInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                triggerGenerationEffect(() => {
-                    if (viewer) viewer.loadModel(viewer.currentModelKey);
-                });
-            }
-        });
-    }
-
-    // 6. Theme Hue Switcher (Dark Holographic Glass vs Crystal Pure Light Glass)
-    const themeToggleBtn = document.getElementById('themeToggleBtn');
-    if (themeToggleBtn) {
-        let isLightGlass = false;
-        themeToggleBtn.addEventListener('click', () => {
-            isLightGlass = !isLightGlass;
-            if (isLightGlass) {
-                document.documentElement.setAttribute('data-theme', 'light-glass');
-                themeToggleBtn.querySelector('.toggle-label').textContent = 'Light Glass';
-            } else {
-                document.documentElement.removeAttribute('data-theme');
-                themeToggleBtn.querySelector('.toggle-label').textContent = 'Dark Glass';
-            }
-        });
-    }
-
-    // 7. Hero Primary & Secondary Action Buttons
-    const primaryCtaBtn = document.getElementById('primaryCtaBtn');
-    if (primaryCtaBtn) {
-        primaryCtaBtn.addEventListener('click', () => {
-            if (promptInput) {
-                promptInput.focus();
-                promptInput.select();
-            }
-            // Flash prompt bar to guide user
-            const promptHud = document.querySelector('.viewport-prompt-hud');
-            if (promptHud) {
-                promptHud.style.transform = 'scale(1.03)';
-                setTimeout(() => {
-                    promptHud.style.transform = 'scale(1)';
-                }, 300);
-            }
-        });
-    }
-
-    const watchDemoBtn = document.getElementById('watchDemoBtn');
-    if (watchDemoBtn) {
-        watchDemoBtn.addEventListener('click', () => {
-            if (viewer) {
-                viewer.resetCamera();
-                // Sequence of quick shader showcases
-                const modes = ['wireframe', 'clay', 'normal', 'pbr'];
-                let idx = 0;
-                const interval = setInterval(() => {
-                    idx = (idx + 1) % modes.length;
-                    viewer.setRenderMode(modes[idx]);
-                    modeButtons.forEach((b) => {
-                        b.classList.toggle('active', b.getAttribute('data-mode') === modes[idx]);
-                    });
-                    if (idx === modes.length - 1) clearInterval(interval);
-                }, 800);
-            }
-        });
-    }
-});
-
-/* ================================================================
-   DREAMFRAME — Panel Interactivity
-   ================================================================ */
-(function () {
-    /* ── Ambience Knob ── */
-    const ambienceSlider = document.getElementById('ambienceSlider');
-    const ambienceArc    = document.getElementById('ambienceArc');
-    const ambienceLumen  = document.getElementById('ambienceLumen');
-    if (ambienceSlider && ambienceArc) {
-        const CIRC = 2 * Math.PI * 50; // circumference ≈ 314
-        function updateAmbience(v) {
-            const pct = v / 100;
-            const dash = pct * CIRC;
-            ambienceArc.setAttribute('stroke-dasharray', dash + ' ' + CIRC);
-            if (ambienceLumen) ambienceLumen.textContent = Math.round(v) + '%';
-            // Optionally dim the 3D canvas
-            const canvas = document.getElementById('three-canvas-container');
-            if (canvas) canvas.style.opacity = 0.2 + 0.8 * pct;
-        }
-        ambienceSlider.addEventListener('input', () => updateAmbience(+ambienceSlider.value));
-        updateAmbience(100);
-    }
-
-    /* ── Temperature Knob ── */
-    const tempSlider = document.getElementById('tempSlider');
-    const tempArc    = document.getElementById('tempArc');
-    const tempVal    = document.getElementById('tempVal');
-    if (tempSlider && tempArc) {
-        const CIRC = 2 * Math.PI * 50;
-        function updateTemp(v) {
-            const min = -20, max = 100;
-            const pct = (v - min) / (max - min);
-            const dash = pct * CIRC;
-            tempArc.setAttribute('stroke-dasharray', dash + ' ' + CIRC);
-            if (tempVal) tempVal.textContent = Math.round(v) + '°C';
-        }
-        tempSlider.addEventListener('input', () => updateTemp(+tempSlider.value));
-        updateTemp(32);
-    }
-
-    /* ── Generic mode-btn toggle (df-mode-btn) ── */
-    document.querySelectorAll('.df-mode-btns').forEach(group => {
-        group.querySelectorAll('.df-mode-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                group.querySelectorAll('.df-mode-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
-    });
-
-    /* ── Color swatches ── */
-    document.querySelectorAll('.df-color-swatches').forEach(row => {
-        row.querySelectorAll('.df-swatch').forEach(sw => {
-            sw.addEventListener('click', () => {
-                row.querySelectorAll('.df-swatch').forEach(s => s.classList.remove('active'));
-                sw.classList.add('active');
-                // Change knob stroke color
-                const panel = row.closest('.df-panel');
-                if (panel) {
-                    const arc = panel.querySelector('.df-knob-fill');
-                    if (arc) arc.style.stroke = sw.dataset.color || '#8b5cf6';
-                }
-            });
-        });
-    });
-
-    /* ── Right panel model list → sync with main model dock ── */
-    const modelTitles = {
-        racecar: { name: '360 HYPERCAR', desc: 'High-speed aerodynamic asset generated with neural diffusion. Featuring full 4K PBR textures, optimized quad topology, and realistic physics geometry.' },
-        eclipsedroot: { name: '360 ECLIPSED ROOT', desc: 'Otherworldly organic structure sculpted with AI mesh generation. 57.7K poly fantasy asset with multi-layered bark detail and root physics rigging.' }
-    };
-
-    document.querySelectorAll('.df-model-item:not(.df-model-locked)').forEach(item => {
-        item.addEventListener('click', () => {
-            // Highlight in right panel
-            document.querySelectorAll('.df-model-item').forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-
-            const modelKey = item.dataset.model;
-
-            // Sync title bar
-            const nameEl = document.getElementById('dfModelName');
-            const descEl = document.getElementById('dfModelDesc');
-            const audioTitle = document.getElementById('dfAudioTitle');
-            if (modelKey && modelTitles[modelKey]) {
-                if (nameEl) nameEl.textContent = modelTitles[modelKey].name;
-                if (descEl) descEl.textContent = modelTitles[modelKey].desc;
-                if (audioTitle) audioTitle.textContent = item.querySelector('.df-model-item-name')?.textContent || '';
-            }
-
-            // Sync main model dock buttons
-            const dockBtn = document.querySelector('.choice-pill-btn[data-model="' + modelKey + '"]');
-            if (dockBtn) dockBtn.click();
-        });
-    });
-
-    /* Sync right panel when main dock is clicked */
-    document.querySelectorAll('.choice-pill-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const modelKey = btn.dataset.model;
-            document.querySelectorAll('.df-model-item').forEach(i => {
-                i.classList.toggle('active', i.dataset.model === modelKey);
-            });
-            const nameEl = document.getElementById('dfModelName');
-            const descEl = document.getElementById('dfModelDesc');
-            const audioTitle = document.getElementById('dfAudioTitle');
-            if (modelKey && modelTitles[modelKey]) {
-                if (nameEl) nameEl.textContent = modelTitles[modelKey].name;
-                if (descEl) descEl.textContent = modelTitles[modelKey].desc;
-                if (audioTitle) {
-                    const item = document.querySelector('.df-model-item[data-model="' + modelKey + '"]');
-                    audioTitle.textContent = item?.querySelector('.df-model-item-name')?.textContent || '';
-                }
-            }
-        });
-    });
-
-    /* ── Audio player play/pause visual ── */
-    const playBtn = document.querySelector('.df-aud-play');
-    let isPlaying = true;
-    if (playBtn) {
-        playBtn.addEventListener('click', () => {
-            isPlaying = !isPlaying;
-            const icon = playBtn.querySelector('i');
-            if (icon) {
-                icon.className = isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play';
-            }
-            // Pause/resume bar animations
-            document.querySelectorAll('.df-bar').forEach(bar => {
-                bar.style.animationPlayState = isPlaying ? 'running' : 'paused';
-            });
-        });
-    }
-
-    /* ── Lib tabs ── */
-    document.querySelectorAll('.df-lib-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.df-lib-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-        });
-    });
-})();
-
-/* ================================================================
-   BENTO GAME CARDS — NETFLIX-STYLE HOVER VIDEO PREVIEWS
-   ================================================================ */
-(function initBentoVideoPreviews() {
-    const gameCards = document.querySelectorAll('.bento-card[data-game]');
-    if (!gameCards.length) return;
-
-    gameCards.forEach(card => {
-        const video = card.querySelector('.bento-card-bg-video');
-        if (!video) return;
-
-        let playTimer = null;
-
-        // Ensure video is muted for native autoplay policy
-        video.muted = true;
-
-        card.addEventListener('mouseenter', () => {
-            // 120ms debounce like Netflix so fast mouse crossings don't start decoding
-            playTimer = setTimeout(() => {
-                card.classList.add('video-active');
-                video.muted = true;
-                
-                // If video is near end or paused, reset smoothly
-                if (video.ended || video.currentTime > 0.5) {
-                    video.currentTime = 0;
-                }
-                
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(err => {
-                        // Browser autoplay policy or abort handled cleanly
-                        console.debug('Video preview play deferred:', err);
-                    });
-                }
-            }, 120);
-        });
-
-        card.addEventListener('mouseleave', () => {
-            if (playTimer) {
-                clearTimeout(playTimer);
-                playTimer = null;
-            }
-
-            card.classList.remove('video-active');
-            
-            // Pause and reset video position
-            try {
-                video.pause();
-                video.currentTime = 0;
-            } catch (e) {
-                // Ignore if already paused
-            }
-        });
-    });
-
-    /* ── Red Dead Redemption Story Tab Switcher ── */
-    const rdrTabs = document.querySelectorAll('.rdr-tab-pill');
-    const panePart2 = document.getElementById('paneRdrPart2');
-    const panePart1 = document.getElementById('paneRdrPart1');
-
-    if (rdrTabs.length && panePart2 && panePart1) {
-        rdrTabs.forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                rdrTabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-
-                const targetTab = tab.getAttribute('data-rdr-tab');
-                if (targetTab === 'part1') {
-                    panePart2.classList.remove('active');
-                    panePart1.classList.add('active');
-                } else {
-                    panePart1.classList.remove('active');
-                    panePart2.classList.add('active');
-                }
-            });
-        });
-    }
-})();
-// ============================================================
-//   GAME SHOWCASE — 3D Title & Cards Opening Architecture v5
-//   (Fixed: Scoped to container, No fullscreen flashing, Viewport Observer)
-// ============================================================
-(function () {
+/* ========================================================================== */
+/* CINEMATIC GAME SCROLL + LIGHTWEIGHT 3D STUDIO                              */
+/* ========================================================================== */
+(function initCinematicSections() {
   'use strict';
 
-  var GAMES = [
-    {
-      id: 0,
-      title: 'Cyberpunk<br>2077',
-      cardTitle: 'Cyberpunk 2077',
-      genre: 'Action RPG · Open World',
-      desc: 'Nhập vai V — một lính đánh thuê trong siêu đô thị tương lai Night City, nơi ranh giới giữa con người và máy móc dần tan biến.',
-      image: './data/games/cyberpunk_2077.png',
-      video: 'video/cyberpunk.mp4',
-      btnText: 'Xem trên Steam',
-      btnLink: 'https://store.steampowered.com/app/1091500',
-      btnColor: '#f9c742',
-      btnTextColor: '#000',
-      rating: '9.4 / 10'
-    },
-    {
-      id: 1,
-      title: 'Grand Theft<br>Auto V',
-      cardTitle: 'Grand Theft Auto V',
-      genre: 'Action · Open World',
-      desc: 'Trải nghiệm siêu phẩm GTA V và GTA Online — nay được nâng cấp cho thế hệ mới với đồ hoạ đỉnh cao, tốc độ tải nhanh hơn và âm thanh 3D.',
-      image: './data/games/gta_v_enhanced.png',
-      video: 'video/gtav.mp4',
-      btnText: 'Xem trên Steam',
-      btnLink: 'https://store.steampowered.com/app/271590',
-      btnColor: '#e52521',
-      btnTextColor: '#fff',
-      rating: '9.1 / 10'
-    },
-    {
-      id: 2,
-      title: 'Grand Theft<br>Auto <span style="color:#ff6b35;">VI</span>',
-      cardTitle: 'Grand Theft Auto VI',
-      genre: 'Action · Open World · 2025',
-      desc: 'Kỷ nguyên mới của Grand Theft Auto — thế giới mở rộng lớn nhất, chân thực nhất từ trước đến nay tại vùng đất Leonida.',
-      image: './data/games/gta6.jpg',
-      video: 'video/gtavi.mp4',
-      btnText: 'Rockstar Games',
-      btnLink: 'https://www.rockstargames.com/gta-vi',
-      btnColor: '#ff6b35',
-      btnTextColor: '#fff',
-      rating: 'Coming 2025'
-    },
-    {
-      id: 3,
-      title: 'Red Dead<br>Redemption',
-      cardTitle: 'Red Dead Redemption',
-      genre: 'Action Adventure · Western',
-      desc: 'Câu chuyện về Arthur Morgan và băng đảng Van der Linde — hành trình sinh tử ở miền Tây hoang dã cuối thời kỳ vàng son.',
-      image: './data/games/red_dead_redemption.png',
-      video: 'video/rdr2.mp4',
-      btnText: 'Xem trên Steam',
-      btnLink: 'https://store.steampowered.com/app/1174180',
-      btnColor: '#b8441b',
-      btnTextColor: '#fff',
-      rating: '9.7 / 10'
-    },
-    {
-      id: 4,
-      title: 'Stray',
-      cardTitle: 'Stray',
-      genre: 'Adventure · Indie · Puzzle',
-      desc: 'Hoá thân thành một chú mèo lạc lối trong thành phố tương lai âm u, tìm đường trở về qua những con hẻm tối tăm đầy bí ẩn.',
-      image: './data/games/stray.png',
-      video: 'video/stray.mp4',
-      btnText: 'Xem trên Steam',
-      btnLink: 'https://store.steampowered.com/app/1332010',
-      btnColor: '#4a9eff',
-      btnTextColor: '#fff',
-      rating: '8.8 / 10'
-    }
-  ];
+  const scenes = Array.from(document.querySelectorAll('[data-game-scene]'));
+  const navButtons = Array.from(document.querySelectorAll('[data-game-jump]'));
+  const progressBar = document.getElementById('favProgressBar');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const saveData = Boolean(navigator.connection && navigator.connection.saveData);
+  const desktopVideo = window.matchMedia('(min-width: 901px)').matches && !reduceMotion && !saveData;
+  let activeScene = -1;
 
-  function initGameShowcase() {
-    var showcase = document.getElementById('gameShowcase');
-    if (!showcase) return;
-
-    var bgSlides      = showcase.querySelectorAll('.gsc-bg-slide');
-    var infoBox       = document.getElementById('gscInfoContainer');
-    var deckContainer = document.getElementById('gscCardsDeck');
-    var counterCur    = document.getElementById('gscCounterCur');
-    var progressFill  = document.getElementById('gscProgressFill');
-    var prevBtn       = document.getElementById('gscPrevBtn');
-    var nextBtn       = document.getElementById('gscNextBtn');
-    var expCard       = document.getElementById('gscExpandingCard');
-    var expImg        = document.getElementById('gscExpImg');
-
-    var activeId = 0;
-    var deckOrder = [1, 2, 3, 4];
-    var isAnimating = false;
-    var autoTimer = null;
-    var AUTO_DELAY = 8500;
-    var isUserHover = false;
-    var isShowcaseVisible = false;
-
-    function pad(n) {
-      return (n < 10 ? '0' : '') + n;
-    }
-
-    // Render left text block for given game
-    function renderLeftInfo(game, animate) {
-      if (!infoBox) return;
-
-      var html = '<div class="gsc-info-block active">' +
-        '<div class="gsc-tag-row">' +
-          '<span class="gsc-dot-accent" style="background:' + game.btnColor + ';box-shadow:0 0 10px ' + game.btnColor + ';"></span>' +
-          '<span class="gsc-genre">' + game.genre + '</span>' +
-        '</div>' +
-        '<h1 class="gsc-game-title">' + game.title + '</h1>' +
-        '<p class="gsc-game-desc">' + game.desc + '</p>' +
-        '<div class="gsc-btn-row">' +
-          '<a href="' + game.btnLink + '" target="_blank" class="gsc-play-btn" style="background:' + game.btnColor + ';color:' + game.btnTextColor + ';box-shadow:0 4px 18px ' + game.btnColor + '55;">' +
-            '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>' +
-            game.btnText +
-          '</a>' +
-          '<span class="gsc-score">' +
-            '<svg width="11" height="11" viewBox="0 0 24 24" fill="#f9c742"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>' +
-            game.rating +
-          '</span>' +
-        '</div>' +
-      '</div>';
-
-      if (animate) {
-        infoBox.style.opacity = '0';
-        infoBox.style.transform = 'translateY(14px)';
-        setTimeout(function () {
-          infoBox.innerHTML = html;
-          infoBox.style.transition = 'opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
-          infoBox.style.opacity = '1';
-          infoBox.style.transform = 'translateY(0)';
-        }, 180);
-      } else {
-        infoBox.innerHTML = html;
-      }
-    }
-
-    // Render cards deck on the right (ONLY non-active games!)
-    function renderCardsDeck() {
-      if (!deckContainer) return;
-      deckContainer.innerHTML = '';
-
-      deckOrder.forEach(function (gId) {
-        var g = GAMES[gId];
-        var card = document.createElement('div');
-        card.className = 'gsc-deck-card';
-        card.dataset.gameId = g.id;
-
-        card.innerHTML =
-          '<img src="' + g.image + '" alt="' + g.cardTitle + '" class="gsc-deck-card-img" loading="lazy" />' +
-          '<div class="gsc-deck-card-overlay">' +
-            '<span class="gsc-deck-card-tag">' + g.genre.split('·')[0].trim() + '</span>' +
-            '<span class="gsc-deck-card-title">' + g.cardTitle + '</span>' +
-          '</div>';
-
-        card.addEventListener('click', function () {
-          if (isAnimating) return;
-          // Explicit user click: run scoped expanding card animation!
-          switchToGame(g.id, card);
-        });
-
-        deckContainer.appendChild(card);
-      });
-    }
-
-    // Update bottom counter & progress bar
-    function updateProgress(gameId) {
-      if (counterCur) counterCur.textContent = pad(gameId + 1);
-      if (progressFill) {
-        var pct = ((gameId + 1) / GAMES.length) * 100;
-        progressFill.style.width = pct + '%';
-      }
-    }
-
-    function ensureVideoSource(video) {
-      if (!video || video.dataset.loaded === 'true') return;
-      var src = video.dataset.videoSrc;
-      if (!src) return;
-      video.src = src;
+  function loadAndPlayVideo(scene) {
+    if (!desktopVideo || !scene) return;
+    const video = scene.querySelector('video[data-video-src]');
+    if (!video) return;
+    if (!video.dataset.loaded) {
+      video.src = video.dataset.videoSrc;
       video.dataset.loaded = 'true';
       video.load();
     }
-
-    // Play video for active slide cleanly — eliminates avatar blur & handles fallbacks
-    function playSlideVideo(slide) {
-      if (!slide) return;
-      // Mobile/data-saving mode keeps the lightweight poster image only.
-      if (window.__LOW_PERF) return;
-      var video = slide.querySelector('.gsc-bg-video');
-      if (!video) return;
-
-      ensureVideoSource(video);
-
-      var markPlaying = function () {
-        slide.classList.add('video-playing');
-      };
-
-      if (!video.paused && video.currentTime > 0) {
-        markPlaying();
-      }
-
-      video.addEventListener('playing', markPlaying, { once: true });
-      video.addEventListener('timeupdate', function () {
-        if (video.currentTime > 0.05) {
-          markPlaying();
-        }
-      });
-
-      // Safe seek only if metadata ready
-      try {
-        if (video.readyState >= 1 && video.currentTime > 0) {
-          video.currentTime = 0;
-        }
-      } catch (e) {}
-
-      // Explicitly play with error safety
-      try {
-        var playPromise = video.play();
-        if (playPromise !== undefined) {
-          playPromise.then(markPlaying).catch(function () {
-            // If video playback fails (e.g. not uploaded to GitHub or blocked),
-            // poster image stays cleanly displayed with zero errors!
-          });
-        }
-      } catch (err) {}
-    }
-
-    // Stop and pause all inactive videos
-    function pauseInactiveVideos() {
-      bgSlides.forEach(function (slide) {
-        var id = parseInt(slide.dataset.gameId, 10);
-        if (id !== activeId) {
-          slide.classList.remove('active');
-          slide.classList.remove('video-playing');
-          var v = slide.querySelector('.gsc-bg-video');
-          if (v) {
-            try {
-              v.pause();
-              v.currentTime = 0;
-            } catch (e) {}
-          }
-        }
-      });
-    }
-
-    // Switch to target game with Cards Opening animation SCOPED to container
-    function switchToGame(targetId, sourceCardEl) {
-      if (targetId === activeId || isAnimating) return;
-      isAnimating = true;
-
-      var targetGame = GAMES[targetId];
-      var oldActiveId = activeId;
-
-      // Only run expanding card animation if user clicked a specific card!
-      // AND position it relative to the showcase container (NEVER covering whole window)
-      if (sourceCardEl && expCard && expImg) {
-        var containerRect = showcase.getBoundingClientRect();
-        var cardRect = sourceCardEl.getBoundingClientRect();
-        var relTop = Math.max(0, cardRect.top - containerRect.top);
-        var relLeft = Math.max(0, cardRect.left - containerRect.left);
-
-        expImg.src = targetGame.image;
-
-        // Position overlay directly over clicked card inside showcase
-        expCard.style.display = 'block';
-        expCard.style.transition = 'none';
-        expCard.style.top = relTop + 'px';
-        expCard.style.left = relLeft + 'px';
-        expCard.style.width = cardRect.width + 'px';
-        expCard.style.height = cardRect.height + 'px';
-        expCard.style.borderRadius = '20px';
-        expCard.style.opacity = '1';
-
-        // Force browser layout reflow
-        void expCard.offsetWidth;
-
-        // Animate expanding to fill showcase container only
-        expCard.style.transition = 'all 0.5s cubic-bezier(0.2, 0.9, 0.25, 1)';
-        expCard.style.top = '0px';
-        expCard.style.left = '0px';
-        expCard.style.width = '100%';
-        expCard.style.height = '100%';
-        expCard.style.borderRadius = '0px';
-      }
-
-      // Activate new background slide
-      bgSlides.forEach(function (slide) {
-        var id = parseInt(slide.dataset.gameId, 10);
-        if (id === targetId) {
-          slide.classList.add('active');
-          playSlideVideo(slide);
-        }
-      });
-
-      // Update active ID
-      activeId = targetId;
-
-      // Update Deck: Remove clicked game, put previous game at the end
-      var newDeck = deckOrder.filter(function (id) { return id !== targetId; });
-      newDeck.push(oldActiveId);
-      deckOrder = newDeck;
-
-      // Update text and indicators
-      renderLeftInfo(targetGame, true);
-      updateProgress(activeId);
-
-      // Smoothly re-render deck cards
-      setTimeout(function () {
-        renderCardsDeck();
-      }, 150);
-
-      // Clean up expanding card layer after animation completes
-      setTimeout(function () {
-        pauseInactiveVideos();
-        if (expCard && expCard.style.display !== 'none') {
-          expCard.style.transition = 'opacity 0.25s ease';
-          expCard.style.opacity = '0';
-          setTimeout(function () {
-            expCard.style.display = 'none';
-            isAnimating = false;
-          }, 260);
-        } else {
-          isAnimating = false;
-        }
-      }, 530);
-
-      restartAutoTimer();
-    }
-
-    // Next game: if isAuto = true, NO expanding overlay to prevent screen flashing!
-    function goNext(isAuto) {
-      if (isAnimating || deckOrder.length === 0) return;
-      var nextId = deckOrder[0];
-      // Only animate expanding card if user manually clicks, NOT on auto-timer
-      var cardToAnimate = isAuto ? null : (deckContainer ? deckContainer.querySelector('.gsc-deck-card') : null);
-      switchToGame(nextId, cardToAnimate);
-    }
-
-    function goPrev() {
-      if (isAnimating) return;
-      var prevId = (activeId - 1 + GAMES.length) % GAMES.length;
-      switchToGame(prevId, null);
-    }
-
-    function restartAutoTimer() {
-      clearInterval(autoTimer);
-      autoTimer = null;
-      if (!isUserHover && isShowcaseVisible) {
-        autoTimer = setInterval(function () {
-          goNext(true); // isAuto = true: smooth background crossfade, NO flashing overlay!
-        }, AUTO_DELAY);
-      }
-    }
-
-    // Button event listeners
-    if (nextBtn) {
-      nextBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        goNext(false);
-      });
-    }
-
-    if (prevBtn) {
-      prevBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        goPrev();
-      });
-    }
-
-    // Keyboard navigation
-    document.addEventListener('keydown', function (e) {
-      var sec = document.getElementById('bento');
-      if (!sec) return;
-      var r = sec.getBoundingClientRect();
-      if (r.top < window.innerHeight && r.bottom > 0) {
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-          e.preventDefault();
-          goNext(false);
-        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-          e.preventDefault();
-          goPrev();
-        }
-      }
-    });
-
-    // Touch swipe
-    var touchX = 0;
-    showcase.addEventListener('touchstart', function (e) {
-      touchX = e.changedTouches[0].clientX;
-    }, { passive: true });
-
-    showcase.addEventListener('touchend', function (e) {
-      var dx = e.changedTouches[0].clientX - touchX;
-      if (Math.abs(dx) > 50) {
-        if (dx < 0) goNext(false);
-        else goPrev();
-      }
-    }, { passive: true });
-
-    // Hover pause
-    showcase.addEventListener('mouseenter', function () {
-      isUserHover = true;
-      clearInterval(autoTimer);
-      autoTimer = null;
-    });
-
-    showcase.addEventListener('mouseleave', function () {
-      isUserHover = false;
-      restartAutoTimer();
-    });
-
-    // Viewport IntersectionObserver: ONLY run timer when user is actually viewing the showcase!
-    if ('IntersectionObserver' in window) {
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          isShowcaseVisible = entry.isIntersecting;
-          if (isShowcaseVisible) {
-            var visibleSlide = showcase.querySelector('.gsc-bg-slide.active');
-            if (visibleSlide) playSlideVideo(visibleSlide);
-            restartAutoTimer();
-          } else {
-            clearInterval(autoTimer);
-            autoTimer = null;
-          }
-        });
-      }, { threshold: 0.15 });
-      observer.observe(showcase);
-    } else {
-      isShowcaseVisible = true;
-      restartAutoTimer();
-    }
-
-    // INITIALIZE FIRST STATE
-    renderLeftInfo(GAMES[activeId], false);
-    renderCardsDeck();
-    updateProgress(activeId);
-
-    // Start video for first slide
-    var firstSlide = showcase.querySelector('.gsc-bg-slide[data-game-id="0"]');
-    if (firstSlide) {
-      firstSlide.classList.add('active');
-      if (!('IntersectionObserver' in window) && !window.__LOW_PERF) {
-        playSlideVideo(firstSlide);
-      }
-    }
-
-    restartAutoTimer();
-    console.log('[GSC] Cards Opening v5 Initialized cleanly.');
+    const showVideo = () => scene.classList.add('video-ready');
+    video.addEventListener('playing', showVideo, { once: true });
+    const promise = video.play();
+    if (promise) promise.catch(() => scene.classList.remove('video-ready'));
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initGameShowcase);
-  } else {
-    initGameShowcase();
+  function releaseVideo(scene) {
+    const video = scene && scene.querySelector('video[data-video-src]');
+    if (!video) return;
+    video.pause();
+    scene.classList.remove('video-ready');
   }
+
+  function setActiveScene(index) {
+    if (index < 0 || index >= scenes.length || index === activeScene) return;
+    activeScene = index;
+    scenes.forEach((scene, sceneIndex) => {
+      const current = sceneIndex === index;
+      scene.classList.toggle('is-current', current);
+      if (current) loadAndPlayVideo(scene);
+      else releaseVideo(scene);
+    });
+    navButtons.forEach((button, buttonIndex) => button.classList.toggle('is-active', buttonIndex === index));
+    if (progressBar) progressBar.style.transform = `scaleY(${(index + 1) / scenes.length})`;
+  }
+
+  if (scenes.length) {
+    const sceneObserver = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) setActiveScene(scenes.indexOf(visible.target));
+    }, { threshold: [0.35, 0.55, 0.72] });
+
+    scenes.forEach((scene) => sceneObserver.observe(scene));
+    setActiveScene(0);
+  }
+
+  function scrollToId(id) {
+    const target = document.getElementById(id);
+    if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  navButtons.forEach((button) => button.addEventListener('click', () => scrollToId(button.dataset.gameJump)));
+  document.querySelectorAll('[data-next-game]').forEach((button) => button.addEventListener('click', () => scrollToId(button.dataset.nextGame)));
+  window.addEventListener('pagehide', () => scenes.forEach(releaseVideo));
+
+  const modelSection = document.getElementById('model-creator');
+  const stage = document.getElementById('modelStage');
+  const boot = document.getElementById('modelBoot');
+  const bootButton = document.getElementById('modelBootButton');
+  if (!modelSection || !stage || !boot || !bootButton) return;
+
+  let viewer = null;
+  let viewerPromise = null;
+  const isCompact = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
+  const modelCopy = {
+    racecar: {
+      title: 'APEX HYPERCAR / 01',
+      description: 'Một mẫu xe khí động học với bề mặt PBR, ánh sáng neon và chuyển động turntable thời gian thực.'
+    },
+    eclipsedroot: {
+      title: 'THE ECLIPSED ROOT / 02',
+      description: 'Một thực thể fantasy hữu cơ với hệ rễ phát sáng, hình khối giàu chi tiết và chất liệu phản ứng theo ánh sáng.'
+    }
+  };
+
+  function supportsWebGL() {
+    try {
+      const canvas = document.createElement('canvas');
+      return Boolean(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector(`script[data-model-runtime="${src}"]`);
+      if (existing) {
+        if (existing.dataset.ready === 'true') resolve();
+        else existing.addEventListener('load', resolve, { once: true });
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      script.dataset.modelRuntime = src;
+      script.addEventListener('load', () => {
+        script.dataset.ready = 'true';
+        resolve();
+      }, { once: true });
+      script.addEventListener('error', () => reject(new Error(`Không tải được ${src}`)), { once: true });
+      document.head.appendChild(script);
+    });
+  }
+
+  function updateBoot(message, failed) {
+    const status = boot.querySelector('small');
+    if (status) status.textContent = message;
+    boot.classList.toggle('is-loading', !failed);
+    bootButton.hidden = !failed;
+    if (failed) bootButton.textContent = 'Thử lại';
+  }
+
+  function startViewer() {
+    if (viewer) return Promise.resolve(viewer);
+    if (viewerPromise) return viewerPromise;
+    if (!supportsWebGL()) {
+      updateBoot('Thiết bị này không hỗ trợ WebGL. Ảnh tĩnh được giữ làm phương án thay thế.', true);
+      return Promise.resolve(null);
+    }
+
+    boot.classList.add('is-loading');
+    bootButton.hidden = true;
+    updateBoot('Đang tải bộ máy 3D…', false);
+    viewerPromise = loadScript('three.min.js')
+      .then(() => loadScript('OrbitControls.js'))
+      .then(() => loadScript('GLTFLoader.js'))
+      .then(() => {
+        viewer = new window.ModelViewer3D('three-canvas-container');
+        viewer.isSectionVisible = true;
+        if (viewer.renderer) viewer.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isCompact ? 1 : 1.5));
+        if (viewer.controls) viewer.controls.enableZoom = false;
+        stage.classList.add('is-loaded');
+        boot.classList.remove('is-loading');
+        return viewer;
+      })
+      .catch((error) => {
+        console.warn('3D runtime unavailable:', error);
+        viewerPromise = null;
+        updateBoot('Không tải được mô hình. Kiểm tra mạng rồi thử lại.', true);
+        return null;
+      });
+    return viewerPromise;
+  }
+
+  bootButton.addEventListener('click', startViewer);
+
+  const modelObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (viewer) viewer.isSectionVisible = entry.isIntersecting;
+      if (entry.isIntersecting && !isCompact) startViewer();
+    });
+  }, { rootMargin: '280px 0px', threshold: 0.05 });
+  modelObserver.observe(modelSection);
+
+  const choiceButtons = Array.from(modelSection.querySelectorAll('.choice-pill-btn'));
+  choiceButtons.forEach((button) => button.addEventListener('click', () => {
+    startViewer().then((instance) => {
+      if (!instance) return;
+      choiceButtons.forEach((item) => {
+        const selected = item === button;
+        item.classList.toggle('is-active', selected);
+        item.setAttribute('aria-pressed', String(selected));
+      });
+      const key = button.dataset.model;
+      instance.loadModel(key);
+      const copy = modelCopy[key];
+      if (copy) {
+        document.getElementById('modelDisplayName').textContent = copy.title;
+        document.getElementById('modelDisplayDescription').textContent = copy.description;
+      }
+    });
+  }));
+
+  const modeButtons = Array.from(modelSection.querySelectorAll('.mode-btn'));
+  modeButtons.forEach((button) => button.addEventListener('click', () => {
+    startViewer().then((instance) => {
+      if (!instance) return;
+      modeButtons.forEach((item) => {
+        const selected = item === button;
+        item.classList.toggle('is-active', selected);
+        item.setAttribute('aria-pressed', String(selected));
+      });
+      instance.setRenderMode(button.dataset.mode);
+    });
+  }));
+
+  const rotateButton = document.getElementById('btnAutoRotate');
+  rotateButton.addEventListener('click', () => startViewer().then((instance) => {
+    if (!instance) return;
+    const active = instance.toggleAutoRotate();
+    rotateButton.classList.toggle('is-active', active);
+    rotateButton.setAttribute('aria-pressed', String(active));
+  }));
+
+  const lightingButton = document.getElementById('btnToggleLighting');
+  lightingButton.addEventListener('click', () => startViewer().then((instance) => {
+    if (!instance) return;
+    const mode = instance.toggleLighting();
+    lightingButton.innerHTML = `<span>◐</span> Light: ${mode.charAt(0).toUpperCase() + mode.slice(1)}`;
+  }));
+
+  document.getElementById('btnResetCamera').addEventListener('click', () => startViewer().then((instance) => {
+    if (instance) instance.resetCamera();
+  }));
 })();
