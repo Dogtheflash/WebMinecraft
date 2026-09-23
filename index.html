@@ -33,9 +33,6 @@
   <!-- Font Awesome for 3D Model Creator -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
   <!-- Three.js, OrbitControls, GLTFLoader -->
-  <script src="three.min.js"></script>
-  <script src="OrbitControls.js"></script>
-  <script src="GLTFLoader.js"></script>
 </head>
 
 <body class="terminal-active">
@@ -508,14 +505,11 @@
   <div class="grain" aria-hidden="true"></div>
   
     <!-- ========== BACKGROUND VIDEOS ========== -->
-  <video id="bg-video" class="bg-video" autoplay muted loop playsinline preload="auto" aria-hidden="true" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; object-fit: cover; z-index: -2; pointer-events: none;">
-    <source src="./data/background/chillnight.mp4" type="video/mp4">
-    <source src="https://raw.githubusercontent.com/Dogtheflash/WebMinecraft/main/data/background/chillnight.mp4" type="video/mp4">
-  </video>
+  <video id="bg-video" class="bg-video" muted loop playsinline preload="none" data-bg-src="./data/background/chillnight.mp4" aria-hidden="true" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; object-fit: cover; z-index: -2; pointer-events: none;"></video>
 
   <div id="bg-yt-container" class="bg-video hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; overflow: hidden;">
     <iframe id="bg-yt-player" 
-            src="https://www.youtube.com/embed/zvIS6EIkXx8?enablejsapi=1&autoplay=0&mute=0&controls=0&showinfo=0&rel=0&modestbranding=1&disablekb=1&iv_load_policy=3&fs=0" 
+            data-src="https://www.youtube.com/embed/zvIS6EIkXx8?enablejsapi=1&autoplay=0&mute=0&controls=0&showinfo=0&rel=0&modestbranding=1&disablekb=1&iv_load_policy=3&fs=0"
             frameborder="0" 
             allow="autoplay; encrypted-media" 
             allowfullscreen
@@ -1218,31 +1212,31 @@
 
       <!-- Slide 0: Cyberpunk 2077 -->
       <div class="gsc-bg-slide active" data-game-id="0">
-        <img src="./data/games/cyberpunk_2077.png" alt="Cyberpunk 2077" class="gsc-bg-img" />
+        <img src="./data/games/cyberpunk_2077.png" alt="Cyberpunk 2077" class="gsc-bg-img" loading="lazy" decoding="async" />
         <video class="gsc-bg-video" loop muted playsinline preload="none" data-video-src="video/cyberpunk.mp4"></video>
       </div>
 
       <!-- Slide 1: GTA V -->
       <div class="gsc-bg-slide" data-game-id="1">
-        <img src="./data/games/gta_v_enhanced.png" alt="Grand Theft Auto V" class="gsc-bg-img" />
+        <img src="./data/games/gta_v_enhanced.png" alt="Grand Theft Auto V" class="gsc-bg-img" loading="lazy" decoding="async" />
         <video class="gsc-bg-video" loop muted playsinline preload="none" data-video-src="video/gtav.mp4"></video>
       </div>
 
       <!-- Slide 2: GTA VI (Official Artwork) -->
       <div class="gsc-bg-slide" data-game-id="2">
-        <img src="./data/games/gta6.jpg" alt="Grand Theft Auto VI" class="gsc-bg-img" />
+        <img src="./data/games/gta6.jpg" alt="Grand Theft Auto VI" class="gsc-bg-img" loading="lazy" decoding="async" />
         <video class="gsc-bg-video" loop muted playsinline preload="none" data-video-src="video/gtavi.mp4"></video>
       </div>
 
       <!-- Slide 3: Red Dead Redemption (Clean and fallback sources) -->
       <div class="gsc-bg-slide" data-game-id="3">
-        <img src="./data/games/red_dead_redemption.png" alt="Red Dead Redemption" class="gsc-bg-img" />
+        <img src="./data/games/red_dead_redemption.png" alt="Red Dead Redemption" class="gsc-bg-img" loading="lazy" decoding="async" />
         <video class="gsc-bg-video" loop muted playsinline preload="none" data-video-src="video/rdr2.mp4"></video>
       </div>
 
       <!-- Slide 4: Stray -->
       <div class="gsc-bg-slide" data-game-id="4">
-        <img src="./data/games/stray.png" alt="Stray" class="gsc-bg-img" />
+        <img src="./data/games/stray.png" alt="Stray" class="gsc-bg-img" loading="lazy" decoding="async" />
         <video class="gsc-bg-video" loop muted playsinline preload="none" data-video-src="video/stray.mp4"></video>
       </div>
 
@@ -1639,7 +1633,7 @@
     <div class="visualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
     <!-- canvas vẫn cần để module audio chạy (vòng avatar đập theo nhạc), nhưng không vẽ sóng -->
     <canvas id="audio-visualizer" class="audio-visualizer player-visualizer viz-silent" aria-hidden="true"></canvas>
-    <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="auto"></audio>
+    <audio id="audio-player" src="./Audio/Nightcore-Rise-Up.mp3" preload="none"></audio>
   </aside>
   <!-- ========== THE MIDNIGHT ARCADE (11 GAMES) FULLSCREEN OVERLAY ========== -->
 <div id="snake-overlay" class="snake-overlay hidden" aria-modal="true" role="dialog" aria-label="The Midnight Arcade — 11 Games">

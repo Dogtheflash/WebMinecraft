@@ -1,10 +1,18 @@
 /* ════════════════════════════════════════════════════════════
-   CHẾ ĐỘ NHẸ — chỉ bật khi người dùng chọn prefers-reduced-motion
+   CHẾ ĐỘ NHẸ — tự bật cho mobile, mạng tiết kiệm dữ liệu và máy yếu
    Các hiệu ứng ăn GPU sẽ tự tắt thay vì làm rớt khung hình.
    ════════════════════════════════════════════════════════════ */
 window.__LOW_PERF = (function () {
   try {
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
+    const smallScreen = window.matchMedia('(max-width: 768px)').matches ||
+      window.matchMedia('(pointer: coarse)').matches;
+    const weakDevice = (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
+      (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+    const slowNetwork = conn.saveData === true || /(^|-)2g$/.test(conn.effectiveType || '');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reducedData = window.matchMedia('(prefers-reduced-data: reduce)').matches;
+    return reducedMotion || reducedData || smallScreen || weakDevice || slowNetwork;
   } catch (e) { return false; }
 })();
 if (window.__LOW_PERF) document.documentElement.classList.add('low-perf');
@@ -3085,6 +3093,29 @@ if (interactiveCard) {
 
   let isYtMode = false;
 
+  function loadMp4Background() {
+    if (window.__LOW_PERF || mp4Video.dataset.loaded === 'true') return;
+    const src = mp4Video.dataset.bgSrc;
+    if (!src) return;
+    mp4Video.src = src;
+    mp4Video.dataset.loaded = 'true';
+    mp4Video.load();
+    mp4Video.play().catch(() => {});
+  }
+
+  function loadYouTubeBackground() {
+    if (!ytIframe.getAttribute('src') && ytIframe.dataset.src) {
+      ytIframe.setAttribute('src', ytIframe.dataset.src);
+    }
+  }
+
+  // Cho trang hiển thị trước; chỉ tải video nền sau khi trình duyệt rảnh.
+  if (!window.__LOW_PERF) {
+    const start = () => loadMp4Background();
+    if ('requestIdleCallback' in window) window.requestIdleCallback(start, { timeout: 2500 });
+    else window.setTimeout(start, 2500);
+  }
+
   function postYtCommand(func, args) {
     if (ytIframe && ytIframe.contentWindow) {
       ytIframe.contentWindow.postMessage(JSON.stringify({
@@ -3104,6 +3135,7 @@ if (interactiveCard) {
       mp4Video.classList.add('hidden');
       ytContainer.classList.remove('hidden');
       if (restartBtn) restartBtn.classList.remove('hidden');
+      loadYouTubeBackground();
 
       toggleBtn.style.background = 'rgba(53, 232, 255, 0.2)';
       toggleBtn.style.borderColor = '#35e8ff';
@@ -3119,7 +3151,7 @@ if (interactiveCard) {
       ytContainer.classList.add('hidden');
       if (restartBtn) restartBtn.classList.add('hidden');
       mp4Video.classList.remove('hidden');
-      mp4Video.play();
+      loadMp4Background();
 
       toggleBtn.style.background = '';
       toggleBtn.style.borderColor = '';
@@ -3158,7 +3190,7 @@ if (interactiveCard) {
 
   /* Chế độ nhẹ: người dùng bật tiết kiệm dữ liệu → bỏ video nền + hạt phim */
   const conn = navigator.connection || {};
-  if (conn.saveData === true || window.matchMedia('(prefers-reduced-data: reduce)').matches) {
+  if (window.__LOW_PERF || conn.saveData === true || window.matchMedia('(prefers-reduced-data: reduce)').matches) {
     document.body.classList.add('lite-mode');
   }
 
@@ -3466,7 +3498,14 @@ if (interactiveCard) {
   if (!v) return;
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) v.pause();
-    else v.play().catch(function () {});
+    else if (!window.__LOW_PERF) {
+      if (!v.src && v.dataset.bgSrc) {
+        v.src = v.dataset.bgSrc;
+        v.dataset.loaded = 'true';
+        v.load();
+      }
+      v.play().catch(function () {});
+    }
   });
 })();
 
@@ -4156,13 +4195,52 @@ window.ModelViewer3D = ModelViewer3D;
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize 3D WebGL Viewer
+    // 1. Initialize 3D WebGL Viewer only when the section is near the viewport.
     let viewer = null;
-    try {
-        viewer = new ModelViewer3D('three-canvas-container');
-    } catch (err) {
-        console.warn('Three.js viewer initialization notice:', err);
+    let viewerLoadPromise = null;
+    const modelSection = document.getElementById('model-creator');
+    const initViewer = () => {
+        if (viewer) return Promise.resolve(viewer);
+        if (viewerLoadPromise) return viewerLoadPromise;
+
+        const loadScript = (src) => new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.async = true;
+            script.onload = resolve;
+            script.onerror = () => reject(new Error(`Unable to load ${src}`));
+            document.head.appendChild(script);
+        });
+
+        viewerLoadPromise = loadScript('three.min.js')
+        .then(() => loadScript('OrbitControls.js'))
+        .then(() => loadScript('GLTFLoader.js'))
+        .then(() => {
+            try {
+                viewer = new ModelViewer3D('three-canvas-container');
+            } catch (err) {
+                console.warn('Three.js viewer initialization notice:', err);
+            }
+            return viewer;
+        }).catch((err) => {
+            console.warn('3D viewer resources were deferred or unavailable:', err);
+            return null;
+        });
+
+        return viewerLoadPromise;
+    };
+
+    if (modelSection && 'IntersectionObserver' in window) {
+        const viewerObserver = new IntersectionObserver((entries, observer) => {
+            if (!entries.some(entry => entry.isIntersecting)) return;
+            initViewer();
+            observer.disconnect();
+        }, { rootMargin: '100px 0px' });
+        viewerObserver.observe(modelSection);
+    } else if (!window.__LOW_PERF) {
+        window.setTimeout(initViewer, 1800);
     }
+    modelSection?.addEventListener('pointerdown', initViewer, { once: true, passive: true });
 
     // 2. Render Mode Switcher (PBR, Clay, Wireframe, Normals)
     const modeButtons = document.querySelectorAll('.mode-btn');
@@ -4651,7 +4729,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var autoTimer = null;
     var AUTO_DELAY = 8500;
     var isUserHover = false;
-    var isShowcaseVisible = true;
+    var isShowcaseVisible = false;
 
     function pad(n) {
       return (n < 10 ? '0' : '') + n;
@@ -4743,6 +4821,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Play video for active slide cleanly — eliminates avatar blur & handles fallbacks
     function playSlideVideo(slide) {
       if (!slide) return;
+      // Mobile/data-saving mode keeps the lightweight poster image only.
+      if (window.__LOW_PERF) return;
       var video = slide.querySelector('.gsc-bg-video');
       if (!video) return;
 
@@ -4972,6 +5052,8 @@ document.addEventListener('DOMContentLoaded', () => {
         entries.forEach(function (entry) {
           isShowcaseVisible = entry.isIntersecting;
           if (isShowcaseVisible) {
+            var visibleSlide = showcase.querySelector('.gsc-bg-slide.active');
+            if (visibleSlide) playSlideVideo(visibleSlide);
             restartAutoTimer();
           } else {
             clearInterval(autoTimer);
@@ -4994,7 +5076,9 @@ document.addEventListener('DOMContentLoaded', () => {
     var firstSlide = showcase.querySelector('.gsc-bg-slide[data-game-id="0"]');
     if (firstSlide) {
       firstSlide.classList.add('active');
-      playSlideVideo(firstSlide);
+      if (!('IntersectionObserver' in window) && !window.__LOW_PERF) {
+        playSlideVideo(firstSlide);
+      }
     }
 
     restartAutoTimer();

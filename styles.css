@@ -2852,6 +2852,18 @@ body.lite-mode .bg-video,
 body.lite-mode .ambient,
 body.lite-mode .grain { display: none; }
 
+/* Mobile/data-saving mode: keep poster art and skip showcase video/GPU layers. */
+body.lite-mode .gsc-bg-video { display: none !important; }
+body.lite-mode .gsc-bg-slide.video-playing .gsc-bg-img { opacity: 1 !important; }
+
+@media (max-width: 768px) {
+  #gameShowcase,
+  #model-creator {
+    content-visibility: auto;
+    contain-intrinsic-size: 900px;
+  }
+}
+
 /* ────────────────────────────────────────────────────────────
    15. TÔN TRỌNG prefers-reduced-motion — toàn trang, không chỉ loader
    ──────────────────────────────────────────────────────────── */
