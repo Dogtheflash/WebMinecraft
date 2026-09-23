@@ -4522,9 +4522,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 })();
-
 // ============================================================
-//   GAME SHOWCASE — 3D Title & Cards Opening Architecture v4
+//   GAME SHOWCASE — 3D Title & Cards Opening Architecture v5
+//   (Fixed: Scoped to container, No fullscreen flashing, Viewport Observer)
 // ============================================================
 (function () {
   'use strict';
@@ -4617,12 +4617,12 @@ document.addEventListener('DOMContentLoaded', () => {
     var expImg        = document.getElementById('gscExpImg');
 
     var activeId = 0;
-    // Deck contains the other 4 games in order
     var deckOrder = [1, 2, 3, 4];
     var isAnimating = false;
     var autoTimer = null;
-    var AUTO_DELAY = 6500;
+    var AUTO_DELAY = 8500;
     var isUserHover = false;
+    var isShowcaseVisible = true;
 
     function pad(n) {
       return (n < 10 ? '0' : '') + n;
@@ -4653,13 +4653,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (animate) {
         infoBox.style.opacity = '0';
-        infoBox.style.transform = 'translateY(16px)';
+        infoBox.style.transform = 'translateY(14px)';
         setTimeout(function () {
           infoBox.innerHTML = html;
           infoBox.style.transition = 'opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
           infoBox.style.opacity = '1';
           infoBox.style.transform = 'translateY(0)';
-        }, 200);
+        }, 180);
       } else {
         infoBox.innerHTML = html;
       }
@@ -4685,6 +4685,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         card.addEventListener('click', function () {
           if (isAnimating) return;
+          // Explicit user click: run scoped expanding card animation!
           switchToGame(g.id, card);
         });
 
@@ -4701,7 +4702,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Play video for active slide cleanly — eliminates avatar blur & handles RDR
+    // Play video for active slide cleanly — eliminates avatar blur & handles fallbacks
     function playSlideVideo(slide) {
       if (!slide) return;
       var video = slide.querySelector('.gsc-bg-video');
@@ -4729,17 +4730,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (e) {}
 
-      // Explicitly play with promise handling
+      // Explicitly play with error safety
       try {
         var playPromise = video.play();
         if (playPromise !== undefined) {
-          playPromise.then(markPlaying).catch(function (err) {
-            console.warn('Video play warning:', err);
+          playPromise.then(markPlaying).catch(function () {
+            // If video playback fails (e.g. not uploaded to GitHub or blocked),
+            // poster image stays cleanly displayed with zero errors!
           });
         }
-      } catch (err) {
-        console.warn('Video play exception:', err);
-      }
+      } catch (err) {}
     }
 
     // Stop and pause all inactive videos
@@ -4760,7 +4760,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Switch to target game with Cards Opening animation
+    // Switch to target game with Cards Opening animation SCOPED to container
     function switchToGame(targetId, sourceCardEl) {
       if (targetId === activeId || isAnimating) return;
       isAnimating = true;
@@ -4768,30 +4768,35 @@ document.addEventListener('DOMContentLoaded', () => {
       var targetGame = GAMES[targetId];
       var oldActiveId = activeId;
 
-      // If card was clicked, perform expanding card opening transition
+      // Only run expanding card animation if user clicked a specific card!
+      // AND position it relative to the showcase container (NEVER covering whole window)
       if (sourceCardEl && expCard && expImg) {
-        var rect = sourceCardEl.getBoundingClientRect();
+        var containerRect = showcase.getBoundingClientRect();
+        var cardRect = sourceCardEl.getBoundingClientRect();
+        var relTop = Math.max(0, cardRect.top - containerRect.top);
+        var relLeft = Math.max(0, cardRect.left - containerRect.left);
+
         expImg.src = targetGame.image;
 
-        // Position overlay directly over clicked card
+        // Position overlay directly over clicked card inside showcase
         expCard.style.display = 'block';
         expCard.style.transition = 'none';
-        expCard.style.top = rect.top + 'px';
-        expCard.style.left = rect.left + 'px';
-        expCard.style.width = rect.width + 'px';
-        expCard.style.height = rect.height + 'px';
+        expCard.style.top = relTop + 'px';
+        expCard.style.left = relLeft + 'px';
+        expCard.style.width = cardRect.width + 'px';
+        expCard.style.height = cardRect.height + 'px';
         expCard.style.borderRadius = '20px';
         expCard.style.opacity = '1';
 
         // Force browser layout reflow
         void expCard.offsetWidth;
 
-        // Animate expanding to fill entire screen
-        expCard.style.transition = 'all 0.52s cubic-bezier(0.2, 0.9, 0.25, 1)';
+        // Animate expanding to fill showcase container only
+        expCard.style.transition = 'all 0.5s cubic-bezier(0.2, 0.9, 0.25, 1)';
         expCard.style.top = '0px';
         expCard.style.left = '0px';
-        expCard.style.width = '100vw';
-        expCard.style.height = '100vh';
+        expCard.style.width = '100%';
+        expCard.style.height = '100%';
         expCard.style.borderRadius = '0px';
       }
 
@@ -4824,7 +4829,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Clean up expanding card layer after animation completes
       setTimeout(function () {
         pauseInactiveVideos();
-        if (expCard) {
+        if (expCard && expCard.style.display !== 'none') {
           expCard.style.transition = 'opacity 0.25s ease';
           expCard.style.opacity = '0';
           setTimeout(function () {
@@ -4839,11 +4844,13 @@ document.addEventListener('DOMContentLoaded', () => {
       restartAutoTimer();
     }
 
-    function goNext() {
+    // Next game: if isAuto = true, NO expanding overlay to prevent screen flashing!
+    function goNext(isAuto) {
       if (isAnimating || deckOrder.length === 0) return;
       var nextId = deckOrder[0];
-      var firstCard = deckContainer ? deckContainer.querySelector('.gsc-deck-card') : null;
-      switchToGame(nextId, firstCard);
+      // Only animate expanding card if user manually clicks, NOT on auto-timer
+      var cardToAnimate = isAuto ? null : (deckContainer ? deckContainer.querySelector('.gsc-deck-card') : null);
+      switchToGame(nextId, cardToAnimate);
     }
 
     function goPrev() {
@@ -4854,9 +4861,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function restartAutoTimer() {
       clearInterval(autoTimer);
-      if (!isUserHover) {
+      autoTimer = null;
+      if (!isUserHover && isShowcaseVisible) {
         autoTimer = setInterval(function () {
-          goNext();
+          goNext(true); // isAuto = true: smooth background crossfade, NO flashing overlay!
         }, AUTO_DELAY);
       }
     }
@@ -4865,7 +4873,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (nextBtn) {
       nextBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        goNext();
+        goNext(false);
       });
     }
 
@@ -4884,7 +4892,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (r.top < window.innerHeight && r.bottom > 0) {
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
           e.preventDefault();
-          goNext();
+          goNext(false);
         } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
           e.preventDefault();
           goPrev();
@@ -4901,7 +4909,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showcase.addEventListener('touchend', function (e) {
       var dx = e.changedTouches[0].clientX - touchX;
       if (Math.abs(dx) > 50) {
-        if (dx < 0) goNext();
+        if (dx < 0) goNext(false);
         else goPrev();
       }
     }, { passive: true });
@@ -4910,12 +4918,32 @@ document.addEventListener('DOMContentLoaded', () => {
     showcase.addEventListener('mouseenter', function () {
       isUserHover = true;
       clearInterval(autoTimer);
+      autoTimer = null;
     });
 
     showcase.addEventListener('mouseleave', function () {
       isUserHover = false;
       restartAutoTimer();
     });
+
+    // Viewport IntersectionObserver: ONLY run timer when user is actually viewing the showcase!
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          isShowcaseVisible = entry.isIntersecting;
+          if (isShowcaseVisible) {
+            restartAutoTimer();
+          } else {
+            clearInterval(autoTimer);
+            autoTimer = null;
+          }
+        });
+      }, { threshold: 0.15 });
+      observer.observe(showcase);
+    } else {
+      isShowcaseVisible = true;
+      restartAutoTimer();
+    }
 
     // INITIALIZE FIRST STATE
     renderLeftInfo(GAMES[activeId], false);
@@ -4930,7 +4958,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     restartAutoTimer();
-    console.log('[GSC] Cards Opening v4 Initialized with 3D title &', GAMES.length, 'games.');
+    console.log('[GSC] Cards Opening v5 Initialized cleanly.');
   }
 
   if (document.readyState === 'loading') {
