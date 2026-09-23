@@ -4280,6 +4280,9 @@ window.ModelViewer3D = ModelViewer3D;
     const viewAllButton = document.getElementById('gameViewAll');
     const favoriteButton = document.getElementById('gameFavoriteButton');
     const trailerButton = document.getElementById('gameTrailerButton');
+    const videoVolumeControl = document.getElementById('gameVideoVolume');
+    const videoMuteButton = document.getElementById('gameVideoMute');
+    const videoVolumeSlider = document.getElementById('gameVideoVolumeSlider');
     const trailerAction = explorer.querySelector('[data-explorer-action="trailer"]');
     const favoritesAction = explorer.querySelector('[data-explorer-action="favorites"]');
     const homeAction = explorer.querySelector('[data-explorer-action="home"]');
@@ -4288,6 +4291,11 @@ window.ModelViewer3D = ModelViewer3D;
     let favoritesOnly = false;
     let transitionTimer = 0;
     let favorites = new Set();
+    let lastVideoVolume = 0.6;
+    let resumeMusicAfterTrailer = false;
+
+    featureVideo.volume = 0.6;
+    featureVideo.muted = false;
 
     try {
       const saved = JSON.parse(localStorage.getItem('gameExplorerFavorites') || '[]');
@@ -4310,14 +4318,39 @@ window.ModelViewer3D = ModelViewer3D;
       if (path) path.setAttribute('d', playing ? 'M8 7h3v10H8zm5 0h3v10h-3z' : 'm9 6 9 6-9 6z');
     }
 
-    function stopTrailer(unload = false) {
+    function updateVideoVolumeUI() {
+      const percent = featureVideo.muted ? 0 : Math.round(featureVideo.volume * 100);
+      videoVolumeSlider.value = String(percent);
+      videoVolumeSlider.setAttribute('aria-valuetext', `${percent} phần trăm`);
+      videoVolumeControl.style.setProperty('--video-volume', `${percent}%`);
+      videoVolumeControl.classList.toggle('is-muted', percent === 0);
+      videoMuteButton.setAttribute('aria-pressed', String(percent === 0));
+      videoMuteButton.setAttribute('aria-label', percent === 0 ? 'Bật tiếng video' : 'Tắt tiếng video');
+    }
+
+    function pauseMusicForTrailer() {
+      if (!audio.paused) {
+        resumeMusicAfterTrailer = true;
+        pauseMusic();
+      }
+    }
+
+    function resumeMusicAfterVideo() {
+      if (!resumeMusicAfterTrailer || document.hidden) return;
+      resumeMusicAfterTrailer = false;
+      playCurrentTrack().catch((error) => console.warn('Unable to resume background music:', error));
+    }
+
+    function stopTrailer(unload = false, resumeBackground = true) {
       featureVideo.pause();
       setTrailerState(false);
       if (unload) {
         featureVideo.removeAttribute('src');
         delete featureVideo.dataset.gameKey;
         featureVideo.load();
+        feature.classList.remove('is-video-ready');
       }
+      if (resumeBackground) resumeMusicAfterVideo();
     }
 
     async function toggleTrailer() {
@@ -4331,14 +4364,21 @@ window.ModelViewer3D = ModelViewer3D;
         featureVideo.src = game.video;
         featureVideo.poster = game.image;
         featureVideo.dataset.gameKey = game.key;
+        featureVideo.volume = 0.6;
+        featureVideo.muted = false;
+        lastVideoVolume = 0.6;
+        updateVideoVolumeUI();
         featureVideo.load();
       }
+      feature.classList.add('is-video-ready');
+      pauseMusicForTrailer();
       try {
         await featureVideo.play();
         setTrailerState(true);
         announce(`Đang phát video ${game.title}.`);
       } catch (error) {
         setTrailerState(false);
+        resumeMusicAfterVideo();
         announce('Không thể phát video. Hãy thử lại sau.');
         console.warn('Game trailer playback failed:', error);
       }
@@ -4440,6 +4480,25 @@ window.ModelViewer3D = ModelViewer3D;
     });
 
     trailerButton.addEventListener('click', toggleTrailer);
+    videoVolumeSlider.addEventListener('input', () => {
+      const nextVolume = Math.max(0, Math.min(1, Number(videoVolumeSlider.value) / 100));
+      featureVideo.volume = nextVolume;
+      featureVideo.muted = nextVolume === 0;
+      if (nextVolume > 0) lastVideoVolume = nextVolume;
+      updateVideoVolumeUI();
+    });
+    videoMuteButton.addEventListener('click', () => {
+      if (featureVideo.muted || featureVideo.volume === 0) {
+        featureVideo.muted = false;
+        featureVideo.volume = lastVideoVolume || 0.6;
+      } else {
+        lastVideoVolume = featureVideo.volume || 0.6;
+        featureVideo.muted = true;
+      }
+      updateVideoVolumeUI();
+    });
+    featureVideo.addEventListener('volumechange', updateVideoVolumeUI);
+    updateVideoVolumeUI();
     explorer.querySelectorAll('[data-explorer-action]').forEach((button) => button.addEventListener('click', () => {
       const action = button.dataset.explorerAction;
       if (action === 'home') {
@@ -4466,8 +4525,11 @@ window.ModelViewer3D = ModelViewer3D;
       if (!entries[0].isIntersecting) stopTrailer(false);
     }, { threshold:0.08 });
     explorerObserver.observe(explorer);
-    document.addEventListener('visibilitychange', () => { if (document.hidden) stopTrailer(false); });
-    window.addEventListener('pagehide', () => stopTrailer(true));
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopTrailer(false, false);
+      else resumeMusicAfterVideo();
+    });
+    window.addEventListener('pagehide', () => stopTrailer(true, false));
     selectGame(0, false);
     filterLibrary();
   }

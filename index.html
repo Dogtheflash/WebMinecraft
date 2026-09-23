@@ -1256,7 +1256,17 @@
 
             <article class="game-feature" aria-live="polite">
               <img id="gameFeatureImage" src="data/games/cyberpunk_2077.png" alt="Cyberpunk 2077 — Night City" decoding="async">
-              <video id="gameFeatureVideo" muted loop playsinline preload="none" poster="data/games/cyberpunk_2077.png"></video>
+              <video id="gameFeatureVideo" loop playsinline preload="none" poster="data/games/cyberpunk_2077.png"></video>
+              <div class="game-video-volume" id="gameVideoVolume" role="group" aria-label="Âm lượng video">
+                <button type="button" id="gameVideoMute" aria-label="Tắt tiếng video" aria-pressed="false">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path class="game-volume-speaker" d="M4 10v4h3l4 3V7l-4 3H4z"></path>
+                    <path class="game-volume-waves" d="M14.5 9.5a4 4 0 0 1 0 5M17 7a7 7 0 0 1 0 10"></path>
+                    <path class="game-volume-cross" d="m15.5 9.5 5 5m0-5-5 5"></path>
+                  </svg>
+                </button>
+                <input id="gameVideoVolumeSlider" type="range" min="0" max="100" value="60" step="1" aria-label="Chỉnh âm lượng video" aria-valuetext="60 phần trăm">
+              </div>
               <div class="game-feature-overlay" aria-hidden="true"></div>
 
               <div class="game-feature-copy">
