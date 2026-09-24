@@ -1208,39 +1208,22 @@
 
 
         <!-- ================== GAME EXPLORER DASHBOARD ================== -->
-        <section class="game-explorer" id="favorite-games" aria-labelledby="game-explorer-title">
+        <section class="game-explorer" id="favorite-games" aria-labelledby="favorite-games-heading">
           <img class="game-explorer-backdrop" id="gameExplorerBackdrop" src="data/games/cyberpunk_2077.png" alt="" aria-hidden="true">
           <div class="game-explorer-shade" aria-hidden="true"></div>
 
           <div class="game-dashboard">
             <header class="game-dashboard-topbar">
-              <a class="game-explorer-brand" href="#favorite-games" aria-label="Game Explorer — về đầu bảng">
-                <span class="game-brand-mark" aria-hidden="true">GX</span>
-                <strong>Game Explorer</strong>
-              </a>
-
-              <label class="game-search" for="gameSearch">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
-                <input id="gameSearch" type="search" placeholder="Tìm trò chơi" autocomplete="off">
-              </label>
-
-              <div class="game-top-actions">
-                <span class="game-world-count"><b>05</b> worlds</span>
-                <button type="button" data-explorer-step="-1" aria-label="Trò chơi trước">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"></path></svg>
-                </button>
-                <button type="button" data-explorer-step="1" aria-label="Trò chơi tiếp theo">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
-                </button>
-                <img src="minevui-avatar.png" alt="Bộ sưu tập của Chinatsu Kamado" width="38" height="38">
-              </div>
+              <h2 class="game-dashboard-title" id="favorite-games-heading" data-text="TỰA GAME YÊU THÍCH">
+                <span>Tựa Game Yêu Thích</span>
+              </h2>
             </header>
 
             <nav class="game-side-nav" aria-label="Công cụ Game Explorer">
               <button class="is-active" type="button" data-explorer-action="home" aria-label="Về trò chơi đầu tiên" aria-pressed="true">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 11 8-7 8 7v9h-6v-6h-4v6H4z"></path></svg>
               </button>
-              <button type="button" data-explorer-action="browse" aria-label="Tìm trong bộ sưu tập">
+              <button type="button" data-explorer-action="browse" aria-label="Đi tới bộ sưu tập trò chơi">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v15H6.5A2.5 2.5 0 0 1 4 16.5z"></path><path d="M8 4v15"></path></svg>
               </button>
               <button type="button" data-explorer-action="favorites" aria-label="Chỉ hiện trò chơi yêu thích" aria-pressed="false">

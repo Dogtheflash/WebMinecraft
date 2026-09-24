@@ -4275,7 +4275,6 @@ window.ModelViewer3D = ModelViewer3D;
     const featureVideo = document.getElementById('gameFeatureVideo');
     const backdrop = document.getElementById('gameExplorerBackdrop');
     const libraryItems = Array.from(explorer.querySelectorAll('[data-game-key]'));
-    const searchInput = document.getElementById('gameSearch');
     const emptyState = document.getElementById('gameLibraryEmpty');
     const viewAllButton = document.getElementById('gameViewAll');
     const favoriteButton = document.getElementById('gameFavoriteButton');
@@ -4392,12 +4391,10 @@ window.ModelViewer3D = ModelViewer3D;
     }
 
     function filterLibrary() {
-      const query = searchInput.value.trim().toLocaleLowerCase('vi');
       let visibleCount = 0;
       libraryItems.forEach((item) => {
-        const matchesText = !query || item.dataset.search.includes(query);
         const matchesFavorite = !favoritesOnly || favorites.has(item.dataset.gameKey);
-        item.hidden = !(matchesText && matchesFavorite);
+        item.hidden = !matchesFavorite;
         if (!item.hidden) visibleCount += 1;
       });
       emptyState.hidden = visibleCount !== 0;
@@ -4447,22 +4444,7 @@ window.ModelViewer3D = ModelViewer3D;
       selectGame(index);
     }));
 
-    explorer.querySelectorAll('[data-explorer-step]').forEach((button) => button.addEventListener('click', () => {
-      const direction = Number(button.dataset.explorerStep);
-      selectGame((activeIndex + direction + games.length) % games.length);
-    }));
-
-    searchInput.addEventListener('input', filterLibrary);
-    searchInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        searchInput.value = '';
-        filterLibrary();
-        searchInput.blur();
-      }
-    });
-
     viewAllButton.addEventListener('click', () => {
-      searchInput.value = '';
       favoritesOnly = false;
       favoritesAction?.setAttribute('aria-pressed', 'false');
       filterLibrary();
@@ -4502,13 +4484,12 @@ window.ModelViewer3D = ModelViewer3D;
     explorer.querySelectorAll('[data-explorer-action]').forEach((button) => button.addEventListener('click', () => {
       const action = button.dataset.explorerAction;
       if (action === 'home') {
-        searchInput.value = '';
         favoritesOnly = false;
         favoritesAction?.setAttribute('aria-pressed', 'false');
         filterLibrary();
         selectGame(0);
       } else if (action === 'browse') {
-        searchInput.focus();
+        document.getElementById('game-library-title')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
       } else if (action === 'favorites') {
         favoritesOnly = !favoritesOnly;
         button.setAttribute('aria-pressed', String(favoritesOnly));
