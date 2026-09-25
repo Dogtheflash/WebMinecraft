@@ -2847,11 +2847,6 @@ body.vt-active .profile-console { animation: none !important; }
   .ambient { filter: blur(60px); }
 }
 
-/* Máy báo tiết kiệm dữ liệu / GPU yếu: tắt nền video */
-body.lite-mode .bg-video,
-body.lite-mode .ambient,
-body.lite-mode .grain { display: none; }
-
 /* ────────────────────────────────────────────────────────────
    15. TÔN TRỌNG prefers-reduced-motion — toàn trang, không chỉ loader
    ──────────────────────────────────────────────────────────── */
@@ -2892,56 +2887,8 @@ body.reduce-motion /* .profile-console transform preserved */
 .audio-visualizer.viz-silent { display: none !important; }
 .visualizer { display: none !important; }   /* 4 vạch nhảy cạnh trình phát */
 
-/* ────────────────────────────────────────────────────────────
-   1b. HIỆU NĂNG — chế độ nhẹ
-   Thủ phạm chính của lag: backdrop-filter phủ lên video đang chạy.
-   Trình duyệt phải làm mờ lại toàn bộ vùng đó MỖI KHUNG HÌNH.
-   ──────────────────────────────────────────────────────────── */
-.low-perf .glass-panel,
-.low-perf .profile-console,
-.low-perf .cmd-window,
-.low-perf .theme-toggle-btn,
-.low-perf .theme-menu,
-.low-perf .warp-btn,
-.low-perf .volume-toggle,
-.low-perf .music-player {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-/* Bù lại độ đục để card không bị trong suốt lộ video */
-.low-perf .profile-console,
-.low-perf .music-player { background: rgb(10 12 22 / .93); }
-@supports (background: color-mix(in srgb, red 50%, blue)) {
-  .low-perf .profile-console,
-  .low-perf .music-player { background: color-mix(in srgb, var(--panel) 100%, #000 30%); }
-}
-.low-perf .cmd-window { background: rgb(8 8 12 / .92); }
-
-/* Các lớp phủ toàn màn hình dùng mix-blend-mode: tốn nhất, bỏ hết */
-.low-perf .grain,
-.low-perf .scanlines,
-.low-perf .pointer-glow,
-.low-perf .ambient,
-.low-perf .page-ripple,
-.low-perf .hover-ripple { display: none !important; }
-
-/* Không nghiêng 3D, không đổ bóng động */
-.low-perf .color-page { transform: none !important; }
-.low-perf .profile-console::after,
-.low-perf .color-page::after { display: none; }
-
-/* will-change đặt tràn lan làm trình duyệt cấp phát layer thừa → tốn RAM */
-.low-perf .profile-console,
-.low-perf .color-page,
-.low-perf .plx-layer,
-.low-perf .grain,
-.low-perf .presence-card,
-.low-perf .activity-card,
-.low-perf .about-card { will-change: auto !important; }
-
 /* Viền gradient chạy quanh panel: giữ, nhưng mỏng lại cho nhẹ mắt */
 .profile-console::before { padding: 2px; }
-.low-perf .profile-console::before { padding: 1.5px; opacity: .78; }
 
 /* ────────────────────────────────────────────────────────────
    2. KHUNG NHỎ LẠI + NÚT ĐỔI THEME BẤM ĐƯỢC TRÊN ĐIỆN THOẠI

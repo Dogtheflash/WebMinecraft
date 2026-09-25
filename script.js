@@ -1,21 +1,6 @@
-/* ════════════════════════════════════════════════════════════
-   CHẾ ĐỘ NHẸ — tự bật cho mobile, mạng tiết kiệm dữ liệu và máy yếu
-   Các hiệu ứng ăn GPU sẽ tự tắt thay vì làm rớt khung hình.
-   ════════════════════════════════════════════════════════════ */
-window.__LOW_PERF = (function () {
-  try {
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
-    const compactScreen = window.matchMedia('(max-width: 768px)').matches ||
-      (window.matchMedia('(pointer: coarse)').matches && window.matchMedia('(max-width: 1024px)').matches);
-    const slowNetwork = conn.saveData === true || /(^|-)2g$/.test(conn.effectiveType || '');
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const reducedData = window.matchMedia('(prefers-reduced-data: reduce)').matches;
-    // Desktop vẫn phát video nền; chỉ chuyển sang chế độ nhẹ theo kích thước màn
-    // hình, tùy chọn tiết kiệm dữ liệu hoặc cài đặt giảm chuyển động của người dùng.
-    return reducedMotion || reducedData || compactScreen || slowNetwork;
-  } catch (e) { return false; }
-})();
-if (window.__LOW_PERF) document.documentElement.classList.add('low-perf');
+/* Giữ nguyên chất lượng hình ảnh và hiệu ứng trên cả desktop lẫn mobile. */
+window.__LOW_PERF = false;
+document.documentElement.classList.remove('low-perf');
 
 
 /* ============================================================
@@ -3116,7 +3101,7 @@ if (interactiveCard) {
   let isYtMode = false;
 
   function loadMp4Background() {
-    if (window.__LOW_PERF || mp4Video.dataset.loaded === 'true') return;
+    if (mp4Video.dataset.loaded === 'true') return;
     const src = mp4Video.dataset.bgSrc;
     if (!src) return;
     mp4Video.src = src;
@@ -3131,12 +3116,10 @@ if (interactiveCard) {
     }
   }
 
-  // Cho trang hiển thị trước; chỉ tải video nền sau khi trình duyệt rảnh.
-  if (!window.__LOW_PERF) {
-    const start = () => loadMp4Background();
-    if ('requestIdleCallback' in window) window.requestIdleCallback(start, { timeout: 2500 });
-    else window.setTimeout(start, 2500);
-  }
+  // Poster hiện ngay; video bắt đầu tải sớm để nền CMD không bị đen trên mobile.
+  const start = () => loadMp4Background();
+  if ('requestIdleCallback' in window) window.requestIdleCallback(start, { timeout: 900 });
+  else window.setTimeout(start, 400);
 
   function postYtCommand(func, args) {
     if (ytIframe && ytIframe.contentWindow) {
@@ -3210,11 +3193,7 @@ if (interactiveCard) {
   syncMotionFlag();
   reduceMotion.addEventListener?.('change', syncMotionFlag);
 
-  /* Chế độ nhẹ: người dùng bật tiết kiệm dữ liệu → bỏ video nền + hạt phim */
-  const conn = navigator.connection || {};
-  if (window.__LOW_PERF || conn.saveData === true || window.matchMedia('(prefers-reduced-data: reduce)').matches) {
-    document.body.classList.add('lite-mode');
-  }
+  document.body.classList.remove('lite-mode');
 
   /* ──────────────────────────────────────────────────────────
      1. SKELETON + ĐẾM SỐ TĂNG DẦN
@@ -3520,7 +3499,7 @@ if (interactiveCard) {
   if (!v) return;
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) v.pause();
-    else if (!window.__LOW_PERF) {
+    else {
       if (!v.src && v.dataset.bgSrc) {
         v.src = v.dataset.bgSrc;
         v.dataset.loaded = 'true';
@@ -3808,15 +3787,15 @@ class ModelViewer3D {
 
         // 3. Renderer Setup (Transparent background)
         this.renderer = new THREE.WebGLRenderer({
-            antialias: !window.__LOW_PERF,
+            antialias: true,
             alpha: true,
             powerPreference: 'high-performance'
         });
         this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.__LOW_PERF ? 1 : 1.5));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1.12;
-        this.renderer.shadowMap.enabled = !window.__LOW_PERF;
+        this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
         this.container.innerHTML = '';
@@ -4658,7 +4637,6 @@ window.ModelViewer3D = ModelViewer3D;
 
   let viewer = null;
   let viewerPromise = null;
-  const isCompact = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
   const modelCopy = {
     racecar: {
       index: '01',
@@ -4752,7 +4730,7 @@ window.ModelViewer3D = ModelViewer3D;
       .then(() => {
         viewer = new window.ModelViewer3D('three-canvas-container');
         viewer.isSectionVisible = true;
-        if (viewer.renderer) viewer.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isCompact ? 1 : 1.5));
+        if (viewer.renderer) viewer.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
         if (viewer.controls) viewer.controls.enableZoom = false;
         viewer.setLighting('studio');
         const rotateButton = document.getElementById('btnAutoRotate');
@@ -4777,7 +4755,7 @@ window.ModelViewer3D = ModelViewer3D;
   const modelObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (viewer) viewer.isSectionVisible = entry.isIntersecting;
-      if (entry.isIntersecting && !isCompact) startViewer();
+      if (entry.isIntersecting) startViewer();
     });
   }, { rootMargin: '280px 0px', threshold: 0.05 });
   modelObserver.observe(modelSection);
