@@ -3747,6 +3747,48 @@ class ModelViewer3D {
                 polyCount: 57754,
                 polyText: '57,754 Tris • High-Poly GLTF',
                 defaultPrompt: 'Mythical ancient tree, twisted bioluminescent roots, ethereal cosmic glow, octane render, 8K PBR, 57.7K topology'
+            },
+            soulcompanion: {
+                key: 'soulcompanion',
+                name: 'Soul Piece Companion',
+                primaryPath: 'models/soul_piece_companion.glb',
+                fallbackPath: null,
+                targetSize: 2.95,
+                initialRotation: { x: 0, y: 0.25, z: 0 },
+                initialY: -0.04,
+                metalness: 0.15,
+                roughness: 0.62,
+                polyCount: 59812,
+                polyText: '59,812 Tris • Web GLB',
+                defaultPrompt: 'Soul companion creature, stylized fantasy silhouette, game-ready topology, textured PBR character'
+            },
+            catgirl: {
+                key: 'catgirl',
+                name: 'Fantasy Cat Girl',
+                primaryPath: 'models/fantasy_cat_girl.glb',
+                fallbackPath: null,
+                targetSize: 2.9,
+                initialRotation: { x: 0, y: 0.16, z: 0 },
+                initialY: -0.04,
+                metalness: 0.08,
+                roughness: 0.58,
+                polyCount: 10941,
+                polyText: '10,941 Tris • Web GLB',
+                defaultPrompt: 'Fantasy cat girl character, stylized game art, optimized real-time mesh, textured PBR character'
+            },
+            warlord: {
+                key: 'warlord',
+                name: 'Fantasy Armored Warlord',
+                primaryPath: 'models/fantasy_armored_warlord.glb',
+                fallbackPath: null,
+                targetSize: 3.0,
+                initialRotation: { x: 0, y: 0.2, z: 0 },
+                initialY: -0.06,
+                metalness: 0.38,
+                roughness: 0.5,
+                polyCount: 9858,
+                polyText: '9,858 Tris • Web GLB',
+                defaultPrompt: 'Fantasy armored warlord, ornate dark armor, game-ready topology, textured PBR character'
             }
         };
 
@@ -3773,12 +3815,15 @@ class ModelViewer3D {
         this.renderer.setSize(width, height);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.__LOW_PERF ? 1 : 1.5));
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        this.renderer.toneMappingExposure = 1.25;
+        this.renderer.toneMappingExposure = 1.12;
         this.renderer.shadowMap.enabled = !window.__LOW_PERF;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
         this.container.innerHTML = '';
         this.container.appendChild(this.renderer.domElement);
+        this.renderer.domElement.setAttribute('role', 'img');
+        this.renderer.domElement.setAttribute('tabindex', '0');
+        this.renderer.domElement.setAttribute('aria-label', 'Trình xem mô hình 3D tương tác. Kéo để xoay vật thể.');
 
         // 4. OrbitControls for rich interaction
         if (typeof THREE.OrbitControls !== 'undefined') {
@@ -3798,6 +3843,12 @@ class ModelViewer3D {
                 this.resumeRotateTimeout = setTimeout(() => {
                     this.isUserInteracting = false;
                 }, 1800);
+            });
+            this.renderer.domElement.addEventListener('focus', () => {
+                this.isUserInteracting = true;
+            });
+            this.renderer.domElement.addEventListener('blur', () => {
+                this.isUserInteracting = false;
             });
         }
 
@@ -3819,11 +3870,11 @@ class ModelViewer3D {
 
     setupLighting() {
         // Ambient Light
-        this.lights.ambient = new THREE.AmbientLight(0xdbeafe, 1.4);
+        this.lights.ambient = new THREE.AmbientLight(0xfff0d8, 1.35);
         this.scene.add(this.lights.ambient);
 
         // Main Studio Key Light
-        this.lights.key = new THREE.DirectionalLight(0xffffff, 2.2);
+        this.lights.key = new THREE.DirectionalLight(0xfff7ea, 2.8);
         this.lights.key.position.set(5, 7, 4);
         this.lights.key.castShadow = true;
         this.lights.key.shadow.mapSize.width = 1024;
@@ -3831,17 +3882,17 @@ class ModelViewer3D {
         this.scene.add(this.lights.key);
 
         // Neon Cyan Fill Light
-        this.lights.fillCyan = new THREE.PointLight(0x00f0ff, 3.8, 14);
+        this.lights.fillCyan = new THREE.PointLight(0xdcae68, 2.6, 14);
         this.lights.fillCyan.position.set(-4, 2.5, 3);
         this.scene.add(this.lights.fillCyan);
 
         // Electric Purple / Magenta Rim Light
-        this.lights.rimPurple = new THREE.PointLight(0xa855f7, 4.2, 16);
+        this.lights.rimPurple = new THREE.PointLight(0xf0c987, 3.2, 16);
         this.lights.rimPurple.position.set(3.5, 3.5, -4);
         this.scene.add(this.lights.rimPurple);
 
         // Front Accent Light
-        this.lights.frontAccent = new THREE.PointLight(0x38bdf8, 2.0, 10);
+        this.lights.frontAccent = new THREE.PointLight(0xe8c17a, 1.5, 10);
         this.lights.frontAccent.position.set(0, 0.5, 4);
         this.scene.add(this.lights.frontAccent);
     }
@@ -3871,12 +3922,12 @@ class ModelViewer3D {
         shadowMesh.position.y = -0.72;
         this.scene.add(shadowMesh);
 
-        // Glowing Cyan Pedestal Ring
+        // Warm atelier pedestal ring
         const ringGeo = new THREE.RingGeometry(1.6, 1.66, 64);
         const ringMat = new THREE.MeshBasicMaterial({
-            color: 0x718957,
+            color: 0xe8c17a,
             transparent: true,
-            opacity: 0.35,
+            opacity: 0.42,
             side: THREE.DoubleSide
         });
         const ringMesh = new THREE.Mesh(ringGeo, ringMat);
@@ -3887,7 +3938,7 @@ class ModelViewer3D {
         // Secondary subtle outer ring
         const outerRingGeo = new THREE.RingGeometry(2.1, 2.14, 64);
         const outerRingMat = new THREE.MeshBasicMaterial({
-            color: 0x92a477,
+            color: 0xa8783f,
             transparent: true,
             opacity: 0.22,
             side: THREE.DoubleSide
@@ -3898,8 +3949,39 @@ class ModelViewer3D {
         this.scene.add(outerRingMesh);
     }
 
+    disposeModel(group) {
+        if (!group) return;
+        const disposedTextures = new Set();
+        const disposedMaterials = new Set();
+
+        group.traverse((child) => {
+            if (child.geometry) child.geometry.dispose();
+
+            const materials = [
+                ...(Array.isArray(child.material) ? child.material : [child.material]),
+                child.userData?.originalMat,
+                child.userData?.pbrMat,
+                child.userData?.clayMat,
+                child.userData?.wireframeMat,
+                child.userData?.normalMat
+            ].filter(Boolean);
+
+            materials.forEach((material) => {
+                if (disposedMaterials.has(material)) return;
+                disposedMaterials.add(material);
+                Object.values(material).forEach((value) => {
+                    if (value?.isTexture && !disposedTextures.has(value)) {
+                        disposedTextures.add(value);
+                        value.dispose();
+                    }
+                });
+                material.dispose?.();
+            });
+        });
+    }
+
     /**
-     * Load Model by Key ('racecar' or 'eclipsedroot')
+     * Load one of the five gallery models on demand.
      */
     loadModel(modelKey) {
         const config = this.models[modelKey] || this.models.racecar;
@@ -3914,9 +3996,7 @@ class ModelViewer3D {
             if (requestId !== this.loadRequestId) return;
             if (this.modelGroup) {
                 this.scene.remove(this.modelGroup);
-                this.modelGroup.traverse((child) => {
-                    if (child.geometry) child.geometry.dispose();
-                });
+                this.disposeModel(this.modelGroup);
             }
 
             const model = gltf.scene;
@@ -3977,7 +4057,7 @@ class ModelViewer3D {
 
                         // Create Wireframe material
                         child.userData.wireframeMat = new THREE.MeshBasicMaterial({
-                            color: 0x00f0ff,
+                            color: 0xe8c17a,
                             wireframe: true
                         });
 
@@ -3994,6 +4074,8 @@ class ModelViewer3D {
             // Update UI Polycount display
             const countText = polyCount > 0 ? `${polyCount.toLocaleString()} Tris` : config.polyText;
             this.updatePolyDisplay(countText, config.name);
+            const compactCount = document.getElementById('modelPolySummary');
+            if (compactCount) compactCount.textContent = polyCount > 0 ? `${Math.max(1, Math.round(polyCount / 1000))}K tris` : config.polyText.split(' • ')[0];
 
             // Apply active shader mode
             this.setRenderMode(this.currentMode);
@@ -4074,31 +4156,43 @@ class ModelViewer3D {
         });
     }
 
-    toggleLighting() {
-        const presets = ['cyber', 'studio', 'ambient'];
-        const nextIdx = (presets.indexOf(this.currentLighting) + 1) % presets.length;
-        this.currentLighting = presets[nextIdx];
+    setLighting(preset = 'studio') {
+        const presets = ['studio', 'sunset', 'night', 'moody'];
+        this.currentLighting = presets.includes(preset) ? preset : 'studio';
 
-        if (this.currentLighting === 'cyber') {
-            this.lights.ambient.color.setHex(0xdbeafe);
-            this.lights.fillCyan.intensity = 3.8;
-            this.lights.rimPurple.intensity = 4.2;
-            this.lights.key.intensity = 2.2;
-        } else if (this.currentLighting === 'studio') {
-            this.lights.ambient.color.setHex(0xffffff);
-            this.lights.ambient.intensity = 2.0;
-            this.lights.fillCyan.intensity = 1.2;
-            this.lights.rimPurple.intensity = 1.2;
-            this.lights.key.intensity = 3.0;
-        } else if (this.currentLighting === 'ambient') {
-            this.lights.ambient.color.setHex(0x60a5fa);
-            this.lights.ambient.intensity = 2.4;
-            this.lights.fillCyan.intensity = 2.0;
-            this.lights.rimPurple.intensity = 2.0;
-            this.lights.key.intensity = 1.4;
-        }
-
+        const rigs = {
+            studio: {
+                ambient:[0xfff0d8,1.35], key:[0xfff7ea,2.8], fill:[0xdcae68,2.6], rim:[0xf0c987,3.2], front:[0xe8c17a,1.5]
+            },
+            sunset: {
+                ambient:[0xffc28b,1.2], key:[0xffd2aa,2.7], fill:[0xff8a38,2.8], rim:[0xb74720,3.4], front:[0xffbd73,1.4]
+            },
+            night: {
+                ambient:[0x8a9dcc,1.0], key:[0xdce7ff,2.25], fill:[0x4267cc,2.7], rim:[0x7768d8,3.6], front:[0x83a6ff,1.25]
+            },
+            moody: {
+                ambient:[0x9b8872,.82], key:[0xe7d7c0,1.85], fill:[0x9b7041,.8], rim:[0xc79b64,2.5], front:[0x8d7255,.72]
+            }
+        };
+        const rig = rigs[this.currentLighting];
+        this.lights.ambient.color.setHex(rig.ambient[0]);
+        this.lights.ambient.intensity = rig.ambient[1];
+        this.lights.key.color.setHex(rig.key[0]);
+        this.lights.key.intensity = rig.key[1];
+        this.lights.fillCyan.color.setHex(rig.fill[0]);
+        this.lights.fillCyan.intensity = rig.fill[1];
+        this.lights.rimPurple.color.setHex(rig.rim[0]);
+        this.lights.rimPurple.intensity = rig.rim[1];
+        this.lights.frontAccent.color.setHex(rig.front[0]);
+        this.lights.frontAccent.intensity = rig.front[1];
+        document.getElementById('modelStage')?.setAttribute('data-lighting', this.currentLighting);
         return this.currentLighting;
+    }
+
+    toggleLighting() {
+        const presets = ['studio', 'sunset', 'night', 'moody'];
+        const nextIdx = (presets.indexOf(this.currentLighting) + 1) % presets.length;
+        return this.setLighting(presets[nextIdx]);
     }
 
     toggleAutoRotate() {
@@ -4272,6 +4366,7 @@ window.ModelViewer3D = ModelViewer3D;
   if (explorer) {
     const feature = explorer.querySelector('.game-feature');
     const featureImage = document.getElementById('gameFeatureImage');
+    const featureImageNext = document.getElementById('gameFeatureImageNext');
     const featureVideo = document.getElementById('gameFeatureVideo');
     const backdrop = document.getElementById('gameExplorerBackdrop');
     const libraryItems = Array.from(explorer.querySelectorAll('[data-game-key]'));
@@ -4289,6 +4384,8 @@ window.ModelViewer3D = ModelViewer3D;
     let activeIndex = 0;
     let favoritesOnly = false;
     let transitionTimer = 0;
+    let imageTransitionTimer = 0;
+    let imageTransitionId = 0;
     let favorites = new Set();
     let lastVideoVolume = 0.6;
     let resumeMusicAfterTrailer = false;
@@ -4400,6 +4497,45 @@ window.ModelViewer3D = ModelViewer3D;
       emptyState.hidden = visibleCount !== 0;
     }
 
+    function crossfadeFeatureImage(game) {
+      const nextAlt = `${game.title} — ${game.location}`;
+      const transitionId = ++imageTransitionId;
+      window.clearTimeout(imageTransitionTimer);
+      feature.classList.remove('is-crossfading');
+
+      if (!featureImageNext || reduceMotion || featureImage.getAttribute('src') === game.image) {
+        featureImage.src = game.image;
+        featureImage.alt = nextAlt;
+        featureImageNext?.removeAttribute('src');
+        return;
+      }
+
+      const preloader = new Image();
+      preloader.decoding = 'async';
+      preloader.onload = () => {
+        if (transitionId !== imageTransitionId) return;
+        featureImageNext.src = game.image;
+        featureImageNext.alt = '';
+        window.requestAnimationFrame(() => {
+          if (transitionId !== imageTransitionId) return;
+          feature.classList.add('is-crossfading');
+          imageTransitionTimer = window.setTimeout(() => {
+            if (transitionId !== imageTransitionId) return;
+            featureImage.src = game.image;
+            featureImage.alt = nextAlt;
+            feature.classList.remove('is-crossfading');
+            featureImageNext.removeAttribute('src');
+          }, 580);
+        });
+      };
+      preloader.onerror = () => {
+        if (transitionId !== imageTransitionId) return;
+        featureImage.src = game.image;
+        featureImage.alt = nextAlt;
+      };
+      preloader.src = game.image;
+    }
+
     function selectGame(index, shouldAnnounce = true) {
       if (index < 0 || index >= games.length) return;
       stopTrailer(true);
@@ -4408,8 +4544,7 @@ window.ModelViewer3D = ModelViewer3D;
       explorer.classList.add('is-changing');
       window.clearTimeout(transitionTimer);
 
-      featureImage.src = game.image;
-      featureImage.alt = `${game.title} — ${game.location}`;
+      crossfadeFeatureImage(game);
       backdrop.src = game.image;
       featureVideo.poster = game.image;
       document.getElementById('gameFeatureIndex').textContent = `${String(index + 1).padStart(2, '0')} / ${String(games.length).padStart(2, '0')} · ${game.genre.toUpperCase()}`;
@@ -4526,14 +4661,41 @@ window.ModelViewer3D = ModelViewer3D;
   const isCompact = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
   const modelCopy = {
     racecar: {
+      index: '01',
       title: 'APEX HYPERCAR / 01',
-      description: 'Một mẫu xe khí động học với bề mặt PBR, ánh sáng neon và chuyển động turntable thời gian thực.'
+      description: 'Một mẫu xe khí động học với bề mặt PBR, ánh sáng studio và chuyển động turntable thời gian thực.',
+      compactPoly: '10K tris'
     },
     eclipsedroot: {
+      index: '02',
       title: 'THE ECLIPSED ROOT / 02',
-      description: 'Một thực thể fantasy hữu cơ với hệ rễ phát sáng, hình khối giàu chi tiết và chất liệu phản ứng theo ánh sáng.'
+      description: 'Một thực thể fantasy hữu cơ với hệ rễ phát sáng, hình khối giàu chi tiết và chất liệu phản ứng theo ánh sáng.',
+      compactPoly: '57K tris'
+    },
+    soulcompanion: {
+      index: '03',
+      title: 'SOUL PIECE COMPANION / 03',
+      description: 'Một linh thú đồng hành mang phong cách fantasy, được rút gọn hình học và texture để tải nhanh hơn trên web.',
+      compactPoly: '60K tris'
+    },
+    catgirl: {
+      index: '04',
+      title: 'FANTASY CAT GIRL / 04',
+      description: 'Nhân vật miêu nữ fantasy với texture PBR đã tối ưu, cân bằng giữa chi tiết hình ảnh và hiệu năng thời gian thực.',
+      compactPoly: '11K tris'
+    },
+    warlord: {
+      index: '05',
+      title: 'ARMORED WARLORD / 05',
+      description: 'Một chiến tướng giáp trụ giàu chi tiết, phản xạ ánh sáng theo vật liệu kim loại và vẫn đủ nhẹ cho trình duyệt.',
+      compactPoly: '10K tris'
     }
   };
+  const modelStatus = document.getElementById('modelControlStatus');
+
+  function announceModel(message) {
+    if (modelStatus) modelStatus.textContent = message;
+  }
 
   function supportsWebGL() {
     try {
@@ -4592,8 +4754,12 @@ window.ModelViewer3D = ModelViewer3D;
         viewer.isSectionVisible = true;
         if (viewer.renderer) viewer.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isCompact ? 1 : 1.5));
         if (viewer.controls) viewer.controls.enableZoom = false;
-        viewer.toggleLighting();
-        document.getElementById('btnToggleLighting').textContent = '◐ Light: Studio';
+        viewer.setLighting('studio');
+        const rotateButton = document.getElementById('btnAutoRotate');
+        if (rotateButton) {
+          rotateButton.classList.toggle('is-active', viewer.autoRotate);
+          rotateButton.setAttribute('aria-pressed', String(viewer.autoRotate));
+        }
         boot.classList.remove('is-loading');
         return viewer;
       })
@@ -4626,13 +4792,19 @@ window.ModelViewer3D = ModelViewer3D;
         item.setAttribute('aria-pressed', String(selected));
       });
       const key = button.dataset.model;
+      const selectedIndex = choiceButtons.indexOf(button) + 1;
+      const selectionCount = document.getElementById('modelSelectionCount');
+      if (selectionCount) selectionCount.textContent = `${selectedIndex} / ${choiceButtons.length}`;
       const watermark = modelSection.querySelector('.object-watermark');
-      if (watermark) watermark.textContent = key === 'racecar' ? 'FORM / 01' : 'FORM / 02';
+      if (watermark && modelCopy[key]) watermark.textContent = `OBSIDIAN / ${modelCopy[key].index}`;
       instance.loadModel(key);
       const copy = modelCopy[key];
       if (copy) {
         document.getElementById('modelDisplayName').textContent = copy.title;
         document.getElementById('modelDisplayDescription').textContent = copy.description;
+        const compactPoly = document.getElementById('modelPolySummary');
+        if (compactPoly) compactPoly.textContent = copy.compactPoly;
+        announceModel(`Đã chọn ${copy.title.replace(/\s*\/\s*\d+$/, '')}.`);
       }
     });
   }));
@@ -4647,6 +4819,7 @@ window.ModelViewer3D = ModelViewer3D;
         item.setAttribute('aria-pressed', String(selected));
       });
       instance.setRenderMode(button.dataset.mode);
+      announceModel(`Đã chuyển sang chế độ vật liệu ${button.textContent.trim()}.`);
     });
   }));
 
@@ -4656,16 +4829,27 @@ window.ModelViewer3D = ModelViewer3D;
     const active = instance.toggleAutoRotate();
     rotateButton.classList.toggle('is-active', active);
     rotateButton.setAttribute('aria-pressed', String(active));
+    announceModel(active ? 'Đã bật tự động xoay mô hình.' : 'Đã tắt tự động xoay mô hình.');
   }));
 
-  const lightingButton = document.getElementById('btnToggleLighting');
-  lightingButton.addEventListener('click', () => startViewer().then((instance) => {
-    if (!instance) return;
-    const mode = instance.toggleLighting();
-    lightingButton.innerHTML = `<span>◐</span> Light: ${mode.charAt(0).toUpperCase() + mode.slice(1)}`;
+  const lightingButtons = Array.from(modelSection.querySelectorAll('[data-light]'));
+  lightingButtons.forEach((button) => button.addEventListener('click', () => {
+    startViewer().then((instance) => {
+      if (!instance) return;
+      const mode = instance.setLighting(button.dataset.light);
+      lightingButtons.forEach((item) => {
+        const selected = item === button;
+        item.classList.toggle('is-active', selected);
+        item.setAttribute('aria-pressed', String(selected));
+      });
+      announceModel(`Đã chọn ánh sáng ${mode}.`);
+    });
   }));
 
   document.getElementById('btnResetCamera').addEventListener('click', () => startViewer().then((instance) => {
-    if (instance) instance.resetCamera();
+    if (instance) {
+      instance.resetCamera();
+      announceModel('Đã đặt lại góc nhìn mô hình.');
+    }
   }));
 })();

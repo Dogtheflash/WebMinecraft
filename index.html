@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+JP:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+JP:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" />
@@ -1214,18 +1214,18 @@
 
           <div class="game-dashboard">
             <div class="game-bubbles" aria-hidden="true">
-              <i style="--x:8%;--y:18%;--size:3px;--duration:9s;--delay:-2s"></i>
-              <i style="--x:17%;--y:72%;--size:2px;--duration:12s;--delay:-7s"></i>
-              <i style="--x:29%;--y:14%;--size:2px;--duration:10s;--delay:-4s"></i>
-              <i style="--x:43%;--y:86%;--size:3px;--duration:13s;--delay:-9s"></i>
-              <i style="--x:56%;--y:24%;--size:2px;--duration:11s;--delay:-5s"></i>
-              <i style="--x:68%;--y:78%;--size:3px;--duration:14s;--delay:-11s"></i>
-              <i style="--x:76%;--y:11%;--size:2px;--duration:9s;--delay:-1s"></i>
-              <i style="--x:88%;--y:64%;--size:3px;--duration:12s;--delay:-8s"></i>
-              <i style="--x:94%;--y:28%;--size:2px;--duration:10s;--delay:-6s"></i>
-              <i style="--x:12%;--y:92%;--size:2px;--duration:15s;--delay:-12s"></i>
-              <i style="--x:37%;--y:46%;--size:2px;--duration:12s;--delay:-3s"></i>
-              <i style="--x:61%;--y:52%;--size:2px;--duration:10s;--delay:-7s"></i>
+              <i style="--x:8%;--y:18%;--size:3px;--duration:18s;--delay:-2s;--drift:5px"></i>
+              <i style="--x:17%;--y:72%;--size:2px;--duration:22s;--delay:-7s;--drift:-4px"></i>
+              <i style="--x:29%;--y:14%;--size:2px;--duration:17s;--delay:-4s;--drift:3px"></i>
+              <i style="--x:43%;--y:86%;--size:3px;--duration:24s;--delay:-9s;--drift:-5px"></i>
+              <i style="--x:56%;--y:24%;--size:2px;--duration:20s;--delay:-5s;--drift:4px"></i>
+              <i style="--x:68%;--y:78%;--size:3px;--duration:25s;--delay:-11s;--drift:-3px"></i>
+              <i style="--x:76%;--y:11%;--size:2px;--duration:19s;--delay:-1s;--drift:5px"></i>
+              <i style="--x:88%;--y:64%;--size:3px;--duration:23s;--delay:-8s;--drift:-4px"></i>
+              <i style="--x:94%;--y:28%;--size:2px;--duration:18s;--delay:-6s;--drift:3px"></i>
+              <i style="--x:12%;--y:92%;--size:2px;--duration:26s;--delay:-12s;--drift:-5px"></i>
+              <i style="--x:37%;--y:46%;--size:2px;--duration:21s;--delay:-3s;--drift:4px"></i>
+              <i style="--x:61%;--y:52%;--size:2px;--duration:19s;--delay:-7s;--drift:-3px"></i>
             </div>
             <header class="game-dashboard-topbar">
               <h2 class="game-dashboard-title" id="favorite-games-heading" data-text="TỰA GAME YÊU THÍCH">
@@ -1234,7 +1234,8 @@
             </header>
 
             <article class="game-feature" aria-live="polite">
-              <img id="gameFeatureImage" src="data/games/cyberpunk_2077.png" alt="Cyberpunk 2077 — Night City" decoding="async">
+              <img class="game-feature-image-current" id="gameFeatureImage" src="data/games/cyberpunk_2077.png" alt="Cyberpunk 2077 — Night City" decoding="async">
+              <img class="game-feature-image-next" id="gameFeatureImageNext" alt="" aria-hidden="true" decoding="async">
               <video id="gameFeatureVideo" loop playsinline preload="none" poster="data/games/cyberpunk_2077.png"></video>
               <div class="game-video-volume" id="gameVideoVolume" role="group" aria-label="Âm lượng video">
                 <button type="button" id="gameVideoMute" aria-label="Tắt tiếng video" aria-pressed="false">
@@ -1316,64 +1317,112 @@
 
         <!-- ================== INTERACTIVE 3D ATELIER ================== -->
         <section class="model-atelier" id="model-creator" aria-labelledby="model-title">
-          <div class="model-orb model-orb-a" aria-hidden="true"></div>
-          <div class="model-orb model-orb-b" aria-hidden="true"></div>
-          <div class="model-grid" aria-hidden="true"></div>
-
-          <header class="model-heading">
-            <span class="model-kicker">THE OBJECT ROOM · COLLECTION 02</span>
-            <h2 id="model-title">Đẹp từ<br><em>mọi góc nhìn.</em></h2>
-            <p>Một không gian dành cho những chi tiết. Chọn một vật thể, thay đổi ánh sáng và tìm góc nhìn của riêng bạn.</p>
-          </header>
-
           <div class="model-stage-shell">
+            <header class="model-heading">
+              <div class="model-brand" aria-label="Obsidian Atelier">
+                <span class="model-brand-mark" aria-hidden="true"></span>
+                <span><strong>OBSIDIAN ATELIER</strong><small>GAMES / 3D ART / PERSONAL PORTFOLIO</small></span>
+              </div>
+              <div class="model-heading-copy">
+                <span class="model-kicker">PHÒNG TRƯNG BÀY 3D</span>
+                <h2 id="model-title">Đẹp từ<br><em>mọi góc nhìn.</em></h2>
+                <p>Khám phá các mô hình 3D được thể hiện với sự chỉnh chu trong từng chi tiết, từ ý tưởng đến hình ảnh thực tế.</p>
+              </div>
+              <div class="model-heading-signature" aria-hidden="true"><i></i><span>ART MEETS REAL-TIME</span></div>
+            </header>
+
             <div class="model-stage-topbar">
               <span class="model-live"><i></i> LIVE RENDER</span>
               <span id="hudPolyCount">Sẵn sàng tải mô hình</span>
             </div>
 
             <div class="model-stage" id="modelStage">
-              <span class="object-watermark" aria-hidden="true">FORM / 01</span>
+              <span class="object-watermark" aria-hidden="true">OBSIDIAN / 01</span>
               <div class="object-orbit" aria-hidden="true"></div>
               <div id="three-canvas-container" class="model-canvas" aria-label="Khung xem mô hình 3D"></div>
               <div class="model-boot" id="modelBoot">
                 <span class="model-boot-ring" aria-hidden="true"></span>
                 <strong>Bắt đầu khám phá</strong>
-                <small>Xoay vật thể. Đổi chất liệu. Tìm góc nhìn mới.</small>
-                <button type="button" id="modelBootButton">Mở phòng trưng bày ↗</button>
+                <small>Xoay vật thể, đổi chất liệu và tìm góc nhìn của riêng bạn.</small>
+                <button type="button" id="modelBootButton">Mở phòng trưng bày</button>
               </div>
               <div class="model-stage-caption">
-                <span>DRAG TO ROTATE</span>
-                <span>REAL-TIME PBR</span>
+                <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11V7a2 2 0 0 1 4 0v4-1a2 2 0 0 1 4 0v2-1a2 2 0 0 1 4 0v5a6 6 0 0 1-6 6h-2.5a6 6 0 0 1-5-2.7L3.7 15a2 2 0 0 1 3.1-2.5L8 14"></path></svg> KÉO ĐỂ XOAY</span>
+                <span>DRIVE IMAGINATION FURTHER</span>
               </div>
             </div>
 
             <div class="model-controls" aria-label="Điều khiển mô hình 3D">
               <div class="model-control-group model-select-group">
-                <span class="model-control-label">MODEL</span>
-                <button class="choice-pill-btn is-active" type="button" data-model="racecar" aria-pressed="true">
-                  <span>01</span><strong>Apex Hypercar</strong><small>10K tris</small>
-                </button>
-                <button class="choice-pill-btn" type="button" data-model="eclipsedroot" aria-pressed="false">
-                  <span>02</span><strong>Eclipsed Root</strong><small>57K tris</small>
-                </button>
+                <span class="model-control-label"><strong>Chọn mô hình</strong><small id="modelSelectionCount">1 / 5</small></span>
+                <div class="model-select-track">
+                  <button class="choice-pill-btn is-active" type="button" data-model="racecar" aria-pressed="true">
+                    <span class="model-choice-visual" aria-hidden="true">
+                      <svg viewBox="0 0 140 70"><path d="M15 48 23 36l17-7 17-15h37l21 15 13 5 5 14H15Z"></path><path d="m48 29 14-11h28l13 11H48Z"></path><circle cx="40" cy="49" r="10"></circle><circle cx="108" cy="49" r="10"></circle><path d="M12 48h124"></path></svg>
+                    </span>
+                    <span class="model-choice-copy"><strong>Apex Hypercar</strong><small>Futuristic vehicle · 10K tris</small></span>
+                  </button>
+                  <button class="choice-pill-btn" type="button" data-model="eclipsedroot" aria-pressed="false">
+                    <span class="model-choice-visual" aria-hidden="true">
+                      <svg viewBox="0 0 140 70"><path d="M70 59c-4-17-3-28 4-39m-4 27L48 31m25 7 22-19M59 42 42 17m40 24 22-13M70 59 45 64m25-5 27 5"></path><path d="M54 54c11-6 21-7 33 0"></path></svg>
+                    </span>
+                    <span class="model-choice-copy"><strong>Eclipsed Root</strong><small>Fantasy organic · 57K tris</small></span>
+                  </button>
+                  <button class="choice-pill-btn" type="button" data-model="soulcompanion" aria-pressed="false">
+                    <span class="model-choice-visual" aria-hidden="true">
+                      <svg viewBox="0 0 140 70"><path d="M70 14c-11 0-20 9-20 20 0 7 4 13 10 17l-4 9 14-6 14 6-4-9c6-4 10-10 10-17 0-11-9-20-20-20Z"></path><path d="M57 22 48 14m35 8 9-8M61 36c5 5 13 5 18 0"></path><circle cx="63" cy="31" r="2"></circle><circle cx="77" cy="31" r="2"></circle><path d="m35 29-7 4 7 4m70-8 7 4-7 4"></path></svg>
+                    </span>
+                    <span class="model-choice-copy"><strong>Soul Companion</strong><small>Spirit companion · 60K tris</small></span>
+                  </button>
+                  <button class="choice-pill-btn" type="button" data-model="catgirl" aria-pressed="false">
+                    <span class="model-choice-visual" aria-hidden="true">
+                      <svg viewBox="0 0 140 70"><path d="m54 22 7-12 9 9 9-9 7 12c5 5 8 12 8 20 0 14-11 22-24 22S46 56 46 42c0-8 3-15 8-20Z"></path><path d="M58 40c7 5 17 5 24 0M59 31h3m16 0h3M46 52c-12 3-14 11-7 14"></path></svg>
+                    </span>
+                    <span class="model-choice-copy"><strong>Fantasy Cat Girl</strong><small>Fantasy character · 11K tris</small></span>
+                  </button>
+                  <button class="choice-pill-btn" type="button" data-model="warlord" aria-pressed="false">
+                    <span class="model-choice-visual" aria-hidden="true">
+                      <svg viewBox="0 0 140 70"><path d="M70 10 54 18l-5 18 8 24h26l8-24-5-18-16-8Z"></path><path d="m54 18-15 9 10 9m37-18 15 9-10 9M60 29h20M65 38h10M57 60l-12 6m38-6 12 6"></path><path d="M70 10v50"></path></svg>
+                    </span>
+                    <span class="model-choice-copy"><strong>Armored Warlord</strong><small>Armored character · 10K tris</small></span>
+                  </button>
+                </div>
               </div>
 
               <div class="model-control-group">
-                <span class="model-control-label">MATERIAL</span>
+                <span class="model-control-label"><strong>Chế độ hiển thị vật liệu</strong></span>
                 <div class="model-segmented">
-                  <button class="mode-btn is-active" type="button" data-mode="pbr" aria-pressed="true">PBR</button>
-                  <button class="mode-btn" type="button" data-mode="clay" aria-pressed="false">CLAY</button>
-                  <button class="mode-btn" type="button" data-mode="wireframe" aria-pressed="false">MESH</button>
-                  <button class="mode-btn" type="button" data-mode="normal" aria-pressed="false">NORMAL</button>
+                  <button class="mode-btn is-active" type="button" data-mode="pbr" aria-pressed="true"><i class="material-swatch material-pbr" aria-hidden="true"></i><span>PBR</span></button>
+                  <button class="mode-btn" type="button" data-mode="clay" aria-pressed="false"><i class="material-swatch material-clay" aria-hidden="true"></i><span>Clay</span></button>
+                  <button class="mode-btn" type="button" data-mode="wireframe" aria-pressed="false"><i class="material-swatch material-wire" aria-hidden="true"></i><span>Wireframe</span></button>
+                  <button class="mode-btn" type="button" data-mode="normal" aria-pressed="false"><i class="material-swatch material-normal" aria-hidden="true"></i><span>Normal</span></button>
+                </div>
+              </div>
+
+              <div class="model-control-group model-light-group">
+                <span class="model-control-label"><strong>Thiết lập ánh sáng</strong></span>
+                <div class="model-lighting" role="group" aria-label="Chọn ánh sáng">
+                  <button class="light-preset is-active" type="button" data-light="studio" aria-pressed="true"><i class="light-orb light-studio" aria-hidden="true"></i><span>Studio</span></button>
+                  <button class="light-preset" type="button" data-light="sunset" aria-pressed="false"><i class="light-orb light-sunset" aria-hidden="true"></i><span>Sunset</span></button>
+                  <button class="light-preset" type="button" data-light="night" aria-pressed="false"><i class="light-orb light-night" aria-hidden="true"></i><span>Night</span></button>
+                  <button class="light-preset" type="button" data-light="moody" aria-pressed="false"><i class="light-orb light-moody" aria-hidden="true"></i><span>Moody</span></button>
                 </div>
               </div>
 
               <div class="model-control-group model-action-group">
-                <span class="model-control-label">SCENE</span>
-                <button class="model-action is-active" type="button" id="btnAutoRotate" aria-pressed="true"><span>↻</span> Auto rotate</button>
-                <button class="model-action" type="button" id="btnToggleLighting"><span>◐</span> Light: Cyber</button>
-                <button class="model-action" type="button" id="btnResetCamera"><span>⌖</span> Reset view</button>
+                <button class="model-action is-active" type="button" id="btnAutoRotate" aria-pressed="true">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"></path></svg>
+                  <span><strong>Tự động xoay</strong><small>Mô hình xoay chậm khi không thao tác</small></span><i class="model-switch" aria-hidden="true"></i>
+                </button>
+                <button class="model-action" type="button" id="btnResetCamera">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v6h6"></path></svg>
+                  <span><strong>Đặt lại góc nhìn</strong><small>Trở về góc trưng bày mặc định</small></span>
+                </button>
+              </div>
+
+              <div class="model-control-meta" aria-label="Thông số mô hình">
+                <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 16H4L12 3Zm0 5v6m0 2v.01"></path></svg><strong id="modelPolySummary">10K tris</strong><small>Low-poly optimized</small></span>
+                <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4-8 4-8-4 8-4Zm-8 9 8 4 8-4m-16 5 8 4 8-4"></path></svg><strong>Real-time PBR</strong><small>Game ready</small></span>
               </div>
             </div>
           </div>
@@ -1382,6 +1431,7 @@
             <span id="modelDisplayName">APEX HYPERCAR / 01</span>
             <p id="modelDisplayDescription">Một mẫu xe khí động học với bề mặt PBR, ánh sáng neon và chuyển động turntable thời gian thực.</p>
           </footer>
+          <p class="model-status" id="modelControlStatus" aria-live="polite"></p>
         </section>
 
     
