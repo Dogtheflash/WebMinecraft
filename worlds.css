@@ -13,6 +13,7 @@
 /* -------------------------------------------------------------------------- */
 /* GAME EXPLORER DASHBOARD                                                    */
 /* -------------------------------------------------------------------------- */
+.game-explorer[hidden] { display:none!important; }
 .game-explorer {
   --explorer-accent:#70e3df;
   position:relative;

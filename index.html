@@ -1207,9 +1207,9 @@
 </section>
 
 
-        <!-- ================== GAME EXPLORER DASHBOARD ================== -->
-        <section class="game-explorer" id="favorite-games" aria-labelledby="favorite-games-heading">
-          <img class="game-explorer-backdrop" id="gameExplorerBackdrop" src="data/games/cyberpunk_2077.png" alt="" aria-hidden="true">
+        <!-- Game Explorer tạm ẩn; giữ nguyên mã và asset để có thể bật lại sau. -->
+        <section class="game-explorer" id="favorite-games" aria-labelledby="favorite-games-heading" data-feature-disabled="true" hidden aria-hidden="true">
+          <img class="game-explorer-backdrop" id="gameExplorerBackdrop" data-disabled-src="data/games/cyberpunk_2077.png" alt="" aria-hidden="true">
           <div class="game-explorer-shade" aria-hidden="true"></div>
 
           <div class="game-dashboard">
@@ -1234,9 +1234,9 @@
             </header>
 
             <article class="game-feature" aria-live="polite">
-              <img class="game-feature-image-current" id="gameFeatureImage" src="data/games/cyberpunk_2077.png" alt="Cyberpunk 2077 — Night City" decoding="async">
+              <img class="game-feature-image-current" id="gameFeatureImage" data-disabled-src="data/games/cyberpunk_2077.png" alt="Cyberpunk 2077 — Night City" decoding="async">
               <img class="game-feature-image-next" id="gameFeatureImageNext" alt="" aria-hidden="true" decoding="async">
-              <video id="gameFeatureVideo" loop playsinline preload="none" poster="data/games/cyberpunk_2077.png"></video>
+              <video id="gameFeatureVideo" loop playsinline preload="none" data-disabled-poster="data/games/cyberpunk_2077.png"></video>
               <div class="game-video-volume" id="gameVideoVolume" role="group" aria-label="Âm lượng video">
                 <button type="button" id="gameVideoMute" aria-label="Tắt tiếng video" aria-pressed="false">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1289,23 +1289,23 @@
 
               <div class="game-library-list" id="gameLibraryList">
                 <button class="game-library-item is-active" type="button" data-game-key="cyberpunk" data-search="cyberpunk 2077 action rpg night city cd projekt red" aria-current="true">
-                  <img src="data/games/cyberpunk_2077.png" alt="" loading="lazy" decoding="async">
+                  <img data-disabled-src="data/games/cyberpunk_2077.png" alt="" loading="lazy" decoding="async">
                   <span><strong>Cyberpunk 2077</strong><small>Action RPG · Night City</small><em>CD Projekt Red</em></span><i aria-hidden="true">01</i>
                 </button>
                 <button class="game-library-item" type="button" data-game-key="gtav" data-search="grand theft auto v action open world los santos rockstar games">
-                  <img src="data/games/gta_v_enhanced.png" alt="" loading="lazy" decoding="async">
+                  <img data-disabled-src="data/games/gta_v_enhanced.png" alt="" loading="lazy" decoding="async">
                   <span><strong>Grand Theft Auto V</strong><small>Action · Los Santos</small><em>Rockstar Games</em></span><i aria-hidden="true">02</i>
                 </button>
                 <button class="game-library-item" type="button" data-game-key="gtavi" data-search="grand theft auto vi action open world leonida rockstar games">
-                  <img src="data/games/gta6.jpg" alt="" loading="lazy" decoding="async">
+                  <img data-disabled-src="data/games/gta6.jpg" alt="" loading="lazy" decoding="async">
                   <span><strong>Grand Theft Auto VI</strong><small>Action · Leonida</small><em>Rockstar Games</em></span><i aria-hidden="true">03</i>
                 </button>
                 <button class="game-library-item" type="button" data-game-key="rdr2" data-search="red dead redemption 2 western adventure outlaws rockstar games">
-                  <img src="data/games/red_dead_redemption.png" alt="" loading="lazy" decoding="async">
+                  <img data-disabled-src="data/games/red_dead_redemption.png" alt="" loading="lazy" decoding="async">
                   <span><strong>Red Dead Redemption II</strong><small>Western · 1899</small><em>Rockstar Games</em></span><i aria-hidden="true">04</i>
                 </button>
                 <button class="game-library-item" type="button" data-game-key="stray" data-search="stray adventure indie walled city blue twelve studio">
-                  <img src="data/games/stray.png" alt="" loading="lazy" decoding="async">
+                  <img data-disabled-src="data/games/stray.png" alt="" loading="lazy" decoding="async">
                   <span><strong>Stray</strong><small>Adventure · Walled City 99</small><em>BlueTwelve Studio</em></span><i aria-hidden="true">05</i>
                 </button>
               </div>

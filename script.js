@@ -4304,6 +4304,13 @@ window.ModelViewer3D = ModelViewer3D;
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const explorer = document.getElementById('favorite-games');
+  if (explorer?.hidden || explorer?.dataset.featureDisabled === 'true') return;
+  explorer?.querySelectorAll('[data-disabled-src]').forEach((asset) => {
+    asset.src = asset.dataset.disabledSrc;
+  });
+  explorer?.querySelectorAll('[data-disabled-poster]').forEach((video) => {
+    video.poster = video.dataset.disabledPoster;
+  });
   const games = [
     {
       key: 'cyberpunk', title: 'Cyberpunk 2077', subtitle: 'Night City · 2077', genre: 'Action RPG',
