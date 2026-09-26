@@ -568,6 +568,7 @@
 .model-boot button:hover { transform:translateY(-2px); filter:brightness(1.08); }
 .model-boot.is-loading button { pointer-events:none; opacity:.55; }
 .model-stage-caption { position:absolute; z-index:3; left:24px; right:24px; bottom:18px; display:flex; align-items:center; justify-content:space-between; color:rgba(255,255,255,.4); font:600 7px/1 'JetBrains Mono',monospace; letter-spacing:.16em; pointer-events:none; }
+.model-atelier[hidden] { display:none!important; }
 .model-stage-caption span { display:flex; align-items:center; gap:8px; }
 .model-stage-caption svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
 .model-controls {

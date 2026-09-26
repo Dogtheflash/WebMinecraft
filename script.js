@@ -4630,6 +4630,7 @@ window.ModelViewer3D = ModelViewer3D;
   }
 
   const modelSection = document.getElementById('model-creator');
+  if (modelSection?.hidden || modelSection?.dataset.featureDisabled === 'true') return;
   const stage = document.getElementById('modelStage');
   const boot = document.getElementById('modelBoot');
   const bootButton = document.getElementById('modelBootButton');
