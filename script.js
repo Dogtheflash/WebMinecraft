@@ -3526,15 +3526,8 @@ if (interactiveCard) {
   function openArcade() {
     overlay.classList.remove('hidden');
     document.body.classList.add('arcade-active');
-    if (iframe && !iframe.srcdoc) {
-      try {
-        const bin = atob(ARCADE_B64);
-        const bytes = new Uint8Array(bin.length);
-        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-        iframe.srcdoc = new TextDecoder('utf-8').decode(bytes);
-      } catch (e) {
-        iframe.src = 'arcade.html';
-      }
+    if (iframe && !iframe.getAttribute('src')) {
+      iframe.src = 'arcade.html';
     }
   }
 
