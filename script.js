@@ -3127,7 +3127,7 @@ if (interactiveCard) {
         event: 'command',
         func: func,
         args: args || []
-      }), '*');
+      }), 'https://www.youtube.com');
     }
   }
 
@@ -3536,7 +3536,7 @@ if (interactiveCard) {
     document.body.classList.remove('arcade-active');
     if (iframe && iframe.contentWindow) {
       try {
-        iframe.contentWindow.postMessage({ type: 'PAUSE_ARCADE' }, '*');
+        iframe.contentWindow.postMessage({ type: 'PAUSE_ARCADE' }, window.location.origin);
       } catch (e) {}
     }
   }
@@ -3544,6 +3544,7 @@ if (interactiveCard) {
   if (openBtn) openBtn.addEventListener('click', openArcade);
 
   window.addEventListener('message', (e) => {
+    if (e.origin !== window.location.origin || e.source !== iframe.contentWindow) return;
     if (e.data && (e.data.type === 'CLOSE_ARCADE' || e.data === 'CLOSE_ARCADE')) {
       closeArcade();
     }
