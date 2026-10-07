@@ -2659,11 +2659,8 @@ h1, h2, .sk-title-text, .color-page-head h2, .mc-bot-name, .steam-display-name {
   -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
           mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
   animation: ringSpin 9s linear infinite;
-  /* --audio-bass do audio visualizer bơm vào, 0 → 1 */
-  transform: scale(calc(1 + var(--audio-bass, 0) * .07));
-  opacity: calc(.55 + var(--audio-bass, 0) * .45);
-  transition: opacity .12s linear;
-  will-change: transform;
+  transform: none;
+  opacity: .72;
 }
 @keyframes ringSpin { to { rotate: 360deg; } }
 
@@ -5349,4 +5346,325 @@ html {
   .fav-media img,
   .model-boot-ring,
   .model-live i { transition: none; animation: none; }
+}
+
+/* ==========================================================================
+   COMPACT PROFILE + MUSIC DOCK
+   Match the restrained proportions of the supplied reference while keeping
+   every existing control and inner page available.
+   ========================================================================== */
+.profile-screen.active {
+  padding: 18px 14px 112px !important;
+}
+
+.profile-console {
+  width: min(410px, calc(100vw - 28px));
+  border-radius: 14px;
+}
+
+.profile-banner { height: 100px; }
+.profile-banner::after { height: 38px; }
+
+.profile-header {
+  gap: 11px;
+  margin-top: -32px;
+  padding: 0 14px 7px;
+}
+
+.avatar-wrap {
+  width: 70px;
+  height: 70px;
+}
+
+.avatar-image,
+.avatar-fallback { border-width: 4px; }
+.avatar-decoration { transform: scale(1.06); }
+.status-orb {
+  right: 1px;
+  bottom: 4px;
+  width: 21px;
+  height: 21px;
+  border-width: 4px;
+}
+.avatar-ring { inset: -5px; }
+
+.profile-header h1 {
+  font-size: clamp(22px, 5vw, 25px);
+  line-height: 1;
+}
+.profile-console .identity-block { padding-bottom: 2px; }
+.profile-console .username {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.profile-console .presence-card,
+.profile-console .activity-card,
+.profile-console .about-card {
+  margin: 0 12px 7px;
+  padding: 8px 9px;
+  border-radius: 12px;
+}
+
+.profile-console .presence-card {
+  min-height: 64px;
+  gap: 8px;
+}
+
+.profile-console .presence-card h2,
+.profile-console .activity-card h2,
+.profile-console .about-card h2 {
+  margin-bottom: 3px;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.profile-console .presence-card p,
+.profile-console .activity-card p,
+.profile-console .about-card p,
+.profile-console #custom-status-line {
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+
+.clock-inline {
+  min-width: 88px;
+  gap: 1px;
+  padding: 6px 8px;
+}
+.clock-inline-time { font-size: 11px; }
+.clock-inline-date,
+.clock-inline-phase { font-size: 8px; }
+
+.css-chibi {
+  right: 43px;
+  --chibi-scale: .72;
+  transform-origin: bottom center;
+}
+.css-cat {
+  right: 79px;
+  transform: scale(.72);
+  transform-origin: bottom right;
+}
+
+.profile-console .meta-grid {
+  gap: 6px;
+  margin: 0 12px 7px;
+}
+.profile-console .meta-grid div {
+  min-height: 44px;
+  padding: 7px 8px;
+  border-radius: 11px;
+}
+.profile-console .meta-grid span {
+  margin-bottom: 2px;
+  font-size: 10px;
+}
+.profile-console .meta-grid strong { font-size: 11.5px; }
+.profile-console .badge-list { gap: 3px; min-height: 18px; }
+.profile-console .discord-badge,
+.profile-console .discord-badge img {
+  width: 18px;
+  height: 18px;
+}
+
+.profile-console .about-card { padding-bottom: 8px; }
+.profile-console .tags {
+  gap: 5px;
+  margin-top: 7px;
+}
+.profile-console .tags span {
+  padding: 4px 8px;
+  font-size: 10px;
+}
+
+.profile-console .social-row {
+  gap: 7px;
+  padding: 0 12px 6px;
+}
+.profile-console .social-row a {
+  width: 32px;
+  height: 32px;
+}
+.profile-console .social-row svg {
+  width: 15px;
+  height: 15px;
+}
+
+.profile-console .profile-footer {
+  gap: 5px;
+  padding: 7px 12px 8px;
+}
+.profile-console .profile-footer a {
+  gap: 4px;
+  padding: 5px 7px;
+  font-size: 10.5px;
+  border-radius: 8px;
+}
+.profile-console .steam-icon {
+  width: 13px !important;
+  height: 13px !important;
+}
+
+.theme-switcher {
+  top: 7px;
+  right: 7px;
+  gap: 4px;
+}
+.theme-toggle-btn,
+.warp-btn {
+  width: 30px;
+  height: 30px;
+  margin-left: 0;
+  font-size: 13px;
+}
+
+/* Reference-style compact music dock. */
+.music-player {
+  bottom: 10px;
+  width: min(410px, calc(100vw - 28px));
+  min-height: 58px;
+  gap: 8px;
+  padding: 7px 9px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 12px;
+  background: rgba(8, 10, 21, .86);
+  color: #edf3ff;
+  box-shadow: 0 14px 38px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.07);
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+}
+
+.player-art {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 8px;
+  background: url('./data/background/banner.gif') center / cover no-repeat;
+  box-shadow: 0 5px 16px rgba(0,0,0,.38);
+  animation: none;
+}
+.player-art::before,
+.player-art::after { display: none; }
+
+.track-meta strong {
+  color: #f3f6ff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.track-time {
+  margin-top: 2px;
+  font-size: 9px;
+  line-height: 1;
+}
+.progress {
+  height: 3px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+.progress:hover { height: 5px; }
+.progress span::after { display: none; }
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex: 0 0 auto;
+}
+.play-btn,
+.next-btn {
+  width: 27px;
+  height: 27px;
+  min-width: 27px;
+  padding: 0;
+  border-radius: 7px;
+  font-size: 14px;
+}
+.play-btn:hover,
+.next-btn:hover { background: rgba(255,255,255,.08); }
+
+.volume-control {
+  position: relative;
+  top: auto;
+  right: auto;
+  transform: none;
+}
+.volume-toggle {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  font-size: 13px;
+}
+.volume-control input {
+  left: auto;
+  right: -2px;
+  bottom: 36px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 9px;
+  background: rgba(8,10,21,.94);
+  box-shadow: 0 10px 26px rgba(0,0,0,.4);
+}
+.volume-control.open input { width: 104px; }
+
+@media (max-width: 620px) {
+  .profile-screen.active { padding: 12px 10px 100px !important; }
+  .profile-console,
+  .music-player { width: min(410px, calc(100vw - 20px)); }
+
+  .theme-switcher {
+    top: 7px;
+    right: 7px;
+    flex-direction: row;
+    align-items: center;
+  }
+  .theme-toggle-btn,
+  .warp-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+
+  .clock-inline {
+    width: auto;
+    min-width: 88px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 6px 8px;
+    gap: 1px;
+    border-radius: 999px;
+  }
+  .clock-inline-top { gap: 4px; }
+  .clock-inline-time { font-size: 11px; }
+  .clock-inline-dot { width: 5px; height: 5px; }
+  .ci-sep { margin: 0; font-size: inherit; }
+  .clock-inline-date,
+  .clock-inline-phase {
+    font-size: 8px;
+    text-align: right;
+  }
+}
+
+@media (max-width: 380px) {
+  .profile-console .presence-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .clock-inline {
+    width: 100%;
+    align-items: center;
+    border-radius: 10px;
+  }
+  .player-controls { gap: 1px; }
+  .play-btn,
+  .next-btn { width: 25px; min-width: 25px; }
+  .volume-toggle { width: 25px; }
 }
