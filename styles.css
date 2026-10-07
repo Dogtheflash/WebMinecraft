@@ -5668,3 +5668,284 @@ html {
   .next-btn { width: 25px; min-width: 25px; }
   .volume-toggle { width: 25px; }
 }
+
+/* ==========================================================================
+   COMPACT INNER TOOLS
+   Keep Minecraft and Text Color aligned with the 410 x 493 profile card.
+   Steam intentionally keeps its existing wide layout.
+   ========================================================================== */
+#minecraft-page,
+#color-page {
+  box-sizing: border-box;
+  min-height: 493px;
+}
+
+#minecraft-page {
+  padding: 10px 12px 12px;
+}
+
+#minecraft-page .color-page-head,
+#color-page .color-page-head {
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+#minecraft-page .color-page-head h2,
+#color-page .color-page-head h2 {
+  font-size: 19px;
+  line-height: 1.08;
+}
+
+#minecraft-page .color-page-head .eyebrow,
+#color-page .color-page-head .eyebrow {
+  margin-bottom: 2px;
+  font-size: 8px;
+  line-height: 1.2;
+}
+
+#minecraft-page .mini-btn,
+#color-page .mini-btn {
+  min-height: 32px;
+  padding: 6px 9px;
+  border-radius: 9px;
+  font-size: 11px;
+}
+
+#minecraft-page .mc-bot-card {
+  gap: 9px;
+  margin-bottom: 7px;
+  padding: 8px 9px;
+  border-radius: 11px;
+}
+
+#minecraft-page .mc-bot-avatar,
+#minecraft-page .mc-bot-avatar img {
+  width: 42px;
+  height: 42px;
+}
+
+#minecraft-page .mc-bot-avatar img {
+  border-radius: 10px;
+}
+
+#minecraft-page .mc-bot-status-dot {
+  right: -2px;
+  bottom: -2px;
+  width: 13px;
+  height: 13px;
+  border-width: 3px;
+}
+
+#minecraft-page .mc-bot-tag {
+  margin-bottom: 2px;
+  font-size: 7.5px;
+}
+
+#minecraft-page .mc-bot-name {
+  margin-bottom: 2px;
+  font-size: 13px;
+}
+
+#minecraft-page .mc-bot-desc {
+  font-size: 9px;
+}
+
+#minecraft-page .mc-action-row {
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+#minecraft-page .mc-join-btn {
+  gap: 5px;
+  padding: 7px 10px;
+  font-size: 10px;
+}
+
+#minecraft-page .mc-join-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+#minecraft-page .mc-updated {
+  font-size: 8px;
+}
+
+#minecraft-page .mc-stats-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  margin-bottom: 7px;
+}
+
+#minecraft-page .mc-stat-card {
+  min-height: 46px;
+  padding: 7px 7px;
+  border-radius: 9px;
+}
+
+#minecraft-page .mc-stat-card.wide {
+  grid-column: span 2;
+}
+
+#minecraft-page .mc-stat-label {
+  margin-bottom: 3px;
+  font-size: 7px;
+  letter-spacing: .08em;
+}
+
+#minecraft-page .mc-stat-value {
+  font-size: 10.5px;
+}
+
+#minecraft-page .mc-ip-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+#minecraft-page .mc-copy-ip-btn {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  padding: 0 !important;
+  border-radius: 7px !important;
+}
+
+#minecraft-page .mc-feature-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+#minecraft-page .mc-feature-card {
+  padding: 7px;
+  border-radius: 9px;
+}
+
+#minecraft-page .mc-feature-num {
+  margin-bottom: 3px;
+  font-size: 8px;
+}
+
+#minecraft-page .mc-feature-title {
+  margin-bottom: 3px;
+  font-size: 10.5px;
+  line-height: 1.2;
+}
+
+#minecraft-page .mc-feature-desc {
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+#color-page {
+  padding: 10px 12px 12px;
+}
+
+#color-page .field-block {
+  gap: 3px;
+  margin-bottom: 6px;
+  font-size: 9.5px;
+}
+
+#color-page .field-block textarea,
+#color-page .field-block select {
+  padding: 7px 8px;
+  border-radius: 9px;
+  font-size: 10.5px;
+}
+
+#color-page .field-block select {
+  min-height: 32px;
+  padding-right: 28px;
+  background-position: center, right 7px center;
+  background-size: 100% 100%, 13px 13px;
+}
+
+#color-page #tc-input-text {
+  height: 43px;
+  min-height: 43px;
+  resize: none;
+}
+
+#color-page .tool-grid {
+  gap: 6px;
+}
+
+#color-page .color-picks {
+  gap: 5px;
+  margin: 2px 0 6px;
+}
+
+#color-page .color-picks label {
+  gap: 4px;
+  min-width: 0;
+  padding: 5px 6px;
+  border-radius: 9px;
+  font-size: 9px;
+}
+
+#color-page .color-picks input {
+  width: 31px;
+  height: 21px;
+  border-radius: 6px;
+}
+
+#color-page .tool-grid.compact {
+  align-items: center;
+}
+
+#color-page .toggle-row {
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+#color-page .toggle-row label {
+  min-height: 29px;
+  padding: 5px 7px;
+  font-size: 9px;
+}
+
+#color-page .toggle-row input {
+  width: 11px;
+  height: 11px;
+}
+
+#color-page .preview-card {
+  margin: 1px 0 6px;
+  padding: 7px 8px;
+  border-radius: 10px;
+}
+
+#color-page .preview-card > span {
+  margin-bottom: 4px;
+  font-size: 8px;
+}
+
+#color-page .tc-preview {
+  min-height: 24px;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+#color-page .output-block textarea {
+  height: 58px;
+  min-height: 58px;
+  resize: none;
+}
+
+#color-page .copy-btn {
+  padding: 8px 10px;
+  border-radius: 9px;
+  font-size: 10px;
+}
+
+@media (max-width: 380px) {
+  #minecraft-page,
+  #color-page {
+    min-height: 493px;
+  }
+
+  #minecraft-page .mc-stat-label { font-size: 6.5px; }
+  #minecraft-page .mc-stat-value { font-size: 9.5px; }
+  #minecraft-page .mc-feature-desc { font-size: 8px; }
+}
