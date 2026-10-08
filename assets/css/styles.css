@@ -4834,8 +4834,9 @@ body.terminal-active {
   height: 40px;
   border: 1px solid rgba(255,255,255,.18);
   border-radius: 8px;
-  background: url('../background/banner.gif') center / cover no-repeat;
-  object-fit: cover;
+  background: transparent;
+  object-fit: contain;
+  object-position: center;
   box-shadow: 0 5px 16px rgba(0,0,0,.38);
   animation: none;
 }
@@ -4889,7 +4890,7 @@ body.terminal-active {
   display: flex;
   align-items: center;
   gap: 3px;
-  min-width: 114px;
+  min-width: 28px;
   flex: 0 0 auto;
 }
 .volume-toggle {
@@ -4927,6 +4928,31 @@ body.terminal-active {
   transition: none;
 }
 .volume-control.open input { width: 56px; }
+
+/* Expand inward; the speaker stays at the right edge of the music dock. */
+.volume-toggle { order: 2; flex-shrink: 0; }
+.volume-details {
+  order: 1;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  width: 0;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  transition: width .2s ease, opacity .2s ease;
+}
+.volume-details input { flex-shrink: 0; }
+.volume-control:hover .volume-details,
+.volume-control:focus-within .volume-details,
+.volume-control.open .volume-details {
+  width: 83px;
+  visibility: visible;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .volume-details { transition: none; }
+}
 
 .volume-control input::-webkit-slider-runnable-track {
   height: 4px;
@@ -5032,11 +5058,14 @@ body.terminal-active {
   .prev-btn,
   .play-btn,
   .next-btn { width: 25px; min-width: 25px; }
-  .volume-control { gap: 2px; min-width: 84px; }
+  .volume-control { gap: 2px; min-width: 24px; }
   .volume-toggle { width: 24px; min-width: 24px; }
   .volume-control input,
   .volume-control.open input { width: 42px; }
   .volume-value { min-width: 14px; font-size: 8px; }
+  .volume-control:hover .volume-details,
+  .volume-control:focus-within .volume-details,
+  .volume-control.open .volume-details { width: 61px; }
 }
 
 /* ==========================================================================

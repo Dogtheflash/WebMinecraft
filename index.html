@@ -913,7 +913,7 @@
 
   <!-- ========== MUSIC PLAYER ========== -->
   <aside id="music-player" class="music-player glass-panel hidden" aria-label="Trình phát nhạc">
-    <img id="track-cover" class="player-art" src="assets/music/nightcore-rise-up.webp" alt="Ảnh bìa Nightcore - Rise Up" width="40" height="40" decoding="async" />
+    <img id="track-cover" class="player-art" src="assets/music/nightcore-rise-up.jpg" alt="Ảnh bìa Nightcore - Rise Up" width="40" height="40" decoding="async" />
     <div class="track-meta">
       <strong id="track-title">Beautiful Piano Music</strong>
       <div class="track-time"><span id="current-time">0:00</span><span id="duration-time">0:00</span></div>
@@ -926,8 +926,10 @@
     </div>
     <div id="volume-control" class="volume-control" aria-label="Âm lượng nhạc">
       <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Tắt âm lượng" title="Tắt âm lượng">🔊</button>
+      <div class="volume-details">
       <input id="volume-slider" type="range" min="0" max="100" step="1" value="50" aria-label="Chỉnh âm lượng nhạc" aria-valuetext="50 phần trăm" />
       <output id="volume-value" class="volume-value" for="volume-slider" aria-live="polite">50</output>
+      </div>
     </div>
     <audio id="audio-player" preload="metadata">
       <source src="assets/audio/Nightcore-Rise-Up.mp3" type="audio/mpeg" />

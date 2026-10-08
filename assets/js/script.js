@@ -642,9 +642,9 @@ const durationTimeEl = document.getElementById('duration-time');
 const trackUrl = (fileName) => new URL(`assets/audio/${fileName}`, document.baseURI).href;
 const trackArtUrl = (fileName) => new URL(`assets/music/${fileName}`, document.baseURI).href;
 const tracks = [
-  { title: 'Nightcore - Rise Up', src: trackUrl('Nightcore-Rise-Up.mp3'), art: trackArtUrl('nightcore-rise-up.webp') },
-  { title: 'Esoa (Ballad Version)', src: trackUrl('Esoa-Ballad-version.mp3'), art: trackArtUrl('esoa-ballad.webp') },
-  { title: 'Alan Walker - Alone', src: trackUrl('Music.mp3'), art: trackArtUrl('alan-walker-alone.webp') }
+  { title: 'Nightcore - Rise Up', src: trackUrl('Nightcore-Rise-Up.mp3'), art: trackArtUrl('nightcore-rise-up.jpg') },
+  { title: 'Esoa (Ballad Version)', src: trackUrl('Esoa-Ballad-version.mp3'), art: trackArtUrl('esoa-ballad.jpg') },
+  { title: 'Alan Walker - Alone', src: trackUrl('Music.mp3'), art: trackArtUrl('alan-walker-alone.jpg') }
 ];
 let currentTrackIndex = 0;
 let playing = false;
@@ -811,6 +811,10 @@ volumeSlider.addEventListener('input', () => setMusicVolume(volumeSlider.value))
 volumeSlider.addEventListener('change', () => setMusicVolume(volumeSlider.value));
 
 volumeToggle.addEventListener('click', () => {
+  if (window.matchMedia('(hover: none)').matches && !volumeControl.classList.contains('open')) {
+    volumeControl.classList.add('open');
+    return;
+  }
   if (audio.volume > 0) {
     lastAudibleVolume = audio.volume;
     setMusicVolume(0);
@@ -821,6 +825,15 @@ volumeToggle.addEventListener('click', () => {
 });
 
 audio.addEventListener('volumechange', updateMusicVolumeUI);
+document.addEventListener('pointerdown', (event) => {
+  if (!volumeControl.contains(event.target)) volumeControl.classList.remove('open');
+});
+volumeControl.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    volumeControl.classList.remove('open');
+    document.activeElement?.blur();
+  }
+});
 updateMusicVolumeUI();
 
 const colorTool = {
