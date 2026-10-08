@@ -5949,3 +5949,133 @@ html {
   #minecraft-page .mc-stat-value { font-size: 9.5px; }
   #minecraft-page .mc-feature-desc { font-size: 8px; }
 }
+
+/* ==========================================================================
+   COMPACT CMD WINDOW
+   Match the default profile footprint without changing terminal behaviour.
+   ========================================================================== */
+body.terminal-active .terminal-screen {
+  align-items: center;
+  padding: 14px;
+}
+
+body.terminal-active .cmd-window {
+  width: min(410px, calc(100vw - 28px));
+  height: min(493px, calc(100dvh - 28px));
+  max-height: calc(100dvh - 28px);
+  border-radius: 14px;
+}
+
+body.terminal-active .cmd-titlebar {
+  height: 34px;
+  padding: 0 9px;
+  gap: 6px;
+}
+
+body.terminal-active .cmd-controls {
+  gap: 5px;
+  margin-right: 7px;
+}
+
+body.terminal-active .cmd-controls span {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+body.terminal-active .cmd-tabs {
+  flex: 1 1 auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+body.terminal-active .cmd-tabs::-webkit-scrollbar {
+  display: none !important;
+}
+
+body.terminal-active .cmd-tab {
+  min-width: 106px;
+  max-width: 142px;
+  gap: 6px;
+  padding: 0 8px;
+  font-size: 11px;
+}
+
+body.terminal-active .cmd-tab.active-tab {
+  height: 26px;
+  margin: 4px 0;
+}
+
+body.terminal-active .cmd-tab-close {
+  width: 14px;
+  height: 14px;
+  font-size: 12px;
+}
+
+body.terminal-active .cmd-plus {
+  width: 27px;
+  height: 26px;
+  font-size: 14px;
+}
+
+body.terminal-active .cmd-body {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 34px);
+  min-height: 0;
+  overflow: hidden;
+  padding: 12px;
+  font-size: 10.5px;
+  line-height: 1.42;
+}
+
+body.terminal-active .cmd-log {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  scrollbar-width: thin;
+}
+
+body.terminal-active .cmd-prompt-line {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+body.terminal-active .cmd-prompt-line span {
+  white-space: nowrap;
+}
+
+body.terminal-active .cmd-continue {
+  flex: 0 0 auto;
+  min-height: 38px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+body.terminal-active .cmd-window.maximized {
+  height: min(640px, calc(100dvh - 20px));
+  max-height: calc(100dvh - 20px) !important;
+}
+
+@media (max-width: 420px) {
+  body.terminal-active .terminal-screen {
+    padding: 10px;
+  }
+
+  body.terminal-active .cmd-window {
+    width: calc(100vw - 20px);
+    height: min(493px, calc(100dvh - 20px));
+    max-height: calc(100dvh - 20px);
+    border-radius: 12px;
+  }
+
+  body.terminal-active .cmd-body {
+    padding: 11px;
+    font-size: 10px;
+  }
+}
