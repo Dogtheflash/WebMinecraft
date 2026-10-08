@@ -926,8 +926,9 @@
       <button id="next-track" class="next-btn" type="button" aria-label="Chuyển sang bài tiếp theo" title="Bài tiếp theo">⏭</button>
     </div>
     <div id="volume-control" class="volume-control" aria-label="Âm lượng nhạc">
-      <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Mở chỉnh âm lượng">🔊</button>
-      <input id="volume-slider" type="range" min="0" max="100" value="50" aria-label="Chỉnh âm lượng nhạc" />
+      <button id="volume-toggle" class="volume-toggle" type="button" aria-label="Tắt âm lượng" title="Tắt âm lượng">🔊</button>
+      <input id="volume-slider" type="range" min="0" max="100" step="1" value="50" aria-label="Chỉnh âm lượng nhạc" aria-valuetext="50 phần trăm" />
+      <output id="volume-value" class="volume-value" for="volume-slider" aria-live="polite">50</output>
     </div>
     <audio id="audio-player" preload="metadata">
       <source src="Audio/Nightcore-Rise-Up.mp3" type="audio/mpeg" />

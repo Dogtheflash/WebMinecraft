@@ -84,6 +84,7 @@ const progressBar = document.getElementById('progress-bar');
 const volumeControl = document.getElementById('volume-control');
 const volumeToggle = document.getElementById('volume-toggle');
 const volumeSlider = document.getElementById('volume-slider');
+const volumeValue = document.getElementById('volume-value');
 const presenceEls = {
   avatar: document.getElementById('avatar-image'),
   decoration: document.getElementById('avatar-decoration'),
@@ -694,8 +695,7 @@ async function playCurrentTrack() {
 
 async function startMusic() {
   try {
-    audio.volume = 0.15;
-    volumeSlider.value = 15;
+    setMusicVolume(15);
     if (!audio.paused) {
       playing = true;
       playToggle.textContent = '❚❚';
@@ -784,37 +784,48 @@ audio.addEventListener('timeupdate', () => {
   renderTrackMeta();
 });
 
-let volumeAutoCloseTimer;
+let lastAudibleVolume = Math.max(audio.volume, 0.5);
 
-function scheduleVolumeAutoClose() {
-  clearTimeout(volumeAutoCloseTimer);
-  if (!volumeControl.classList.contains('open')) return;
-  volumeAutoCloseTimer = setTimeout(() => {
-    volumeControl.classList.remove('open');
-  }, 2000);
+function updateMusicVolumeUI() {
+  const percent = Math.round(audio.volume * 100);
+  volumeSlider.value = String(percent);
+  volumeSlider.setAttribute('aria-valuetext', `${percent} phần trăm`);
+  volumeValue.value = String(percent);
+  volumeValue.textContent = String(percent);
+  volumeControl.style.setProperty('--music-volume', `${percent}%`);
+
+  const isMuted = percent === 0;
+  volumeToggle.textContent = isMuted ? '🔇' : percent < 45 ? '🔉' : '🔊';
+  volumeToggle.setAttribute('aria-label', isMuted ? 'Bật âm lượng' : 'Tắt âm lượng');
+  volumeToggle.title = isMuted ? 'Bật âm lượng' : 'Tắt âm lượng';
 }
 
-volumeToggle.addEventListener('click', (event) => {
-  event.stopPropagation();
-  volumeControl.classList.toggle('open');
-  if (volumeControl.classList.contains('open')) {
-    volumeSlider.focus();
-    scheduleVolumeAutoClose();
-  } else {
-    clearTimeout(volumeAutoCloseTimer);
+function setMusicVolume(percent) {
+  const numericValue = Number(percent);
+  const safePercent = Number.isFinite(numericValue)
+    ? Math.max(0, Math.min(100, numericValue))
+    : 0;
+
+  audio.volume = safePercent / 100;
+  if (safePercent > 0) lastAudibleVolume = audio.volume;
+  updateMusicVolumeUI();
+}
+
+volumeSlider.addEventListener('input', () => setMusicVolume(volumeSlider.value));
+volumeSlider.addEventListener('change', () => setMusicVolume(volumeSlider.value));
+
+volumeToggle.addEventListener('click', () => {
+  if (audio.volume > 0) {
+    lastAudibleVolume = audio.volume;
+    setMusicVolume(0);
+    return;
   }
+
+  setMusicVolume(Math.round((lastAudibleVolume || 0.5) * 100));
 });
 
-volumeControl.addEventListener('pointermove', scheduleVolumeAutoClose);
-volumeControl.addEventListener('pointerdown', scheduleVolumeAutoClose);
-
-volumeSlider.addEventListener('input', () => {
-  const volume = Number(volumeSlider.value) / 100;
-  audio.volume = volume;
-  const icon = volume === 0 ? '🔇' : volume < 0.45 ? '🔉' : '🔊';
-  volumeToggle.textContent = icon;
-  scheduleVolumeAutoClose();
-});
+audio.addEventListener('volumechange', updateMusicVolumeUI);
+updateMusicVolumeUI();
 
 const colorTool = {
   page: document.getElementById('color-page'),
