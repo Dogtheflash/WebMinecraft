@@ -5951,8 +5951,8 @@ html {
 }
 
 /* ==========================================================================
-   WIDE CMD WINDOW
-   Use a real terminal-like landscape ratio without changing behaviour.
+   COMPACT LANDSCAPE CMD WINDOW
+   Keep a smaller terminal-like landscape ratio without changing behaviour.
    ========================================================================== */
 body.terminal-active .terminal-screen {
   align-items: center;
@@ -5960,8 +5960,8 @@ body.terminal-active .terminal-screen {
 }
 
 body.terminal-active .cmd-window {
-  width: min(860px, calc(100vw - 28px));
-  height: min(493px, calc(100dvh - 28px));
+  width: min(640px, calc(100vw - 28px));
+  height: min(410px, calc(100dvh - 28px));
   max-height: calc(100dvh - 28px);
   border-radius: 14px;
 }
@@ -6069,7 +6069,7 @@ body.terminal-active .cmd-window.maximized {
 
   body.terminal-active .cmd-window {
     width: calc(100vw - 20px);
-    height: min(493px, calc(100dvh - 20px));
+    height: min(410px, calc(100dvh - 20px));
     max-height: calc(100dvh - 20px);
     border-radius: 12px;
   }
