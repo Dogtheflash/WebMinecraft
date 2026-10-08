@@ -16,13 +16,13 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+JP:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" />
-  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="icon" href="assets/profile/favicon.png" type="image/png">
   <meta property="og:type" content="profile" />
   <meta property="og:title" content="Chinatsu Kamado — profile" />
   <meta property="og:description" content="Hồ sơ cá nhân: Discord realtime, Steam, server Minecraft và vài thứ để nghịch." />
-  <meta property="og:image" content="./data/background/banner.gif" />
+  <meta property="og:image" content="./assets/background/banner.gif" />
   <meta name="twitter:card" content="summary_large_image" />
   <style>
     #cyber-loader {
@@ -198,7 +198,7 @@
   </div>
   <!-- ================================================= -->
 
-<script src="cyber-loader.js"></script>
+<script src="assets/js/cyber-loader.js"></script>
 
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
@@ -207,7 +207,7 @@
   <div class="grain" aria-hidden="true"></div>
   
     <!-- ========== BACKGROUND VIDEOS ========== -->
-  <video id="bg-video" class="bg-video" muted loop playsinline preload="metadata" poster="./data/background/bg-1440.jpg" data-bg-src="./data/background/chillnight.mp4" aria-hidden="true" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; object-fit: cover; z-index: -2; pointer-events: none;"></video>
+  <video id="bg-video" class="bg-video" muted loop playsinline preload="metadata" poster="./assets/background/bg-1440.jpg" data-bg-src="./assets/background/chillnight.mp4" aria-hidden="true" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; object-fit: cover; z-index: -2; pointer-events: none;"></video>
 
   <div id="bg-yt-container" class="bg-video hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; overflow: hidden;">
     <iframe id="bg-yt-player" 
@@ -269,7 +269,6 @@
                     <button id="yt-bg-toggle" class="warp-btn" type="button" aria-label="Chuyển sang Nền YouTube Lofi (kèm tiếng)" title="Bật/Tắt Nền YouTube (kèm tiếng)">🎬</button>
           <button id="yt-restart-btn" class="warp-btn hidden" type="button" aria-label="Quay lại từ đầu video YouTube" title="Quay lại từ đầu video YouTube">🔄</button>
           <button id="warp-btn" class="warp-btn" type="button" aria-label="Hyperspace Jump" title="Warp Speed!">🚀</button>
-          <button id="snake-game-btn" class="warp-btn" type="button" aria-label="The Midnight Arcade — 11 Mini-Games" title="The Midnight Arcade — 11 Trò Chơi">🕹️</button>
         </div>
         <!-- ========== END THEME SWITCHER ========== -->
 
@@ -285,7 +284,7 @@
         <div class="profile-banner">
           <!-- Parallax Layer 0: Base image -->
           <div class="plx-layer" data-depth="0.03">
-            <img id="banner-image" src="./data/background/banner.gif" alt="Ảnh bìa hồ sơ" decoding="async" fetchpriority="high" />
+            <img id="banner-image" src="./assets/background/banner.gif" alt="Ảnh bìa hồ sơ" decoding="async" fetchpriority="high" />
           </div>
           <!-- Parallax Layer 1: Light sweep -->
           <div class="plx-layer plx-light" data-depth="0.06"></div>
@@ -305,7 +304,7 @@
             <span class="avatar-ring" aria-hidden="true"></span>
             <img id="avatar-image" class="avatar-image" src="https://images-ext-1.discordapp.net/external/Pk9lpqQlm9eiN65fVc4VsGsRbedZwUbAsCBLXPHvHq8/%3Fsize%3D4096/https://cdn.discordapp.com/avatars/917263515209859102/cd121ea4baf2512e6e98f16f0f2a8d04.png?size=4096" alt="Ảnh đại diện Discord" />
             <div id="avatar-fallback" class="avatar-fallback">T</div>
-            <img id="avatar-decoration" class="avatar-decoration" src="./data/decoration/anime-dang-yeu.png" alt="Trang trí avatar" />
+            <img id="avatar-decoration" class="avatar-decoration" src="./assets/decoration/anime-dang-yeu.png" alt="Trang trí avatar" />
             <span id="status-orb" class="status-orb offline" aria-label="Trạng thái Discord"></span>
           </div>
           <div class="identity-block">
@@ -434,7 +433,7 @@
           <!-- Bot status card -->
           <div class="mc-bot-card">
             <div class="mc-bot-avatar">
-              <img src="./minevui-avatar.png" alt="Bot avatar" id="mc-bot-avatar" />
+              <img src="./assets/profile/minevui-avatar.png" alt="Bot avatar" id="mc-bot-avatar" />
               <span class="mc-bot-status-dot online"></span>
             </div>
             <div class="mc-bot-info">
@@ -914,7 +913,7 @@
 
   <!-- ========== MUSIC PLAYER ========== -->
   <aside id="music-player" class="music-player glass-panel hidden" aria-label="Trình phát nhạc">
-    <img id="track-cover" class="player-art" src="data/music/nightcore-rise-up.webp" alt="Ảnh bìa Nightcore - Rise Up" width="40" height="40" decoding="async" />
+    <img id="track-cover" class="player-art" src="assets/music/nightcore-rise-up.webp" alt="Ảnh bìa Nightcore - Rise Up" width="40" height="40" decoding="async" />
     <div class="track-meta">
       <strong id="track-title">Beautiful Piano Music</strong>
       <div class="track-time"><span id="current-time">0:00</span><span id="duration-time">0:00</span></div>
@@ -931,20 +930,15 @@
       <output id="volume-value" class="volume-value" for="volume-slider" aria-live="polite">50</output>
     </div>
     <audio id="audio-player" preload="metadata">
-      <source src="Audio/Nightcore-Rise-Up.mp3" type="audio/mpeg" />
+      <source src="assets/audio/Nightcore-Rise-Up.mp3" type="audio/mpeg" />
     </audio>
   </aside>
-  <!-- ========== THE MIDNIGHT ARCADE (11 GAMES) FULLSCREEN OVERLAY ========== -->
-<div id="snake-overlay" class="snake-overlay hidden" aria-modal="true" role="dialog" aria-label="The Midnight Arcade — 11 Games">
-  <iframe id="arcade-iframe" class="arcade-iframe" title="Midnight Arcade" allow="autoplay; fullscreen"></iframe>
-</div>
-<!-- ====================================================================== -->
 
-<script src="loader-failsafe.js"></script>
+<script src="assets/js/loader-failsafe.js"></script>
 
 
 
-<script src="script.js"></script>
+<script src="assets/js/script.js"></script>
 
   
 </body>
