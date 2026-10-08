@@ -5951,8 +5951,8 @@ html {
 }
 
 /* ==========================================================================
-   COMPACT CMD WINDOW
-   Match the default profile footprint without changing terminal behaviour.
+   WIDE CMD WINDOW
+   Use a real terminal-like landscape ratio without changing behaviour.
    ========================================================================== */
 body.terminal-active .terminal-screen {
   align-items: center;
@@ -5960,7 +5960,7 @@ body.terminal-active .terminal-screen {
 }
 
 body.terminal-active .cmd-window {
-  width: min(410px, calc(100vw - 28px));
+  width: min(860px, calc(100vw - 28px));
   height: min(493px, calc(100dvh - 28px));
   max-height: calc(100dvh - 28px);
   border-radius: 14px;
