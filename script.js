@@ -634,6 +634,8 @@ function enterConsole() {
 }
 
 const trackTitle = document.getElementById('track-title');
+const trackCover = document.getElementById('track-cover');
+const prevTrackButton = document.getElementById('prev-track');
 const nextTrackButton = document.getElementById('next-track');
 const currentTimeEl = document.getElementById('current-time');
 const durationTimeEl = document.getElementById('duration-time');
@@ -641,10 +643,11 @@ const durationTimeEl = document.getElementById('duration-time');
 // Resolve every track against the actual page URL. This works on the custom
 // domain, GitHub Pages subfolders and local previews without fragile paths.
 const trackUrl = (fileName) => new URL(`Audio/${fileName}`, document.baseURI).href;
+const trackArtUrl = (fileName) => new URL(`data/music/${fileName}`, document.baseURI).href;
 const tracks = [
-  { title: 'Nightcore - Rise Up', src: trackUrl('Nightcore-Rise-Up.mp3') },
-  { title: 'Esoa (Ballad Version)', src: trackUrl('Esoa-Ballad-version.mp3') },
-  { title: 'My Music', src: trackUrl('Music.mp3') }
+  { title: 'Nightcore - Rise Up', src: trackUrl('Nightcore-Rise-Up.mp3'), art: trackArtUrl('nightcore-rise-up.webp') },
+  { title: 'Esoa (Ballad Version)', src: trackUrl('Esoa-Ballad-version.mp3'), art: trackArtUrl('esoa-ballad.webp') },
+  { title: 'My Music', src: trackUrl('Music.mp3'), art: trackArtUrl('my-music.webp') }
 ];
 let currentTrackIndex = 0;
 let playing = false;
@@ -663,6 +666,8 @@ function formatTime(seconds) {
 function renderTrackMeta() {
   const track = tracks[currentTrackIndex];
   trackTitle.textContent = track.title;
+  if (trackCover.src !== track.art) trackCover.src = track.art;
+  trackCover.alt = `Ảnh bìa ${track.title}`;
   currentTimeEl.textContent = formatTime(audio.currentTime);
   durationTimeEl.textContent = formatTime(audio.duration);
 }
@@ -724,6 +729,23 @@ playToggle.addEventListener('click', async () => {
     }
   } catch (error) {
     console.warn('Audio playback blocked or file missing:', error);
+    trackTitle.textContent = 'Không mở được file nhạc';
+  }
+});
+
+prevTrackButton.addEventListener('click', async () => {
+  const shouldResume = playing;
+  if (audio.currentTime > 3) {
+    audio.currentTime = 0;
+    renderTrackMeta();
+    return;
+  }
+  loadTrack(currentTrackIndex - 1);
+  if (!shouldResume) return;
+  try {
+    await playCurrentTrack();
+  } catch (error) {
+    console.warn('Unable to switch track:', error);
     trackTitle.textContent = 'Không mở được file nhạc';
   }
 });
