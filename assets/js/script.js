@@ -1710,7 +1710,7 @@ if (interactiveCard) {
 
   if (!toggleBtn || !menu) return;
 
-  var THEME_WEATHER = { cyber: 'off', sakura: 'off', ocean: 'snow', fire: 'stars' };
+  var THEME_WEATHER = { cyber: 'rain', sakura: 'sakura', ocean: 'snow', fire: 'stars' };
 
   function applyTheme(theme) {
     if (THEMES.indexOf(theme) === -1) theme = 'cyber';
@@ -1887,7 +1887,7 @@ if (interactiveCard) {
 
   function initParticles() {
     particles = [];
-    if (currentWeather === 'off' || currentWeather === 'sakura' || currentWeather === 'rain') return;
+    if (currentWeather === 'off') return;
 
     var count = 36;
     if (currentWeather === 'sakura') count = window.innerWidth < 768 ? 30 : 48;
@@ -1951,7 +1951,7 @@ if (interactiveCard) {
   }
 
   function loop() {
-    if (currentWeather === 'off' || currentWeather === 'sakura' || currentWeather === 'rain' || window.__LOW_PERF) {
+    if (currentWeather === 'off' || window.__LOW_PERF) {
       ctx.clearRect(0, 0, width, height);
       animId = null;
       return;
@@ -2047,7 +2047,6 @@ if (interactiveCard) {
   }
 
   function setWeather(mode) {
-    if (mode === 'sakura' || mode === 'rain') mode = 'off';
     if (!WEATHER_ICONS[mode]) mode = 'off';
     currentWeather = mode;
     if (weatherToggle) {
@@ -2102,10 +2101,14 @@ if (interactiveCard) {
 
   // Init
   resize();
-  var savedWeather = 'off';
+  var defaultWeather = { cyber: 'rain', sakura: 'sakura', ocean: 'snow', fire: 'stars' }[document.documentElement.getAttribute('data-theme')] || 'rain';
+  var savedWeather = defaultWeather;
   try {
-    savedWeather = localStorage.getItem(STORAGE_KEY) || 'off';
-    if (savedWeather === 'sakura' || savedWeather === 'rain') savedWeather = 'off';
+    savedWeather = localStorage.getItem(STORAGE_KEY) || defaultWeather;
+    if (!localStorage.getItem('profile-weather-enabled-v1')) {
+      savedWeather = defaultWeather;
+      localStorage.setItem('profile-weather-enabled-v1', '1');
+    }
   } catch (e) {}
   setWeather(savedWeather);
 })();
@@ -2439,7 +2442,6 @@ if (interactiveCard) {
    ============================================================ */
 (function initCursorTrails() {
   if (window.__LOW_PERF) return;
-  return; // Disabled by user request
   let lastTime = 0;
   
   document.addEventListener('mousemove', (e) => {
@@ -3065,10 +3067,7 @@ if (interactiveCard) {
 (function refinementLayer() {
   'use strict';
 
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const syncMotionFlag = () => document.body.classList.toggle('reduce-motion', reduceMotion.matches);
-  syncMotionFlag();
-  reduceMotion.addEventListener?.('change', syncMotionFlag);
+  document.body.classList.remove('reduce-motion');
 
   document.body.classList.remove('lite-mode');
 
@@ -3090,7 +3089,7 @@ if (interactiveCard) {
   const nf = new Intl.NumberFormat('vi-VN');
 
   function countUp(el, from, to, template) {
-    const dur = reduceMotion.matches ? 0 : 780;
+    const dur = 780;
     const t0 = performance.now();
     el.__cuLock = true;
     function frame(now) {
@@ -3307,7 +3306,7 @@ if (interactiveCard) {
        Chuyển cảnh giờ do CSS lo, chỉ dùng transform + opacity. */
     fn(); return;
     /* eslint-disable-next-line no-unreachable */
-    if (!canVT || reduceMotion.matches) { fn(); return; }
+    if (!canVT) { fn(); return; }
     document.body.classList.add('vt-active');
     const vt = document.startViewTransition(() => { fn(); });
     vt.finished.finally(() => document.body.classList.remove('vt-active'));

@@ -9,8 +9,7 @@
   var loader = document.getElementById('cyber-loader');
   if (!loader) return;
 
-  var reduced = (window.__LOW_PERF === true) ||
-    (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var reduced = window.__LOW_PERF === true;
 
   var entered = false;
   var progDone = false;

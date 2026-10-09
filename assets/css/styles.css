@@ -110,9 +110,6 @@
   opacity: 1;
   transform: none;
 }
-@media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
-}
 
 
 .bg-video {
@@ -1280,6 +1277,10 @@ body.wide-page-active .mc-bot-avatar {
 }
 
 .weather-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
   display: flex;
   gap: 4px;
   padding: 5px 8px;
@@ -2846,30 +2847,6 @@ body.vt-active .profile-console { animation: none !important; }
   .ambient { filter: blur(60px); }
 }
 
-/* ────────────────────────────────────────────────────────────
-   15. TÔN TRỌNG prefers-reduced-motion — toàn trang, không chỉ loader
-   ──────────────────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
-    scroll-behavior: auto !important;
-  }
-  .grain, .scanlines, .cursor-trail-particle, .warp-canvas { display: none !important; }
-  .player-art { animation: none !important; }
-  .avatar-ring { animation: none !important; transform: none !important; }
-  .plx-layer { transform: none !important; }
-  /* .profile-console transform preserved */
-  .bg-video { opacity: .5; }
-}
-
-/* Người dùng bấm nút "Giảm chuyển động" trong trang */
-body.reduce-motion .grain,
-body.reduce-motion .scanlines,
-body.reduce-motion .cursor-trail-particle { display: none !important; }
-body.reduce-motion .plx-layer,
-body.reduce-motion /* .profile-console transform preserved */
 
 
 /* ════════════════════════════════════════════════════════════
@@ -3460,17 +3437,6 @@ body.color-page-active
 #cyber-loader .cl-hint.show { opacity: 1; transform: none; }
 #cyber-loader .cl-hint b { color: #ffd6f5; font-weight: 600; }
 
-@media (prefers-reduced-motion: reduce) {
-  #cyber-loader .cl-aurora i, #cyber-loader .cl-stars-a, #cyber-loader .cl-stars-b,
-  #cyber-loader .cl-beam, #cyber-loader .cl-steam, #cyber-loader .cl-hover, #cyber-loader .cl-car,
-  #cyber-loader .cl-neon, #cyber-loader .cl-beacon, #cyber-loader .cl-flick1,
-  #cyber-loader .cl-flick2, #cyber-loader .cl-flick3, #cyber-loader .cl-winbreath,
-  #cyber-loader .cl-signFlick, #cyber-loader .cl-holo-plate, #cyber-loader .cl-holo-scan,
-  #cyber-loader .cl-city-reflect, #cyber-loader .cl-bar-fill::after { animation: none !important; }
-  #cl-fx-sky, #cl-fx-rain { display: none; }
-  #cyber-loader .cl-kanji, #cyber-loader .cl-sub, #cyber-loader .cl-bar { animation-duration: .01s !important; }
-  #cyber-loader .cl-ch { animation-duration: .01s !important; }
-}
 
 /* ==========================================================================
    GLOBAL SCROLL & BACKGROUND VIDEO ENGINE
@@ -4693,9 +4659,6 @@ body.color-page-active .profile-screen.active:has(#color-page:not(.hidden)) {
   visibility: visible;
   opacity: 1;
 }
-@media (prefers-reduced-motion: reduce) {
-  .volume-details { transition: none; }
-}
 
 .volume-control input::-webkit-slider-runnable-track {
   height: 4px;
@@ -4911,9 +4874,6 @@ body.color-page-active .profile-screen.active:has(#color-page:not(.hidden)) {
   width: 16px;
   height: 16px;
   transform: none !important;
-}
-@media (prefers-reduced-motion: reduce) {
-  .discord-blink { display: none; }
 }
 
 #minecraft-page .mc-bot-avatar,

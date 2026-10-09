@@ -16,7 +16,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+JP:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=weather-1" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" />
   <link rel="icon" href="assets/profile/favicon.png" type="image/png">
   <meta property="og:type" content="profile" />
@@ -198,7 +198,7 @@
   </div>
   <!-- ================================================= -->
 
-<script src="assets/js/cyber-loader.js"></script>
+<script src="assets/js/cyber-loader.js?v=weather-1"></script>
 
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
@@ -265,6 +265,14 @@
             <button id="theme-auto" class="theme-option-auto" type="button" title="Tự động đổi theo giờ Việt Nam">🕒</button>
           </div>
           <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi giao diện">🌙</button>
+          <div id="weather-menu" class="weather-menu hidden" role="group" aria-label="Chọn hiệu ứng thời tiết">
+            <button class="weather-option" type="button" data-weather="sakura" aria-label="Hoa anh đào" title="Hoa anh đào">🌸</button>
+            <button class="weather-option" type="button" data-weather="rain" aria-label="Mưa Cyber" title="Mưa Cyber">🌧️</button>
+            <button class="weather-option" type="button" data-weather="snow" aria-label="Tuyết rơi" title="Tuyết rơi">❄️</button>
+            <button class="weather-option" type="button" data-weather="stars" aria-label="Bụi sao" title="Bụi sao">✨</button>
+            <button class="weather-option" type="button" data-weather="off" aria-label="Tắt thời tiết" title="Tắt thời tiết">🚫</button>
+          </div>
+          <button id="weather-toggle" class="theme-toggle-btn" type="button" aria-label="Đổi hiệu ứng thời tiết">🌧️</button>
 
                     <button id="yt-bg-toggle" class="warp-btn" type="button" aria-label="Chuyển sang Nền YouTube Lofi (kèm tiếng)" title="Bật/Tắt Nền YouTube (kèm tiếng)">🎬</button>
           <button id="yt-restart-btn" class="warp-btn hidden" type="button" aria-label="Quay lại từ đầu video YouTube" title="Quay lại từ đầu video YouTube">🔄</button>
@@ -674,7 +682,7 @@
 
 
 
-<script src="assets/js/script.js"></script>
+<script src="assets/js/script.js?v=weather-1"></script>
 
   
 </body>
