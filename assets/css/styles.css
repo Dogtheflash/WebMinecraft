@@ -5124,9 +5124,25 @@ body.terminal-active {
 #minecraft-page .mc-bot-card {
   gap: 9px;
   margin-bottom: 7px;
-  padding: 8px 9px;
+  padding: 14px 10px;
+  min-height: 96px;
   border-radius: 11px;
 }
+
+#minecraft-page .mc-bot-info { flex: 1; min-width: 0; }
+
+#minecraft-page .mc-join-btn.mc-discord-icon {
+  order: -1;
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 10px;
+}
+
+#minecraft-page .mc-join-btn.mc-discord-icon svg { width: 21px; height: 21px; }
 
 #minecraft-page .mc-bot-avatar,
 #minecraft-page .mc-bot-avatar img {
