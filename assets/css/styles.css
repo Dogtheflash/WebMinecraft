@@ -5092,6 +5092,8 @@ body.terminal-active {
 
 #minecraft-page {
   padding: 10px 12px 12px;
+  transform: none !important;
+  transform-style: flat;
 }
 
 #minecraft-page .color-page-head,
@@ -5145,7 +5147,12 @@ body.terminal-active {
   border-radius: 10px;
 }
 
-#minecraft-page .mc-join-btn.mc-discord-icon svg { width: 26px; height: 26px; transform: translate(2px, 3px); }
+#minecraft-page .mc-join-btn.mc-discord-icon,
+#minecraft-page .mc-join-btn.mc-discord-icon:hover,
+#minecraft-page .mc-join-btn.mc-discord-icon:focus-visible {
+  transform: none !important;
+}
+#minecraft-page .mc-join-btn.mc-discord-icon svg { width: 26px; height: 26px; transform: none !important; }
 #minecraft-page .mc-discord-icon .discord-blink {
   position: absolute;
   inset: 0;
@@ -5158,8 +5165,9 @@ body.terminal-active {
   animation: discordEyeBlink 2.8s infinite;
 }
 @keyframes discordEyeBlink {
-  0%, 90%, 100% { transform: scaleY(0); }
-  94%, 96% { transform: scaleY(1); }
+  0%, 78%, 100% { transform: scaleY(0); }
+  82%, 91% { transform: scaleY(1); }
+  95% { transform: scaleY(0); }
 }
 @media (prefers-reduced-motion: reduce) {
   .discord-blink { display: none; }
