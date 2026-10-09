@@ -80,6 +80,7 @@ const cmdNewTab = document.getElementById('cmd-new-tab');
 const cmdLog = document.getElementById('cmd-log');
 const cmdForm = document.getElementById('cmd-form');
 const cmdInput = document.getElementById('cmd-input');
+const cmdWindow = document.querySelector('.cmd-window');
 const progressBar = document.getElementById('progress-bar');
 const volumeControl = document.getElementById('volume-control');
 const volumeToggle = document.getElementById('volume-toggle');
@@ -184,12 +185,24 @@ function renderCmdTabs() {
   `).join('');
 }
 
+let lastCmdGrowthLineCount = 0;
+
+function syncCmdWindowHeight(log = '') {
+  if (!cmdWindow || cmdWindow.classList.contains('maximized')) return;
+  const lineCount = Math.max(1, log.split('\n').length);
+  if (lineCount === lastCmdGrowthLineCount) return;
+  lastCmdGrowthLineCount = lineCount;
+  const targetHeight = Math.min(410, 150 + lineCount * 14);
+  cmdWindow.style.setProperty('--cmd-growth-height', `${targetHeight}px`);
+}
+
 function renderCmdBody() {
   const tab = activeCmdTab();
   cmdLog.textContent = tab.log;
   cmdLog.classList.toggle('typing', Boolean(tab.typing));
   cmdForm.classList.toggle('hidden', !tab.interactive);
   cmdInput.value = tab.input || '';
+  syncCmdWindowHeight(tab.log);
 }
 
 function renderCmd() {
@@ -229,7 +242,6 @@ function typeIntro() {
 
 function initCmdWindowControls() {
   const controls = document.querySelectorAll('.cmd-controls span');
-  const cmdWindow = document.querySelector('.cmd-window');
   if (!controls || controls.length < 3 || !cmdWindow) return;
 
   /* Red dot: Do nothing */
@@ -248,6 +260,10 @@ function initCmdWindowControls() {
   controls[2].setAttribute('title', 'Phóng to / Khôi phục cửa sổ CMD');
   controls[2].onclick = function () {
     cmdWindow.classList.toggle('maximized');
+    if (!cmdWindow.classList.contains('maximized')) {
+      lastCmdGrowthLineCount = 0;
+      syncCmdWindowHeight(activeCmdTab().log);
+    }
   };
 }
 
