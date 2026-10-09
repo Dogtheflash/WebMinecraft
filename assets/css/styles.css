@@ -4359,8 +4359,10 @@ body.terminal-active {
   padding: 18px 14px 112px !important;
 }
 
-/* Keep the profile and music together, centered with room on short screens. */
-body:not(.color-page-active) .profile-screen.active {
+/* Center the profile, Minecraft and Text Color with room on short screens. */
+body:not(.color-page-active) .profile-screen.active,
+body.color-page-active .profile-screen.active:has(#minecraft-page:not(.hidden)),
+body.color-page-active .profile-screen.active:has(#color-page:not(.hidden)) {
   min-height: 100dvh !important;
   justify-content: center;
   padding: 24px 14px !important;
