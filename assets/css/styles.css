@@ -3463,6 +3463,7 @@ html {
 #sec-presence > .css-chibi {
   right: calc(var(--clock-center) - 20px);
 }
+.profile-console.page-mode #sec-presence { display: none; }
 #sec-presence > .clock-inline {
   grid-column: 2;
   width: var(--clock-width);
@@ -3508,6 +3509,56 @@ html {
 #sec-presence .clock-inline-phase { font-size: 8px; line-height: 1.2; text-align: center; letter-spacing: .02em; }
 #sec-presence .clock-inline-date { color: #b0bfd2; }
 #sec-presence .clock-inline-phase { color: rgb(var(--accent2-rgb) / .9); }
+
+/* Halo hologram: transparent face and a rotating rainbow pedestal. */
+#sec-presence > .clock-inline {
+  padding: 5px 3px 21px;
+  gap: 4px;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(0deg, rgb(var(--accent2-rgb) / .12), transparent 85%);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  overflow: hidden;
+}
+#sec-presence .clock-inline::before { display: none; }
+#sec-presence .clock-inline-time {
+  font-size: 22px;
+  font-weight: 500;
+  gap: 1px;
+  color: #d8fffd;
+  text-shadow: 0 0 12px rgb(var(--accent2-rgb) / .5);
+}
+#sec-presence .clock-seconds { font-size: 9px; padding-bottom: 3px; color: #b3d9df; }
+#sec-presence .clock-inline-date { color: #b3cdd4; }
+#sec-presence .clock-inline-phase { color: #9bd5d8; }
+#sec-presence .clock-halo-ring {
+  position: absolute;
+  bottom: 2px;
+  left: 3px;
+  right: 3px;
+  height: 15px;
+  padding: 2px;
+  border-radius: 50%;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+#sec-presence .clock-halo-ring::before {
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  left: calc(50% - 60px);
+  top: calc(50% - 60px);
+  background: conic-gradient(#ff729d, #ffc976, #d5f28b, #76f4dd, #7faaff, #d894ff, #ff729d);
+  animation: clockHaloOrbit 6s linear infinite;
+}
+@keyframes clockHaloOrbit { to { transform: rotate(360deg); } }
 
 /* Hide only the page scrollbar; keep wheel, touch and keyboard scrolling. */
 html, body {
