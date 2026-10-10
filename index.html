@@ -16,7 +16,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+JP:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=halo-orbit-2" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=hamster-1" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" />
   <link rel="icon" href="assets/profile/favicon.png" type="image/png">
   <meta property="og:type" content="profile" />
@@ -205,15 +205,15 @@
   <div id="pointer-glow" class="pointer-glow" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
-  
+
     <!-- ========== BACKGROUND VIDEOS ========== -->
   <video id="bg-video" class="bg-video" muted loop playsinline preload="metadata" poster="./assets/background/bg-1440.jpg" data-bg-src="./assets/background/chillnight.mp4" aria-hidden="true" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; object-fit: cover; z-index: -2; pointer-events: none;"></video>
 
   <div id="bg-yt-container" class="bg-video hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; overflow: hidden;">
-    <iframe id="bg-yt-player" 
+    <iframe id="bg-yt-player"
             data-src="https://www.youtube.com/embed/zvIS6EIkXx8?enablejsapi=1&autoplay=0&mute=0&controls=0&showinfo=0&rel=0&modestbranding=1&disablekb=1&iv_load_policy=3&fs=0"
-            frameborder="0" 
-            allow="autoplay; encrypted-media" 
+            frameborder="0"
+            allow="autoplay; encrypted-media"
             allowfullscreen
             style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.25); width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; pointer-events: none;">
     </iframe>
@@ -253,7 +253,6 @@
         <!-- 3D Specular Glass Glare Layer -->
         <div class="holo-glare" aria-hidden="true"></div>
 
-        <!-- ========== COMPANION MOVED TO HEADER ========== -->
         <!-- ========== THEME SWITCHER & WEATHER & WARP ========== -->
         <div id="theme-switcher" class="theme-switcher">
           <div id="theme-menu" class="theme-menu hidden">
@@ -281,7 +280,7 @@
         <!-- ========== END THEME SWITCHER ========== -->
 
 
-        
+
         <!-- Nút cuộn nhanh lên đầu trang -->
         <button id="scroll-top-btn" class="scroll-top-btn hidden" type="button" aria-label="Cuộn lên đầu trang" title="Cuộn lên đầu trang (Home / ↑)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -324,35 +323,24 @@
         </header>
 
         <section class="presence-card glass-2 reveal" id="sec-presence" aria-labelledby="presence-title" style="position: relative;">
-          <!-- ========== INTERACTIVE COMPANION ========== -->
-          <div class="css-chibi" aria-hidden="true">
-            <div id="comp-chat" class="comp-chat">Bấm vào mình đi!</div>
-            
-
-            <div id="companion" class="chibi-head" title="Bấm vào mình đi!">
-              <div class="chibi-hat"></div>
-              <div class="comp-eye left"></div>
-              <div class="comp-eye right"></div>
+          <!-- From Uiverse.io by Nawsome -->
+          <div aria-label="Hamster chạy trong bánh xe" role="img" class="wheel-and-hamster">
+            <div class="wheel"></div>
+            <div class="hamster">
+              <div class="hamster__body">
+                <div class="hamster__head">
+                  <div class="hamster__ear"></div>
+                  <div class="hamster__eye"></div>
+                  <div class="hamster__nose"></div>
+                </div>
+                <div class="hamster__limb hamster__limb--fr"></div>
+                <div class="hamster__limb hamster__limb--fl"></div>
+                <div class="hamster__limb hamster__limb--br"></div>
+                <div class="hamster__limb hamster__limb--bl"></div>
+                <div class="hamster__tail"></div>
+              </div>
             </div>
-            <div class="chibi-body"></div>
-            <div class="chibi-arm left"></div>
-            <div class="chibi-arm right"></div>
-            <div class="chibi-leg left"></div>
-            <div class="chibi-leg right"></div>
-          </div>
-          <!-- ========== SLEEPING CAT ========== -->
-          <div class="css-cat" aria-hidden="true">
-            <div class="cat-zzz z1">Z</div>
-            <div class="cat-zzz z2">z</div>
-            <div class="cat-zzz z3">z</div>
-            <div class="cat-tail"></div>
-            <div class="cat-body"></div>
-            <div class="cat-head">
-              <div class="cat-ear left"></div>
-              <div class="cat-ear right"></div>
-              <div class="cat-eye left"></div>
-              <div class="cat-eye right"></div>
-            </div>
+            <div class="spoke"></div>
           </div>
           <div>
             <h2 id="presence-title">Trạng thái: <span id="custom-status-line">Đang tải...</span></h2>
@@ -701,8 +689,8 @@
 
 
 
-<script src="assets/js/script.js?v=steam-fix-1"></script>
+<script src="assets/js/script.js?v=hamster-1"></script>
 
-  
+
 </body>
 </html>

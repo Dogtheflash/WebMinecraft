@@ -156,16 +156,16 @@ body {
 /* ============================================================
    PHẦN CHỈNH SỬA: Thay thế ảnh nền bằng style chuẩn Linux
    ============================================================ */
-.cmd-window { 
-  width: min(760px, 94vw); 
-  overflow: hidden; 
-  border-radius: 14px; 
-  border: 1px solid rgba(255,255,255,.15); 
+.cmd-window {
+  width: min(760px, 94vw);
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.15);
   background: rgba(8, 8, 12, 0.75);
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,.1); 
-  position: relative; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,.1);
+  position: relative;
   transform: translateZ(0);
 }
 
@@ -1602,7 +1602,7 @@ body,
     box-sizing: border-box;
     display: grid;
     grid-template-columns: 1fr auto;
-    grid-template-areas: 
+    grid-template-areas:
       "time date"
       "time phase";
     align-items: center;
@@ -1735,463 +1735,279 @@ body,
   .player-visualizer { height: 35px !important; }
 }
 
-/* ============================================================
-   INTERACTIVE COMPANION (Chibi Person)
-   ============================================================ */
-.css-chibi {
+/* From Uiverse.io by Nawsome */
+.wheel-and-hamster {
+  --dur: 1s;
+  position: relative;
+  width: 12em;
+  height: 12em;
+  font-size: 14px;
+}
+
+.wheel,
+.hamster,
+.hamster div,
+.spoke {
   position: absolute;
-  bottom: calc(100% - 2px);
-  right: 60px;
-  width: 40px;
-  height: 40px;
-  z-index: 100; /* Increased to ensure it's on top of everything */
-  pointer-events: auto;
-  --chibi-scale: 1;
-  transform: scale(var(--chibi-scale));
 }
 
-.css-chibi.backflip {
-  transform-origin: center center;
-  animation: chibiBackflipAnim 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-@keyframes chibiBackflipAnim {
-  0% { transform: scale(var(--chibi-scale)) translateY(0) rotate(0deg); }
-  10% { transform: scale(var(--chibi-scale)) translateY(6px) scaleY(0.7) rotate(0deg); }
-  35% { transform: scale(var(--chibi-scale)) translateY(-70px) scaleY(1) rotate(-150deg); }
-  60% { transform: scale(var(--chibi-scale)) translateY(0px) scaleY(1) rotate(-270deg); } /* Land on back (lying down) */
-  85% { transform: scale(var(--chibi-scale)) translateY(0px) scaleY(1) rotate(-270deg); } /* Rest on back */
-  100% { transform: scale(var(--chibi-scale)) translateY(0) scaleY(1) rotate(-360deg); } /* Stand up */
-}
-.css-chibi.backflip .chibi-leg {
-  animation: backflipLegAnim 1.8s forwards !important;
-}
-@keyframes backflipLegAnim {
-  0%, 10% { transform: rotate(0deg); }
-  35% { transform: rotate(80deg); } /* Tuck legs while flipping */
-  60%, 85% { transform: rotate(0deg); } /* Legs straight out while lying down */
-  100% { transform: rotate(0deg); }
-}
-
-.comp-chat {
-  position: absolute;
-  bottom: 120%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #ffffff;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #222222;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  z-index: 10;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
-}
-.comp-chat::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border-width: 6px;
-  border-style: solid;
-  border-color: #ffffff transparent transparent transparent;
-}
-.comp-chat.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-5px);
-}
-
-.typing-dots { display: inline-flex; gap: 2px; align-items: baseline; }
-.typing-dots span {
-  animation: typingBounce 1.4s infinite ease-in-out both;
-}
-.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
-.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
-
-@keyframes typingBounce {
-  0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
-  40% { transform: translateY(-3px); opacity: 1; }
-}
-
-/* Chibi Parts */
-
-/* Chibi Hats */
-.chibi-hat {
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  height: 20px;
-  pointer-events: none;
-  z-index: 4;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-/* 1. Cap */
-.chibi-hat.hat-cap { opacity: 1; }
-.chibi-hat.hat-cap::before {
-  content: ''; position: absolute; bottom: 0; left: 10%; width: 80%; height: 16px;
-  background: #ff4757; border-radius: 16px 16px 0 0;
-}
-.chibi-hat.hat-cap::after {
-  content: ''; position: absolute; bottom: 0; left: -10%; width: 60%; height: 4px;
-  background: #ff4757; border-radius: 4px;
-}
-
-/* 2. Crown */
-.chibi-hat.hat-crown { opacity: 1; }
-.chibi-hat.hat-crown::before {
-  content: ''; position: absolute; bottom: 2px; left: 15%; width: 70%; height: 14px;
-  background: linear-gradient(135deg, #eccc68, #ffa502);
-  clip-path: polygon(0 100%, 100% 100%, 100% 0, 80% 50%, 50% 0, 20% 50%, 0 0);
-}
-
-/* 3. Wizard */
-.chibi-hat.hat-wizard { opacity: 1; top: -14px; }
-.chibi-hat.hat-wizard::before {
-  content: ''; position: absolute; bottom: 2px; left: 20%; width: 60%; height: 28px;
-  background: #70a1ff; clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-}
-.chibi-hat.hat-wizard::after {
-  content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 4px;
-  background: #3742fa; border-radius: 50%;
-}
-
-/* 4. Cat Ears */
-.chibi-hat.hat-catears { opacity: 1; top: -12px; }
-.chibi-hat.hat-catears::before, .chibi-hat.hat-catears::after {
-  content: ''; position: absolute; bottom: -2px; width: 0; height: 0;
-  background: transparent;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 12px solid #2f3542;
-  filter: drop-shadow(0 -1px 1px #ff7f50);
-  clip-path: none;
-}
-.chibi-hat.hat-catears::before { left: 5%; transform: rotate(-20deg); }
-.chibi-hat.hat-catears::after { right: 5%; transform: rotate(20deg); }
-
-/* 5. Visor */
-.chibi-hat.hat-visor { opacity: 1; top: 6px; }
-.chibi-hat.hat-visor::before {
-  content: ''; position: absolute; top: 0; left: -5%; width: 110%; height: 8px;
-  background: rgb(var(--accent2-rgb) / 0.2); border-top: 2px solid var(--cyan); border-bottom: 2px solid var(--cyan);
-  box-shadow: 0 0 8px var(--cyan); border-radius: 4px;
-}
-
-/* Hat changing animation */
-.chibi-changing-hat .chibi-arm.right {
-  transform-origin: top right;
-  animation: changeHatAnim 1s ease-in-out forwards;
-}
-@keyframes changeHatAnim {
-  0% { transform: rotate(-25deg) translateY(0); }
-  50% { transform: rotate(-150deg) translateY(-4px) translateX(-2px); }
-  100% { transform: rotate(-25deg) translateY(0); }
-}
-
-/* Pet Cat animation */
-.chibi-petting .chibi-arm.left {
-  animation: petCatAnim 2s ease-in-out forwards;
-}
-@keyframes petCatAnim {
-  0% { transform: rotate(25deg) translate(0, 0); }
-  15% { transform: rotate(80deg) translate(-12px, 6px); }
-  35% { transform: rotate(60deg) translate(-6px, 2px); }
-  55% { transform: rotate(80deg) translate(-12px, 6px); }
-  75% { transform: rotate(60deg) translate(-6px, 2px); }
-  100% { transform: rotate(25deg) translate(0, 0); }
-}
-
-.chibi-head {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 36px;
-  height: 32px;
-  background: #1a1b26;
-  border: 2px solid var(--cyan);
-  border-radius: 40% 40% 45% 45%;
-  z-index: 3;
-  box-shadow: inset 0 -4px 6px rgba(0,0,0,0.6), 0 0 10px rgb(var(--accent2-rgb) / 0.3);
-  cursor: pointer;
-  pointer-events: auto;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
-}
-.chibi-head:hover {
-  transform: translateX(-50%) translateY(-3px) scale(1.05);
-  box-shadow: inset 0 -4px 6px rgba(0,0,0,0.6), 0 0 15px rgb(var(--accent2-rgb) / 0.6);
-}
-.chibi-head:active {
-  transform: translateX(-50%) translateY(0) scale(0.95);
-}
-
-.comp-eye {
-  position: absolute;
-  top: 14px;
-  width: 6px;
-  height: 10px;
-  background: var(--cyan);
+.wheel,
+.spoke {
   border-radius: 50%;
-  box-shadow: 0 0 8px var(--cyan);
-  transition: background 0.3s, box-shadow 0.3s;
-  transform: translate(var(--eye-x, 0px), var(--eye-y, 0px));
-  animation: compBlink 5s infinite;
-}
-.comp-eye.left { left: 8px; }
-.comp-eye.right { right: 8px; }
-
-@keyframes compBlink {
-  0%, 94%, 100% { transform: scaleY(1) translate(var(--eye-x, 0px), var(--eye-y, 0px)); }
-  96% { transform: scaleY(0.1) translate(var(--eye-x, 0px), var(--eye-y, 0px)); }
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
-.chibi-body {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 24px;
-  height: 26px;
-  background: #1a1b26;
-  border-radius: 40% 40% 10% 10%;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-bottom: none;
+.wheel {
+  background: radial-gradient(100% 100% at center,hsla(0,0%,60%,0) 47.8%,hsl(0,0%,60%) 48%);
   z-index: 2;
 }
 
-.chibi-arm {
-  position: absolute;
-  bottom: -2px;
-  width: 10px;
-  height: 18px;
-  background: #24283b;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.1);
-  z-index: 4;
+.hamster {
+  animation: hamster var(--dur) ease-in-out infinite;
+  top: 50%;
+  left: calc(50% - 3.5em);
+  width: 7em;
+  height: 3.75em;
+  transform: rotate(4deg) translate(-0.8em,1.85em);
+  transform-origin: 50% 0;
+  z-index: 1;
 }
-.chibi-arm.left {
-  left: -2px;
-  transform: rotate(25deg);
+
+.hamster__head {
+  animation: hamsterHead var(--dur) ease-in-out infinite;
+  background: hsl(30,90%,55%);
+  border-radius: 70% 30% 0 100% / 40% 25% 25% 60%;
+  box-shadow: 0 -0.25em 0 hsl(30,90%,80%) inset,
+    0.75em -1.55em 0 hsl(30,90%,90%) inset;
+  top: 0;
+  left: -2em;
+  width: 2.75em;
+  height: 2.5em;
+  transform-origin: 100% 50%;
 }
-.chibi-arm.right {
-  right: -2px;
+
+.hamster__ear {
+  animation: hamsterEar var(--dur) ease-in-out infinite;
+  background: hsl(0,90%,85%);
+  border-radius: 50%;
+  box-shadow: -0.25em 0 hsl(30,90%,55%) inset;
+  top: -0.25em;
+  right: -0.25em;
+  width: 0.75em;
+  height: 0.75em;
+  transform-origin: 50% 75%;
+}
+
+.hamster__eye {
+  animation: hamsterEye var(--dur) linear infinite;
+  background-color: hsl(0,0%,0%);
+  border-radius: 50%;
+  top: 0.375em;
+  left: 1.25em;
+  width: 0.5em;
+  height: 0.5em;
+}
+
+.hamster__nose {
+  background: hsl(0,90%,75%);
+  border-radius: 35% 65% 85% 15% / 70% 50% 50% 30%;
+  top: 0.75em;
+  left: 0;
+  width: 0.2em;
+  height: 0.25em;
+}
+
+.hamster__body {
+  animation: hamsterBody var(--dur) ease-in-out infinite;
+  background: hsl(30,90%,90%);
+  border-radius: 50% 30% 50% 30% / 15% 60% 40% 40%;
+  box-shadow: 0.1em 0.75em 0 hsl(30,90%,55%) inset,
+    0.15em -0.5em 0 hsl(30,90%,80%) inset;
+  top: 0.25em;
+  left: 2em;
+  width: 4.5em;
+  height: 3em;
+  transform-origin: 17% 50%;
+  transform-style: preserve-3d;
+}
+
+.hamster__limb--fr,
+.hamster__limb--fl {
+  clip-path: polygon(0 0,100% 0,70% 80%,60% 100%,0% 100%,40% 80%);
+  top: 2em;
+  left: 0.5em;
+  width: 1em;
+  height: 1.5em;
+  transform-origin: 50% 0;
+}
+
+.hamster__limb--fr {
+  animation: hamsterFRLimb var(--dur) linear infinite;
+  background: linear-gradient(hsl(30,90%,80%) 80%,hsl(0,90%,75%) 80%);
+  transform: rotate(15deg) translateZ(-1px);
+}
+
+.hamster__limb--fl {
+  animation: hamsterFLLimb var(--dur) linear infinite;
+  background: linear-gradient(hsl(30,90%,90%) 80%,hsl(0,90%,85%) 80%);
+  transform: rotate(15deg);
+}
+
+.hamster__limb--br,
+.hamster__limb--bl {
+  border-radius: 0.75em 0.75em 0 0;
+  clip-path: polygon(0 0,100% 0,100% 30%,70% 90%,70% 100%,30% 100%,40% 90%,0% 30%);
+  top: 1em;
+  left: 2.8em;
+  width: 1.5em;
+  height: 2.5em;
+  transform-origin: 50% 30%;
+}
+
+.hamster__limb--br {
+  animation: hamsterBRLimb var(--dur) linear infinite;
+  background: linear-gradient(hsl(30,90%,80%) 90%,hsl(0,90%,75%) 90%);
+  transform: rotate(-25deg) translateZ(-1px);
+}
+
+.hamster__limb--bl {
+  animation: hamsterBLLimb var(--dur) linear infinite;
+  background: linear-gradient(hsl(30,90%,90%) 90%,hsl(0,90%,85%) 90%);
   transform: rotate(-25deg);
 }
 
-.chibi-leg {
-  position: absolute;
-  top: 100%;
-  width: 10px;
-  height: 22px;
-  background: #24283b;
-  border-radius: 5px;
-  border: 1px solid rgba(255,255,255,0.05);
-  transform-origin: top center;
-  z-index: 1; 
-}
-.chibi-leg::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: -2px;
-  width: 12px;
-  height: 8px;
-  background: var(--cyan);
-  border-radius: 4px;
-  box-shadow: 0 0 5px var(--cyan);
-}
-.chibi-leg.left {
-  left: 8px;
-  animation: swingLegLeft 2.5s ease-in-out infinite;
-}
-.chibi-leg.right {
-  right: 8px;
-  animation: swingLegRight 2.5s ease-in-out infinite 0.7s;
+.hamster__tail {
+  animation: hamsterTail var(--dur) linear infinite;
+  background: hsl(0,90%,85%);
+  border-radius: 0.25em 50% 50% 0.25em;
+  box-shadow: 0 -0.2em 0 hsl(0,90%,75%) inset;
+  top: 1.5em;
+  right: -0.5em;
+  width: 1em;
+  height: 0.5em;
+  transform: rotate(30deg) translateZ(-1px);
+  transform-origin: 0.25em 0.25em;
 }
 
-@keyframes swingLegLeft {
-  0%, 100% { transform: rotate(-25deg); }
-  50% { transform: rotate(35deg); }
-}
-@keyframes swingLegRight {
-  0%, 100% { transform: rotate(-35deg); }
-  50% { transform: rotate(25deg); }
+.spoke {
+  animation: spoke var(--dur) linear infinite;
+  background: radial-gradient(100% 100% at center,hsl(0,0%,60%) 4.8%,hsla(0,0%,60%,0) 5%),
+    linear-gradient(hsla(0,0%,55%,0) 46.9%,hsl(0,0%,65%) 47% 52.9%,hsla(0,0%,65%,0) 53%) 50% 50% / 99% 99% no-repeat;
 }
 
-/* ============================================================
-   SLEEPING CAT (CSS Art)
-   ============================================================ */
-.css-cat {
-  position: absolute;
-  bottom: calc(100% - 2px);
-  right: 110px;
-  width: 36px;
-  height: 24px;
-  z-index: 40;
-  cursor: pointer;
+/* Animations */
+@keyframes hamster {
+  from, to {
+    transform: rotate(4deg) translate(-0.8em,1.85em);
+  }
+
+  50% {
+    transform: rotate(0) translate(-0.8em,1.85em);
+  }
 }
 
-.cat-body {
-  position: absolute;
-  bottom: 0;
-  left: 6px;
-  width: 30px;
-  height: 18px;
-  background: #1a1b26;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 20px 20px 5px 5px;
-  border-bottom: none;
-  z-index: 2;
-  box-shadow: inset 0 -4px 6px rgba(0,0,0,0.6);
-  animation: catBreathe 3s ease-in-out infinite;
+@keyframes hamsterHead {
+  from, 25%, 50%, 75%, to {
+    transform: rotate(0);
+  }
+
+  12.5%, 37.5%, 62.5%, 87.5% {
+    transform: rotate(8deg);
+  }
 }
 
-.cat-head {
-  position: absolute;
-  bottom: 2px;
-  left: 0;
-  width: 16px;
-  height: 14px;
-  background: #1a1b26;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 50%;
-  z-index: 3;
-  animation: catBreatheHead 3s ease-in-out infinite;
+@keyframes hamsterEye {
+  from, 90%, to {
+    transform: scaleY(1);
+  }
+
+  95% {
+    transform: scaleY(0);
+  }
 }
 
-.cat-ear {
-  position: absolute;
-  top: -4px;
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 8px solid #1a1b26;
-  z-index: 1;
-}
-.cat-ear.left {
-  left: 0;
-  transform: rotate(-20deg);
-}
-.cat-ear.right {
-  right: 2px;
-  transform: rotate(20deg);
-}
-.cat-ear::after {
-  content: '';
-  position: absolute;
-  top: 3px;
-  left: -1.5px;
-  width: 0;
-  height: 0;
-  border-left: 1.5px solid transparent;
-  border-right: 1.5px solid transparent;
-  border-bottom: 4px solid var(--cyan);
+@keyframes hamsterEar {
+  from, 25%, 50%, 75%, to {
+    transform: rotate(0);
+  }
+
+  12.5%, 37.5%, 62.5%, 87.5% {
+    transform: rotate(12deg);
+  }
 }
 
-.cat-eye {
-  position: absolute;
-  top: 6px;
-  width: 4px;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 1px;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.cat-eye.left { left: 3px; }
-.cat-eye.right { right: 3px; }
+@keyframes hamsterBody {
+  from, 25%, 50%, 75%, to {
+    transform: rotate(0);
+  }
 
-/* Awake State */
-.css-cat.awake .cat-zzz {
-  opacity: 0;
-  animation: none;
-}
-.css-cat.awake .cat-eye {
-  height: 4px;
-  top: 5px;
-  background: var(--cyan);
-  box-shadow: 0 0 6px var(--cyan);
-  border-radius: 50%;
-  transform: translate(var(--cat-eye-x, 0px), var(--cat-eye-y, 0px));
-}
-.css-cat.awake .cat-head {
-  transform: translateY(-2px);
-}
-.css-cat.awake .cat-tail {
-  animation: awakeTail 0.8s infinite;
-}
-@keyframes awakeTail {
-  0% { transform: rotate(-10deg); }
-  50% { transform: rotate(10deg); }
-  100% { transform: rotate(-10deg); }
+  12.5%, 37.5%, 62.5%, 87.5% {
+    transform: rotate(-2deg);
+  }
 }
 
-.cat-tail {
-  position: absolute;
-  bottom: 2px;
-  right: -4px;
-  width: 12px;
-  height: 14px;
-  border: 4px solid #1a1b26;
-  border-left: none;
-  border-bottom: none;
-  border-radius: 0 10px 10px 0;
-  z-index: 1;
+@keyframes hamsterFRLimb {
+  from, 25%, 50%, 75%, to {
+    transform: rotate(50deg) translateZ(-1px);
+  }
+
+  12.5%, 37.5%, 62.5%, 87.5% {
+    transform: rotate(-30deg) translateZ(-1px);
+  }
 }
 
-.cat-zzz {
-  position: absolute;
-  top: -10px;
-  left: -5px;
-  font-size: 10px;
-  color: var(--cyan);
-  font-weight: bold;
-  opacity: 0;
-  pointer-events: none;
-  animation: floatZzz 4s linear infinite;
-  text-shadow: 0 0 5px var(--cyan);
-}
-.cat-zzz.z2 {
-  animation-delay: 1.5s;
-  font-size: 8px;
-  left: 5px;
-}
-.cat-zzz.z3 {
-  animation-delay: 3s;
-  font-size: 12px;
-  left: -2px;
+@keyframes hamsterFLLimb {
+  from, 25%, 50%, 75%, to {
+    transform: rotate(-30deg);
+  }
+
+  12.5%, 37.5%, 62.5%, 87.5% {
+    transform: rotate(50deg);
+  }
 }
 
-@keyframes catBreathe {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(1.05) translateY(-1px); }
-}
-@keyframes catBreatheHead {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-1px) rotate(-2deg); }
-}
-@keyframes floatZzz {
-  0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 0.8; }
-  100% { transform: translate(-10px, -20px) scale(1.2); opacity: 0; }
+@keyframes hamsterBRLimb {
+  from, 25%, 50%, 75%, to {
+    transform: rotate(-60deg) translateZ(-1px);
+  }
+
+  12.5%, 37.5%, 62.5%, 87.5% {
+    transform: rotate(20deg) translateZ(-1px);
+  }
 }
 
-@media (max-width: 620px) {
-  .css-chibi { --chibi-scale: 0.8; right: 20px; }
-  .css-cat { transform: scale(0.8); right: 60px; }
-  .comp-chat { font-size: 10px; padding: 3px 6px; }
+@keyframes hamsterBLLimb {
+  from, 25%, 50%, 75%, to {
+    transform: rotate(20deg);
+  }
+
+  12.5%, 37.5%, 62.5%, 87.5% {
+    transform: rotate(-60deg);
+  }
 }
 
+@keyframes hamsterTail {
+  from, 25%, 50%, 75%, to {
+    transform: rotate(30deg) translateZ(-1px);
+  }
+
+  12.5%, 37.5%, 62.5%, 87.5% {
+    transform: rotate(10deg) translateZ(-1px);
+  }
+}
+
+@keyframes spoke {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(-1turn);
+  }
+}
 /* ============================================================
    CURSOR TRAIL PARTICLES
    ============================================================ */
@@ -2289,124 +2105,6 @@ body,
 body.shaking {
   animation: screenShake 0.5s cubic-bezier(.36,.07,.19,.97) both;
 }
-.css-chibi.chibi-scared .chibi-arm {
-  animation: chibiScaredArm 0.3s forwards !important;
-}
-@keyframes chibiScaredArm {
-  100% { transform: rotate(160deg) translateY(-10px); }
-}
-.css-chibi.chibi-scared .chibi-head {
-  animation: chibiScaredHead 0.1s infinite;
-}
-@keyframes chibiScaredHead {
-  0%, 100% { transform: translateX(-50%) translateY(2px) rotate(-2deg); }
-  50% { transform: translateX(-50%) translateY(0px) rotate(2deg); }
-}
-
-/* ============================================================
-   CHIBI RUNNER MINIGAME
-   ============================================================ */
-.about-card.game-active > *:not(#runner-game-container) {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-#runner-game-container {
-  position: absolute;
-  inset: 0;
-  background: var(--card-bg);
-  z-index: 100;
-  border-radius: inherit;
-  display: none;
-  overflow: hidden;
-}
-#runner-game-container.active {
-  display: block;
-  animation: gameReveal 0.4s ease-out;
-}
-@keyframes gameReveal {
-  0% { transform: scaleY(0); opacity: 0; }
-  100% { transform: scaleY(1); opacity: 1; }
-}
-.runner-score {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font: 700 16px var(--font-mono);
-  color: var(--cyan);
-  text-shadow: 0 0 5px var(--cyan);
-}
-.runner-close {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  cursor: pointer;
-  color: var(--muted);
-  font-size: 14px;
-}
-.runner-close:hover { color: var(--red); }
-.runner-ground {
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--cyan);
-  box-shadow: 0 0 5px var(--cyan);
-}
-.runner-chibi-wrap {
-  position: absolute;
-  bottom: 22px;
-  left: 30px;
-  width: 24px;
-  height: 24px;
-  z-index: 2;
-}
-.runner-chibi-wrap .css-chibi {
-  position: absolute;
-  bottom: 28px !important;
-  right: auto !important;
-  left: 0 !important;
-  transform: scale(0.6);
-  transform-origin: bottom left;
-}
-.runner-obstacle {
-  position: absolute;
-  bottom: 22px;
-  width: 12px;
-  height: 24px;
-  background: transparent;
-  border: 2px solid var(--pink);
-  border-bottom: none;
-  border-radius: 6px 6px 0 0;
-  box-shadow: 0 0 8px var(--pink), inset 0 0 4px var(--pink);
-}
-.runner-obstacle::before {
-  content: ''; position: absolute; top: 10px; left: -8px; width: 6px; height: 8px;
-  border: 2px solid var(--pink); border-right: none; border-top: none;
-}
-.runner-obstacle::after {
-  content: ''; position: absolute; top: 6px; right: -8px; width: 6px; height: 6px;
-  border: 2px solid var(--pink); border-left: none; border-top: none;
-}
-.runner-game-over {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: rgba(15, 18, 32, 0.85);
-  color: #fff;
-  font: 700 16px var(--font-mono);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-  z-index: 10;
-}
-.runner-game-over.show { opacity: 1; }
-.runner-game-over span { font-size: 11px; color: var(--muted); margin-top: 8px; }
-
 /* ============================================================
    WARP SPEED UI
    ============================================================ */
@@ -3039,12 +2737,12 @@ h1 { font-size: clamp(27px, 5.6vw, 35px); }
    ██  PROFILE SCROLLSPY & BACK-TO-TOP BUTTON
    ════════════════════════════════════════════════════════════ */
 
-body.color-page-active 
+body.color-page-active
 
 
 
 
-.spy-dot:hover 
+.spy-dot:hover
 
 /* Nút cuộn nhanh lên đầu trang */
 .scroll-top-btn {
@@ -3460,8 +3158,17 @@ html {
   gap: 8px;
   padding-top: 20px;
 }
-#sec-presence > .css-chibi {
-  right: calc(var(--clock-center) - 20px);
+#sec-presence > .wheel-and-hamster {
+  position: absolute;
+  width: 84px;
+  height: 84px;
+  font-size: 7px;
+  right: calc(var(--clock-center) - 42px);
+  bottom: calc(100% - 20px);
+  z-index: 5;
+  pointer-events: none;
+  border: 0;
+  background: transparent;
 }
 .profile-console.page-mode #sec-presence { display: none; }
 #sec-presence > .clock-inline {
@@ -3710,8 +3417,8 @@ body.terminal-active {
   backdrop-filter: blur(24px) saturate(140%);
   -webkit-backdrop-filter: blur(24px) saturate(140%);
   overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-              border-color 0.3s ease, 
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease,
               box-shadow 0.3s ease;
 }
 
@@ -4549,16 +4256,7 @@ body.color-page-active .profile-screen.active:has(#steam-page:not(.hidden)) {
 .clock-inline-date,
 .clock-inline-phase { font-size: 8px; }
 
-.css-chibi {
-  right: 43px;
-  --chibi-scale: .72;
-  transform-origin: bottom center;
-}
-.css-cat {
-  right: 79px;
-  transform: scale(.72);
-  transform-origin: bottom right;
-}
+
 
 .profile-console .meta-grid {
   gap: 6px;
