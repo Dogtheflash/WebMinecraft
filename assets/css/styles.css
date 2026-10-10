@@ -3450,7 +3450,18 @@ html {
   background: #020308 !important;
 }
 
-/* Cosmic visible scrollbar */
+/* Hide only the page scrollbar; keep wheel, touch and keyboard scrolling. */
+html, body {
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+/* Scrollbars inside tools remain available. */
 ::-webkit-scrollbar {
   width: 10px !important;
   height: 10px !important;
