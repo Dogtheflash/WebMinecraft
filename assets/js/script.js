@@ -1276,9 +1276,52 @@ function renderSteamPlaying(gameName, detail = '', state = '', elapsed = '') {
   }
 }
 
+// Load before displaying, retry once, and never leave a broken-image icon.
+function setSteamImage(image, source) {
+  if (!image || !source) return;
+  if (image.dataset.loadedSource === source && image.naturalWidth > 0) {
+    image.style.visibility = 'visible';
+    image.style.display = 'block';
+    return;
+  }
+  const token = {};
+  image._steamLoadToken = token;
+  image.style.visibility = 'hidden';
+  image.style.display = 'block';
+  const probe = new Image();
+  probe.referrerPolicy = 'no-referrer';
+  let retried = false;
+  probe.onload = () => {
+    if (image._steamLoadToken !== token) return;
+    image.referrerPolicy = 'no-referrer';
+    image.src = probe.src;
+    image.dataset.loadedSource = source;
+    image.style.visibility = 'visible';
+  };
+  probe.onerror = () => {
+    if (image._steamLoadToken !== token) return;
+    if (!retried) {
+      retried = true;
+      try {
+        const retry = new URL(source);
+        retry.searchParams.set('retry', Date.now());
+        probe.src = retry.href;
+        return;
+      } catch (_) { /* Invalid source stays hidden. */ }
+    }
+    image.removeAttribute('src');
+    image.style.visibility = 'hidden';
+    delete image.dataset.loadedSource;
+  };
+  probe.src = source;
+}
+
+let steamHasCurrentGame = false;
+
 function applySteamData(data) {
+  steamHasCurrentGame = Boolean(data.currentGame);
   if (steamPage.avatar && data.avatar)
-    steamPage.avatar.src = data.avatar;
+    setSteamImage(steamPage.avatar, data.avatar);
 
   if (steamPage.displayName)
     steamPage.displayName.textContent = data.displayName || 'nakarotad';
@@ -1316,9 +1359,9 @@ function applySteamData(data) {
 
   if (steamPage.gameThumb) {
     if (isIngame && data.currentGameThumb) {
-      steamPage.gameThumb.src = data.currentGameThumb;
-      steamPage.gameThumb.style.display = 'block';
+      setSteamImage(steamPage.gameThumb, data.currentGameThumb);
     } else {
+      steamPage.gameThumb._steamLoadToken = null;
       steamPage.gameThumb.style.display = 'none';
     }
   }
@@ -1338,7 +1381,7 @@ function applySteamData(data) {
 }
 
 function applySteamLanyardFallback(data) {
-  if (!steamPage.page) return;
+  if (!steamPage.page || steamHasCurrentGame) return;
   const activities = data.activities || [];
   const steamActivity = activities.find(a =>
     a.type === 0 && a.id !== 'spotify:1' && a.application_id
@@ -1359,8 +1402,13 @@ function applySteamLanyardFallback(data) {
 
   if (steamActivity?.assets?.large_image && steamPage.gameThumb) {
     const appId = steamActivity.application_id;
-    steamPage.gameThumb.src = `https://cdn.discordapp.com/app-assets/${appId}/${steamActivity.assets.large_image}.png`;
-    steamPage.gameThumb.style.display = 'block';
+    const asset = steamActivity.assets.large_image;
+    const source = /^\d+$/.test(asset)
+      ? `https://cdn.discordapp.com/app-assets/${appId}/${asset}.png`
+      : asset.startsWith('mp:external/')
+        ? `https://images-ext-1.discordapp.net/external/${asset.slice('mp:external/'.length)}`
+        : '';
+    if (source) setSteamImage(steamPage.gameThumb, source);
   }
 
   if (steamPage.updated) steamPage.updated.textContent = formatSteamTime();
@@ -1379,7 +1427,7 @@ async function initSteamPage() {
     const data = await fetchSteamData();
     applySteamData(data);
 
-    if (lanyardCache) applySteamLanyardFallback(lanyardCache);
+    if (!data.currentGame && lanyardCache) applySteamLanyardFallback(lanyardCache);
   } catch (err) {
     console.warn('Steam Worker fetch error:', err);
 
