@@ -1,5 +1,0 @@
-Contact: https://github.com/Dogtheflash/WebMinecraft/issues/new
-Expires: 2027-10-01T00:00:00Z
-Preferred-Languages: vi, en
-Canonical: https://tuxinhtrai.io.vn/.well-known/security.txt
-Policy: https://github.com/Dogtheflash/WebMinecraft/security/policy

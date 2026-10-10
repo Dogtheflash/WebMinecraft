@@ -1,5 +1,0 @@
-# Keep original high-resolution model sources local.
-/models/source/
-
-# Assistant plugins are local tools, not website source files.
-/.agents/
