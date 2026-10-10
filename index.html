@@ -16,7 +16,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+JP:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=steam-fix-1" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=halo-orbit-2" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" />
   <link rel="icon" href="assets/profile/favicon.png" type="image/png">
   <meta property="og:type" content="profile" />
@@ -365,7 +365,26 @@
             </div>
             <div class="clock-inline-date" id="ci-date">T2, 01/01</div>
             <div class="clock-inline-phase" id="ci-phase">🌙 GMT+7</div>
-            <span class="clock-halo-ring" aria-hidden="true"></span>
+            <svg class="clock-halo-ring" viewBox="0 0 104 24" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="clock-halo-gradient" x1="4" y1="12" x2="100" y2="12" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#72f7ff" />
+                  <stop offset=".2" stop-color="#7faaff" />
+                  <stop offset=".4" stop-color="#d894ff" />
+                  <stop offset=".6" stop-color="#ff729d" />
+                  <stop offset=".8" stop-color="#ffc976" />
+                  <stop offset="1" stop-color="#72f7ff" />
+                </linearGradient>
+                <path id="clock-halo-orbit-path" d="M 4 12 A 48 8 0 1 0 100 12 A 48 8 0 1 0 4 12" />
+              </defs>
+              <use class="clock-halo-orbit" href="#clock-halo-orbit-path" />
+              <g class="clock-halo-star">
+                <path d="M 0 -4 C .5 -1.2 1.2 -.5 4 0 C 1.2 .5 .5 1.2 0 4 C -.5 1.2 -1.2 .5 -4 0 C -1.2 -.5 -.5 -1.2 0 -4 Z" />
+                <animateMotion dur="6s" repeatCount="indefinite" rotate="auto">
+                  <mpath href="#clock-halo-orbit-path" />
+                </animateMotion>
+              </g>
+            </svg>
           </div>
         </section>
 

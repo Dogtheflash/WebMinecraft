@@ -3510,17 +3510,17 @@ html {
 #sec-presence .clock-inline-date { color: #b0bfd2; }
 #sec-presence .clock-inline-phase { color: rgb(var(--accent2-rgb) / .9); }
 
-/* Halo hologram: transparent face and a rotating rainbow pedestal. */
+/* Halo hologram: transparent face with a clean rainbow orbit around the date. */
 #sec-presence > .clock-inline {
-  padding: 5px 3px 21px;
+  padding: 5px 3px 4px;
   gap: 4px;
   border: 0;
   border-radius: 0;
-  background: linear-gradient(0deg, rgb(var(--accent2-rgb) / .12), transparent 85%);
+  background: transparent;
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  overflow: hidden;
+  overflow: visible;
 }
 #sec-presence .clock-inline::before { display: none; }
 #sec-presence .clock-inline-time {
@@ -3531,34 +3531,36 @@ html {
   text-shadow: 0 0 12px rgb(var(--accent2-rgb) / .5);
 }
 #sec-presence .clock-seconds { font-size: 9px; padding-bottom: 3px; color: #b3d9df; }
-#sec-presence .clock-inline-date { color: #b3cdd4; }
+#sec-presence .clock-inline-date {
+  position: relative;
+  z-index: 2;
+  color: #d5ecf0;
+  text-shadow: 0 0 7px rgba(2, 8, 18, .95);
+}
 #sec-presence .clock-inline-phase { color: #9bd5d8; }
 #sec-presence .clock-halo-ring {
   position: absolute;
-  bottom: 2px;
-  left: 3px;
-  right: 3px;
-  height: 15px;
-  padding: 2px;
-  border-radius: 50%;
-  overflow: hidden;
+  top: 31px;
+  left: 0;
+  width: 104px;
+  height: 24px;
+  overflow: visible;
   pointer-events: none;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
 }
-#sec-presence .clock-halo-ring::before {
-  content: '';
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  left: calc(50% - 60px);
-  top: calc(50% - 60px);
-  background: conic-gradient(#ff729d, #ffc976, #d5f28b, #76f4dd, #7faaff, #d894ff, #ff729d);
-  animation: clockHaloOrbit 6s linear infinite;
+#sec-presence .clock-halo-orbit {
+  fill: none;
+  stroke: url(#clock-halo-gradient);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 18 5;
+  filter: drop-shadow(0 0 3px rgb(var(--accent2-rgb) / .72));
+  animation: clockHaloFlow 6s linear infinite;
 }
-@keyframes clockHaloOrbit { to { transform: rotate(360deg); } }
+#sec-presence .clock-halo-star {
+  fill: #fff8c9;
+  filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 6px #ffdb76);
+}
+@keyframes clockHaloFlow { to { stroke-dashoffset: -46; } }
 
 /* Hide only the page scrollbar; keep wheel, touch and keyboard scrolling. */
 html, body {
