@@ -3450,6 +3450,65 @@ html {
   background: #020308 !important;
 }
 
+/* Glass desk clock: one shared horizontal anchor on every screen size. */
+#sec-presence {
+  --clock-width: 104px;
+  --clock-center: 62px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--clock-width);
+  align-items: start;
+  gap: 8px;
+  padding-top: 20px;
+}
+#sec-presence > .css-chibi {
+  right: calc(var(--clock-center) - 20px);
+}
+#sec-presence > .clock-inline {
+  grid-column: 2;
+  width: var(--clock-width);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 5px 6px;
+  border-radius: 12px;
+  border: 1px solid rgb(var(--accent2-rgb) / .32);
+  background: linear-gradient(135deg, rgb(var(--accent2-rgb) / .12), rgba(13,20,33,.72));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 4px 14px rgba(0,0,0,.18);
+}
+#sec-presence .clock-inline::before {
+  inset: 0 28% auto;
+  height: 1px;
+  background: rgb(var(--accent2-rgb) / .85);
+  box-shadow: 0 0 8px rgb(var(--accent2-rgb) / .45);
+}
+#sec-presence .clock-inline-top { justify-content: center; }
+#sec-presence .clock-inline-time {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font: 700 17px/1.25 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  color: #f1f6ff;
+}
+#sec-presence .clock-tile {
+  padding: 2px 3px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(255,255,255,.09) 48%, rgba(0,0,0,.22) 49%, rgba(0,0,0,.22) 53%, rgba(255,255,255,.04) 54%);
+  box-shadow: 0 2px 3px rgba(0,0,0,.18);
+}
+#sec-presence .ci-sep { font-size: 12px; margin: 0; animation: none; color: #adc2d4; }
+#sec-presence .clock-seconds { font-size: 9px; color: #a5bdcf; align-self: flex-end; padding-bottom: 3px; }
+#sec-presence .clock-inline-date,
+#sec-presence .clock-inline-phase { font-size: 8px; line-height: 1.2; text-align: center; letter-spacing: .02em; }
+#sec-presence .clock-inline-date { color: #b0bfd2; }
+#sec-presence .clock-inline-phase { color: rgb(var(--accent2-rgb) / .9); }
+
 /* Hide only the page scrollbar; keep wheel, touch and keyboard scrolling. */
 html, body {
   scrollbar-width: none;
