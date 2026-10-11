@@ -2536,6 +2536,10 @@ if (interactiveCard) {
   if (!toggleBtn || !mp4Video || !ytContainer || !ytIframe) return;
 
   let isYtMode = false;
+  let ytReady = false;
+  let ytPlaying = false;
+  let playbackRetry = 0;
+  let revealFallback = 0;
 
   function loadMp4Background() {
     if (mp4Video.dataset.loaded === 'true') return;
@@ -2549,12 +2553,19 @@ if (interactiveCard) {
 
   function loadYouTubeBackground() {
     if (!ytIframe.getAttribute('src') && ytIframe.dataset.src) {
-      ytIframe.setAttribute('src', ytIframe.dataset.src);
+      const embedUrl = new URL(ytIframe.dataset.src);
+      if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+        embedUrl.searchParams.set('origin', window.location.origin);
+      }
+      ytIframe.setAttribute('src', embedUrl.href);
     }
   }
 
-  // Poster hiện ngay; video bắt đầu tải sớm để nền CMD không bị đen trên mobile.
-  const start = () => loadMp4Background();
+  // Tải ngầm cả hai nền để nút YouTube phản hồi ngay khi người dùng bấm.
+  const start = () => {
+    loadMp4Background();
+    loadYouTubeBackground();
+  };
   if ('requestIdleCallback' in window) window.requestIdleCallback(start, { timeout: 900 });
   else window.setTimeout(start, 400);
 
@@ -2568,14 +2579,107 @@ if (interactiveCard) {
     }
   }
 
+  function startYtEventFeed() {
+    if (!ytIframe.contentWindow) return;
+    ytIframe.contentWindow.postMessage(JSON.stringify({
+      event: 'listening',
+      id: 'bg-yt-player'
+    }), 'https://www.youtube.com');
+    postYtCommand('addEventListener', ['onStateChange']);
+  }
+
+  function stopPlaybackRetry() {
+    if (!playbackRetry) return;
+    window.clearInterval(playbackRetry);
+    playbackRetry = 0;
+  }
+
+  function stopRevealFallback() {
+    if (!revealFallback) return;
+    window.clearTimeout(revealFallback);
+    revealFallback = 0;
+  }
+
+  function scheduleRevealFallback(delay) {
+    stopRevealFallback();
+    revealFallback = window.setTimeout(() => {
+      revealFallback = 0;
+      if (isYtMode) revealYouTubeBackground();
+    }, delay);
+  }
+
+  function revealYouTubeBackground() {
+    if (!isYtMode || ytPlaying) return;
+    ytPlaying = true;
+    stopPlaybackRetry();
+    stopRevealFallback();
+    ytContainer.classList.remove('is-loading');
+    ytContainer.classList.add('is-playing');
+    window.setTimeout(() => {
+      if (!isYtMode) return;
+      mp4Video.pause();
+      mp4Video.classList.add('hidden');
+    }, 550);
+  }
+
+  function requestYouTubePlayback() {
+    stopPlaybackRetry();
+    let attempts = 0;
+    const sendCommands = () => {
+      if (!isYtMode || ytPlaying) {
+        stopPlaybackRetry();
+        return;
+      }
+      attempts += 1;
+      postYtCommand('setVolume', [50]);
+      postYtCommand('unMute');
+      postYtCommand('playVideo');
+      if (attempts >= 12) stopPlaybackRetry();
+    };
+    sendCommands();
+    playbackRetry = window.setInterval(sendCommands, ytReady ? 250 : 400);
+  }
+
+  ytIframe.addEventListener('load', () => {
+    ytReady = true;
+    startYtEventFeed();
+    window.setTimeout(startYtEventFeed, 350);
+    if (isYtMode) {
+      requestYouTubePlayback();
+      scheduleRevealFallback(900);
+    }
+  });
+
+  window.addEventListener('message', (event) => {
+    if (event.source !== ytIframe.contentWindow || event.origin !== 'https://www.youtube.com') return;
+    let message = event.data;
+    if (typeof message === 'string') {
+      try { message = JSON.parse(message); } catch (_) { return; }
+    }
+    if (!message || typeof message !== 'object') return;
+
+    if (message.event === 'onReady') {
+      ytReady = true;
+      if (isYtMode) requestYouTubePlayback();
+    }
+
+    const playerState = message.event === 'onStateChange'
+      ? Number(message.info)
+      : Number(message.info && message.info.playerState);
+    if (playerState === 1) revealYouTubeBackground();
+  });
+
   toggleBtn.addEventListener('click', () => {
     isYtMode = !isYtMode;
 
     if (isYtMode) {
-      // Bật chế độ YouTube (Kèm âm thanh)
-      mp4Video.pause();
-      mp4Video.classList.add('hidden');
+      // Giữ nền MP4/ảnh che cho đến khi YouTube thực sự phát để không lộ logo tải.
+      ytPlaying = false;
+      mp4Video.classList.remove('hidden');
+      loadMp4Background();
       ytContainer.classList.remove('hidden');
+      ytContainer.classList.remove('is-playing');
+      ytContainer.classList.add('is-loading');
       if (restartBtn) restartBtn.classList.remove('hidden');
       loadYouTubeBackground();
 
@@ -2583,14 +2687,16 @@ if (interactiveCard) {
       toggleBtn.style.borderColor = '#35e8ff';
       toggleBtn.style.boxShadow = '0 0 10px #35e8ff';
 
-      // Phát video YouTube + mở tiếng + âm lượng 50
-      postYtCommand('playVideo');
-      postYtCommand('unMute');
-      postYtCommand('setVolume', [50]);
+      requestYouTubePlayback();
+      if (ytReady) scheduleRevealFallback(450);
     } else {
       // Tắt chế độ YouTube, quay về nền MP4 mặc định
+      stopPlaybackRetry();
+      stopRevealFallback();
+      ytPlaying = false;
       postYtCommand('pauseVideo');
       ytContainer.classList.add('hidden');
+      ytContainer.classList.remove('is-loading', 'is-playing');
       if (restartBtn) restartBtn.classList.add('hidden');
       mp4Video.classList.remove('hidden');
       loadMp4Background();

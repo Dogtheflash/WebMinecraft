@@ -13,10 +13,12 @@
     content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; script-src-attr 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://images-ext-1.discordapp.net https://cdn.discordapp.com https://cdn-icons-png.flaticon.com https://avatars.steamstatic.com https://cdn.akamai.steamstatic.com; media-src 'self' blob: https://cdn.pixabay.com https://assets.mixkit.co; connect-src 'self' https://api.lanyard.rest https://api.mcsrvstat.us https://steam-proxy.bbtu223344.workers.dev; frame-src 'self' https://www.youtube.com; worker-src 'self' blob:; manifest-src 'self'; form-action 'self'; upgrade-insecure-requests" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://www.youtube.com" />
+  <link rel="preconnect" href="https://i.ytimg.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+JP:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=capybara-walk-2" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=youtube-background-2" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" />
   <link rel="icon" href="assets/profile/favicon.png" type="image/png">
   <meta property="og:type" content="profile" />
@@ -211,11 +213,11 @@
 
   <div id="bg-yt-container" class="bg-video hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; overflow: hidden;">
     <iframe id="bg-yt-player"
-            data-src="https://www.youtube.com/embed/zvIS6EIkXx8?enablejsapi=1&autoplay=0&mute=0&controls=0&showinfo=0&rel=0&modestbranding=1&disablekb=1&iv_load_policy=3&fs=0"
+            data-src="https://www.youtube.com/embed/zvIS6EIkXx8?enablejsapi=1&autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&disablekb=1&iv_load_policy=3&fs=0&playsinline=1&loop=1&playlist=zvIS6EIkXx8"
+            title="Nền video YouTube"
             frameborder="0"
             allow="autoplay; encrypted-media"
-            allowfullscreen
-            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.25); width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; pointer-events: none;">
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.35); width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; pointer-events: none;">
     </iframe>
   </div>
   <!-- ======================================== -->
@@ -694,7 +696,7 @@
 
 
 
-<script src="assets/js/script.js?v=capybara-1"></script>
+<script src="assets/js/script.js?v=youtube-background-2"></script>
 
 
 </body>

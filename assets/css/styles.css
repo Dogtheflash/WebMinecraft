@@ -124,12 +124,40 @@ video.bg-video {
 #bg-yt-player {
   position: absolute;
   top: 50%; left: 50%;
-  transform: translate(-50%, -50%) scale(1.25);
+  z-index: 1;
+  transform: translate(-50%, -50%) scale(1.35);
   width: 100vw;
   height: 56.25vw;
   min-height: 100dvh;
   min-width: 177.77vh;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity .45s ease;
+}
+#bg-yt-container {
+  background: #020308;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .25s ease, visibility .25s ease;
+}
+#bg-yt-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(rgba(2, 3, 8, .08), rgba(2, 3, 8, .08)),
+    url('../background/bg-1440.jpg') center / cover no-repeat;
+  opacity: 1;
+  transition: opacity .55s ease, visibility .55s ease;
+  pointer-events: none;
+}
+#bg-yt-container.is-playing #bg-yt-player {
+  opacity: 1;
+}
+#bg-yt-container.is-playing::after {
+  opacity: 0;
+  visibility: hidden;
 }
 
 * { box-sizing: border-box; }
@@ -3283,7 +3311,15 @@ body.terminal-active {
 }
 
 #bg-yt-container.hidden {
+  display: block !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+#bg-video.hidden {
   display: none !important;
+}
+#bg-yt-container {
+  z-index: -1 !important;
 }
 
 
