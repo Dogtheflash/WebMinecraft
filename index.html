@@ -27,180 +27,44 @@
   <meta property="og:image" content="./assets/background/banner.gif" />
   <meta name="twitter:card" content="summary_large_image" />
   <style>
-    #cyber-loader {
-      position: fixed; inset: 0; z-index: 999999;
-      background: #04060e;
-      display: grid; place-items: center;
+    #sakura-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
       overflow: hidden;
-      font-family: 'Chakra Petch', system-ui, sans-serif;
-      color: #eef4ff;
+      background: #0d1021;
+      opacity: 1;
+      transition: opacity .7s ease;
+    }
+    #sakura-loader.sakura-loader-done {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #sakura-loader-frame {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #0d1021;
     }
   </style>
 </head>
 
 <body class="terminal-active">
 
-  <!-- ===== CYBER CITY LOADER (thay cho iOS 26 boot) ===== -->
-  <div id="cyber-loader">
-    <noscript><style>#cyber-loader{display:none!important}</style></noscript>
-
-    <div class="cl-aurora"><i></i><i></i><i></i><i></i></div>
-
-    <div class="cl-stars-b"></div>
-    <div class="cl-stars-a"></div>
-
-    <div class="cl-beam cl-beam-1"></div>
-    <div class="cl-beam cl-beam-2"></div>
-
-    <canvas id="cl-fx-sky"></canvas>
-
-    <!-- Tầng nhà xa -->
-    <svg class="cl-city-far" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
-      <g fill="#0c1129" opacity=".9">
-        <rect x="0" y="176" width="86" height="124"/><rect x="86" y="146" width="64" height="154"/>
-        <rect x="150" y="196" width="72" height="104"/><rect x="222" y="128" width="82" height="172"/>
-        <rect x="304" y="188" width="52" height="112"/><rect x="356" y="158" width="92" height="142"/>
-        <rect x="448" y="204" width="62" height="96"/><rect x="510" y="138" width="72" height="162"/>
-        <rect x="582" y="178" width="82" height="122"/><rect x="664" y="196" width="52" height="104"/>
-        <rect x="716" y="148" width="92" height="152"/><rect x="808" y="186" width="62" height="114"/>
-        <rect x="870" y="128" width="82" height="172"/><rect x="952" y="178" width="62" height="122"/>
-        <rect x="1014" y="158" width="72" height="142"/><rect x="1086" y="198" width="82" height="102"/>
-        <rect x="1168" y="136" width="62" height="164"/><rect x="1230" y="176" width="92" height="124"/>
-        <rect x="1322" y="156" width="62" height="144"/><rect x="1384" y="196" width="56" height="104"/>
-      </g>
-    </svg>
-
-    <!-- Tầng nhà gần + cửa sổ neon + biển hiệu -->
-    <svg class="cl-city-near" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
-      <defs>
-        <pattern id="clwc" width="17" height="24" patternUnits="userSpaceOnUse">
-          <rect x="5" y="7" width="6" height="10" rx="1" fill="rgba(120,225,255,.9)"/>
-        </pattern>
-        <pattern id="clwp" width="19" height="26" patternUnits="userSpaceOnUse">
-          <rect x="6" y="8" width="6" height="10" rx="1" fill="rgba(255,120,225,.85)"/>
-        </pattern>
-        <pattern id="clwa" width="16" height="22" patternUnits="userSpaceOnUse">
-          <rect x="4" y="6" width="6" height="9" rx="1" fill="rgba(255,205,120,.8)"/>
-        </pattern>
-      </defs>
-
-      <g id="clCityNearG">
-        <g fill="#060a1c">
-          <rect x="30" y="112" width="112" height="188"/><rect x="146" y="66" width="92" height="234"/>
-          <rect x="238" y="140" width="132" height="160"/><rect x="370" y="94" width="102" height="206"/>
-          <rect x="472" y="150" width="122" height="150"/><rect x="594" y="58" width="92" height="242"/>
-          <rect x="686" y="134" width="142" height="166"/><rect x="828" y="88" width="102" height="212"/>
-          <rect x="930" y="146" width="132" height="154"/><rect x="1062" y="74" width="92" height="226"/>
-          <rect x="1154" y="124" width="122" height="176"/><rect x="1276" y="98" width="134" height="202"/>
-        </g>
-
-        <rect x="38" y="122" width="96" height="120" fill="url(#clwc)" class="cl-winbreath"/>
-        <rect x="154" y="76" width="76" height="160" fill="url(#clwp)"/>
-        <rect x="246" y="150" width="116" height="100" fill="url(#clwa)" class="cl-winbreath wb2"/>
-        <rect x="378" y="104" width="86" height="130" fill="url(#clwc)"/>
-        <rect x="480" y="160" width="106" height="90" fill="url(#clwp)" class="cl-winbreath wb3"/>
-        <rect x="602" y="68" width="76" height="170" fill="url(#clwc)"/>
-        <rect x="694" y="144" width="126" height="110" fill="url(#clwa)"/>
-        <rect x="836" y="98" width="86" height="140" fill="url(#clwp)"/>
-        <rect x="938" y="156" width="116" height="94" fill="url(#clwc)" class="cl-winbreath wb2"/>
-        <rect x="1070" y="84" width="76" height="150" fill="url(#clwa)"/>
-        <rect x="1162" y="134" width="106" height="110" fill="url(#clwp)"/>
-        <rect x="1284" y="108" width="118" height="130" fill="url(#clwc)"/>
-
-        <g class="cl-flick1" fill="#bff7ff">
-          <rect x="60" y="140" width="8" height="10" rx="1"/><rect x="180" y="96" width="8" height="10" rx="1"/>
-          <rect x="620" y="90" width="8" height="10" rx="1"/><rect x="960" y="170" width="8" height="10" rx="1"/>
-        </g>
-        <g class="cl-flick2" fill="#ff9ee0">
-          <rect x="410" y="120" width="8" height="10" rx="1"/><rect x="860" y="112" width="8" height="10" rx="1"/>
-          <rect x="1310" y="124" width="8" height="10" rx="1"/>
-        </g>
-        <g class="cl-flick3" fill="#ffe9b0">
-          <rect x="270" y="166" width="8" height="10" rx="1"/><rect x="720" y="156" width="8" height="10" rx="1"/>
-          <rect x="1180" y="150" width="8" height="10" rx="1"/>
-        </g>
-
-        <line x1="192" y1="66" x2="192" y2="34" stroke="#0b1230" stroke-width="3"/>
-        <circle class="cl-beacon" cx="192" cy="32" r="3.2" fill="#ff5b6e"/>
-        <line x1="640" y1="58" x2="640" y2="20" stroke="#0b1230" stroke-width="3"/>
-        <circle class="cl-beacon b2" cx="640" cy="18" r="3.2" fill="#ff5b6e"/>
-
-        <rect class="cl-neon np1" x="606" y="70" width="66" height="5" rx="2.5" fill="currentColor" style="color:#ff4fd8"/>
-        <rect class="cl-neon np2" x="1078" y="84" width="58" height="5" rx="2.5" fill="currentColor" style="color:#35e8ff"/>
-        <rect class="cl-neon np3" x="166" y="76" width="50" height="4" rx="2" fill="currentColor" style="color:#7df3ff"/>
-
-        <g style="color:#ff9ee0">
-          <rect x="700" y="64" width="32" height="92" rx="5" fill="rgba(22,10,42,.6)" stroke="rgba(255,158,224,.4)" stroke-width="1"/>
-          <text x="716" y="98"  text-anchor="middle" font-size="26" font-weight="500"
-                class="cl-neon cl-signFlick" fill="currentColor" style="font-family:'Noto Serif JP',serif">千</text>
-          <text x="716" y="134" text-anchor="middle" font-size="26" font-weight="500"
-                class="cl-neon" fill="currentColor" style="font-family:'Noto Serif JP',serif">夏</text>
-        </g>
-
-        <g style="color:#7df3ff">
-          <rect x="1330" y="106" width="24" height="112" rx="4" fill="rgba(8,20,40,.55)" stroke="rgba(125,243,255,.3)" stroke-width="1"/>
-          <text x="1342" y="126" text-anchor="middle" font-size="15" class="cl-neon" fill="currentColor" style="font-family:'Noto Serif JP',serif">サ</text>
-          <text x="1342" y="147" text-anchor="middle" font-size="15" class="cl-neon" fill="currentColor" style="font-family:'Noto Serif JP',serif">イ</text>
-          <text x="1342" y="168" text-anchor="middle" font-size="15" class="cl-neon cl-signFlick" fill="currentColor" style="font-family:'Noto Serif JP',serif">バ</text>
-          <text x="1342" y="189" text-anchor="middle" font-size="15" class="cl-neon" fill="currentColor" style="font-family:'Noto Serif JP',serif">ー</text>
-        </g>
-
-        <g class="cl-holo-plate">
-          <rect x="392" y="44" width="62" height="66" rx="4" fill="rgba(53,232,255,.07)" stroke="rgba(53,232,255,.55)" stroke-width="1"/>
-          <rect x="400" y="54" width="34" height="3" rx="1.5" fill="rgba(140,240,255,.8)"/>
-          <rect x="400" y="63" width="46" height="3" rx="1.5" fill="rgba(140,240,255,.5)"/>
-          <rect x="400" y="72" width="24" height="3" rx="1.5" fill="rgba(140,240,255,.65)"/>
-          <rect x="400" y="84" width="10" height="6" fill="rgba(53,232,255,.85)"/>
-          <rect x="414" y="84" width="10" height="6" fill="rgba(53,232,255,.45)"/>
-          <rect x="428" y="84" width="10" height="6" fill="rgba(53,232,255,.2)"/>
-          <clipPath id="clHoloClip"><rect x="393" y="45" width="60" height="64" rx="4"/></clipPath>
-          <rect class="cl-holo-scan" x="392" y="44" width="62" height="7" fill="rgba(160,245,255,.28)" clip-path="url(#clHoloClip)"/>
-        </g>
-      </g>
-    </svg>
-
-    <div class="cl-street"></div>
-    <svg class="cl-city-reflect" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
-      <use href="#clCityNearG"></use>
-    </svg>
-
-    <div class="cl-haze"></div>
-
-    <div class="cl-steam cl-steam-1"></div>
-    <div class="cl-steam cl-steam-2"></div>
-    <div class="cl-steam cl-steam-3"></div>
-
-    <div class="cl-hover cl-hover-1"></div>
-    <div class="cl-hover cl-hover-2"></div>
-
-    <canvas id="cl-fx-rain"></canvas>
-
-    <div class="cl-road"></div>
-    <div class="cl-car cl-car-1"></div>
-    <div class="cl-car cl-car-2"></div>
-
-    <div class="cl-vignette"></div>
-
-    <div class="cl-stage">
-      <div class="cl-kanji">千夏</div>
-      <h1 class="cl-name" id="cl-name"></h1>
-      <div class="cl-sub">cyber city · night drive</div>
-
-      <div class="cl-bar">
-        <div class="cl-bar-label"><span>system boot</span><span class="lb-r">chinatsu.os</span></div>
-        <div class="cl-bar-track"><div class="cl-bar-fill" id="cl-fill"></div></div>
-        <div class="cl-bar-meta">
-          <span id="cl-line">bật lưới điện thành phố…</span>
-          <span id="cl-pct">0%</span>
-        </div>
-      </div>
-
-      <div class="cl-hint" id="cl-hint">✦ Kết nối hoàn tất — <b>bấm để bước vào</b></div>
-    </div>
+  <!-- ===== SAKURA MIDNIGHT LOADER ===== -->
+  <div id="sakura-loader" aria-label="Đang tải thế giới Sakura Midnight">
+    <noscript><style>#sakura-loader{display:none!important}</style></noscript>
+    <iframe
+      id="sakura-loader-frame"
+      src="assets/loading/sakura-loader.html?v=sakura-midnight-1"
+      title="Sakura Midnight loading"
+      loading="eager"
+      fetchpriority="high"
+      scrolling="no"
+      aria-hidden="true"></iframe>
   </div>
-  <!-- ================================================= -->
-
-<script src="assets/js/cyber-loader.js?v=weather-1"></script>
+  <script src="assets/loading/sakura-loader.js?v=sakura-midnight-1"></script>
 
   <div class="ambient ambient-one"></div>
   <div class="ambient ambient-two"></div>
@@ -692,7 +556,7 @@
     </section>
   </main>
 
-<script src="assets/js/loader-failsafe.js"></script>
+<script src="assets/js/loader-failsafe.js?v=sakura-midnight-1"></script>
 
 
 

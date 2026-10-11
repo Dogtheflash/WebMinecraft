@@ -1,8 +1,8 @@
-/* Failsafe: nếu script.js bị lỗi hoặc không tải được, sau 12s vẫn phải vào trang */
+/* Failsafe: nếu Sakura loader gặp lỗi, sau 15s vẫn mở được trang. */
 setTimeout(function () {
-  if (window.__clDone) return;
-  window.__clDone = true;
-  var l = document.getElementById('cyber-loader');
+  if (window.__sakuraLoaderDone) return;
+  window.__sakuraLoaderDone = true;
+  var l = document.getElementById('sakura-loader');
   if (l && l.parentNode) l.parentNode.removeChild(l);
   var t = document.getElementById('terminal-screen');
   if (t) {
@@ -11,4 +11,4 @@ setTimeout(function () {
     t.classList.add('active');
   }
   try { if (typeof window.initCmd === 'function') window.initCmd(); } catch (e) {}
-}, 12000);
+}, 15000);
