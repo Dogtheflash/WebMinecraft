@@ -185,24 +185,51 @@ function renderCmdTabs() {
   `).join('');
 }
 
-let lastCmdGrowthLineCount = 0;
-
 function syncCmdWindowHeight(log = '') {
   if (!cmdWindow || cmdWindow.classList.contains('maximized')) return;
-  const lineCount = Math.max(1, log.split('\n').length);
-  if (lineCount === lastCmdGrowthLineCount) return;
-  lastCmdGrowthLineCount = lineCount;
-  const targetHeight = Math.min(410, 150 + lineCount * 14);
+  const body = cmdLog.parentElement;
+  const style = getComputedStyle(body);
+  const measure = cmdLog.cloneNode(false);
+  measure.removeAttribute('id');
+  measure.classList.remove('typing');
+  Object.assign(measure.style, {
+    position: 'absolute', visibility: 'hidden', height: 'auto',
+    minHeight: '0', maxHeight: 'none', overflow: 'visible', flex: 'none',
+    width: `${cmdLog.getBoundingClientRect().width}px`,
+  });
+  const baseline = cmdTabsState[0].boot
+    ? 'Microsoft Windows [Version 11.0.22631.0000]\n(c) Microsoft Corporation. All rights reserved.\n\n' + introLines.slice(0, 8).join('\n')
+    : '';
+  body.appendChild(measure);
+  measure.textContent = baseline;
+  const initialHeight = measure.getBoundingClientRect().height;
+  measure.textContent = log.trimEnd() || ' ';
+  const contentHeight = measure.getBoundingClientRect().height;
+  measure.remove();
+  const footer = document.getElementById('cmd-enter-hint');
+  const button = document.getElementById('enter-console-btn');
+  const footerHeight = footer.hidden ? 0 : footer.getBoundingClientRect().height + 10;
+  const buttonHeight = button.classList.contains('hidden') ? 0 : button.getBoundingClientRect().height + 8;
+  const formHeight = cmdForm.classList.contains('hidden') ? 0 : cmdForm.getBoundingClientRect().height;
+  const targetHeight = Math.ceil(34 + parseFloat(style.paddingTop) + parseFloat(style.paddingBottom)
+    + Math.max(activeCmdTab().boot ? initialHeight : 0, contentHeight) + footerHeight + buttonHeight + formHeight + 3);
   cmdWindow.style.setProperty('--cmd-growth-height', `${targetHeight}px`);
 }
 
 function renderCmdBody() {
   const tab = activeCmdTab();
-  cmdLog.textContent = tab.log;
-  cmdLog.classList.toggle('typing', Boolean(tab.typing));
+  const hint = document.getElementById('cmd-enter-hint');
+  const modeStart = tab.log.indexOf('Current Mode');
+  const hintStart = tab.boot && modeStart >= 0 ? tab.log.indexOf('\nP', modeStart) : -1;
+  const log = hintStart < 0 ? tab.log : tab.log.slice(0, hintStart).trimEnd();
+  hint.hidden = hintStart < 0;
+  hint.textContent = hintStart < 0 ? '' : tab.log.slice(hintStart + 1);
+  cmdLog.textContent = log;
+  cmdLog.classList.toggle('typing', Boolean(tab.typing) && hint.hidden);
+  document.getElementById('enter-console-btn').classList.toggle('hidden', tab.boot && tab.typing);
   cmdForm.classList.toggle('hidden', !tab.interactive);
   cmdInput.value = tab.input || '';
-  syncCmdWindowHeight(tab.log);
+  syncCmdWindowHeight(log);
 }
 
 function renderCmd() {
@@ -261,8 +288,7 @@ function initCmdWindowControls() {
   controls[2].onclick = function () {
     cmdWindow.classList.toggle('maximized');
     if (!cmdWindow.classList.contains('maximized')) {
-      lastCmdGrowthLineCount = 0;
-      syncCmdWindowHeight(activeCmdTab().log);
+      renderCmdBody();
     }
   };
 }
@@ -272,6 +298,9 @@ window.initCmd = function () {
   typeIntro();
   initCmdWindowControls();
 };
+window.addEventListener('resize', () => {
+  if (terminalScreen.classList.contains('active')) renderCmdBody();
+});
 
 function showScreen(screen) {
   [terminalScreen, profileScreen].forEach((item) => item.classList.remove('active'));

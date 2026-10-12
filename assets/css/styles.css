@@ -4557,8 +4557,9 @@ body.color-page-active .profile-screen.active:has(#steam-page:not(.hidden)) {
    Keep a smaller terminal-like landscape ratio without changing behaviour.
    ========================================================================== */
 body.terminal-active .terminal-screen {
-  align-items: center;
+  align-items: start;
   padding: 14px;
+  padding-top: clamp(14px, calc((100dvh - 480px) / 2), 120px);
 }
 
 body.terminal-active .cmd-window {
@@ -4637,7 +4638,7 @@ body.terminal-active .cmd-body {
   min-height: 0;
   overflow: hidden;
   padding: 12px;
-  font-size: 10.5px;
+  font-size: 12px;
   line-height: 1.42;
 }
 
@@ -4653,6 +4654,12 @@ body.terminal-active .cmd-log {
 body.terminal-active .cmd-prompt-line {
   flex: 0 0 auto;
   min-width: 0;
+}
+
+body.terminal-active #cmd-enter-hint {
+  flex: 0 0 auto;
+  margin-top: 10px;
+  line-height: inherit;
 }
 
 body.terminal-active .cmd-prompt-line span {
@@ -4676,6 +4683,7 @@ body.terminal-active .cmd-window.maximized {
 @media (max-width: 420px) {
   body.terminal-active .terminal-screen {
     padding: 10px;
+    padding-top: clamp(10px, calc((100dvh - 480px) / 2), 120px);
   }
 
   body.terminal-active .cmd-window {
@@ -4687,6 +4695,6 @@ body.terminal-active .cmd-window.maximized {
 
   body.terminal-active .cmd-body {
     padding: 11px;
-    font-size: 10px;
+    font-size: 11.5px;
   }
 }
