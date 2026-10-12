@@ -16,6 +16,8 @@
 html,body{width:100%;height:100%;overflow:hidden;background:#0d1021}
 body{margin:0}
 .viewport{width:100vw;height:100vh;min-height:0;border:0;border-radius:0}
+/* Match the SVG's native ratio so desktop scenes have no side letterboxing. */
+@media(min-width:601px){.town{height:auto;aspect-ratio:3 / 1}}
 @media(max-width:600px){.viewport{height:100vh;min-height:0}}
 
 </style>
