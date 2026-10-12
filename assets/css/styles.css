@@ -4648,7 +4648,13 @@ body.terminal-active .cmd-log {
   overflow-x: hidden;
   overflow-y: auto;
   overflow-wrap: anywhere;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+}
+
+body.terminal-active .cmd-log::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 body.terminal-active .cmd-prompt-line {
