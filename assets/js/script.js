@@ -219,6 +219,7 @@ function syncCmdWindowHeight(log = '') {
 function renderCmdBody() {
   const tab = activeCmdTab();
   const hint = document.getElementById('cmd-enter-hint');
+  cmdWindow.classList.toggle('boot-layout', Boolean(tab.boot));
   const modeStart = tab.log.indexOf('Current Mode');
   const hintStart = tab.boot && modeStart >= 0 ? tab.log.indexOf('\nP', modeStart) : -1;
   const log = hintStart < 0 ? tab.log : tab.log.slice(0, hintStart).trimEnd();

@@ -4666,6 +4666,25 @@ body.terminal-active .cmd-prompt-line {
   min-width: 0;
 }
 
+/* Keep completed boot lines anchored while the window grows around the footer. */
+body.terminal-active .cmd-window.boot-layout .cmd-log {
+  flex: 0 0 auto;
+}
+body.terminal-active .cmd-window.boot-layout .cmd-body {
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+body.terminal-active .cmd-window.boot-layout .cmd-body::-webkit-scrollbar {
+  display: none;
+}
+body.terminal-active .cmd-window.boot-layout .cmd-continue:not(.hidden) {
+  animation: cmdContinueReveal .18s ease .42s both;
+}
+@keyframes cmdContinueReveal {
+  from { opacity: 0; visibility: hidden; }
+  to { opacity: 1; visibility: visible; }
+}
+
 body.terminal-active #cmd-enter-hint {
   flex: 0 0 auto;
   margin-top: 10px;
