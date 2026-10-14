@@ -2766,7 +2766,7 @@ html {
   height: 60px;
   font-size: 6px;
   right: calc(var(--clock-center) - 42px);
-  bottom: calc(100% - 20px);
+  bottom: calc(100% - 15px);
   transform: none;
   z-index: 5;
   pointer-events: none;
@@ -3823,7 +3823,11 @@ body.color-page-active .profile-screen.active:has(#steam-page:not(.hidden)) {
   line-height: 1.2;
 }
 .profile-header .display-name { font-size: inherit; line-height: inherit; }
-.profile-console .identity-block { padding-bottom: 2px; }
+.profile-console .identity-block {
+  padding-bottom: 2px;
+  position: relative;
+  top: 4px;
+}
 .profile-console .username {
   margin-top: 4px;
   font-size: 12px;
