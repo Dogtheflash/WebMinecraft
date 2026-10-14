@@ -2621,6 +2621,8 @@ if (interactiveCard) {
 
   let isYtMode = false;
   let ytReady = false;
+  let ytApiReady = false;
+  let resetOnFirstPlay = true;
   let ytPlaying = false;
   let playbackRetry = 0;
   let revealFallback = 0;
@@ -2710,7 +2712,16 @@ if (interactiveCard) {
     stopPlaybackRetry();
     let attempts = 0;
     const sendCommands = () => {
-      if (!isYtMode || ytPlaying) {
+      if (!isYtMode) {
+        stopPlaybackRetry();
+        return;
+      }
+      // Reset once per page visit, only after the player can accept commands.
+      if (resetOnFirstPlay && ytApiReady) {
+        postYtCommand('seekTo', [0, true]);
+        resetOnFirstPlay = false;
+      }
+      if (ytPlaying) {
         stopPlaybackRetry();
         return;
       }
@@ -2744,13 +2755,24 @@ if (interactiveCard) {
 
     if (message.event === 'onReady') {
       ytReady = true;
+      ytApiReady = true;
       if (isYtMode) requestYouTubePlayback();
     }
 
     const playerState = message.event === 'onStateChange'
       ? Number(message.info)
       : Number(message.info && message.info.playerState);
-    if (playerState === 1) revealYouTubeBackground();
+    if (Number.isFinite(playerState)) {
+      ytApiReady = true;
+      if (isYtMode && resetOnFirstPlay) {
+        postYtCommand('seekTo', [0, true]);
+        resetOnFirstPlay = false;
+      }
+    }
+    if (playerState === 1) {
+      if (isYtMode) revealYouTubeBackground();
+      else postYtCommand('pauseVideo');
+    }
   });
 
   toggleBtn.addEventListener('click', () => {
