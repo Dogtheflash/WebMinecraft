@@ -531,11 +531,65 @@ const staticDiscordBadges = [
 
 function renderDiscordBadges() {
   presenceEls.publicFlags.innerHTML = staticDiscordBadges.map((badge) => `
-    <span class="discord-badge ${badge.nitro ? 'nitro' : ''}" data-tooltip="${badge.name}" aria-label="${badge.name}">
+    <span class="discord-badge ${badge.nitro ? 'nitro' : ''}" data-tooltip="${badge.name}" aria-label="${badge.name}" tabindex="0">
       <img src="${badge.icon}" alt="${badge.name}">
     </span>
   `).join('');
 }
+
+// Render outside the animated cards so their stacking/clipping cannot cut the label.
+const badgeTooltip = document.createElement('div');
+badgeTooltip.id = 'badge-tooltip';
+badgeTooltip.role = 'tooltip';
+badgeTooltip.hidden = true;
+document.body.appendChild(badgeTooltip);
+let tooltipBadge = null;
+function hideBadgeTooltip() {
+  tooltipBadge?.removeAttribute('aria-describedby');
+  tooltipBadge = null;
+  badgeTooltip.hidden = true;
+}
+function showBadgeTooltip(badge) {
+  hideBadgeTooltip();
+  tooltipBadge = badge;
+  badgeTooltip.textContent = badge.dataset.tooltip;
+  badgeTooltip.hidden = false;
+  badge.setAttribute('aria-describedby', badgeTooltip.id);
+  const anchor = badge.getBoundingClientRect();
+  const size = badgeTooltip.getBoundingClientRect();
+  const viewport = window.visualViewport;
+  const left = viewport?.offsetLeft || 0;
+  const top = viewport?.offsetTop || 0;
+  const width = viewport?.width || window.innerWidth;
+  const height = viewport?.height || window.innerHeight;
+  badgeTooltip.style.left = `${Math.max(left + 8, Math.min(anchor.left + anchor.width / 2 - size.width / 2, left + width - size.width - 8))}px`;
+  const above = anchor.top - size.height - 9;
+  badgeTooltip.style.top = `${Math.max(top + 8, Math.min(above >= top + 8 ? above : anchor.bottom + 9, top + height - size.height - 8))}px`;
+}
+document.addEventListener('pointerover', (event) => {
+  const badge = event.target.closest('.discord-badge[data-tooltip]');
+  if (badge && badge !== tooltipBadge) showBadgeTooltip(badge);
+});
+document.addEventListener('pointerout', (event) => {
+  if (tooltipBadge && event.pointerType !== 'touch' && !tooltipBadge.contains(event.relatedTarget)) hideBadgeTooltip();
+});
+document.addEventListener('focusin', (event) => {
+  const badge = event.target.closest('.discord-badge[data-tooltip]');
+  if (badge) showBadgeTooltip(badge);
+});
+document.addEventListener('focusout', (event) => {
+  if (event.target === tooltipBadge) hideBadgeTooltip();
+});
+document.addEventListener('click', (event) => {
+  const badge = event.target.closest('.discord-badge[data-tooltip]');
+  if (badge) showBadgeTooltip(badge);
+  else hideBadgeTooltip();
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') hideBadgeTooltip();
+});
+window.addEventListener('scroll', hideBadgeTooltip, true);
+window.addEventListener('resize', hideBadgeTooltip);
 
 function updateMetaFields(data) {
   presenceEls.spotifyStatus.textContent = data.listening_to_spotify && data.spotify

@@ -555,6 +555,24 @@ h1 { margin:0; font-size:clamp(24px, 5vw, 32px); line-height:.98; letter-spacing
 .discord-badge img { width:22px; height:22px; display:block; object-fit:contain; }
 .discord-badge.nitro { filter:drop-shadow(0 0 8px rgba(255,115,207,.18)); }
 .discord-badge.empty { width:auto; padding:4px 7px; color:var(--muted); font:700 11px var(--font-mono); background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.1); }
+.discord-badge[data-tooltip]::before,
+.discord-badge[data-tooltip]::after { display: none; }
+#badge-tooltip {
+  position: fixed;
+  z-index: 1000000;
+  width: max-content;
+  max-width: min(280px, calc(100vw - 16px));
+  padding: 7px 10px;
+  border-radius: 7px;
+  background: #111214;
+  color: #f2f3f5;
+  font: 700 12px/1.4 "Inter", sans-serif;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  box-shadow: 0 8px 18px rgba(0,0,0,.34);
+  pointer-events: none;
+}
 .handle { color:#fff !important; font-weight:800; }
 .tags { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
 .tags span { padding:7px 10px; border-radius:999px; background:rgb(var(--accent-rgb) / .12); border:1px solid rgb(var(--accent-rgb) / .24); color:#e7eaff; font-size:12px; }
