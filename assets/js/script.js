@@ -536,38 +536,29 @@ const discordBadgeSnapshot = {
   userId: '917263515209859102',
   verifiedAt: '2026-11-13T00:00:00.000Z',
   badges: [
-    {
-      id: 'game_time', tier: 6, total: 327,
-      unlockedAt: '06/09/2026',
-    },
-    {
-      id: 'game_variety', tier: 8, total: 70,
-      unlockedAt: '19/08/2026',
-    },
-    {
-      id: 'streaming', tier: 2, total: 6,
-      unlockedAt: '30/07/2026',
-    },
+    { id: 'game_time', total: 327 },
+    { id: 'game_variety', total: 70 },
+    { id: 'streaming', total: 6 },
   ],
 };
 
 const discordActivityBadgeTypes = {
   game_time: {
-    name: 'Thời gian chơi', unit: 'giờ chơi tích lũy',
+    unit: 'giờ đã chơi',
     thresholds: [1, 5, 20, 75, 150, 300, 500, 1000, 2000, 5000],
     slugs: ['casual', 'recreational', 'dedicated', 'committed', 'serious', 'devoted', 'seasoned', 'ironclad', 'unshakeable', 'eternal'],
     names: ['Giải trí', 'Giải trí', 'Gắn bó', 'Tâm huyết', 'Nghiêm túc', 'Tận hiến', 'Lão luyện', 'Sắt đá', 'Unshakeable', 'Eternal'],
     prefix: 'game-time',
   },
   game_variety: {
-    name: 'Trò chơi đa dạng', unit: 'trò chơi đã chơi',
+    unit: 'trò đã chơi',
     thresholds: [2, 5, 10, 15, 20, 30, 40, 60, 80, 100],
     slugs: ['sampler', 'dabbler', 'enthusiast', 'ranger', 'explorer', 'adventurer', 'voyager', 'maverick', 'polymath', 'universalist'],
     names: ['Người dùng thử', 'Người chơi qua', 'Người đam mê', 'Trinh sát', 'Người khám phá', 'Nhà thám hiểm', 'Nhà du hành', 'Người khác biệt', 'Polymath', 'Universalist'],
     prefix: 'game-variety',
   },
   streaming: {
-    name: 'Stream', unit: 'giờ đã stream cho người khác',
+    unit: 'giờ đã stream',
     thresholds: [1, 5, 20, 75, 150, 300, 500, 1000, 2000, 5000],
     slugs: ['newcomer', 'fledgling', 'breakout', 'standout', 'trendsetter', 'headliner', 'star', 'sensation', 'visionary', 'phenomenon'],
     names: ['Người mới', 'Chim non', 'Đột phá', 'Nổi bật', 'Người tạo xu hướng', 'Tiêu điểm', 'Ngôi sao', 'Cảm giác', 'Visionary', 'Phenomenon'],
@@ -601,21 +592,17 @@ function readDiscordBadgeProgress(data, now = Date.now()) {
 
 function getDiscordActivityBadges(progress = liveDiscordBadgeProgress) {
   if (discordBadgeSnapshot.userId !== DISCORD_USER_ID) return [];
-  const updated = new Intl.DateTimeFormat('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })
-    .format(new Date(progress?.updatedAt || discordBadgeSnapshot.verifiedAt));
   return discordBadgeSnapshot.badges.flatMap((snapshot) => {
     const type = discordActivityBadgeTypes[snapshot.id];
     const total = progress ? progress.totals[snapshot.id] : snapshot.total;
     const tier = type.thresholds.filter((threshold) => total >= threshold).length;
     if (!tier) return [];
-    const name = `${type.name} · ${type.names[tier - 1]}`;
+    const name = type.names[tier - 1];
     const detail = `${new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 1 }).format(total)} ${type.unit}`;
-    const unlocked = tier === snapshot.tier ? ` · Đã mở khóa ${snapshot.unlockedAt}` : '';
     return [{
       id: snapshot.id, tier, name, detail,
       source: progress ? 'published' : 'snapshot',
       icon: `./assets/badges/${type.prefix}-${type.slugs[tier - 1]}.svg`,
-      tooltip: `${name} · Cấp ${tier} · ${detail}${unlocked} · Cập nhật ${updated}`,
     }];
   });
 }
@@ -637,13 +624,10 @@ function getDiscordAccountAgeBadge(userId = DISCORD_USER_ID, now = new Date()) {
   const years = Math.floor(months / 12);
   if (years < 1) return null;
   const tier = Math.min(years, 10);
-  const joined = new Intl.DateTimeFormat('vi-VN', {
-    timeZone: 'Asia/Ho_Chi_Minh', day: '2-digit', month: '2-digit', year: 'numeric',
-  }).format(createdAt);
   return {
     id: 'account_age', tier,
-    name: `Thời gian tạo tài khoản · ${discordAccountAgeNames[tier - 1]}`,
-    detail: `${years} năm${months % 12 ? `, ${months % 12} tháng` : ''} · Tham gia ${joined}`,
+    name: discordAccountAgeNames[tier - 1],
+    detail: `${years} năm${months % 12 ? `, ${months % 12} tháng` : ''}`,
     icon: `./assets/badges/account-age-${tier}.svg`,
   };
 }
@@ -663,7 +647,7 @@ function renderDiscordBadges() {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = `discord-badge${badge.nitro ? ' nitro' : ''}`;
-    const label = badge.tooltip || [badge.name, badge.tier && `Cấp ${badge.tier}`, badge.detail].filter(Boolean).join(' · ');
+    const label = [badge.name, badge.tier && `Cấp ${badge.tier}`, badge.detail].filter(Boolean).join(' · ');
     button.dataset.tooltip = label;
     if (badge.id) button.dataset.badgeId = badge.id;
     if (badge.tier) button.dataset.badgeTier = String(badge.tier);

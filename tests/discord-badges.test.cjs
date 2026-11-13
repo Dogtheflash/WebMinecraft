@@ -43,21 +43,24 @@ function payload(overrides = {}) {
 const now = Date.parse('2026-11-13T08:00:00Z');
 
 test('the three screenshot-confirmed tiers and totals are displayed exactly', () => {
-  const badges = setup().api.activities();
+  const { api, list } = setup();
+  const badges = api.activities();
   assert.deepEqual(Array.from(badges, (b) => b.tier), [6, 8, 2]);
-  for (const [i, text] of ['327 giờ chơi tích lũy', '70 trò chơi đã chơi', '6 giờ đã stream cho người khác'].entries()) {
-    assert.ok(badges[i].tooltip.includes(text));
-    assert.equal(badges[i].source, 'snapshot');
-    assert.ok(badges[i].tooltip.includes('13/11/2026'));
-  }
+  assert.ok(badges.every((badge) => badge.source === 'snapshot'));
+  api.render();
+  assert.deepEqual(list.children.slice(0, 3).map((button) => button.dataset.tooltip), [
+    'Tận hiến · Cấp 6 · 327 giờ đã chơi',
+    'Người khác biệt · Cấp 8 · 70 trò đã chơi',
+    'Chim non · Cấp 2 · 6 giờ đã stream',
+  ]);
 });
 
 test('account creation is decoded from the ID and age advances at its actual anniversary', () => {
   const { age } = setup().api;
   const current = age(userId, new Date(now));
   assert.equal(current.tier, 4);
-  assert.match(current.detail, /4 năm, 11 tháng.*06\/12\/2021/);
-  assert.match(current.name, /Nụ chồi/);
+  assert.equal(current.detail, '4 năm, 11 tháng');
+  assert.equal(current.name, 'Nụ chồi');
   assert.equal(age(userId, new Date('2026-12-06T03:57:43.957Z')).tier, 4);
   assert.equal(age(userId, new Date('2026-12-06T03:57:43.958Z')).tier, 5);
   assert.equal(age(userId, new Date('2040-01-01T00:00:00Z')).tier, 10);
@@ -75,7 +78,7 @@ test('published progress changes totals, names and icons at the next milestones'
   assert.match(after[0].icon, /game-time-seasoned\.svg$/);
   assert.match(after[1].icon, /game-variety-polymath\.svg$/);
   assert.match(after[2].icon, /streaming-breakout\.svg$/);
-  assert.ok(after.every((b) => b.source === 'published' && !b.tooltip.includes('Đã mở khóa')));
+  assert.ok(after.every((b) => b.source === 'published'));
 });
 
 test('maximum tiers are capped and unearned activity badges are not invented', () => {
