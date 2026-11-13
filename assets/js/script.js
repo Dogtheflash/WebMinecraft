@@ -529,12 +529,157 @@ const staticDiscordBadges = [
   { name: 'nakarotad#2413', icon: './assets/badges/legacy-username.svg' },
 ];
 
+// These activity totals/tiers belong to this user and were confirmed in their
+// Discord Badge Directory screenshots on 2026-11-13. Lanyard/public_flags do
+// not expose this progress. Update the snapshot only from verified data.
+const discordBadgeSnapshot = {
+  userId: '917263515209859102',
+  verifiedAt: '2026-11-13T00:00:00.000Z',
+  badges: [
+    {
+      id: 'game_time', tier: 6, total: 327,
+      unlockedAt: '06/09/2026',
+    },
+    {
+      id: 'game_variety', tier: 8, total: 70,
+      unlockedAt: '19/08/2026',
+    },
+    {
+      id: 'streaming', tier: 2, total: 6,
+      unlockedAt: '30/07/2026',
+    },
+  ],
+};
+
+const discordActivityBadgeTypes = {
+  game_time: {
+    name: 'Thời gian chơi', unit: 'giờ chơi tích lũy',
+    thresholds: [1, 5, 20, 75, 150, 300, 500, 1000, 2000, 5000],
+    slugs: ['casual', 'recreational', 'dedicated', 'committed', 'serious', 'devoted', 'seasoned', 'ironclad', 'unshakeable', 'eternal'],
+    names: ['Giải trí', 'Giải trí', 'Gắn bó', 'Tâm huyết', 'Nghiêm túc', 'Tận hiến', 'Lão luyện', 'Sắt đá', 'Unshakeable', 'Eternal'],
+    prefix: 'game-time',
+  },
+  game_variety: {
+    name: 'Trò chơi đa dạng', unit: 'trò chơi đã chơi',
+    thresholds: [2, 5, 10, 15, 20, 30, 40, 60, 80, 100],
+    slugs: ['sampler', 'dabbler', 'enthusiast', 'ranger', 'explorer', 'adventurer', 'voyager', 'maverick', 'polymath', 'universalist'],
+    names: ['Người dùng thử', 'Người chơi qua', 'Người đam mê', 'Trinh sát', 'Người khám phá', 'Nhà thám hiểm', 'Nhà du hành', 'Người khác biệt', 'Polymath', 'Universalist'],
+    prefix: 'game-variety',
+  },
+  streaming: {
+    name: 'Stream', unit: 'giờ đã stream cho người khác',
+    thresholds: [1, 5, 20, 75, 150, 300, 500, 1000, 2000, 5000],
+    slugs: ['newcomer', 'fledgling', 'breakout', 'standout', 'trendsetter', 'headliner', 'star', 'sensation', 'visionary', 'phenomenon'],
+    names: ['Người mới', 'Chim non', 'Đột phá', 'Nổi bật', 'Người tạo xu hướng', 'Tiêu điểm', 'Ngôi sao', 'Cảm giác', 'Visionary', 'Phenomenon'],
+    prefix: 'streaming',
+  },
+};
+
+let liveDiscordBadgeProgress = null;
+
+function readDiscordBadgeProgress(data, now = Date.now()) {
+  // Optional owner-published data. This is a receiver, not a claim that Lanyard
+  // reads badge progress from Discord. No account credentials belong here.
+  if (data?.discord_user?.id !== DISCORD_USER_ID || typeof data.kv?.discord_badges !== 'string') return null;
+  try {
+    const payload = JSON.parse(data.kv.discord_badges);
+    const updatedAt = Date.parse(payload.updatedAt);
+    if (payload.version !== 1 || payload.userId !== DISCORD_USER_ID
+      || !Number.isFinite(updatedAt) || updatedAt > now + 5 * 60000
+      || updatedAt < Date.parse(discordBadgeSnapshot.verifiedAt)) return null;
+    const totals = [payload.gameTimeHours, payload.gamesPlayed, payload.streamHours];
+    if (!totals.every((value) => typeof value === 'number' && Number.isFinite(value) && value >= 0)
+      || !Number.isSafeInteger(payload.gamesPlayed)) return null;
+    return {
+      updatedAt: new Date(updatedAt).toISOString(),
+      totals: { game_time: payload.gameTimeHours, game_variety: payload.gamesPlayed, streaming: payload.streamHours },
+    };
+  } catch (_) {
+    return null;
+  }
+}
+
+function getDiscordActivityBadges(progress = liveDiscordBadgeProgress) {
+  if (discordBadgeSnapshot.userId !== DISCORD_USER_ID) return [];
+  const updated = new Intl.DateTimeFormat('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })
+    .format(new Date(progress?.updatedAt || discordBadgeSnapshot.verifiedAt));
+  return discordBadgeSnapshot.badges.flatMap((snapshot) => {
+    const type = discordActivityBadgeTypes[snapshot.id];
+    const total = progress ? progress.totals[snapshot.id] : snapshot.total;
+    const tier = type.thresholds.filter((threshold) => total >= threshold).length;
+    if (!tier) return [];
+    const name = `${type.name} · ${type.names[tier - 1]}`;
+    const detail = `${new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 1 }).format(total)} ${type.unit}`;
+    const unlocked = tier === snapshot.tier ? ` · Đã mở khóa ${snapshot.unlockedAt}` : '';
+    return [{
+      id: snapshot.id, tier, name, detail,
+      source: progress ? 'published' : 'snapshot',
+      icon: `./assets/badges/${type.prefix}-${type.slugs[tier - 1]}.svg`,
+      tooltip: `${name} · Cấp ${tier} · ${detail}${unlocked} · Cập nhật ${updated}`,
+    }];
+  });
+}
+
+const discordAccountAgeNames = [
+  'Hạt giống', 'Chồi non', 'Cây non', 'Nụ chồi', 'Nở hoa',
+  'Huyết mộc', 'Cây lá kim cổ thụ', 'Thông đỏ Bristlecone',
+  'Stromatolite', 'Primordial',
+];
+
+function getDiscordAccountAgeBadge(userId = DISCORD_USER_ID, now = new Date()) {
+  if (!/^\d{17,20}$/.test(userId) || !Number.isFinite(now.getTime())) return null;
+  const createdAt = new Date(Number((BigInt(userId) >> 22n) + 1420070400000n));
+  let months = (now.getUTCFullYear() - createdAt.getUTCFullYear()) * 12
+    + now.getUTCMonth() - createdAt.getUTCMonth();
+  const monthAnniversary = new Date(createdAt);
+  monthAnniversary.setUTCMonth(createdAt.getUTCMonth() + months);
+  if (now < monthAnniversary) months -= 1;
+  const years = Math.floor(months / 12);
+  if (years < 1) return null;
+  const tier = Math.min(years, 10);
+  const joined = new Intl.DateTimeFormat('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh', day: '2-digit', month: '2-digit', year: 'numeric',
+  }).format(createdAt);
+  return {
+    id: 'account_age', tier,
+    name: `Thời gian tạo tài khoản · ${discordAccountAgeNames[tier - 1]}`,
+    detail: `${years} năm${months % 12 ? `, ${months % 12} tháng` : ''} · Tham gia ${joined}`,
+    icon: `./assets/badges/account-age-${tier}.svg`,
+  };
+}
+
+let renderedDiscordBadges = '';
 function renderDiscordBadges() {
-  presenceEls.publicFlags.innerHTML = staticDiscordBadges.map((badge) => `
-    <span class="discord-badge ${badge.nitro ? 'nitro' : ''}" data-tooltip="${badge.name}" aria-label="${badge.name}" tabindex="0">
-      <img src="${badge.icon}" alt="${badge.name}">
-    </span>
-  `).join('');
+  const activityBadges = getDiscordActivityBadges();
+  const ageBadge = getDiscordAccountAgeBadge();
+  const badges = [...activityBadges, ...(ageBadge ? [ageBadge] : []), ...staticDiscordBadges];
+  const signature = JSON.stringify(badges);
+  // Presence refreshes every six seconds; preserve keyboard focus and tooltips
+  // instead of replacing the same badge elements on every successful response.
+  if (signature === renderedDiscordBadges) return;
+  hideBadgeTooltip();
+  const fragment = document.createDocumentFragment();
+  badges.forEach((badge) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `discord-badge${badge.nitro ? ' nitro' : ''}`;
+    const label = badge.tooltip || [badge.name, badge.tier && `Cấp ${badge.tier}`, badge.detail].filter(Boolean).join(' · ');
+    button.dataset.tooltip = label;
+    if (badge.id) button.dataset.badgeId = badge.id;
+    if (badge.tier) button.dataset.badgeTier = String(badge.tier);
+    if (badge.source) button.dataset.badgeSource = badge.source;
+    button.setAttribute('aria-label', label);
+    const image = document.createElement('img');
+    image.src = badge.icon;
+    image.alt = '';
+    image.width = 24;
+    image.height = 24;
+    image.setAttribute('aria-hidden', 'true');
+    button.appendChild(image);
+    fragment.appendChild(button);
+  });
+  presenceEls.publicFlags.replaceChildren(fragment);
+  renderedDiscordBadges = signature;
 }
 
 // Render outside the animated cards so their stacking/clipping cannot cut the label.
@@ -591,10 +736,17 @@ document.addEventListener('keydown', (event) => {
 window.addEventListener('scroll', hideBadgeTooltip, true);
 window.addEventListener('resize', hideBadgeTooltip);
 
+// Verified badges remain available even when the presence service is offline.
+renderDiscordBadges();
+
 function updateMetaFields(data) {
   presenceEls.spotifyStatus.textContent = data.listening_to_spotify && data.spotify
     ? `${data.spotify.song || 'Spotify'} · ${data.spotify.artist || 'Unknown'}`
     : 'Chưa phát hiện';
+  const progress = readDiscordBadgeProgress(data);
+  if (progress && (!liveDiscordBadgeProgress || progress.updatedAt >= liveDiscordBadgeProgress.updatedAt)) {
+    liveDiscordBadgeProgress = progress;
+  }
   renderDiscordBadges();
 }
 
@@ -707,7 +859,7 @@ async function fetchDiscordPresence() {
     presenceEls.statusText.innerHTML = `<span class="inline-dot ${status}"></span>Chưa thể đồng bộ Discord`;
     presenceEls.customStatusLine.textContent = 'Không rõ';
     presenceEls.spotifyStatus.textContent = 'Không rõ';
-    presenceEls.publicFlags.innerHTML = '<span class="discord-badge empty">Không rõ</span>';
+    renderDiscordBadges();
   }
 }
 fetchDiscordPresence();
